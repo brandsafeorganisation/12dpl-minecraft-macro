@@ -40,21 +40,41 @@ for how to rebuild it after you change the macro.
 | Click view    | start playing (the mouse then turns the camera); after a pause, W A S D or Space also carries on |
 | Mouse         | look around                                                  |
 | Left click    | break blocks (harder blocks take more hits), hit animals     |
-| Right click   | place blocks, eat food, open crafting tables, furnaces and chests, sleep in beds |
+| Right click   | place blocks, eat food, open crafting tables, furnaces and chests, sleep in beds, open and shut doors |
 | W A S D       | walk                                                         |
 | Space         | jump, swim up, fly up                                        |
 | 1 - 9         | choose a hotbar slot                                         |
 | E             | inventory and 2 x 2 crafting (E or Q closes any screen)      |
 | Q             | pause and free the mouse                                     |
 | F / J         | auto-walk on/off, auto-jump on/off                           |
-| G / C         | fly on/off (no gravity, no fall damage), fly down            |
+| G             | fly on/off (no gravity, no fall damage)                      |
+| C             | crouch on/off (sink while flying)                            |
+| Shift + W A S D | crouch while held: slower, and you don't walk off edges (sink while flying) |
+| T             | chat; Enter sends the line, Escape drops it                  |
+| /             | chat with a / already typed, for a command (see below)       |
 | P             | pick block: hold the item of the block you're looking at     |
 | U             | hide or show the HUD                                         |
 | - / =         | shorter / longer render distance (8 to 64 blocks)            |
 | I / H / O     | position, render and frame-time statistics, help, settings   |
 
 The keys go to the **Keys** box under the view. If they stop working, click
-that box.
+that box. 12d doesn't report Shift on its own, only the capital letter it
+makes, so Shift crouches together with a movement key (the Windows build
+also sees Shift held by itself); Caps Lock does the same.
+
+### Commands
+
+Type these in the chat line (**/** or **T** then **/**). Times are in the
+block game's ticks: 24000 to a day, 0 at sunrise, 6000 at noon.
+
+| Command | What it does |
+|---------|--------------|
+| `/time set day\|noon\|night\|midnight\|<ticks>` | set the time of day |
+| `/time add <ticks>` | move the clock on |
+| `/time query daytime\|gametime\|day` | say the time |
+| `/gamerule doDaylightCycle true\|false` | start or stop the clock (saved with the world) |
+| `/give <player> <item> [count]` | give yourself items, e.g. `/give @p oak_door 3` or `/give @p minecraft:torch 64` (any player name means you) |
+| `/help` | list the commands |
 
 12d only sends auto-repeat for the last key held and never reports a key being
 released. Because of that, only one movement key works at a time. Each press
@@ -76,7 +96,12 @@ library), so loading a pack takes a moment. It uses the images under
 Cubeland has, samples each to 16 x 16 and keeps 8 colours per texture.
 Grey images that the game colours by biome (grass, leaves, water) are
 tinted with the pack's `colormap/grass.png` and `foliage.png`. Anything the
-pack doesn't have keeps its built-in texture. Cows, pigs and zombies use
+pack doesn't have keeps its built-in texture. The crack stages
+(`block/destroy_stage_0` .. `9`), the health bar hearts
+(`gui/sprites/hud/heart/full`, `half` and `container`) and the door
+(`block/oak_door_top`, `oak_door_bottom`, `item/oak_door`) come from the
+pack too. A pack's crack images are meant to darken the block under them,
+which can't be done here, so only their darker pixels are drawn. Cows, pigs and zombies use
 the pack's mob skins (`entity/cow/cow.png`, `entity/pig/pig.png`,
 `entity/zombie/zombie.png`): every
 face of the model is cut from its own rectangle of the skin. Packs made for
@@ -99,29 +124,36 @@ can use any font installed in Windows. In **Settings**:
 12d can only draw with fonts that Windows has installed, so a font file
 you pick has to be installed too (double click it, then **Install**). If
 a font isn't installed, Windows draws a similar one instead. The choice is
-saved with the other settings. After switching back to 12d's default, the
-default font comes back the next time the game opens.
+saved with the other settings (a font file's path too). After switching back
+to 12d's default, the default font comes back the next time the game opens.
+The Windows build (`tools/desktop`) can use a font file without installing
+it: it loads the chosen file for itself, then and every time it starts.
 
 ## What's in it
 
 - **Blocks:** dirt, grass, stone, cobblestone, sand, sandstone, gravel, coal
   ore, iron ore, cactus, oak log, leaves, oak planks, water, bedrock,
-  glass, crafting table, furnace, chest, bed and torch. Each has its own 16 x 16 pixel texture,
+  glass, crafting table, furnace, chest, bed, door and torch. Each has its own 16 x 16 pixel texture,
   generated by the macro when it starts (or taken from a resource pack).
   Near faces show all 16 x 16 pixels; at the **High** texture detail
   setting they do from further away too.
 - **Plants:** grass tufts, poppies and dandelions in meadows, dead bushes
   in deserts. Each is two pictures crossed in an X, like the block game's
   plants, so they look the same from every side; you walk through
-  them, break them with one hit, and placing a block replaces them.
+  them, break them with one hit, and placing a block replaces them. Torches,
+  flowers and grass are only aimed at (and outlined) where they really
+  are, so you can reach past them.
+- **Water:** seen from above you see through it: the bed and banks under
+  it are drawn tinted blue, with a few light glints drifting across the
+  surface (12d can't draw see-through colours, so this stands in for it).
 - **Terrain:** generated from the seed. Rolling hills with the odd steep
   area, forests with open clearings between them, sandy deserts with
   cacti, beaches and oceans (water fills every open cell below y 62).
   Underground there are winding caves, coal ore, iron ore (below y 44) and
   gravel. Some worlds
   get small ponds. A starter house is built near the middle of the world:
-  cobblestone floor, log corners, plank walls with a doorway and windows,
-  a crafting table and a furnace.
+  cobblestone floor, log corners, plank walls with an open door and
+  windows, a crafting table, a furnace, a bed and a chest.
 - **Day and night:** a day lasts 20 minutes. The sun and moon cross the
   sky, the sky turns orange at sunrise and sunset and dark blue at
   night, stars come out, and the land goes dark. The time is on the
@@ -137,16 +169,25 @@ default font comes back the next time the game opens.
   (never right next to torches). They walk straight at you, hit for 3
   with a knock-back, take a few hits to kill, drop rotten flesh, and burn
   up when the sun rises unless they're in the shade.
-- **Beds:** right-click one at night to sleep until morning. Using a bed
-  also makes it your respawn point.
+- **Beds:** two blocks long: the foot goes where you click and the head one
+  block further the way you are looking. Right-click either half at night
+  to sleep until morning; using a bed also makes it your respawn point.
+  Breaking either half removes the whole bed and drops one bed.
+- **Doors:** two blocks tall, made from 6 planks. A shut door is a thin
+  panel on the side of its block you were facing; right-click to swing it
+  open or shut. You can't walk through a shut door. The top half has
+  windows you can see through. Breaking either half drops one door.
 - **Chests:** hold 27 stacks. Right-click to open; the contents are
   saved with the world and spill out if the chest is broken.
 - **Player:** 1.8 blocks tall, with 5 blocks of reach, gravity and collision,
-  swimming, fall damage, a 20-point health bar and slow healing. **G**
-  turns on flying: no gravity, Space rises, C sinks, and you still collide
-  with blocks.
-- **Breaking and placing:** broken blocks drop as items that are picked up
-  when you walk near them. Furnaces turn to face you when placed.
+  swimming, fall damage, a 10-heart health bar and slow healing. **C** (or
+  Shift with a movement key) crouches: lower, slower, and you stop at
+  edges instead of walking off. **G** turns on flying: no gravity, Space
+  rises, C or Shift sinks, and you still collide with blocks.
+- **Breaking and placing:** a block being broken cracks in 10 pixel-art
+  stages (the resource pack's `destroy_stage` images if it has them).
+  Broken blocks drop as items that are picked up when you walk near them.
+  Furnaces turn to face you when placed.
 - **Tools:** wooden, stone and iron pickaxes, axes, shovels and swords. The
   right tool breaks a block in fewer hits. **Stone, cobblestone, sandstone,
   coal ore and furnaces drop nothing unless mined with a pickaxe, and iron
@@ -169,6 +210,7 @@ default font comes back the next time the game opens.
   | 4 torches         | coal over a stick                                |
   | chest             | 8 planks round the edge of the 3 x 3 grid        |
   | bed               | 3 leaves over 3 planks                           |
+  | 3 oak doors       | 2 x 3 planks                                     |
   | furnace           | 8 cobblestone round the edge of the 3 x 3 grid   |
   | pickaxe           | 3 planks, cobblestone or iron ingots across the top, 2 sticks down the middle |
   | axe               | 3 planks, cobblestone or iron ingots in an L, 2 sticks |
@@ -184,7 +226,9 @@ default font comes back the next time the game opens.
   water. They run when hit; cows drop 1–3 raw beef and pigs 1–3 raw
   porkchops, which cook in a furnace. The models have the block game's
   proportions (cow: body, head with horns, four legs; pig: body, head
-  with a snout, four short legs) and a texture per face. A new world
+  with a snout, four short legs) and a texture per face. Their legs swing
+  from the hip as they walk and their heads look round, and at you when
+  you're close. A new world
   starts with 10 cows and 6 pigs, and more turn up now and then away
   from you. Raw beef and porkchops heal 2, cooked ones 7 and rotten
   flesh 1.
@@ -193,7 +237,8 @@ default font comes back the next time the game opens.
 
 ```
 cubeland.4dm          main(): world menu, then the game, until Quit
-CODING_RULES.md       honest functions, records, events, naming, safety
+CLAUDE.md             project rules and testing notes on top of the style guide
+resources/            12dPL style guide, differences from C, API references
 docs/                 the ScuffedMinecraft port plan and its progress
 src/build.4dm         includes include/core/safety.h first, then every source file
 src/<part>/*.4dm      the code, one folder per part of the game (below)
@@ -215,8 +260,8 @@ include/<part>/*.h    each module's constants, record field names and prototypes
                       hotbar, health, hand, help, item icons), render_ui
                       (inventory, crafting table, furnace and chest screens)
   program/            settings (the settings record and its file), save
-                      (world files), game (starting worlds, the per-frame
-                      update, event dispatch)
+                      (world files), commands (the chat commands), game
+                      (starting worlds, the per-frame update, event dispatch)
   ui/                 menu_panel, settings_panel, game_panel (the 12d panels:
                       the controllers), font (font names and files)
 tools/test_harness/   runs the macro as C++ for testing (not used by 12d)
@@ -224,7 +269,8 @@ tools/desktop/        the same macro as a Windows program (not used by 12d)
 ```
 
 The code follows model–view–controller and the rules in
-[CODING_RULES.md](CODING_RULES.md):
+[resources/12dPL Style Guide.md](resources/12dPL%20Style%20Guide.md)
+and [CLAUDE.md](CLAUDE.md):
 
 - **Records.** Game state lives in 12d `Attributes` used like structs: the
   player, inventory, crafting grid, furnaces, cows, drops, settings, HUD,

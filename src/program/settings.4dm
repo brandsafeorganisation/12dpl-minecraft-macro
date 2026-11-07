@@ -25,6 +25,24 @@ void settings_defaults(Attributes &p_settings)
   record_set_integer(p_settings, ATTR_SET_SHOW_DEBUG,      FALSE);
   record_set_text   (p_settings, ATTR_SET_RESOURCE_PACK,   "");
   record_set_text   (p_settings, ATTR_SET_FONT,            "");
+  record_set_text   (p_settings, ATTR_SET_FONT_FILE,       "");
+}
+
+Text settings_font_file(Attributes &p_settings)
+// ----------------------------------------------------------------
+// The font file the font was chosen from, "" if it was chosen by
+// name
+// ----------------------------------------------------------------
+{
+  return record_text(p_settings, ATTR_SET_FONT_FILE);
+}
+
+void settings_set_font_file(Attributes &p_settings, Text p_path)
+// ----------------------------------------------------------------
+// Remember the font file the font was chosen from ("" for none)
+// ----------------------------------------------------------------
+{
+  record_set_text(p_settings, ATTR_SET_FONT_FILE, Text_justify(p_path));
 }
 
 Text settings_font(Attributes &p_settings)
@@ -184,13 +202,14 @@ Text settings_line(Text p_name, Integer p_value)
 Integer settings_save(Attributes &p_settings, Text p_path)
 // ----------------------------------------------------------------
 // Write the settings as "name value" lines. Returns SUCCESS or
-// FAILURE. The resource pack and font lines keep the rest of the
-// line as the path or name, so they may contain spaces.
+// FAILURE. The resource pack, font and font file lines keep the rest
+// of the line as the path or name, so they may contain spaces.
 // ----------------------------------------------------------------
 {
   File l_file;
   Text l_pack_line = "";
   Text l_font_line = ATTR_SET_FONT;
+  Text l_file_line = ATTR_SET_FONT_FILE;
 
   if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
 
@@ -206,6 +225,7 @@ Integer settings_save(Attributes &p_settings, Text p_path)
   l_pack_line = ATTR_SET_RESOURCE_PACK;
   File_write_line(l_file, l_pack_line + " " + settings_resource_pack(p_settings));
   File_write_line(l_file, l_font_line + " " + settings_font(p_settings));
+  File_write_line(l_file, l_file_line + " " + settings_font_file(p_settings));
 
   File_close(l_file);
   return SUCCESS;
@@ -228,6 +248,8 @@ Integer settings_load(Attributes &p_settings, Text p_path)
   Integer      l_skip      = 0;
   Text         l_font      = ATTR_SET_FONT;
   Integer      l_font_skip = 0;
+  Text         l_path_name = ATTR_SET_FONT_FILE;
+  Integer      l_path_skip = 0;
   Dynamic_Text l_words;
 
   settings_defaults(p_settings);
@@ -238,10 +260,18 @@ Integer settings_load(Attributes &p_settings, Text p_path)
   l_skip      = Text_length(l_pack);
   l_font      = l_font + " ";
   l_font_skip = Text_length(l_font);
+  l_path_name = l_path_name + " ";
+  l_path_skip = Text_length(l_path_name);
   while (File_read_line(l_file, l_line) == 0) {
     if (Text_length(l_line) > l_skip) {
       if (Get_subtext(l_line, 1, l_skip) == l_pack) {
         settings_set_resource_pack(p_settings, Get_subtext(l_line, l_skip + 1, Text_length(l_line)));
+        continue;
+      }
+    }
+    if (Text_length(l_line) > l_path_skip) {
+      if (Get_subtext(l_line, 1, l_path_skip) == l_path_name) {
+        settings_set_font_file(p_settings, Get_subtext(l_line, l_path_skip + 1, Text_length(l_line)));
         continue;
       }
     }

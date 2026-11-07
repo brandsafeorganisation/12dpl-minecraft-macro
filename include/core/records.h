@@ -9,7 +9,7 @@
 // carry the entity number: "x_3" is field "x" of entity 3. Every
 // function that reads or writes a record takes it as a parameter,
 // so its signature shows everything it touches (see
-// CODING_RULES.md, "Honest functions").
+// CLAUDE.md, "Honest functions").
 //
 // Field names are object-like macros so a typo is a compile error
 // instead of a silently empty field. Shared field names live here,

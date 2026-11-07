@@ -129,7 +129,17 @@ Real player_eye_y(Attributes &p_player)
 // Height of the player's eyes
 // ----------------------------------------------------------------
 {
+  if (player_crouching(p_player)) return record_real(p_player, ATTR_Y) + CROUCH_EYE_HEIGHT;
   return record_real(p_player, ATTR_Y) + PLAYER_EYE_HEIGHT;
+}
+
+Integer player_crouching(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE while the player is crouched (worked out each frame by
+// player_update)
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_CROUCHING) == TRUE;
 }
 
 void player_look_direction(Attributes &p_player, Real &p_dir_x, Real &p_dir_y, Real &p_dir_z)
@@ -312,7 +322,8 @@ Integer player_target_cow(Attributes &p_player)
 
 Integer player_break_stage(Attributes &p_player, Real p_now)
 // ----------------------------------------------------------------
-// How cracked the block being broken is: 0 (not started) to 4
+// How cracked the block being broken is: 0 (not started) to
+// DESTROY_STAGES
 // ----------------------------------------------------------------
 {
   Integer l_hits   = record_integer(p_player, ATTR_BREAK_HITS);
@@ -322,7 +333,7 @@ Integer player_break_stage(Attributes &p_player, Real p_now)
   if (p_now - record_real(p_player, ATTR_BREAK_TIME) > BREAK_RESET_SECONDS) return 0;
   if (l_needed <= 1) return 0;
 
-  return clamp_integer(1 + floor_integer(3.0 * l_hits / l_needed), 1, 4);
+  return clamp_integer(1 + floor_integer((DESTROY_STAGES - 1.0) * l_hits / l_needed), 1, DESTROY_STAGES);
 }
 
 // ---------------------------------------------------------------- behaviour
@@ -447,7 +458,11 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
   }
 
   if (p_key == "c") {
-    if (player_flying(p_player)) record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
+    if (player_flying(p_player)) {
+      record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
+    } else {
+      record_set_integer(p_player, ATTR_CROUCH_TOGGLE, record_integer(p_player, ATTR_CROUCH_TOGGLE) != TRUE);
+    }
     return;
   }
 
@@ -457,6 +472,20 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
       record_set_real   (p_player, ATTR_MOVE_UNTIL, max_real(l_move_until, p_now + 0.55));
       record_set_integer(p_player, ATTR_MOVE_HELD,  TRUE);
     }
+  }
+}
+
+void player_shift_pressed(Attributes &p_player, Real p_now)
+// ----------------------------------------------------------------
+// A key arrived with Shift held (a capital W, A, S or D): Shift
+// sinks while flying and crouches otherwise. There is no key-up
+// event, so it lasts a moment and each repeat of the key renews it.
+// ----------------------------------------------------------------
+{
+  if (player_flying(p_player)) {
+    record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
+  } else {
+    record_set_real(p_player, ATTR_CROUCH_UNTIL, p_now + CROUCH_HOLD_SECONDS);
   }
 }
 
@@ -534,15 +563,14 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   Integer l_was_grounded = l_on_ground;
   Integer l_blocked      = FALSE;
   Integer l_moving       = FALSE;
-  Integer l_ahead_x      = 0;
-  Integer l_ahead_z      = 0;
-  Integer l_feet_y       = 0;
   Integer l_hit_x        = FALSE;
   Integer l_hit_z        = FALSE;
   Integer l_hit_down     = FALSE;
   Integer l_hit_up       = FALSE;
   Integer l_flying       = player_flying(p_player);
   Real    l_down_until   = record_real(p_player, ATTR_FLY_DOWN_UNTIL);
+  Integer l_crouching    = FALSE;
+  Real    l_eye_height   = PLAYER_EYE_HEIGHT;
 
   record_set_real(p_player, ATTR_PLAYER_HURT,  player_hurt_time (p_player) - p_dt);
   record_set_real(p_player, ATTR_PLAYER_SWING, player_swing_time(p_player) - p_dt);
@@ -565,8 +593,17 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
     l_ease = TAP_START_SPEED + (1.0 - TAP_START_SPEED) * clamp_real((p_now - l_move_start) / TAP_RAMP, 0.0, 1.0);
   }
   l_speed = WALK_SPEED * l_ease;
+  // Crouching (C, or Shift with a movement key; not while flying):
+  // slower, lower eyes, and you don't walk off edges
+  if (!l_flying) {
+    if (record_integer(p_player, ATTR_CROUCH_TOGGLE) == TRUE || p_now < record_real(p_player, ATTR_CROUCH_UNTIL)) l_crouching = TRUE;
+  }
+  record_set_integer(p_player, ATTR_CROUCHING, l_crouching);
+  if (l_crouching) l_eye_height = CROUCH_EYE_HEIGHT;
+
   if (l_in_water) l_speed = l_speed * WATER_SPEED_FACTOR;
   if (l_flying)   l_speed = l_speed * FLY_SPEED_FACTOR;
+  if (l_crouching) l_speed = l_speed * CROUCH_SPEED_FACTOR;
 
   l_wish_x = l_heading_x * l_forward - l_heading_z * l_strafe;
   l_wish_z = l_heading_z * l_forward + l_heading_x * l_strafe;
@@ -619,6 +656,20 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   l_move_x  = l_vx * p_dt;
   l_move_y  = l_vy * p_dt;
   l_move_z  = l_vz * p_dt;
+  // crouched on the ground: refuse a step along x or z that would
+  // leave nothing under you
+  if (l_crouching && l_on_ground && !l_in_water) {
+    if (!physics_box_collides(l_x + l_move_x - PLAYER_HALF_WIDTH, l_y - 0.1, l_z - PLAYER_HALF_WIDTH,
+                              l_x + l_move_x + PLAYER_HALF_WIDTH, l_y - 0.01, l_z + PLAYER_HALF_WIDTH)) {
+      l_move_x = 0.0;
+      l_vx     = 0.0;
+    }
+    if (!physics_box_collides(l_x + l_move_x - PLAYER_HALF_WIDTH, l_y - 0.1, l_z + l_move_z - PLAYER_HALF_WIDTH,
+                              l_x + l_move_x + PLAYER_HALF_WIDTH, l_y - 0.01, l_z + l_move_z + PLAYER_HALF_WIDTH)) {
+      l_move_z = 0.0;
+      l_vz     = 0.0;
+    }
+  }
   l_longest = max_real(Absolute(l_move_y), max_real(Absolute(l_move_x), Absolute(l_move_z)));
   l_steps   = 1 + Floor(l_longest / MAX_MOVE_STEP);
 
@@ -635,12 +686,12 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   }
 
   // Auto-jump: walking into a one block step hops up it, and
-  // swimming into the shore climbs out
+  // swimming into the shore climbs out (only if the body, one block
+  // higher and a little further on, would be clear: not at a wall or
+  // a shut door)
   if (l_blocked && l_moving) {
-    l_ahead_x = Floor(l_x + l_wish_x * 0.6);
-    l_ahead_z = Floor(l_z + l_wish_z * 0.6);
-    l_feet_y  = Floor(l_y + 0.05);
-    if (!world_is_solid(l_ahead_x, l_feet_y + 1, l_ahead_z) && !world_is_solid(l_ahead_x, l_feet_y + 2, l_ahead_z)) {
+    if (!physics_box_collides(l_x + l_wish_x * 0.2 - PLAYER_HALF_WIDTH, l_y + 1.05, l_z + l_wish_z * 0.2 - PLAYER_HALF_WIDTH,
+                              l_x + l_wish_x * 0.2 + PLAYER_HALF_WIDTH, l_y + 1.05 + PLAYER_HEIGHT, l_z + l_wish_z * 0.2 + PLAYER_HALF_WIDTH)) {
       if (l_in_water) {
         l_vy = SWIM_UP_SPEED * 1.6;
       } else if (l_on_ground && p_auto_jump) {
@@ -652,7 +703,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   // Water
   l_in_water = physics_box_in_water(l_x, l_y, l_z, PLAYER_HALF_WIDTH, PLAYER_HEIGHT);
   record_set_integer(p_player, ATTR_PLAYER_IN_WATER,     l_in_water);
-  record_set_integer(p_player, ATTR_PLAYER_EYE_IN_WATER, world_get_block(floor_integer(l_x), floor_integer(l_y + PLAYER_EYE_HEIGHT), floor_integer(l_z)) == BLOCK_WATER);
+  record_set_integer(p_player, ATTR_PLAYER_EYE_IN_WATER, world_get_block(floor_integer(l_x), floor_integer(l_y + l_eye_height), floor_integer(l_z)) == BLOCK_WATER);
 
   player_set_position(p_player, l_x, l_y, l_z);
   player_set_velocity(p_player, l_vx, l_vy, l_vz);
@@ -833,6 +884,99 @@ void player_primary_action(Attributes &p_player, Attributes &p_inventory, Attrib
   }
 }
 
+Integer player_look_facing(Attributes &p_player)
+// ----------------------------------------------------------------
+// FACING_* nearest to the direction the player is looking
+// ----------------------------------------------------------------
+{
+  Real l_yaw    = 0.0;
+  Real l_pitch  = 0.0;
+  Real l_look_x = 0.0;
+  Real l_look_z = 0.0;
+
+  player_look(p_player, l_yaw, l_pitch);
+  l_look_x = Cos(l_yaw);
+  l_look_z = Sin(l_yaw);
+  if (Absolute(l_look_x) >= Absolute(l_look_z)) {
+    if (l_look_x > 0.0) return FACING_PX;
+    return FACING_NX;
+  }
+  if (l_look_z > 0.0) return FACING_PZ;
+  return FACING_NZ;
+}
+
+Integer player_cell_free(Attributes &p_player, Attributes &p_cows, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// TRUE if a block could go in cell (x, y, z): it is in the world,
+// holds air, water or a plant, and no one is standing in it
+// ----------------------------------------------------------------
+{
+  Integer l_existing = 0;
+
+  if (!world_in_bounds(p_x, p_y, p_z)) return FALSE;
+  l_existing = world_get_block(p_x, p_y, p_z);
+  if (l_existing != BLOCK_AIR && l_existing != BLOCK_WATER && !block_is_plant(l_existing)) return FALSE;
+  if (player_overlaps_cell(p_player, p_x, p_y, p_z)) return FALSE;
+  if (cows_box_overlaps(p_cows, p_x, p_y, p_z, p_x + 1.0, p_y + 1.0, p_z + 1.0)) return FALSE;
+  return TRUE;
+}
+
+Integer player_place_double(Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_item,
+                            Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// Put down a door (its bottom half in cell x, y, z and its top half
+// above, shut, on the side of the cell the player is looking
+// towards) or a bed (its foot in the cell and its head one cell
+// further on the way the player is looking). Both cells must be free
+// and stand on something solid. Returns TRUE if it was placed.
+// ----------------------------------------------------------------
+{
+  Integer l_facing = player_look_facing(p_player);
+  Integer l_dx     = 0;
+  Integer l_dz     = 0;
+
+  if (p_item == ITEM_DOOR) {
+    if (!world_is_solid(p_x, p_y - 1, p_z) || !player_cell_free(p_player, p_cows, p_x, p_y + 1, p_z)) {
+      emit_toast(p_events, "A door needs two free blocks on solid ground");
+      return FALSE;
+    }
+    if (!player_cell_free(p_player, p_cows, p_x, p_y, p_z)) return FALSE;
+    world_place_block(p_events, p_x, p_y,     p_z, block_door(l_facing, FALSE, FALSE));
+    world_place_block(p_events, p_x, p_y + 1, p_z, block_door(l_facing, FALSE, TRUE));
+    return TRUE;
+  }
+
+  block_facing_step(l_facing, l_dx, l_dz);
+  if (!world_is_solid(p_x, p_y - 1, p_z) || !world_is_solid(p_x + l_dx, p_y - 1, p_z + l_dz) ||
+      !player_cell_free(p_player, p_cows, p_x + l_dx, p_y, p_z + l_dz)) {
+    emit_toast(p_events, "A bed needs two free blocks side by side on solid ground");
+    return FALSE;
+  }
+  if (!player_cell_free(p_player, p_cows, p_x, p_y, p_z)) return FALSE;
+  world_place_block(p_events, p_x,        p_y, p_z,        block_bed(l_facing, FALSE));
+  world_place_block(p_events, p_x + l_dx, p_y, p_z + l_dz, block_bed(l_facing, TRUE));
+  return TRUE;
+}
+
+void player_toggle_door(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)
+// ----------------------------------------------------------------
+// Open a shut door or shut an open one (both halves)
+// ----------------------------------------------------------------
+{
+  Integer l_open   = !block_door_open(p_block);
+  Integer l_facing = block_door_facing(p_block);
+  Integer l_px     = 0;
+  Integer l_py     = 0;
+  Integer l_pz     = 0;
+
+  world_place_block(p_events, p_x, p_y, p_z, block_door(l_facing, l_open, block_door_top(p_block)));
+  if (block_partner(p_block, p_x, p_y, p_z, l_px, l_py, l_pz)) {
+    if (block_is_door(world_get_block(l_px, l_py, l_pz))) {
+      world_place_block(p_events, l_px, l_py, l_pz, block_door(l_facing, l_open, !block_door_top(p_block)));
+    }
+  }
+}
+
 Integer player_furnace_facing(Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z)
 // ----------------------------------------------------------------
 // The furnace block that turns its door towards the player
@@ -895,8 +1039,13 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
       emit_event(p_events, EVT_OPEN_SCREEN, SCREEN_CHEST, l_x, l_y, l_z, 0.0, 0.0, 0.0, "");
       return;
     }
-    if (l_block == BLOCK_BED) {
+    if (l_block == BLOCK_BED || block_is_bed(l_block)) {
       emit_event(p_events, EVT_SLEEP, l_x, l_y, l_z, 0, 0.0, 0.0, 0.0, "");
+      return;
+    }
+    if (block_is_door(l_block)) {
+      player_toggle_door(p_events, l_x, l_y, l_z, l_block);
+      record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
       return;
     }
   }
@@ -915,6 +1064,7 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
   }
 
   l_place = item_places_block(l_held);
+  if (l_held == ITEM_DOOR) l_place = BLOCK_DOOR_FIRST;
   if (l_place == BLOCK_AIR) return;
   if (player_target_kind(p_player) != TARGET_BLOCK) return;
 
@@ -952,6 +1102,15 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
   if (l_held == ITEM_FURNACE) {
     player_position(p_player, l_px, l_py, l_pz);
     l_place = player_furnace_facing(l_px, l_pz, l_cell_x, l_cell_z);
+  }
+
+  // Doors and beds take two cells
+  if (l_held == ITEM_DOOR || l_held == ITEM_BED) {
+    if (!player_place_double(p_player, p_cows, p_events, l_held, l_cell_x, l_cell_y, l_cell_z)) return;
+    slot_take_one       (p_inventory, l_slot);
+    record_set_real     (p_player, ATTR_PLAYER_SWING, 0.25);
+    player_update_target(p_player, p_cows);
+    return;
   }
 
   world_place_block(p_events, l_cell_x, l_cell_y, l_cell_z, l_place);

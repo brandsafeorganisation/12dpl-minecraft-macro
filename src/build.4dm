@@ -66,6 +66,7 @@
 // program: settings, saving, starting worlds and the frame update
 #include "program/settings.4dm"
 #include "program/save.4dm"
+#include "program/commands.4dm"
 #include "program/game.4dm"
 
 // ui: the 12d panels (controllers) and fonts

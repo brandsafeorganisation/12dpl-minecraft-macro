@@ -86,6 +86,8 @@ One command per line; `#` starts a comment.
 | `look <dx> <dy>`       | move the mouse by (dx, dy) pixels                              |
 | `wait <n>`             | let n frames pass                                              |
 | `key <c> [n]`          | press a key (n times); `space` for the space bar               |
+| `type <text>`          | press each character of the rest of the line, spaces included   |
+| `enter`                | press Enter in the keys box (sends a chat line)                |
 | `holdkey <c> <n>`      | hold a key for n frames (auto-repeat)                          |
 | `time <s>`             | move the clock on by s seconds without a frame                 |
 | `snap <name>`          | save the next frame as `run/out/<name>.ppm`/`.png`             |
@@ -122,7 +124,7 @@ that were looked up most often (to find hot spots).
 | `04_texture_stats`            | how many rectangles each texture and sprite is drawn with       |
 | `05_cooking_and_save`         | cook beef through the furnace screen, eat, save                 |
 | `06_load_fall_respawn`        | load the world from 05, fall damage, death and respawn          |
-| `07_scenery`                  | biome and terrain statistics; the house, water, forest, desert, meadow, cave and hills |
+| `07_scenery`                  | biome and terrain statistics; the house, water, forest, desert, meadow, cave and hills; water seen from above |
 | `08_crack_and_underwater`     | crack overlay on stone, the underwater view                     |
 | `09_help_screen`              | the help panel                                                  |
 | `10_settings`                 | the settings panel from the menu and in game, the - / = keys    |
@@ -133,10 +135,12 @@ that were looked up most often (to find hot spots).
 | `15_night_torches_zombies`    | a torch lights a cave and the light goes when it's broken; sunset and night skies; a zombie walks up and hits, a sword kills it; zombies spawn at night and burn at noon; glass; the house at night; a bed skips to morning and sets the spawn point |
 | `16_chest`                    | items put in a chest survive save and load and spill out when it's broken |
 | `17_mob_models`               | the cow from the front, side and back, and a zombie, with their per-face textures |
-| `18_plants`                   | grass, a poppy, a dandelion, a dead bush and a torch drawn as crossed pictures, from the front, an angle and above |
+| `18_plants`                   | grass, a poppy, a dandelion, a dead bush and a torch drawn as crossed pictures, from the front, an angle and above; aiming through the empty part of a poppy's cell hits what's behind it; a torch's small outline |
 | `19_fonts`                    | the font list, a typed font name, family names read from font files (Windows and Mac names, a collection, a file that isn't a font, a missing file), and the game drawing its text with the chosen font; run `make_test_fonts.py` first |
 | `20_lit_furnace`              | a furnace with fuel becomes a lit furnace block that gives off light, and goes dark again when it stops burning |
 | `21_pigs`                     | a new world has pigs; the pig model from the side and the front; a pig killed with a sword drops raw porkchops |
+| `22_doors_beds_crouch`        | a door placed, opened, shut and walked into; a two block bed placed and broken (one bed drops); Shift stops you at a hole's edge; Shift sinks while flying; the house's door and bed |
+| `23_chat_commands`            | T and / open the chat line; /time set and add, /gamerule doDaylightCycle (the clock stops), /give (with and without minecraft:), an unknown item and command, Escape |
 
 ### Font files
 

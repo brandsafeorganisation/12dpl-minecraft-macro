@@ -44,7 +44,7 @@
 // event to every module's *_on_event() handler.
 // Game state lives in records (12d Attributes used like structs)
 // that are passed to every function that uses them; see
-// CODING_RULES.md.
+// CLAUDE.md.
 //------------------------------------------------------------
 
 #ifdef CUBELAND_BASE_FILE_4DM_INCLUDED

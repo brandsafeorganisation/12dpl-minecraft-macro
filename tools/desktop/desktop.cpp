@@ -57,6 +57,7 @@ struct Node {
   int sel = 0;                // list box selection, 1-based
   int want_w = 0, want_h = 0; // draw box size asked for
   bool keys = false;          // the game's key box (shown as a hint)
+  Text wild;                  // file box: the files it is for ("*.zip", "*.ttf")
 };
 static std::map<long long, Node> g_nodes;
 static std::map<int, long long> g_ctrl_to_id;   // control id -> widget id
@@ -124,7 +125,11 @@ Input_Box Create_input_box(const Text &t, const Message_Box &) {
   if (t.compare(0, 4, "Keys") == 0) g_nodes[id].keys = true;
   return as<Input_Box>(id);
 }
-File_Box Create_file_box(const Text &t, const Message_Box &, int, const Text &) { return as<File_Box>(new_node(K_FILE, t)); }
+File_Box Create_file_box(const Text &t, const Message_Box &, int, const Text &wild) {
+  long long id = new_node(K_FILE, t);
+  g_nodes[id].wild = wild;
+  return as<File_Box>(id);
+}
 List_Box Create_list_box(const Text &t, const Message_Box &, int) { return as<List_Box>(new_node(K_LIST, t)); }
 Button Create_button(const Text &t, const Text &r) { long long id = new_node(K_BUTTON, t); g_nodes[id].reply = r; return as<Button>(id); }
 Button Create_finish_button(const Text &t, const Text &r) { return Create_button(t, r); }
@@ -308,10 +313,15 @@ static LRESULT CALLBACK view_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
     case WM_CHAR: {
       long long keys = key_box_of(panel_of(id));
       if (w >= 32 && w < 127) { char c[2] = {(char)w, 0}; push_event(keys, "keystroke", c); }
+      if (w == 8)  push_event(keys, "keystroke", "backspace");   // for the chat line
+      if (w == 13) push_event(keys, "text selected", "");        // Enter, as 12d's input box reports it
       return 0;
     }
     case WM_KEYDOWN:
-      if (w == VK_ESCAPE) push_event(key_box_of(panel_of(id)), "keystroke", "q");
+      if (w == VK_ESCAPE) push_event(key_box_of(panel_of(id)), "keystroke", "escape");
+      // Shift alone types nothing; held down it repeats, which the
+      // game reads as crouching (or sinking while flying)
+      if (w == VK_SHIFT) push_event(key_box_of(panel_of(id)), "keystroke", "shift");
       return 0;
     case WM_GETDLGCODE: return DLGC_WANTALLKEYS | DLGC_WANTCHARS;
   }
@@ -430,9 +440,20 @@ static LRESULT CALLBACK panel_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
         char file[MAX_PATH] = "";
         OPENFILENAMEA of; ZeroMemory(&of, sizeof of);
         of.lStructSize = sizeof of; of.hwndOwner = h; of.lpstrFile = file; of.nMaxFile = MAX_PATH;
-        of.lpstrFilter = "Resource packs (*.zip)\0*.zip\0All files\0*.*\0";
+        // offer the kind of file the box is for: fonts (and register a
+        // chosen font file so it can be drawn with straight away) or
+        // resource packs
+        bool fonts = n.wild.find(".ttf") != std::string::npos;
+        if (fonts) {
+          of.lpstrFilter = "Font files (*.ttf, *.otf, *.ttc)\0*.ttf;*.otf;*.ttc\0All files\0*.*\0";
+        } else {
+          of.lpstrFilter = "Resource packs (*.zip)\0*.zip\0All files\0*.*\0";
+        }
         of.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-        if (GetOpenFileNameA(&of)) set_text(n.id, file);
+        if (GetOpenFileNameA(&of)) {
+          set_text(n.id, file);
+          if (fonts) AddFontResourceExA(file, FR_PRIVATE, 0);
+        }
       } else if ((n.kind == K_INPUT || n.kind == K_FILE) && code == EN_CHANGE) {
         n.value = window_text(n.hwnd);
       }
@@ -574,6 +595,22 @@ int Wait_on_events(long long &id, Text &cmd, Text &msg) {
 }
 
 // ---------------------------------------------------------------- start
+// A font chosen from a file isn't installed in Windows, so the font
+// file named in the settings is made available to this program before
+// the game starts (12d itself needs the font installed)
+static void register_saved_font_file() {
+  FILE *f = fopen("cubeland_worlds\\cubeland_settings.txt", "r");
+  if (!f) return;
+  char line[1024];
+  while (fgets(line, sizeof line, f)) {
+    if (strncmp(line, "font_file ", 10) != 0) continue;
+    std::string path = line + 10;
+    while (!path.empty() && (path.back() == '\n' || path.back() == '\r' || path.back() == ' ')) path.pop_back();
+    if (!path.empty()) AddFontResourceExA(path.c_str(), FR_PRIVATE, 0);
+  }
+  fclose(f);
+}
+
 int main() {
   g_inst = GetModuleHandleA(0);
   // Work in the program's own folder, so the worlds and settings are
@@ -599,6 +636,7 @@ int main() {
   vc.hCursor = LoadCursor(0, IDC_CROSS);
   RegisterClassA(&vc);
 
+  register_saved_font_file();
   macro_main();
   return 0;
 }

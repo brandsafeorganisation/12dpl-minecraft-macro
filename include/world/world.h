@@ -52,6 +52,7 @@
 #define ATTR_HOUSE_Z        ("house_z")
 #define ATTR_WORLD_TIME     ("time_of_day")   // 0..1: 0 sunrise, 0.25 noon, 0.5 sunset, 0.75 midnight
 #define ATTR_WORLD_DAYS     ("days")
+#define ATTR_WORLD_NO_CYCLE ("daylight_cycle_off")   // TRUE after /gamerule doDaylightCycle false
 
 // Day and night
 #define DAY_SECONDS         1200.0   // one whole day, in seconds of play
@@ -89,6 +90,8 @@ Integer world_cell_block    (Integer p_cell);
 Real    world_time_of_day   (Attributes &p_info);
 void    world_set_time_of_day(Attributes &p_info, Real p_time);
 void    world_advance_time  (Attributes &p_info, Real p_dt);
+Integer world_daylight_cycle(Attributes &p_info);
+void    world_set_daylight_cycle(Attributes &p_info, Integer p_on);
 Real    world_sun_height    (Real p_time_of_day);
 Real    world_daylight      (Real p_time_of_day);
 Integer world_is_night      (Real p_time_of_day);

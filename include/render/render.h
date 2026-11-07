@@ -33,7 +33,21 @@
 #define NEAR_PLANE         0.05
 #define GUARD_BAND         3000.0  // screen clipping only past this many pixels
 #define MAX_POLY_POINTS    24
+#define CRACK_LIGHTEST     330     // crack pixels lighter than this (red + green + blue) aren't drawn
+#define CRACK_DARKEN       0.55    // crack pixels are drawn this much darker
+#define MOB_MAX_PARTS      8       // boxes an animal is built from, at most
+#define MOB_LEG_SWING      0.5     // how far legs swing from the hip while walking (radians)
+#define MOB_HEAD_TURN      0.9     // how far a head turns to look at you (radians)
+#define MOB_HEAD_SWAY      0.35    // how far a head sways while looking round
+#define MOB_LOOK_RANGE     8.0     // animals this close look at you
 #define WATER_TOP          0.875   // height of a water surface in its cell
+#define WATER_TINT         0.6     // share of the water colour over a face seen through water
+#define WATER_TINT_R       40.0    // the colour water tints faces towards
+#define WATER_TINT_G       90.0
+#define WATER_TINT_B       200.0
+#define WATER_GLINTS       2       // light glints drawn on a water surface seen from above
+#define WATER_GLINT_LENGTH 0.4     // each glint's length and width, as a share of the face
+#define WATER_GLINT_WIDTH  0.06
 #define CUBE_RADIUS        0.87    // half the diagonal of a block
 #define SECTION_RADIUS     13.9    // half the diagonal of a section
 #define DETAIL_FLAT        0       // one average colour
@@ -81,6 +95,26 @@
   Real    g_view_time         = 0.25;
   Real    g_view_now          = 0.0;   // clock for animation (water shimmer)  // time of day, 0 sunrise, 0.25 noon, 0.5 sunset, 0.75 midnight
   Real    g_box_light         = 1.0;   // light of the entity being queued
+
+  // The boxes of the animal being queued (render_mob_begin .. end)
+  Real    g_mob_x      = 0.0;
+  Real    g_mob_y      = 0.0;
+  Real    g_mob_z      = 0.0;
+  Real    g_mob_yaw    = 0.0;
+  Real    g_mob_tint   = 0.0;
+  Integer g_mob_parts  = 0;
+  Real    g_part_along [MOB_MAX_PARTS];
+  Real    g_part_up    [MOB_MAX_PARTS];
+  Real    g_part_across[MOB_MAX_PARTS];
+  Real    g_part_half_f[MOB_MAX_PARTS];
+  Real    g_part_half_y[MOB_MAX_PARTS];
+  Real    g_part_half_s[MOB_MAX_PARTS];
+  Real    g_part_turn  [MOB_MAX_PARTS];
+  Real    g_part_pitch [MOB_MAX_PARTS];
+  Integer g_part_side  [MOB_MAX_PARTS];
+  Integer g_part_top   [MOB_MAX_PARTS];
+  Integer g_part_front [MOB_MAX_PARTS];
+  Integer g_part_back  [MOB_MAX_PARTS];
   Real    g_sky_top_r = 92.0;
   Real    g_sky_top_g = 146.0;
   Real    g_sky_top_b = 232.0;
@@ -130,6 +164,8 @@
   Real    g_df_shade  [MAX_DRAW_FACES];
   Real    g_df_fog    [MAX_DRAW_FACES];
   Real    g_df_tint   [MAX_DRAW_FACES];
+  Real    g_df_wet    [MAX_DRAW_FACES];   // 0..1: how far a face under water is tinted towards the water
+  Real    g_df_phase  [MAX_DRAW_FACES];   // 0..1 per cell: where a water surface's glints sit
   Integer g_df_detail [MAX_DRAW_FACES];
   Integer g_df_front  [MAX_DRAW_FACES];
   Integer g_df_crack  [MAX_DRAW_FACES];
@@ -193,12 +229,6 @@
   Real    g_star_z    [NUM_STARS];
   Real    g_star_level[NUM_STARS];
 
-  // Crack pattern drawn over a block being broken (face u, v)
-  Real    g_crack_u0[8];
-  Real    g_crack_v0[8];
-  Real    g_crack_u1[8];
-  Real    g_crack_v1[8];
-
   // A plant's four half pictures, while queueing them
   Real    g_fin_dist[4];
   Integer g_fin_done[4];
@@ -224,18 +254,20 @@ Integer render_sphere_visible  (Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p
 void    render_add_face        (Real p_c0x, Real p_c0y, Real p_c0z, Real p_e1x, Real p_e1y, Real p_e1z, Real p_e2x, Real p_e2y, Real p_e2z,
                                 Integer p_tex, Real p_shade, Real p_distance_squared, Real p_size, Real p_tint, Integer p_crack);
 void    render_add_block_face  (Integer p_x, Integer p_y, Integer p_z, Integer p_direction, Integer p_block,
-                                Real p_distance_squared, Integer p_crack, Real p_light);
+                                Real p_distance_squared, Integer p_crack, Real p_light, Real p_wet);
 void    render_add_sprite      (Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_half_width, Real p_height, Integer p_tex,
                                 Real p_shade, Real p_distance_squared);
+void    render_add_shaped      (Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_light);
 void    render_add_plant       (Integer p_x, Integer p_y, Integer p_z, Integer p_tex, Real p_light);
 Integer render_layer_count     (Real p_limit);
 void    render_collect_blocks  ();
-void    render_add_box         (Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_yaw, Real p_half_f, Real p_half_y, Real p_half_s,
-                                Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back, Real p_tint);
+void    render_add_box         (Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_yaw, Real p_pitch, Real p_half_f, Real p_half_y, Real p_half_s,
+                                Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back, Real p_tint, Real p_sort_dist_sq);
 void    render_collect_cows    (Attributes &p_cows);
 void    render_collect_drops   (Attributes &p_drops);
 Integer render_clip_and_draw   (Draw_Box p_box);
 void    render_quad            (Draw_Box p_box, Real p_u0, Real p_v0, Real p_u1, Real p_v1);
+void    render_draw_crack      (Draw_Box p_box, Integer p_tex);
 void    render_draw_face       (Draw_Box p_box, Integer p_face);
 void    render_cover_reset     ();
 void    render_cover_add       (Integer p_line, Real p_low, Real p_high);
@@ -250,12 +282,16 @@ void    render_target_outline  (Draw_Box p_box);
 void    render_view_from       (Attributes &p_player, Attributes &p_settings, Real p_time_of_day, Real p_now);
 Text    render_stats_text      ();
 Real    render_light_at        (Real p_x, Real p_y, Real p_z);
-void    render_mob_part        (Real p_mob_x, Real p_mob_y, Real p_mob_z, Real p_yaw, Real p_along, Real p_up, Real p_across,
-                                Real p_half_f, Real p_half_y, Real p_half_s, Integer p_tex_side, Integer p_tex_top, Integer p_tex_front,
-                                Integer p_tex_back, Real p_tint);
-void    render_zombie          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint);
-void    render_cow             (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint);
-void    render_pig             (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint);
+void    render_mob_begin       (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_tint);
+void    render_mob_part        (Real p_along, Real p_up, Real p_across, Real p_half_f, Real p_half_y, Real p_half_s,
+                                Real p_turn, Real p_pitch, Integer p_hip,
+                                Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back);
+Integer render_mob_part_nearer (Integer p_a, Integer p_b, Real p_eye_along, Real p_eye_up, Real p_eye_across);
+void    render_mob_end         ();
+void    render_mob_head_look   (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_up, Real p_idle, Real &p_turn, Real &p_pitch);
+void    render_zombie          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle);
+void    render_cow             (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle);
+void    render_pig             (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle);
 void    render_sky_colours     (Real p_time_of_day);
 void    render_sky_disc        (Draw_Box p_box, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_size, Integer p_moon);
 void    render_stars           (Draw_Box p_box, Real p_brightness);
