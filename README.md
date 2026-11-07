@@ -193,7 +193,8 @@ default font comes back the next time the game opens.
 
 ```
 cubeland.4dm          main(): world menu, then the game, until Quit
-CODING_RULES.md       honest functions, records, events, naming, safety
+CLAUDE.md             project rules and testing notes on top of the style guide
+resources/            12dPL style guide, differences from C, API references
 docs/                 the ScuffedMinecraft port plan and its progress
 src/build.4dm         includes include/core/safety.h first, then every source file
 src/<part>/*.4dm      the code, one folder per part of the game (below)
@@ -224,7 +225,8 @@ tools/desktop/        the same macro as a Windows program (not used by 12d)
 ```
 
 The code follows model–view–controller and the rules in
-[CODING_RULES.md](CODING_RULES.md):
+[resources/12dPL Style Guide.md](resources/12dPL%20Style%20Guide.md)
+and [CLAUDE.md](CLAUDE.md):
 
 - **Records.** Game state lives in 12d `Attributes` used like structs: the
   player, inventory, crafting grid, furnaces, cows, drops, settings, HUD,
