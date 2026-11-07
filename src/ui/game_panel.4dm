@@ -16,6 +16,7 @@
 #include "../../include/render/ui.h"
 #include "../../include/program/save.h"
 #include "../../include/program/game.h"
+#include "../../include/program/commands.h"
 #include "../../include/ui/panels.h"
 #include "../../include/ui/font.h"
 
@@ -194,6 +195,9 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
   Text      l_cmd             = "";
   Text      l_msg             = "";
   Text      l_key             = "";
+  Integer   l_chatting        = FALSE;   // a chat line is being typed (T or /)
+  Text      l_chat            = "";
+  Text      l_reply           = "";
   Text      l_why             = "";
   Real      l_now             = 0.0;
   Real      l_frame_start     = 0.0;
@@ -471,8 +475,22 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
       if (l_cmd == "keystroke") {
         l_key = Text_lower(l_msg);
         l_last_input = l_now;
+        // Escape works as Q, except while typing a chat line
+        if (l_key == "escape" && !l_chatting) l_key = "q";
 
-        if (ui_screen(g_ui) != SCREEN_NONE) {
+        if (l_chatting) {
+          // Typing a chat line: every key is text until Enter (or
+          // Escape, which drops the line)
+          if (l_key == "escape") {
+            l_chatting = FALSE;
+            l_chat     = "";
+          } else if (l_key == "backspace") {
+            if (Text_length(l_chat) > 0) l_chat = Get_subtext(l_chat, 1, Text_length(l_chat) - 1);
+          } else if (Text_length(l_msg) == 1) {
+            l_chat = l_chat + l_msg;
+          }
+          hud_set_chat_input(g_hud, l_chatting, l_chat);
+        } else if (ui_screen(g_ui) != SCREEN_NONE) {
           if (l_key == "e" || l_key == "q") {
             game_panel_close_screen();
             game_panel_dispatch(l_now);
@@ -552,12 +570,34 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
             settings_toggle(g_settings, ATTR_SET_SHOW_HUD);
             settings_save(g_settings, save_settings_path());
           }
+          // T opens the chat line, / opens it with the / typed
+          if (l_key == "t" || l_key == "/") {
+            l_chatting = TRUE;
+            l_chat     = "";
+            if (l_key == "/") l_chat = "/";
+            hud_set_chat_input(g_hud, TRUE, l_chat);
+          }
         }
 
         Set_data(l_key_box, "");
         if (!l_captured) l_want_frame = TRUE;
 
       } else if (l_cmd == "text selected") {
+        // Enter sends a chat line being typed: a command if it starts
+        // with /, otherwise something said
+        if (l_chatting) {
+          if (Get_subtext(l_chat, 1, 1) == "/") {
+            hud_chat(g_hud, l_chat, l_now);
+            l_reply = command_run(l_chat, g_info, g_inventory);
+            hud_chat(g_hud, l_reply, l_now);
+          } else if (l_chat != "") {
+            hud_chat(g_hud, "<You> " + l_chat, l_now);
+          }
+          l_chatting = FALSE;
+          l_chat     = "";
+          hud_set_chat_input(g_hud, FALSE, "");
+          if (!l_captured) l_want_frame = TRUE;
+        }
         // Enter takes the focus away; take it back for the game keys
         Set_data(l_key_box, "");
         Set_focus(l_key_box);

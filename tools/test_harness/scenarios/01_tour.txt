@@ -13,10 +13,13 @@ look 300 120
 wait 2
 snap 04_turn
 holdkey w 40
+wait 1
 snap 05_walked
+wait 1
 key e
 wait 1
 snap 06_inventory
+wait 1
 key e
 wait 2
 button quit

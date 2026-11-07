@@ -6,6 +6,7 @@ static double px(){ double x,y,z; player_position(g_player,x,y,z); return x; }
 static double py(){ double x,y,z; player_position(g_player,x,y,z); return y; }
 static double pz(){ double x,y,z; player_position(g_player,x,y,z); return z; }
 static double s_saved_x=0,s_saved_y=0,s_saved_z=0;
+static int s_ox=0,s_oy=0,s_oz=0;
 static void set_look(double yaw,double pitch){ player_set_look(g_player,yaw,pitch); }
 extern long long g_attribute_calls;
 static void dump(){
@@ -83,7 +84,7 @@ static void register_hooks(){
   g_calls["house_view"]=[]{ int hx=record_integer(g_info,ATTR_HOUSE_X),hy=record_integer(g_info,ATTR_HOUSE_Y),hz=record_integer(g_info,ATTR_HOUSE_Z); player_reset(g_player,hx-4.5,hy+3.0,hz-5.0); set_look(0.75,-0.25); printf("[hook] house at %d %d %d\n",hx,hy,hz); };
   g_calls["stone_front"]=[]{ int x=(int)px()+2, y=(int)py(), z=(int)pz(); world_place_block(g_events,x,y,z,2); world_place_block(g_events,x,y+1,z,10); set_look(0,-0.3); };
   g_calls["select_pickaxe"]=[]{ int s=find_item(ITEM_WOODEN_PICKAXE); if(!s) s=find_item(ITEM_STONE_PICKAXE); if(s>0&&s<=9) player_set_selected(g_player,s); else printf("[hook] pickaxe not on hotbar (%d)\n",s); };
-  for(auto pr: std::vector<std::pair<const char*,int>>{{"table",ITEM_CRAFTING_TABLE},{"pickaxe",ITEM_WOODEN_PICKAXE},{"stone_pickaxe",ITEM_STONE_PICKAXE},{"furnace",ITEM_FURNACE},{"cobble",ITEM_COBBLESTONE},{"sword",ITEM_STONE_SWORD},{"beef",ITEM_COOKED_BEEF},{"poppy",ITEM_POPPY},{"iron_pickaxe",ITEM_IRON_PICKAXE},{"iron_sword",ITEM_IRON_SWORD}}){
+  for(auto pr: std::vector<std::pair<const char*,int>>{{"table",ITEM_CRAFTING_TABLE},{"pickaxe",ITEM_WOODEN_PICKAXE},{"stone_pickaxe",ITEM_STONE_PICKAXE},{"furnace",ITEM_FURNACE},{"cobble",ITEM_COBBLESTONE},{"sword",ITEM_STONE_SWORD},{"beef",ITEM_COOKED_BEEF},{"poppy",ITEM_POPPY},{"iron_pickaxe",ITEM_IRON_PICKAXE},{"iron_sword",ITEM_IRON_SWORD},{"door",ITEM_DOOR},{"bed",ITEM_BED}}){
     int item=pr.second; g_calls[std::string("hold_")+pr.first]=[item]{ int s=find_item(item); if(!s){ printf("[hook] no %s to hold\n",item_name(item).c_str()); return; }
       int i9=slot_item(g_inventory,9),c9=slot_count(g_inventory,9),d9=slot_damage(g_inventory,9);
       slot_set(g_inventory,9,item,slot_count(g_inventory,s),slot_damage(g_inventory,s)); if(s!=9) slot_set(g_inventory,s,i9,c9,d9); player_set_selected(g_player,9); }; }
@@ -122,6 +123,30 @@ static void register_hooks(){
   g_calls["block_below_target"]=[]{ int x,y,z; player_target_cell(g_player,x,y,z); printf("[hook] target block %s, selected slot %d holds %s\n",item_name(world_get_block(x,y,z)).c_str(),player_selected(g_player),item_name(player_held_item(g_player,g_inventory)).c_str()); };
   g_calls["cover"]=[]{ printf("[hook] cover"); int st=getenv("COVER_ALL")?1:20; for(int c=1;c<=g_cover_columns;c+=st){ printf(" "); for(int k=1;k<=g_cover_count[c];k++) printf("%s%.0f..%.0f",k>1?",":"",g_cover_low[(c-1)*COVER_SPANS+k]<-1e29?-1:g_cover_low[(c-1)*COVER_SPANS+k],g_cover_high[(c-1)*COVER_SPANS+k]>1e29?9999:g_cover_high[(c-1)*COVER_SPANS+k]); } printf("\n"); };
   // A row of plants two blocks ahead (+x) of the player, standing on flat ground
+  // ---- doors, beds, crouching (scenario 22): a flat 13 x 13 floor around the player, who faces +x
+  g_calls["flat_area"]=[]{ int x0=(int)floor(px())+20, y0=(int)floor(py()), z0=(int)floor(pz());
+     if(y0<20) y0=64; s_ox=x0; s_oy=y0; s_oz=z0;  // 20 blocks from the spawn point, clear of the house
+     for(int dx=-6;dx<=6;dx++) for(int dz=-6;dz<=6;dz++){ for(int dy=-3;dy<0;dy++) world_set_block(x0+dx,y0+dy,z0+dz,BLOCK_STONE); world_set_block(x0+dx,y0-1,z0+dz,BLOCK_GRASS); for(int dy=0;dy<6;dy++) world_set_block(x0+dx,y0+dy,z0+dz,BLOCK_AIR); }
+     for(int dx=-6;dx<=6;dx++) for(int dz=-6;dz<=6;dz++) for(int dy=-3;dy<6;dy++) mesh_mark_dirty(x0+dx,y0+dy,z0+dz);
+     for(int dx=-7;dx<=7;dx++) for(int dz=-7;dz<=7;dz++) world_update_column_top(x0+dx,z0+dz);
+     player_reset(g_player,x0+0.5,y0+0.01,z0+0.5); set_look(0.0,-0.3); cows_clear(g_cows);
+     printf("[hook] flat area at %d %d %d\n",x0,y0,z0); };
+  g_calls["give_door_bed"]=[]{ inventory_add(g_inventory,ITEM_DOOR,2); inventory_add(g_inventory,ITEM_BED,1); };
+  g_calls["aim_ground_2"]=[]{ double dx=s_ox+2.5-px(), dy=s_oy-0.02-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["aim_ground_side"]=[]{ double dx=s_ox+1.5-px(), dy=s_oy-0.02-player_eye_y(g_player), dz=s_oz-1.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["aim_door"]=[]{ double dx=s_ox+2.9-px(), dy=s_oy+1.0-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["aim_open_door"]=[]{ double dx=s_ox+2.5-px(), dy=s_oy+1.0-player_eye_y(g_player), dz=s_oz+0.9-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["aim_bed_head"]=[]{ double dx=s_ox+1.5-px(), dy=s_oy+0.3-player_eye_y(g_player), dz=s_oz-2.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["cells"]=[]{ printf("[hook] door cells %d %d   bed cells %d %d %d %d (beside: %d %d)\n",
+       world_get_block(s_ox+2,s_oy,s_oz),world_get_block(s_ox+2,s_oy+1,s_oz),
+       world_get_block(s_ox+1,s_oy,s_oz-2),world_get_block(s_ox+1,s_oy,s_oz-3),world_get_block(s_ox+2,s_oy,s_oz-2),world_get_block(s_ox+2,s_oy,s_oz-3),
+       world_get_block(s_ox+1,s_oy,s_oz-1),world_get_block(s_ox+2,s_oy,s_oz-1));
+     int drops=0, beds=0; for(int d=1;d<=MAX_DROPS;d++) if(drop_used(g_drops,d)){ drops++; if(drop_item(g_drops,d)==ITEM_BED) beds++; }
+     printf("[hook] player at %.2f %.2f %.2f eye %.2f crouching %d flying %d; drops %d (beds %d)\n",px(),py(),pz(),player_eye_y(g_player)-py(),player_crouching(g_player),player_flying(g_player),drops,beds); };
+  g_calls["face_x"]=[]{ player_reset(g_player,s_ox+0.5,s_oy+0.01,s_oz+0.5); set_look(0.0,0.0); };
+  g_calls["hole_ahead"]=[]{ for(int dz=-1;dz<=1;dz++) for(int dy=-3;dy<0;dy++){ world_set_block(s_ox+3,s_oy+dy,s_oz+dz,BLOCK_AIR); mesh_mark_dirty(s_ox+3,s_oy+dy,s_oz+dz); world_update_column_top(s_ox+3,s_oz+dz); }
+     player_reset(g_player,s_ox+0.5,s_oy+0.01,s_oz+0.5); set_look(0.0,0.0); };
+  g_calls["clear_test_blocks"]=[]{ for(int dx=1;dx<=3;dx++) for(int dz=-3;dz<=0;dz++) for(int dy=0;dy<3;dy++){ world_set_block(s_ox+dx,s_oy+dy,s_oz+dz,BLOCK_AIR); mesh_mark_dirty(s_ox+dx,s_oy+dy,s_oz+dz); } };
   g_calls["aim_poppy"]=[]{ double x,y,z; player_position(g_player,x,y,z); int bx=(int)floor(x)+3, by=(int)floor(y), bz=(int)floor(z);
      double ex=x, ey=player_eye_y(g_player), ez=z;
      double tz[2]={bz+0.5,bz+0.08};

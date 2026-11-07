@@ -167,6 +167,7 @@ Integer settings_panel_run(Attributes &p_settings)
   settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row);
   Set_data(l_pack_box, settings_resource_pack(p_settings));
   Set_data(l_font_name_box, settings_font(p_settings));
+  Set_data(l_font_file_box, settings_font_file(p_settings));
   Set_data(l_message, "Longer views and higher detail look better but draw more slowly.");
 
   while (l_doit) {
@@ -229,21 +230,28 @@ Integer settings_panel_run(Attributes &p_settings)
       Set_data(l_message, "Using the built-in textures.");
     } else if (l_cmd == "set_font_next") {
       settings_set_font(p_settings, font_next_choice(settings_font(p_settings)));
+      settings_set_font_file(p_settings, "");
       Set_data(l_font_name_box, settings_font(p_settings));
+      Set_data(l_font_file_box, "");
     } else if (l_cmd == "set_font_default") {
       settings_set_font(p_settings, "");
+      settings_set_font_file(p_settings, "");
       Set_data(l_font_name_box, "");
+      Set_data(l_font_file_box, "");
       Set_data(l_message, "The default font comes back when the game is next opened.");
     } else if (l_cmd == "set_font_name") {
       l_font = "";
       Get_data(l_font_name_box, l_font);
       settings_set_font(p_settings, l_font);
+      settings_set_font_file(p_settings, "");
+      Set_data(l_font_file_box, "");
       Set_data(l_message, "If that font isn't installed, Windows draws a similar one instead.");
     } else if (l_cmd == "set_font_file") {
       l_pack = "";
       Get_data(l_font_file_box, l_pack);
       if (font_family_from_file(l_pack, l_font, l_report) == SUCCESS) {
         settings_set_font(p_settings, l_font);
+        settings_set_font_file(p_settings, l_pack);
         Set_data(l_font_name_box, l_font);
         Set_data(l_message, "Using " + l_font + ". The font has to be installed in Windows (double click the file, then Install) for 12d to draw with it.");
       } else {
@@ -254,6 +262,7 @@ Integer settings_panel_run(Attributes &p_settings)
       settings_defaults(p_settings);
       settings_set_resource_pack(p_settings, l_pack);   // keep the textures: there's a button for that
       Set_data(l_font_name_box, "");
+      Set_data(l_font_file_box, "");
     } else {
       continue;
     }

@@ -563,9 +563,6 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   Integer l_was_grounded = l_on_ground;
   Integer l_blocked      = FALSE;
   Integer l_moving       = FALSE;
-  Integer l_ahead_x      = 0;
-  Integer l_ahead_z      = 0;
-  Integer l_feet_y       = 0;
   Integer l_hit_x        = FALSE;
   Integer l_hit_z        = FALSE;
   Integer l_hit_down     = FALSE;
@@ -689,12 +686,12 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   }
 
   // Auto-jump: walking into a one block step hops up it, and
-  // swimming into the shore climbs out
+  // swimming into the shore climbs out (only if the body, one block
+  // higher and a little further on, would be clear: not at a wall or
+  // a shut door)
   if (l_blocked && l_moving) {
-    l_ahead_x = Floor(l_x + l_wish_x * 0.6);
-    l_ahead_z = Floor(l_z + l_wish_z * 0.6);
-    l_feet_y  = Floor(l_y + 0.05);
-    if (!world_is_solid(l_ahead_x, l_feet_y + 1, l_ahead_z) && !world_is_solid(l_ahead_x, l_feet_y + 2, l_ahead_z)) {
+    if (!physics_box_collides(l_x + l_wish_x * 0.2 - PLAYER_HALF_WIDTH, l_y + 1.05, l_z + l_wish_z * 0.2 - PLAYER_HALF_WIDTH,
+                              l_x + l_wish_x * 0.2 + PLAYER_HALF_WIDTH, l_y + 1.05 + PLAYER_HEIGHT, l_z + l_wish_z * 0.2 + PLAYER_HALF_WIDTH)) {
       if (l_in_water) {
         l_vy = SWIM_UP_SPEED * 1.6;
       } else if (l_on_ground && p_auto_jump) {
@@ -887,6 +884,99 @@ void player_primary_action(Attributes &p_player, Attributes &p_inventory, Attrib
   }
 }
 
+Integer player_look_facing(Attributes &p_player)
+// ----------------------------------------------------------------
+// FACING_* nearest to the direction the player is looking
+// ----------------------------------------------------------------
+{
+  Real l_yaw    = 0.0;
+  Real l_pitch  = 0.0;
+  Real l_look_x = 0.0;
+  Real l_look_z = 0.0;
+
+  player_look(p_player, l_yaw, l_pitch);
+  l_look_x = Cos(l_yaw);
+  l_look_z = Sin(l_yaw);
+  if (Absolute(l_look_x) >= Absolute(l_look_z)) {
+    if (l_look_x > 0.0) return FACING_PX;
+    return FACING_NX;
+  }
+  if (l_look_z > 0.0) return FACING_PZ;
+  return FACING_NZ;
+}
+
+Integer player_cell_free(Attributes &p_player, Attributes &p_cows, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// TRUE if a block could go in cell (x, y, z): it is in the world,
+// holds air, water or a plant, and no one is standing in it
+// ----------------------------------------------------------------
+{
+  Integer l_existing = 0;
+
+  if (!world_in_bounds(p_x, p_y, p_z)) return FALSE;
+  l_existing = world_get_block(p_x, p_y, p_z);
+  if (l_existing != BLOCK_AIR && l_existing != BLOCK_WATER && !block_is_plant(l_existing)) return FALSE;
+  if (player_overlaps_cell(p_player, p_x, p_y, p_z)) return FALSE;
+  if (cows_box_overlaps(p_cows, p_x, p_y, p_z, p_x + 1.0, p_y + 1.0, p_z + 1.0)) return FALSE;
+  return TRUE;
+}
+
+Integer player_place_double(Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_item,
+                            Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// Put down a door (its bottom half in cell x, y, z and its top half
+// above, shut, on the side of the cell the player is looking
+// towards) or a bed (its foot in the cell and its head one cell
+// further on the way the player is looking). Both cells must be free
+// and stand on something solid. Returns TRUE if it was placed.
+// ----------------------------------------------------------------
+{
+  Integer l_facing = player_look_facing(p_player);
+  Integer l_dx     = 0;
+  Integer l_dz     = 0;
+
+  if (p_item == ITEM_DOOR) {
+    if (!world_is_solid(p_x, p_y - 1, p_z) || !player_cell_free(p_player, p_cows, p_x, p_y + 1, p_z)) {
+      emit_toast(p_events, "A door needs two free blocks on solid ground");
+      return FALSE;
+    }
+    if (!player_cell_free(p_player, p_cows, p_x, p_y, p_z)) return FALSE;
+    world_place_block(p_events, p_x, p_y,     p_z, block_door(l_facing, FALSE, FALSE));
+    world_place_block(p_events, p_x, p_y + 1, p_z, block_door(l_facing, FALSE, TRUE));
+    return TRUE;
+  }
+
+  block_facing_step(l_facing, l_dx, l_dz);
+  if (!world_is_solid(p_x, p_y - 1, p_z) || !world_is_solid(p_x + l_dx, p_y - 1, p_z + l_dz) ||
+      !player_cell_free(p_player, p_cows, p_x + l_dx, p_y, p_z + l_dz)) {
+    emit_toast(p_events, "A bed needs two free blocks side by side on solid ground");
+    return FALSE;
+  }
+  if (!player_cell_free(p_player, p_cows, p_x, p_y, p_z)) return FALSE;
+  world_place_block(p_events, p_x,        p_y, p_z,        block_bed(l_facing, FALSE));
+  world_place_block(p_events, p_x + l_dx, p_y, p_z + l_dz, block_bed(l_facing, TRUE));
+  return TRUE;
+}
+
+void player_toggle_door(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)
+// ----------------------------------------------------------------
+// Open a shut door or shut an open one (both halves)
+// ----------------------------------------------------------------
+{
+  Integer l_open   = !block_door_open(p_block);
+  Integer l_facing = block_door_facing(p_block);
+  Integer l_px     = 0;
+  Integer l_py     = 0;
+  Integer l_pz     = 0;
+
+  world_place_block(p_events, p_x, p_y, p_z, block_door(l_facing, l_open, block_door_top(p_block)));
+  if (block_partner(p_block, p_x, p_y, p_z, l_px, l_py, l_pz)) {
+    if (block_is_door(world_get_block(l_px, l_py, l_pz))) {
+      world_place_block(p_events, l_px, l_py, l_pz, block_door(l_facing, l_open, !block_door_top(p_block)));
+    }
+  }
+}
+
 Integer player_furnace_facing(Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z)
 // ----------------------------------------------------------------
 // The furnace block that turns its door towards the player
@@ -949,8 +1039,13 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
       emit_event(p_events, EVT_OPEN_SCREEN, SCREEN_CHEST, l_x, l_y, l_z, 0.0, 0.0, 0.0, "");
       return;
     }
-    if (l_block == BLOCK_BED) {
+    if (l_block == BLOCK_BED || block_is_bed(l_block)) {
       emit_event(p_events, EVT_SLEEP, l_x, l_y, l_z, 0, 0.0, 0.0, 0.0, "");
+      return;
+    }
+    if (block_is_door(l_block)) {
+      player_toggle_door(p_events, l_x, l_y, l_z, l_block);
+      record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
       return;
     }
   }
@@ -969,6 +1064,7 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
   }
 
   l_place = item_places_block(l_held);
+  if (l_held == ITEM_DOOR) l_place = BLOCK_DOOR_FIRST;
   if (l_place == BLOCK_AIR) return;
   if (player_target_kind(p_player) != TARGET_BLOCK) return;
 
@@ -1006,6 +1102,15 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
   if (l_held == ITEM_FURNACE) {
     player_position(p_player, l_px, l_py, l_pz);
     l_place = player_furnace_facing(l_px, l_pz, l_cell_x, l_cell_z);
+  }
+
+  // Doors and beds take two cells
+  if (l_held == ITEM_DOOR || l_held == ITEM_BED) {
+    if (!player_place_double(p_player, p_cows, p_events, l_held, l_cell_x, l_cell_y, l_cell_z)) return;
+    slot_take_one       (p_inventory, l_slot);
+    record_set_real     (p_player, ATTR_PLAYER_SWING, 0.25);
+    player_update_target(p_player, p_cows);
+    return;
   }
 
   world_place_block(p_events, l_cell_x, l_cell_y, l_cell_z, l_place);

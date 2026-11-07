@@ -404,6 +404,59 @@ void render_add_sprite(Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_half_wid
                   p_tex, p_shade, p_distance_squared, p_half_width * 2.0, 0.0, 0);
 }
 
+void render_add_shaped(Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_light)
+// ----------------------------------------------------------------
+// Queue a door or bed half in cell (x, y, z) as a box filling its
+// block_box, lit by light. A door shows its picture on both broad
+// faces; a bed shows its blanket (and pillow at the head) on top,
+// lengthways from foot to head.
+// ----------------------------------------------------------------
+{
+  Real    l_min_x  = 0.0;
+  Real    l_min_y  = 0.0;
+  Real    l_min_z  = 0.0;
+  Real    l_max_x  = 1.0;
+  Real    l_max_y  = 1.0;
+  Real    l_max_z  = 1.0;
+  Real    l_yaw    = 0.0;
+  Real    l_half_f = 0.0;
+  Real    l_half_s = 0.0;
+  Integer l_tex    = 0;
+  Integer l_facing = 0;
+
+  block_box(p_block, l_min_x, l_min_y, l_min_z, l_max_x, l_max_y, l_max_z);
+  g_box_light = p_light;
+
+  if (block_is_door(p_block)) {
+    l_tex = TEX_DOOR_BOTTOM;
+    if (block_door_top(p_block)) l_tex = TEX_DOOR_TOP;
+    // the box faces across its thin side
+    l_yaw    = 0.0;
+    l_half_f = (l_max_x - l_min_x) * 0.5;
+    l_half_s = (l_max_z - l_min_z) * 0.5;
+    if (l_max_x - l_min_x > l_max_z - l_min_z) {
+      l_yaw    = PI * 0.5;
+      l_half_f = (l_max_z - l_min_z) * 0.5;
+      l_half_s = (l_max_x - l_min_x) * 0.5;
+    }
+    render_add_box(p_x + (l_min_x + l_max_x) * 0.5, p_y + 0.5, p_z + (l_min_z + l_max_z) * 0.5, l_yaw, 0.0,
+                   l_half_f, 0.5, l_half_s, TEX_PLANKS, TEX_PLANKS, l_tex, l_tex, 0.0, -1.0);
+    return;
+  }
+
+  // a bed: facing points from foot to head, so the box's front is the
+  // head end; the top texture's u runs from foot to head
+  l_facing = block_bed_facing(p_block);
+  if (l_facing == FACING_PX) l_yaw = 0.0;
+  if (l_facing == FACING_PZ) l_yaw = PI * 0.5;
+  if (l_facing == FACING_NX) l_yaw = PI;
+  if (l_facing == FACING_NZ) l_yaw = PI * 1.5;
+  l_tex = TEX_BED_FOOT_TOP;
+  if (block_bed_head(p_block)) l_tex = TEX_BED_TOP;
+  render_add_box(p_x + 0.5, p_y + BED_HEIGHT * 0.5, p_z + 0.5, l_yaw, 0.0, 0.5, BED_HEIGHT * 0.5, 0.5,
+                 TEX_BED_SIDE, l_tex, TEX_BED_SIDE, TEX_BED_SIDE, 0.0, -1.0);
+}
+
 void render_add_plant(Integer p_x, Integer p_y, Integer p_z, Integer p_tex, Real p_light)
 // ----------------------------------------------------------------
 // Queue a plant in cell (x, y, z): two pictures crossed in an X
@@ -635,7 +688,7 @@ void render_collect_blocks()
             l_layer0   = clamp_integer(floor_integer(g_cam_z - l_origin_z) + 1, 0, SECTION_SIZE);
             l_offset_z = 0.0;
           } else {
-            if (!g_view_plants) continue;
+            // plants (when shown), doors and beds
             l_offset_y = 0.45;
           }
           if (l_layer0 >= l_layer1) continue;
@@ -675,7 +728,10 @@ void render_collect_blocks()
             l_dist_sq = (l_rel_x + 0.5) * (l_rel_x + 0.5) + (l_rel_y + 0.5) * (l_rel_y + 0.5) + (l_rel_z + 0.5) * (l_rel_z + 0.5);
             if (l_dist_sq > l_range_sq) continue;
             if (l_direction == DIR_PLANT) {
-              if (l_dist_sq > l_plant_sq) continue;
+              if (!block_is_shaped(l_block)) {
+                if (!g_view_plants) continue;
+                if (l_dist_sq > l_plant_sq) continue;
+              }
             }
             l_rel_x = l_rel_x + l_offset_x;
             l_rel_y = l_rel_y + l_offset_y;
@@ -698,7 +754,11 @@ void render_collect_blocks()
             l_light = max_real(l_sky * l_daylight, l_torch * 1.0) / LIGHT_FULL;
 
             if (l_direction == DIR_PLANT) {
-              render_add_plant(l_x, l_y, l_z, block_plant_texture(l_block), l_light);
+              if (block_is_shaped(l_block)) {
+                render_add_shaped(l_x, l_y, l_z, l_block, l_light);
+              } else {
+                render_add_plant(l_x, l_y, l_z, block_plant_texture(l_block), l_light);
+              }
               continue;
             }
 

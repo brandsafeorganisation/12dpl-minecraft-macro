@@ -15,6 +15,8 @@
 
 #define MAX_TOASTS          4
 #define TOAST_SECONDS       3.0
+#define MAX_CHAT_LINES      8     // chat lines kept (shown while typing)
+#define CHAT_SECONDS        10.0  // a chat line shows this long otherwise
 #define TEXT_ALIGN_LEFT     0     // top left of the text at (x, y)
 #define TEXT_ALIGN_CENTRE   30    // top centre of the text at (x, y)
 #define ICON_QUICK          0     // block icons as 2 x 2 colours (hotbar, hand)
@@ -49,6 +51,10 @@
 #define ATTR_HUD_FRAME_MAX  ("frame_max")
 #define ATTR_HUD_WINDOW     ("window_start")
 #define ATTR_HUD_STATS      ("frame_stats")     // the last full second, as text
+#define ATTR_HUD_CHAT       ("chat")            // chat lines "chat_n", newest first
+#define ATTR_HUD_CHAT_UNTIL ("chat_until")
+#define ATTR_HUD_CHAT_OPEN  ("chat_open")       // TRUE while a chat line is being typed
+#define ATTR_HUD_CHAT_INPUT ("chat_input")      // the line being typed
 #define FRAME_STATS_SECONDS 1.0
 
 /*Global variables*/ {
@@ -59,6 +65,9 @@
 
 void hud_clear          (Attributes &p_hud);
 void hud_toast          (Attributes &p_hud, Text p_text, Real p_now);
+void hud_chat           (Attributes &p_hud, Text p_text, Real p_now);
+void hud_set_chat_input (Attributes &p_hud, Integer p_open, Text p_text);
+Integer hud_chat_open   (Attributes &p_hud);
 void hud_show_name      (Attributes &p_hud, Real p_now);
 Integer hud_help_shown  (Attributes &p_hud);
 void hud_set_help       (Attributes &p_hud, Integer p_shown);

@@ -250,7 +250,7 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
   furnaces_update(p_furnaces, p_events, p_real_dt);
 
   if (p_running) {
-    world_advance_time(p_info, p_dt);
+    if (world_daylight_cycle(p_info)) world_advance_time(p_info, p_dt);
     player_update(p_player, p_cows, p_events, settings_flag(p_settings, ATTR_SET_AUTO_JUMP), p_dt, p_now);
     player_position(p_player, l_x, l_y, l_z);
     cows_update (p_cows, p_random, p_events, l_x, l_y, l_z, world_is_night(world_time_of_day(p_info)), player_is_dead(p_player), p_dt);

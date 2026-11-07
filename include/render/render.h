@@ -257,6 +257,7 @@ void    render_add_block_face  (Integer p_x, Integer p_y, Integer p_z, Integer p
                                 Real p_distance_squared, Integer p_crack, Real p_light, Real p_wet);
 void    render_add_sprite      (Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_half_width, Real p_height, Integer p_tex,
                                 Real p_shade, Real p_distance_squared);
+void    render_add_shaped      (Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_light);
 void    render_add_plant       (Integer p_x, Integer p_y, Integer p_z, Integer p_tex, Real p_light);
 Integer render_layer_count     (Real p_limit);
 void    render_collect_blocks  ();

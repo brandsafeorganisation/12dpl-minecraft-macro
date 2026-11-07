@@ -2,6 +2,7 @@
 #define BLOCKS_4DM_INCLUDED
 
 #include "../../include/core/common.h"
+#include "../../include/core/util.h"
 #include "../../include/blocks/blocks.h"
 #include "../../include/blocks/textures.h"
 
@@ -30,17 +31,187 @@ Integer block_is_plant(Integer p_block)
   return FALSE;
 }
 
-Integer block_box(Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z)
+// ---------------------------------------------------------------- doors and beds
+
+Integer block_is_door(Integer p_block)
 // ----------------------------------------------------------------
-// The part of its cell a block can be aimed at and is outlined by,
-// 0..1 along each axis. Returns TRUE if that is less than the whole
-// cell (torches, flowers and other plants).
+// TRUE for either half of a door, open or shut
 // ----------------------------------------------------------------
 {
-  Real l_half   = 0.5;
-  Real l_height = 1.0;
+  return p_block >= BLOCK_DOOR_FIRST && p_block <= BLOCK_DOOR_LAST;
+}
 
-  if (p_block == BLOCK_TORCH) {
+Integer block_is_bed(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for either half of a two block bed (not the older one block
+// BLOCK_BED)
+// ----------------------------------------------------------------
+{
+  return p_block >= BLOCK_BED_FIRST && p_block <= BLOCK_BED_LAST;
+}
+
+Integer block_is_shaped(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for blocks drawn as a box smaller than their cell (doors and
+// beds): they hide nothing next to them
+// ----------------------------------------------------------------
+{
+  return block_is_door(p_block) || block_is_bed(p_block);
+}
+
+Integer block_door(Integer p_facing, Integer p_open, Integer p_top)
+// ----------------------------------------------------------------
+// The door block facing FACING_*, open or shut, top or bottom half
+// ----------------------------------------------------------------
+{
+  Integer l_open = 0;
+  Integer l_top  = 0;
+
+  if (p_open) l_open = 1;
+  if (p_top ) l_top  = 1;
+  return BLOCK_DOOR_FIRST + p_facing * 4 + l_open * 2 + l_top;
+}
+
+Integer block_door_facing(Integer p_block)
+// ----------------------------------------------------------------
+// FACING_* of a door: the side of its cell the shut door sits on
+// ----------------------------------------------------------------
+{
+  return floor_divide(p_block - BLOCK_DOOR_FIRST, 4);
+}
+
+Integer block_door_open(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE if a door block is open
+// ----------------------------------------------------------------
+{
+  return floor_divide(p_block - BLOCK_DOOR_FIRST, 2) - 2 * floor_divide(p_block - BLOCK_DOOR_FIRST, 4) == 1;
+}
+
+Integer block_door_top(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for the top half of a door
+// ----------------------------------------------------------------
+{
+  return p_block - BLOCK_DOOR_FIRST - 2 * floor_divide(p_block - BLOCK_DOOR_FIRST, 2) == 1;
+}
+
+Integer block_bed(Integer p_facing, Integer p_head)
+// ----------------------------------------------------------------
+// The bed half facing FACING_* (from foot to head), head or foot
+// ----------------------------------------------------------------
+{
+  Integer l_head = 0;
+
+  if (p_head) l_head = 1;
+  return BLOCK_BED_FIRST + p_facing * 2 + l_head;
+}
+
+Integer block_bed_facing(Integer p_block)
+// ----------------------------------------------------------------
+// FACING_* of a bed half: from its foot towards its head
+// ----------------------------------------------------------------
+{
+  return floor_divide(p_block - BLOCK_BED_FIRST, 2);
+}
+
+Integer block_bed_head(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for the head half of a bed (the one with the pillow)
+// ----------------------------------------------------------------
+{
+  return p_block - BLOCK_BED_FIRST - 2 * floor_divide(p_block - BLOCK_BED_FIRST, 2) == 1;
+}
+
+void block_facing_step(Integer p_facing, Integer &p_dx, Integer &p_dz)
+// ----------------------------------------------------------------
+// One cell step in direction FACING_*
+// ----------------------------------------------------------------
+{
+  p_dx = 0;
+  p_dz = 0;
+  if (p_facing == FACING_PX) p_dx =  1;
+  if (p_facing == FACING_NX) p_dx = -1;
+  if (p_facing == FACING_PZ) p_dz =  1;
+  if (p_facing == FACING_NZ) p_dz = -1;
+}
+
+Integer block_partner(Integer p_block, Integer p_x, Integer p_y, Integer p_z, Integer &p_px, Integer &p_py, Integer &p_pz)
+// ----------------------------------------------------------------
+// For one half of a door or bed at (x, y, z), the cell of the other
+// half. Returns FALSE for every other block.
+// ----------------------------------------------------------------
+{
+  Integer l_dx = 0;
+  Integer l_dz = 0;
+
+  p_px = p_x;
+  p_py = p_y;
+  p_pz = p_z;
+  if (block_is_door(p_block)) {
+    if (block_door_top(p_block)) {
+      p_py = p_y - 1;
+    } else {
+      p_py = p_y + 1;
+    }
+    return TRUE;
+  }
+  if (block_is_bed(p_block)) {
+    block_facing_step(block_bed_facing(p_block), l_dx, l_dz);
+    if (block_bed_head(p_block)) {
+      p_px = p_x - l_dx;
+      p_pz = p_z - l_dz;
+    } else {
+      p_px = p_x + l_dx;
+      p_pz = p_z + l_dz;
+    }
+    return TRUE;
+  }
+  return FALSE;
+}
+
+Integer block_box(Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z)
+// ----------------------------------------------------------------
+// The part of its cell a block can be aimed at, is outlined by and
+// (if solid) collides with, 0..1 along each axis. Returns TRUE if
+// that is less than the whole cell (torches, plants, doors, beds).
+// ----------------------------------------------------------------
+{
+  Real    l_half   = 0.5;
+  Real    l_height = 1.0;
+  Integer l_side   = 0;
+
+  // a door is a thin panel along one side of its cell; opening it
+  // swings it round to the next side
+  if (block_is_door(p_block)) {
+    l_side = block_door_facing(p_block);
+    if (block_door_open(p_block)) {
+      if (l_side == FACING_PX) {
+        l_side = FACING_PZ;
+      } else if (l_side == FACING_PZ) {
+        l_side = FACING_NX;
+      } else if (l_side == FACING_NX) {
+        l_side = FACING_NZ;
+      } else {
+        l_side = FACING_PX;
+      }
+    }
+    p_min_x = 0.0;
+    p_min_y = 0.0;
+    p_min_z = 0.0;
+    p_max_x = 1.0;
+    p_max_y = 1.0;
+    p_max_z = 1.0;
+    if (l_side == FACING_PX) p_min_x = 1.0 - DOOR_THICKNESS;
+    if (l_side == FACING_NX) p_max_x = DOOR_THICKNESS;
+    if (l_side == FACING_PZ) p_min_z = 1.0 - DOOR_THICKNESS;
+    if (l_side == FACING_NZ) p_max_z = DOOR_THICKNESS;
+    return TRUE;
+  }
+
+  if (block_is_bed(p_block)) {
+    l_height = BED_HEIGHT;
+  } else if (p_block == BLOCK_TORCH) {
     l_half   = 0.0625;
     l_height = 0.625;
   } else if (p_block == BLOCK_POPPY || p_block == BLOCK_DANDELION) {
@@ -88,6 +259,7 @@ Integer block_hides_faces(Integer p_block)
 // ----------------------------------------------------------------
 {
   if (block_is_see_through(p_block)) return FALSE;
+  if (block_is_shaped(p_block)) return FALSE;
   return block_is_solid(p_block);
 }
 
@@ -181,6 +353,8 @@ Integer block_hand_hits(Integer p_block)
   if (p_block == BLOCK_CRAFTING_TABLE) return 4;
   if (p_block == BLOCK_GLASS         ) return 2;
   if (p_block == BLOCK_BED           ) return 2;
+  if (block_is_bed(p_block)          ) return 2;
+  if (block_is_door(p_block)         ) return 3;
   if (p_block == BLOCK_CHEST         ) return 4;
   if (p_block == BLOCK_SANDSTONE     ) return 6;
   if (p_block == BLOCK_COAL_ORE      ) return 10;
@@ -201,6 +375,8 @@ Integer block_tool_kind(Integer p_block)
   if (p_block == BLOCK_PLANKS        ) return TOOL_AXE;
   if (p_block == BLOCK_CRAFTING_TABLE) return TOOL_AXE;
   if (p_block == BLOCK_BED           ) return TOOL_AXE;
+  if (block_is_bed(p_block)          ) return TOOL_AXE;
+  if (block_is_door(p_block)         ) return TOOL_AXE;
   if (p_block == BLOCK_CHEST         ) return TOOL_AXE;
   if (p_block == BLOCK_STONE         ) return TOOL_PICKAXE;
   if (p_block == BLOCK_COBBLESTONE   ) return TOOL_PICKAXE;
@@ -276,6 +452,16 @@ Integer block_drop_item(Integer p_block, Integer p_tool_item)
   if (p_block == BLOCK_AIR     ) return ITEM_NONE;
   if (p_block == BLOCK_BEDROCK ) return ITEM_NONE;
   if (block_is_furnace(p_block)) return ITEM_FURNACE;
+  // a door or bed drops one item, from its bottom half or foot (the
+  // other half is broken along with it and drops nothing)
+  if (block_is_door(p_block)) {
+    if (block_door_top(p_block)) return ITEM_NONE;
+    return ITEM_DOOR;
+  }
+  if (block_is_bed(p_block)) {
+    if (block_bed_head(p_block)) return ITEM_NONE;
+    return ITEM_BED;
+  }
   return p_block;
 }
 
@@ -286,6 +472,8 @@ Integer block_pick_item(Integer p_block)
 // ----------------------------------------------------------------
 {
   if (block_is_furnace(p_block)) return ITEM_FURNACE;
+  if (block_is_door(p_block)) return ITEM_DOOR;
+  if (block_is_bed(p_block)) return ITEM_BED;
   if (item_places_block(p_block) == BLOCK_AIR) return ITEM_NONE;
   return p_block;
 }
@@ -414,6 +602,7 @@ Text item_name(Integer p_item)
   if (p_item == ITEM_STONE_SHOVEL   ) return "Stone Shovel";
   if (p_item == ITEM_WOODEN_SWORD   ) return "Wooden Sword";
   if (p_item == ITEM_STONE_SWORD    ) return "Stone Sword";
+  if (p_item == ITEM_DOOR           ) return "Oak Door";
   return "";
 }
 
@@ -526,6 +715,7 @@ Integer item_fuel_seconds(Integer p_item)
   if (p_item == ITEM_PLANKS        ) return 10;
   if (p_item == ITEM_CRAFTING_TABLE) return 15;
   if (p_item == ITEM_STICK         ) return 5;
+  if (p_item == ITEM_DOOR          ) return 10;
   if (item_tool_tier(p_item) == TIER_WOOD) return 10;
   return 0;
 }
@@ -588,6 +778,7 @@ Integer item_sprite_texture(Integer p_item)
   if (p_item == ITEM_WOODEN_SWORD   ) return TEX_ITEM_WOODEN_SWORD;
   if (p_item == ITEM_STONE_SWORD    ) return TEX_ITEM_STONE_SWORD;
   if (p_item == ITEM_ROTTEN_FLESH   ) return TEX_ITEM_ROTTEN_FLESH;
+  if (p_item == ITEM_DOOR           ) return TEX_ITEM_DOOR;
   return block_plant_texture(p_item);
 }
 

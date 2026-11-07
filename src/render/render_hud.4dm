@@ -37,6 +37,11 @@ void hud_clear(Attributes &p_hud)
   record_set_real   (p_hud, ATTR_HUD_FRAME_MAX,  0.0);
   record_set_real   (p_hud, ATTR_HUD_WINDOW,     0.0);
   record_set_text   (p_hud, ATTR_HUD_STATS,      "");
+  for (l_toast = 1; l_toast <= MAX_CHAT_LINES; ++l_toast) {
+    record_set_text_at(p_hud, ATTR_HUD_CHAT,       l_toast, "");
+    record_set_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, l_toast, 0.0);
+  }
+  hud_set_chat_input(p_hud, FALSE, "");
 }
 
 void hud_note_frame(Attributes &p_hud, Real p_frame_ms, Real p_now)
@@ -95,6 +100,38 @@ void hud_toast(Attributes &p_hud, Text p_text, Real p_now)
   }
   record_set_text_at(p_hud, ATTR_TEXT,      1, p_text);
   record_set_real_at(p_hud, ATTR_HUD_UNTIL, 1, p_now + TOAST_SECONDS);
+}
+
+void hud_chat(Attributes &p_hud, Text p_text, Real p_now)
+// ----------------------------------------------------------------
+// Add a line to the chat (what you said, or a command's answer)
+// ----------------------------------------------------------------
+{
+  Integer l_line = 0;
+
+  for (l_line = MAX_CHAT_LINES; l_line >= 2; --l_line) {
+    record_set_text_at(p_hud, ATTR_HUD_CHAT,       l_line, record_text_at(p_hud, ATTR_HUD_CHAT,       l_line - 1));
+    record_set_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, l_line, record_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, l_line - 1));
+  }
+  record_set_text_at(p_hud, ATTR_HUD_CHAT,       1, p_text);
+  record_set_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, 1, p_now + CHAT_SECONDS);
+}
+
+void hud_set_chat_input(Attributes &p_hud, Integer p_open, Text p_text)
+// ----------------------------------------------------------------
+// Show (open TRUE) or hide the chat line being typed
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_hud, ATTR_HUD_CHAT_OPEN,  p_open);
+  record_set_text   (p_hud, ATTR_HUD_CHAT_INPUT, p_text);
+}
+
+Integer hud_chat_open(Attributes &p_hud)
+// ----------------------------------------------------------------
+// TRUE while a chat line is being typed
+// ----------------------------------------------------------------
+{
+  return record_integer(p_hud, ATTR_HUD_CHAT_OPEN) == TRUE;
 }
 
 void hud_show_name(Attributes &p_hud, Real p_now)
@@ -403,7 +440,7 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
   hud_help_heading(p_box, l_x, l_y, "MOUSE");
   hud_help_line(p_box, l_x, l_y, "Click the view" , "start playing (the mouse turns the camera)");
   hud_help_line(p_box, l_x, l_y, "Left click"     , "break blocks (harder blocks take more hits), hit animals");
-  hud_help_line(p_box, l_x, l_y, "Right click"    , "place blocks, eat, use crafting tables and furnaces");
+  hud_help_line(p_box, l_x, l_y, "Right click"    , "place blocks, eat, use tables and furnaces, open doors");
   hud_help_heading(p_box, l_x, l_y, "KEYBOARD");
   hud_help_line(p_box, l_x, l_y, "W A S D"        , "walk (hold one key at a time)");
   hud_help_line(p_box, l_x, l_y, "Space"          , "jump, swim up, fly up");
@@ -411,7 +448,9 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
   hud_help_line(p_box, l_x, l_y, "E"              , "inventory and 2 x 2 crafting");
   hud_help_line(p_box, l_x, l_y, "Q"              , "pause and free the mouse, or close a screen");
   hud_help_line(p_box, l_x, l_y, "F / J"          , "auto-walk on/off, auto-jump on/off");
-  hud_help_line(p_box, l_x, l_y, "G / C"          , "fly on/off, fly down");
+  hud_help_line(p_box, l_x, l_y, "C / Shift + W"  , "crouch on/off, crouch while held (both sink when flying)");
+  hud_help_line(p_box, l_x, l_y, "G"              , "fly on/off");
+  hud_help_line(p_box, l_x, l_y, "T / slash"      , "chat, or a command: /time /gamerule /give /help");
   hud_help_line(p_box, l_x, l_y, "P / U"          , "pick the block you look at, hide the HUD");
   hud_help_line(p_box, l_x, l_y, "- / ="          , "shorter / longer view distance");
   hud_help_line(p_box, l_x, l_y, "I / H / O"      , "position info, this help, settings");
@@ -577,6 +616,25 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
     if (l_message == "" || p_now > record_real_at(p_hud, ATTR_HUD_UNTIL, l_toast)) continue;
     hud_shadow_text(p_box, 12.0, l_y, 13.0, TEXT_ALIGN_LEFT, 250, 238, 190, l_message);
     l_y = l_y + 17.0;
+  }
+
+  // Chat: recent lines above the messages, newest at the bottom (all
+  // kept lines while typing), and the line being typed with a caret
+  l_y = l_bar_y + l_slot_size + 84.0 + MAX_TOASTS * 17.0;
+  for (l_toast = 1; l_toast <= MAX_CHAT_LINES; ++l_toast) {
+    l_message = record_text_at(p_hud, ATTR_HUD_CHAT, l_toast);
+    if (l_message == "") continue;
+    if (!hud_chat_open(p_hud) && p_now > record_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, l_toast)) continue;
+    hud_shadow_text(p_box, 12.0, l_y, 13.0, TEXT_ALIGN_LEFT, 255, 255, 255, l_message);
+    l_y = l_y + 17.0;
+  }
+  if (hud_chat_open(p_hud)) {
+    l_y = l_bar_y + l_slot_size + 58.0;
+    render_set_colour(p_box, 20.0, 20.0, 24.0);
+    render_fill_rect (p_box, 6.0, l_y - 19.0, p_w * 0.6, l_y + 3.0);
+    l_info = "> " + record_text(p_hud, ATTR_HUD_CHAT_INPUT);
+    if (Floor(p_now * 2.0) - 2.0 * Floor(p_now) < 0.5) l_info = l_info + "_";
+    hud_text(p_box, 12.0, l_y, 14.0, TEXT_ALIGN_LEFT, 255, 255, 255, l_info);
   }
 
   // Position read-out

@@ -59,6 +59,8 @@ struct Ev{ Text kind; Text a; double x=0,y=0; };
 static std::deque<Ev> script;
 static void load_script(const char*path){ std::ifstream in(path); Text line; while(std::getline(in,line)){ std::istringstream s(line); Text k; if(!(s>>k)||k[0]=='#') continue;
   if(k=="tick"||k=="wait"){ int n=1; s>>n; for(int i=0;i<n;i++) script.push_back({"tick","",0,0}); }
+  else if(k=="type"){ Text rest; std::getline(s,rest); if(!rest.empty()&&rest[0]==' ') rest=rest.substr(1); for(char c:rest) script.push_back({"key",Text(1,c)}); }
+  else if(k=="enter"){ script.push_back({"enter",""}); }
   else if(k=="key"){ Text c; int n=1; s>>c; s>>n; if(c=="space") c=" "; for(int i=0;i<n;i++) script.push_back({"key",c}); }
   else if(k=="holdkey"){ Text c; int n=1; s>>c>>n; if(c=="space") c=" "; for(int i=0;i<n;i++){ script.push_back({"key",c}); script.push_back({"tick",""}); } }
   else if(k=="look"){ double dx,dy; s>>dx>>dy; script.push_back({"look","",dx,dy}); }
@@ -89,6 +91,7 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
     if(e.kind=="tick"||e.kind=="look"){ // mouse move from current cursor
       double bx=g_cursor_x-100+e.x, by=100+g_box_h-g_cursor_y-e.y; id=box; cmd="mouse_move"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }
     if(e.kind=="key"){ id=keys; cmd="keystroke"; msg=e.a; return 0; }
+    if(e.kind=="enter"){ id=keys; cmd="text selected"; msg=""; return 0; }
     if(e.kind=="click"||e.kind=="rclick"||e.kind=="lbdown"||e.kind=="move"){ g_cursor_x=(int)(100+e.x); g_cursor_y=(int)(100+g_box_h-e.y); id=box; cmd= e.kind=="click"?"click_lb": e.kind=="rclick"?"click_rb": e.kind=="move"?"mouse_move":"click_lb_down"; char b[64]; snprintf(b,64,"%g %g",e.x,e.y); msg=b; return 0; }
     if(e.kind=="capclick"||e.kind=="caprclick"){ double bx=g_cursor_x-100, by=100+g_box_h-g_cursor_y; id=box; cmd= e.kind=="capclick"?"click_lb_down":"click_rb"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }
     if(e.kind=="snap"){ g_snap_name=e.a; continue; }

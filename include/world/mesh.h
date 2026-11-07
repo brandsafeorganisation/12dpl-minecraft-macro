@@ -43,6 +43,7 @@
 #define CELL_SEE_THROUGH   2      // glass
 #define CELL_WATER         3
 #define CELL_PLANT         4
+#define CELL_SHAPED        5      // doors and beds: one entry like a plant, drawn as a box
 
 /*Global variables*/ {
   Integer g_section_state[NUM_SECTIONS];

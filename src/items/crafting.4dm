@@ -65,6 +65,7 @@ void crafting_init_book(Attributes &p_book)
   crafting_add_recipe(p_book, ITEM_TORCH         , 4, 1, 2, "AB"       , ITEM_COAL       , ITEM_STICK);
   crafting_add_recipe(p_book, ITEM_CHEST         , 1, 3, 3, "AAAA.AAAA", ITEM_PLANKS     , ITEM_NONE );
   crafting_add_recipe(p_book, ITEM_BED           , 1, 3, 2, "AAABBB"   , ITEM_LEAVES     , ITEM_PLANKS);
+  crafting_add_recipe(p_book, ITEM_DOOR          , 3, 2, 3, "AAAAAA"   , ITEM_PLANKS     , ITEM_NONE );
   crafting_add_recipe(p_book, ITEM_IRON_PICKAXE  , 1, 3, 3, "AAA.B..B.", ITEM_IRON_INGOT , ITEM_STICK);
   crafting_add_recipe(p_book, ITEM_IRON_AXE      , 1, 2, 3, "AAAB.B"   , ITEM_IRON_INGOT , ITEM_STICK);
   crafting_add_recipe(p_book, ITEM_IRON_SHOVEL   , 1, 1, 3, "ABB"      , ITEM_IRON_INGOT , ITEM_STICK);

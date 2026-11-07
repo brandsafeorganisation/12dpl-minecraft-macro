@@ -48,13 +48,15 @@ void mesh_fill_cell_tables()
     l_block = world_cell_block(l_value);
     g_cell_block[l_value + 1] = l_block;
     g_cell_light[l_value + 1] = world_cell_light(l_value);
-    g_cell_solid[l_value + 1] = block_is_solid(l_block);
+    g_cell_solid[l_value + 1] = block_is_solid(l_block) && !block_is_shaped(l_block);
     if (l_block == BLOCK_AIR) {
       g_cell_kind[l_value + 1] = CELL_AIR;
     } else if (l_block == BLOCK_WATER) {
       g_cell_kind[l_value + 1] = CELL_WATER;
     } else if (block_is_plant(l_block)) {
       g_cell_kind[l_value + 1] = CELL_PLANT;
+    } else if (block_is_shaped(l_block)) {
+      g_cell_kind[l_value + 1] = CELL_SHAPED;
     } else if (block_is_see_through(l_block)) {
       g_cell_kind[l_value + 1] = CELL_SEE_THROUGH;
     } else {
@@ -114,7 +116,7 @@ void mesh_build_section(Integer p_sx, Integer p_sy, Integer p_sz)
 // (air or a plant); faces against water are kept too but flagged
 // wet (only drawn when the camera is under water). Water only
 // shows faces against air. Glass hides nothing but shows no face
-// against glass. Plants are one DIR_PLANT entry.
+// against glass. Plants, doors and beds are one DIR_PLANT entry.
 // Outside the world counts as solid so the world edge isn't drawn.
 // Cells are read straight from g_world and looked up in the
 // g_cell_* tables: this runs for every cell of the section.
@@ -160,7 +162,7 @@ void mesh_build_section(Integer p_sx, Integer p_sy, Integer p_sz)
         if (l_kind == CELL_AIR) continue;
         l_block = g_cell_block[l_value + 1];
 
-        if (l_kind == CELL_PLANT) {
+        if (l_kind == CELL_PLANT || l_kind == CELL_SHAPED) {
           if (l_count >= SECTION_FACE_CAP) {
             ++g_mesh_overflow;
             continue;

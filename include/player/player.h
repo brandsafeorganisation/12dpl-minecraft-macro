@@ -90,6 +90,11 @@ Integer player_break_stage     (Attributes &p_player, Real p_now);
 void    player_turn            (Attributes &p_player, Real p_yaw_change, Real p_pitch_change);
 void    player_key_pressed     (Attributes &p_player, Text p_key, Real p_now);
 void    player_shift_pressed   (Attributes &p_player, Real p_now);
+Integer player_look_facing     (Attributes &p_player);
+Integer player_cell_free       (Attributes &p_player, Attributes &p_cows, Integer p_x, Integer p_y, Integer p_z);
+Integer player_place_double    (Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_item,
+                                Integer p_x, Integer p_y, Integer p_z);
+void    player_toggle_door     (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 Integer player_crouching       (Attributes &p_player);
 void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_events);
 Integer player_flying          (Attributes &p_player);

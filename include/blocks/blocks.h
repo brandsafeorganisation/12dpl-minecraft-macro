@@ -42,8 +42,19 @@
 #define BLOCK_LIT_FURNACE_NX  30   // furnace's block is swapped for one
 #define BLOCK_LIT_FURNACE_PZ  31   // of these while it burns; there is no
 #define BLOCK_LIT_FURNACE_NZ  32   // item for them
+#define BLOCK_DOOR_FIRST      33   // doors: 33 + facing * 4 + open * 2 + top
+#define BLOCK_DOOR_LAST       48   // (facing 0..3 is FACING_*)
+#define BLOCK_BED_FIRST       49   // the two halves of a bed: 49 + facing * 2
+#define BLOCK_BED_LAST        56   // + head (facing points from foot to head);
+                                   // BLOCK_BED is an older one block bed
 #define MAX_BLOCK_ID          28   // highest block that is also an item
 #define TORCH_LIGHT           14
+#define FACING_PX             0    // directions a door or bed can face
+#define FACING_NX             1
+#define FACING_PZ             2
+#define FACING_NZ             3
+#define DOOR_THICKNESS        0.1875
+#define BED_HEIGHT            0.5625
 #define DESTROY_STAGES        10   // crack stages shown while a block is broken
 #define FURNACE_LIGHT         13
 
@@ -91,7 +102,8 @@
 #define ITEM_ROTTEN_FLESH     81
 #define ITEM_RAW_PORKCHOP     82
 #define ITEM_COOKED_PORKCHOP  83
-#define MAX_ITEM_ID           83
+#define ITEM_DOOR             84   // places the two halves of a door
+#define MAX_ITEM_ID           84
 
 // Tool kinds and tiers
 #define TOOL_NONE             0
@@ -118,6 +130,18 @@
 Integer block_is_solid       (Integer p_block);
 Integer block_is_plant       (Integer p_block);
 Integer block_box            (Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z);
+Integer block_is_door        (Integer p_block);
+Integer block_is_bed         (Integer p_block);
+Integer block_is_shaped      (Integer p_block);
+Integer block_door           (Integer p_facing, Integer p_open, Integer p_top);
+Integer block_door_facing    (Integer p_block);
+Integer block_door_open      (Integer p_block);
+Integer block_door_top       (Integer p_block);
+Integer block_bed            (Integer p_facing, Integer p_head);
+Integer block_bed_facing     (Integer p_block);
+Integer block_bed_head       (Integer p_block);
+void    block_facing_step    (Integer p_facing, Integer &p_dx, Integer &p_dz);
+Integer block_partner        (Integer p_block, Integer p_x, Integer p_y, Integer p_z, Integer &p_px, Integer &p_py, Integer &p_pz);
 Integer block_hides_faces    (Integer p_block);
 Integer block_light_emission (Integer p_block);
 Integer block_is_see_through (Integer p_block);
