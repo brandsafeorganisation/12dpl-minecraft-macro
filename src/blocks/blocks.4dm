@@ -30,6 +30,35 @@ Integer block_is_plant(Integer p_block)
   return FALSE;
 }
 
+Integer block_box(Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z)
+// ----------------------------------------------------------------
+// The part of its cell a block can be aimed at and is outlined by,
+// 0..1 along each axis. Returns TRUE if that is less than the whole
+// cell (torches, flowers and other plants).
+// ----------------------------------------------------------------
+{
+  Real l_half   = 0.5;
+  Real l_height = 1.0;
+
+  if (p_block == BLOCK_TORCH) {
+    l_half   = 0.0625;
+    l_height = 0.625;
+  } else if (p_block == BLOCK_POPPY || p_block == BLOCK_DANDELION) {
+    l_half   = 0.1875;
+    l_height = 0.625;
+  } else if (block_is_plant(p_block)) {
+    l_half   = 0.375;
+    l_height = 0.8125;
+  }
+  p_min_x = 0.5 - l_half;
+  p_min_z = 0.5 - l_half;
+  p_max_x = 0.5 + l_half;
+  p_max_z = 0.5 + l_half;
+  p_min_y = 0.0;
+  p_max_y = l_height;
+  return l_half < 0.5 || l_height < 1.0;
+}
+
 Integer block_light_emission(Integer p_block)
 // ----------------------------------------------------------------
 // Light a block gives off (0..LIGHT_MAX_LEVEL)

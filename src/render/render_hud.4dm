@@ -477,32 +477,27 @@ void hud_draw_hand(Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integ
 
 void hud_draw_health(Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_health, Real p_now)
 // ----------------------------------------------------------------
-// Health bar of ten segments, each worth two points, flashing when
-// low
+// Health bar of ten hearts (from the resource pack if it has them),
+// each worth two points: an empty heart with a full or half heart
+// over it. The hearts flash when health is low.
 // ----------------------------------------------------------------
 {
-  Integer l_segment = 0;
-  Real    l_gap     = 2.0;
-  Real    l_seg_w   = (p_width - 9.0 * l_gap) / 10.0;
-  Real    l_sx      = 0.0;
-  Real    l_fill    = 0.0;
-  Real    l_pulse   = 1.0;
+  Integer l_heart = 0;
+  Integer l_left  = 0;
+  Real    l_size  = p_width / 10.0;
+  Real    l_hx    = 0.0;
+  Real    l_pulse = 1.0;
 
   if (p_health <= 6 && Floor(p_now * 4.0) - 2.0 * Floor(p_now * 2.0) > 0.5) l_pulse = 0.6;
 
-  render_set_colour(p_box, 18.0, 16.0, 16.0);
-  render_fill_rect (p_box, p_x0 - 2.0, p_y0 - 2.0, p_x0 + p_width + 2.0, p_y0 + 12.0);
-
-  for (l_segment = 1; l_segment <= 10; ++l_segment) {
-    l_sx = p_x0 + (l_segment - 1) * (l_seg_w + l_gap);
-    render_set_colour(p_box, 70.0, 36.0, 36.0);
-    render_fill_rect (p_box, l_sx, p_y0, l_sx + l_seg_w, p_y0 + 10.0);
-    l_fill = clamp_real((p_health - (l_segment - 1) * 2.0) / 2.0, 0.0, 1.0);
-    if (l_fill > 0.0) {
-      render_set_colour(p_box, 222.0 * l_pulse, 48.0 * l_pulse, 44.0 * l_pulse);
-      render_fill_rect (p_box, l_sx, p_y0, l_sx + l_seg_w * l_fill, p_y0 + 10.0);
-      render_set_colour(p_box, 250.0 * l_pulse, 132.0 * l_pulse, 120.0 * l_pulse);
-      render_fill_rect (p_box, l_sx, p_y0 + 7.0, l_sx + l_seg_w * l_fill, p_y0 + 10.0);
+  for (l_heart = 1; l_heart <= 10; ++l_heart) {
+    l_hx   = p_x0 + (l_heart - 1) * l_size;
+    l_left = p_health - (l_heart - 1) * 2;
+    hud_texture_face(p_box, TEX_HEART_CONTAINER, 1.0, FALSE, l_hx, p_y0, l_size, 0.0, 0.0, l_size);
+    if (l_left >= 2) {
+      hud_texture_face(p_box, TEX_HEART_FULL, l_pulse, FALSE, l_hx, p_y0, l_size, 0.0, 0.0, l_size);
+    } else if (l_left == 1) {
+      hud_texture_face(p_box, TEX_HEART_HALF, l_pulse, FALSE, l_hx, p_y0, l_size, 0.0, 0.0, l_size);
     }
   }
 }
@@ -545,6 +540,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
        + "   " + To_text(p_frame_ms, 1) + " ms";
   if (settings_flag(p_settings, ATTR_SET_SHOW_DEBUG) && hud_frame_stats(p_hud) != "") l_info = l_info + "   " + hud_frame_stats(p_hud);
   if (player_flying(p_player)) l_info = l_info + "   FLYING";
+  if (player_crouching(p_player)) l_info = l_info + "   CROUCHING";
   if (player_auto_walk(p_player)) l_info = l_info + "   AUTO-WALK";
   if (!settings_flag(p_settings, ATTR_SET_AUTO_JUMP)) l_info = l_info + "   auto-jump off";
   hud_text(p_box, 8.0, l_strip - 5.0, 11.0, TEXT_ALIGN_LEFT, 170, 176, 186, l_info);

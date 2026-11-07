@@ -484,7 +484,11 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
           }
         } else {
+          // Shift can't be seen on its own, but turns w a s d into
+          // capitals; a "shift" message is taken too in case 12d sends one
+          if (l_key == "shift") player_shift_pressed(g_player, l_now);
           if (l_key == "w" || l_key == "a" || l_key == "s" || l_key == "d" || l_key == " " || l_key == "c") {
+            if (l_msg != l_key) player_shift_pressed(g_player, l_now);
             player_key_pressed(g_player, l_key, l_now);
             // a movement key while paused carries on (the keys only
             // reach the game while its panel has the focus)

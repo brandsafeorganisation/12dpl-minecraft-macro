@@ -1483,6 +1483,177 @@ void make_texture_item_sword(Integer p_tex, Integer p_tier)
   texture_row(p_tex, 16, "................");
 }
 
+void make_texture_destroy(Integer p_tex, Integer p_stage)
+// ----------------------------------------------------------------
+// Crack stage 1..DESTROY_STAGES drawn over a block being broken:
+// pixel cracks that grow out from the middle along a few branches.
+// Each stage shows a longer stretch of every branch, so a stage
+// contains all the pixels of the stages before it.
+// ----------------------------------------------------------------
+{
+  Integer l_branch = 0;
+  Integer l_step   = 0;
+  Integer l_steps  = 0;
+  Integer l_u      = 0;
+  Integer l_v      = 0;
+  Integer l_du     = 0;
+  Integer l_dv     = 0;
+  Real    l_pick   = 0.0;
+
+  texture_set_palette(p_tex, 1, 40, 38, 36);
+  texture_set_palette(p_tex, 2, 72, 68, 64);
+  texture_fill(p_tex, TEX_TRANSPARENT);
+  l_steps = floor_divide(p_stage * 9, DESTROY_STAGES);
+
+  for (l_branch = 1; l_branch <= 6; ++l_branch) {
+    l_u  = 8 + floor_integer(hash_real(l_branch * 3.1, 1.0, 7.0) * 2.0);
+    l_v  = 8 + floor_integer(hash_real(l_branch * 3.1, 2.0, 7.0) * 2.0);
+    // each branch heads off in its own direction around the middle
+    l_du = 1;
+    l_dv = 0;
+    if (l_branch == 2) { l_du = -1; l_dv =  1; }
+    if (l_branch == 3) { l_du =  0; l_dv = -1; }
+    if (l_branch == 4) { l_du =  1; l_dv =  1; }
+    if (l_branch == 5) { l_du = -1; l_dv = -1; }
+    if (l_branch == 6) { l_du = -1; l_dv =  0; }
+    for (l_step = 1; l_step <= l_steps; ++l_step) {
+      if (l_u < 1 || l_u > TEX_SIZE || l_v < 1 || l_v > TEX_SIZE) break;
+      texture_set(p_tex, l_u, l_v, 1);
+      // a lighter pixel beside the crack now and then
+      if (hash_real(l_branch * 1.3, l_step * 1.0, 9.0) < 0.3) {
+        if (l_u + 1 <= TEX_SIZE) {
+          if (texture_get(p_tex, l_u + 1, l_v) == TEX_TRANSPARENT) texture_set(p_tex, l_u + 1, l_v, 2);
+        }
+      }
+      // wander: mostly straight on, sometimes a step to one side
+      l_pick = hash_real(l_branch * 2.9, l_step * 1.0, 4.0);
+      if (l_pick < 0.25) {
+        l_u = l_u + l_dv;
+        l_v = l_v + l_du;
+      } else if (l_pick < 0.5) {
+        l_u = l_u - l_dv;
+        l_v = l_v - l_du;
+      }
+      l_u = l_u + l_du;
+      l_v = l_v + l_dv;
+    }
+  }
+}
+
+void make_texture_heart(Integer p_tex, Integer p_fill)
+// ----------------------------------------------------------------
+// A health bar heart: p_fill 2 full, 1 the left half, 0 only the
+// dark outline (the empty container)
+// ----------------------------------------------------------------
+{
+  Integer l_u = 0;
+  Integer l_v = 0;
+
+  texture_set_palette(p_tex, 1, 24 , 12 , 12 );
+  texture_set_palette(p_tex, 2, 220, 30 , 30 );
+  texture_set_palette(p_tex, 3, 255, 140, 140);
+  texture_set_palette(p_tex, 4, 70 , 40 , 40 );
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "..1111....1111..");
+  texture_row(p_tex,  4, ".144441..144441.");
+  texture_row(p_tex,  5, "1444444114444441");
+  texture_row(p_tex,  6, "1444444444444441");
+  texture_row(p_tex,  7, "1444444444444441");
+  texture_row(p_tex,  8, "1444444444444441");
+  texture_row(p_tex,  9, ".14444444444441.");
+  texture_row(p_tex, 10, "..144444444441..");
+  texture_row(p_tex, 11, "...1444444441...");
+  texture_row(p_tex, 12, "....14444441....");
+  texture_row(p_tex, 13, ".....144441.....");
+  texture_row(p_tex, 14, "......1441......");
+  texture_row(p_tex, 15, ".......11.......");
+  texture_row(p_tex, 16, "................");
+  if (p_fill == 0) return;
+  for (l_v = 1; l_v <= TEX_SIZE; ++l_v) {
+    for (l_u = 1; l_u <= TEX_SIZE; ++l_u) {
+      if (texture_get(p_tex, l_u, l_v) != 4) continue;
+      if (p_fill == 1 && l_u > 8) continue;
+      texture_set(p_tex, l_u, l_v, 2);
+      if (l_v == 4 || l_v == 5) {
+        if (l_u == 3 || l_u == 4) texture_set(p_tex, l_u, l_v, 3);
+      }
+    }
+  }
+}
+
+void make_texture_door(Integer p_tex, Integer p_top)
+// ----------------------------------------------------------------
+// One half of an oak door: planks in a frame; the top half has a
+// four pane window you can see through
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 150, 112, 66 );
+  texture_set_palette(p_tex, 2, 120, 88 , 50 );
+  texture_set_palette(p_tex, 3, 96 , 70 , 40 );
+  texture_set_palette(p_tex, 4, 60 , 60 , 64 );
+  texture_fill     (p_tex, 1);
+  texture_fill_rect(p_tex, 1 , 1 , 1 , 16, 3);
+  texture_fill_rect(p_tex, 16, 1 , 16, 16, 3);
+  texture_fill_rect(p_tex, 1 , 1 , 16, 1 , 3);
+  texture_fill_rect(p_tex, 1 , 16, 16, 16, 3);
+  texture_fill_rect(p_tex, 6 , 2 , 6 , 15, 2);
+  texture_fill_rect(p_tex, 11, 2 , 11, 15, 2);
+  if (p_top) {
+    texture_fill_rect(p_tex, 4 , 4 , 7 , 7 , TEX_TRANSPARENT);
+    texture_fill_rect(p_tex, 10, 4 , 13, 7 , TEX_TRANSPARENT);
+    texture_fill_rect(p_tex, 4 , 10, 7 , 13, TEX_TRANSPARENT);
+    texture_fill_rect(p_tex, 10, 10, 13, 13, TEX_TRANSPARENT);
+  } else {
+    texture_fill_rect(p_tex, 3 , 4 , 14, 4 , 2);
+    texture_fill_rect(p_tex, 3 , 10, 14, 10, 2);
+    texture_fill_rect(p_tex, 13, 7 , 14, 8 , 4);
+  }
+}
+
+void make_texture_item_door(Integer p_tex)
+// ----------------------------------------------------------------
+// Picture of a door for the inventory
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 150, 112, 66 );
+  texture_set_palette(p_tex, 2, 96 , 70 , 40 );
+  texture_set_palette(p_tex, 3, 60 , 60 , 64 );
+  texture_row(p_tex,  1, "....22222222....");
+  texture_row(p_tex,  2, "....21111112....");
+  texture_row(p_tex,  3, "....21.21.12....");
+  texture_row(p_tex,  4, "....21.21.12....");
+  texture_row(p_tex,  5, "....21111112....");
+  texture_row(p_tex,  6, "....21.21.12....");
+  texture_row(p_tex,  7, "....21.21.12....");
+  texture_row(p_tex,  8, "....21111112....");
+  texture_row(p_tex,  9, "....21111112....");
+  texture_row(p_tex, 10, "....22222212....");
+  texture_row(p_tex, 11, "....21111312....");
+  texture_row(p_tex, 12, "....21111112....");
+  texture_row(p_tex, 13, "....22222212....");
+  texture_row(p_tex, 14, "....21111112....");
+  texture_row(p_tex, 15, "....21111112....");
+  texture_row(p_tex, 16, "....22222222....");
+}
+
+void make_texture_bed_foot_top(Integer p_tex)
+// ----------------------------------------------------------------
+// Top of a bed's foot half: blanket only, folded over at the end
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 176, 36 , 36 );
+  texture_set_palette(p_tex, 2, 140, 24 , 26 );
+  texture_set_palette(p_tex, 5, 120, 86 , 50 );
+  texture_fill     (p_tex, 1);
+  texture_fill_rect(p_tex, 1 , 1 , 16, 1 , 5);
+  texture_fill_rect(p_tex, 1 , 16, 16, 16, 5);
+  texture_fill_rect(p_tex, 1 , 1 , 1 , 16, 5);
+  texture_fill_rect(p_tex, 16, 1 , 16, 16, 5);
+  texture_fill_rect(p_tex, 2 , 5 , 15, 5 , 2);
+  texture_fill_rect(p_tex, 2 , 12, 15, 13, 2);
+}
+
 Integer texture_is_sprite(Integer p_tex)
 // ----------------------------------------------------------------
 // TRUE for the textures drawn as pictures with see-through pixels
@@ -1520,6 +1691,8 @@ void textures_generate()
 // Order matters where one texture starts as a copy of another
 // ----------------------------------------------------------------
 {
+  Integer l_tex = 0;
+
   make_texture_bedrock      (TEX_BEDROCK);
   make_texture_stone        (TEX_STONE);
   make_texture_cobblestone  (TEX_COBBLESTONE);
@@ -1598,6 +1771,14 @@ void textures_generate()
   make_texture_item_rotten_flesh(TEX_ITEM_ROTTEN_FLESH);
   make_texture_item_porkchop (TEX_ITEM_RAW_PORKCHOP, FALSE);
   make_texture_item_porkchop (TEX_ITEM_COOKED_PORKCHOP, TRUE);
+  for (l_tex = TEX_DESTROY_FIRST; l_tex <= TEX_DESTROY_LAST; ++l_tex) make_texture_destroy(l_tex, l_tex - TEX_DESTROY_FIRST + 1);
+  make_texture_heart         (TEX_HEART_FULL, 2);
+  make_texture_heart         (TEX_HEART_HALF, 1);
+  make_texture_heart         (TEX_HEART_CONTAINER, 0);
+  make_texture_door          (TEX_DOOR_TOP, TRUE);
+  make_texture_door          (TEX_DOOR_BOTTOM, FALSE);
+  make_texture_item_door     (TEX_ITEM_DOOR);
+  make_texture_bed_foot_top  (TEX_BED_FOOT_TOP);
 }
 
 #endif

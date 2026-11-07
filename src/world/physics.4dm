@@ -122,7 +122,8 @@ Integer physics_raycast_blocks(Real p_origin_x, Real p_origin_y, Real p_origin_z
 // ----------------------------------------------------------------
 // Walk a ray through the grid cell by cell (3D DDA) and stop at the
 // first block that is neither air nor water (plants count, so they
-// can be broken). dir must be a unit vector. Returns TRUE on a hit
+// can be broken; blocks smaller than their cell only inside their
+// block_box). dir must be a unit vector. Returns TRUE on a hit
 // within max_distance and sets hit_x/y/z (the cell), normal_* (the
 // face that was hit) and distance.
 // ----------------------------------------------------------------
@@ -142,6 +143,13 @@ Integer physics_raycast_blocks(Real p_origin_x, Real p_origin_y, Real p_origin_z
   Real    l_travelled  = 0.0;
   Integer l_block      = 0;
   Integer l_guard      = 0;
+  Real    l_min_x      = 0.0;
+  Real    l_min_y      = 0.0;
+  Real    l_min_z      = 0.0;
+  Real    l_max_x      = 1.0;
+  Real    l_max_y      = 1.0;
+  Real    l_max_z      = 1.0;
+  Real    l_along      = 0.0;
 
   p_normal_x = 0;
   p_normal_y = 0;
@@ -176,11 +184,20 @@ Integer physics_raycast_blocks(Real p_origin_x, Real p_origin_y, Real p_origin_z
 
     l_block = world_get_block(l_cell_x, l_cell_y, l_cell_z);
     if (l_block != BLOCK_AIR && l_block != BLOCK_WATER && world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) {
-      p_hit_x    = l_cell_x;
-      p_hit_y    = l_cell_y;
-      p_hit_z    = l_cell_z;
-      p_distance = l_travelled;
-      return TRUE;
+      // a block smaller than its cell is only hit inside its box
+      l_along = l_travelled;
+      if (block_box(l_block, l_min_x, l_min_y, l_min_z, l_max_x, l_max_y, l_max_z)) {
+        l_along = physics_ray_box(p_origin_x, p_origin_y, p_origin_z, p_dir_x, p_dir_y, p_dir_z,
+                                  l_cell_x + l_min_x, l_cell_y + l_min_y, l_cell_z + l_min_z,
+                                  l_cell_x + l_max_x, l_cell_y + l_max_y, l_cell_z + l_max_z);
+      }
+      if (l_along >= 0.0 && l_along <= p_max_distance) {
+        p_hit_x    = l_cell_x;
+        p_hit_y    = l_cell_y;
+        p_hit_z    = l_cell_z;
+        p_distance = l_along;
+        return TRUE;
+      }
     }
 
     p_normal_x = 0;

@@ -30,7 +30,8 @@ COLORMAP_AT = (51, 173)
 def map_entries():
     """(tex macro name, kind, name, tint, overlay) from pack_map_entry()"""
     src = open(os.path.join(MACRO, 'src', 'blocks', 'resource_pack.4dm')).read()
-    return re.findall(r'pack_entry\(p_tex, p_kind, p_name, p_tint, p_overlay, (\w+)\s*, "(\w+)"\s*, "(\w+)"\s*, (\w+)\s*, "(\w*)"\)', src)
+    return [(t.strip(), k, n, tint, o) for t, k, n, tint, o in re.findall(
+        r'pack_entry\(p_tex, p_kind, p_name, p_tint, p_overlay, (\w+(?:\s*\+\s*\d+)?)\s*, "(\w+)"\s*, "([\w/]+)"\s*, (\w+)\s*, "(\w*)"\)', src)]
 
 def part_entries():
     """(tex macro name, skin name, x, y, w, h, turn macro) from pack_map_part()"""
@@ -56,6 +57,9 @@ def expected_part(pixels, width, x, y, w, h, turn):
     return out
 
 def macro_value(name):
+    if '+' in name:
+        base, offset = name.split('+')
+        return macro_value(base.strip()) + int(offset)
     for header in ('textures.h', 'resource_pack.h'):
         m = re.search(r'#define\s+' + name + r'\s+(\w+)', open(os.path.join(MACRO, 'include', 'blocks', header)).read())
         if m: return int(m.group(1)) if m.group(1).isdigit() else macro_value(m.group(1))

@@ -272,6 +272,22 @@ Integer pack_map_entry(Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_na
   if (p_entry == 49) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_ROTTEN_FLESH  , "item", "rotten_flesh"       , PACK_TINT_NONE   , "");
   if (p_entry == 50) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_RAW_PORKCHOP  , "item", "porkchop"           , PACK_TINT_NONE   , "");
   if (p_entry == 51) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_COOKED_PORKCHOP, "item", "cooked_porkchop"   , PACK_TINT_NONE   , "");
+  if (p_entry == 52) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 0  , "block", "destroy_stage_0"   , PACK_TINT_NONE   , "");
+  if (p_entry == 53) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 1  , "block", "destroy_stage_1"   , PACK_TINT_NONE   , "");
+  if (p_entry == 54) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 2  , "block", "destroy_stage_2"   , PACK_TINT_NONE   , "");
+  if (p_entry == 55) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 3  , "block", "destroy_stage_3"   , PACK_TINT_NONE   , "");
+  if (p_entry == 56) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 4  , "block", "destroy_stage_4"   , PACK_TINT_NONE   , "");
+  if (p_entry == 57) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 5  , "block", "destroy_stage_5"   , PACK_TINT_NONE   , "");
+  if (p_entry == 58) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 6  , "block", "destroy_stage_6"   , PACK_TINT_NONE   , "");
+  if (p_entry == 59) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 7  , "block", "destroy_stage_7"   , PACK_TINT_NONE   , "");
+  if (p_entry == 60) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 8  , "block", "destroy_stage_8"   , PACK_TINT_NONE   , "");
+  if (p_entry == 61) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DESTROY_FIRST + 9  , "block", "destroy_stage_9"   , PACK_TINT_NONE   , "");
+  if (p_entry == 62) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_HEART_FULL         , "gui"  , "sprites/hud/heart/full"     , PACK_TINT_NONE, "");
+  if (p_entry == 63) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_HEART_HALF         , "gui"  , "sprites/hud/heart/half"     , PACK_TINT_NONE, "");
+  if (p_entry == 64) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_HEART_CONTAINER    , "gui"  , "sprites/hud/heart/container", PACK_TINT_NONE, "");
+  if (p_entry == 65) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DOOR_TOP           , "block", "oak_door_top"       , PACK_TINT_NONE   , "");
+  if (p_entry == 66) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DOOR_BOTTOM        , "block", "oak_door_bottom"    , PACK_TINT_NONE   , "");
+  if (p_entry == 67) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_DOOR          , "item" , "oak_door"           , PACK_TINT_NONE   , "");
   return FALSE;
 }
 

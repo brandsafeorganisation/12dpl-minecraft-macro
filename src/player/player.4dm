@@ -129,7 +129,17 @@ Real player_eye_y(Attributes &p_player)
 // Height of the player's eyes
 // ----------------------------------------------------------------
 {
+  if (player_crouching(p_player)) return record_real(p_player, ATTR_Y) + CROUCH_EYE_HEIGHT;
   return record_real(p_player, ATTR_Y) + PLAYER_EYE_HEIGHT;
+}
+
+Integer player_crouching(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE while the player is crouched (worked out each frame by
+// player_update)
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_CROUCHING) == TRUE;
 }
 
 void player_look_direction(Attributes &p_player, Real &p_dir_x, Real &p_dir_y, Real &p_dir_z)
@@ -312,7 +322,8 @@ Integer player_target_cow(Attributes &p_player)
 
 Integer player_break_stage(Attributes &p_player, Real p_now)
 // ----------------------------------------------------------------
-// How cracked the block being broken is: 0 (not started) to 4
+// How cracked the block being broken is: 0 (not started) to
+// DESTROY_STAGES
 // ----------------------------------------------------------------
 {
   Integer l_hits   = record_integer(p_player, ATTR_BREAK_HITS);
@@ -322,7 +333,7 @@ Integer player_break_stage(Attributes &p_player, Real p_now)
   if (p_now - record_real(p_player, ATTR_BREAK_TIME) > BREAK_RESET_SECONDS) return 0;
   if (l_needed <= 1) return 0;
 
-  return clamp_integer(1 + floor_integer(3.0 * l_hits / l_needed), 1, 4);
+  return clamp_integer(1 + floor_integer((DESTROY_STAGES - 1.0) * l_hits / l_needed), 1, DESTROY_STAGES);
 }
 
 // ---------------------------------------------------------------- behaviour
@@ -447,7 +458,11 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
   }
 
   if (p_key == "c") {
-    if (player_flying(p_player)) record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
+    if (player_flying(p_player)) {
+      record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
+    } else {
+      record_set_integer(p_player, ATTR_CROUCH_TOGGLE, record_integer(p_player, ATTR_CROUCH_TOGGLE) != TRUE);
+    }
     return;
   }
 
@@ -457,6 +472,20 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
       record_set_real   (p_player, ATTR_MOVE_UNTIL, max_real(l_move_until, p_now + 0.55));
       record_set_integer(p_player, ATTR_MOVE_HELD,  TRUE);
     }
+  }
+}
+
+void player_shift_pressed(Attributes &p_player, Real p_now)
+// ----------------------------------------------------------------
+// A key arrived with Shift held (a capital W, A, S or D): Shift
+// sinks while flying and crouches otherwise. There is no key-up
+// event, so it lasts a moment and each repeat of the key renews it.
+// ----------------------------------------------------------------
+{
+  if (player_flying(p_player)) {
+    record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
+  } else {
+    record_set_real(p_player, ATTR_CROUCH_UNTIL, p_now + CROUCH_HOLD_SECONDS);
   }
 }
 
@@ -543,6 +572,8 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   Integer l_hit_up       = FALSE;
   Integer l_flying       = player_flying(p_player);
   Real    l_down_until   = record_real(p_player, ATTR_FLY_DOWN_UNTIL);
+  Integer l_crouching    = FALSE;
+  Real    l_eye_height   = PLAYER_EYE_HEIGHT;
 
   record_set_real(p_player, ATTR_PLAYER_HURT,  player_hurt_time (p_player) - p_dt);
   record_set_real(p_player, ATTR_PLAYER_SWING, player_swing_time(p_player) - p_dt);
@@ -565,8 +596,17 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
     l_ease = TAP_START_SPEED + (1.0 - TAP_START_SPEED) * clamp_real((p_now - l_move_start) / TAP_RAMP, 0.0, 1.0);
   }
   l_speed = WALK_SPEED * l_ease;
+  // Crouching (C, or Shift with a movement key; not while flying):
+  // slower, lower eyes, and you don't walk off edges
+  if (!l_flying) {
+    if (record_integer(p_player, ATTR_CROUCH_TOGGLE) == TRUE || p_now < record_real(p_player, ATTR_CROUCH_UNTIL)) l_crouching = TRUE;
+  }
+  record_set_integer(p_player, ATTR_CROUCHING, l_crouching);
+  if (l_crouching) l_eye_height = CROUCH_EYE_HEIGHT;
+
   if (l_in_water) l_speed = l_speed * WATER_SPEED_FACTOR;
   if (l_flying)   l_speed = l_speed * FLY_SPEED_FACTOR;
+  if (l_crouching) l_speed = l_speed * CROUCH_SPEED_FACTOR;
 
   l_wish_x = l_heading_x * l_forward - l_heading_z * l_strafe;
   l_wish_z = l_heading_z * l_forward + l_heading_x * l_strafe;
@@ -619,6 +659,20 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   l_move_x  = l_vx * p_dt;
   l_move_y  = l_vy * p_dt;
   l_move_z  = l_vz * p_dt;
+  // crouched on the ground: refuse a step along x or z that would
+  // leave nothing under you
+  if (l_crouching && l_on_ground && !l_in_water) {
+    if (!physics_box_collides(l_x + l_move_x - PLAYER_HALF_WIDTH, l_y - 0.1, l_z - PLAYER_HALF_WIDTH,
+                              l_x + l_move_x + PLAYER_HALF_WIDTH, l_y - 0.01, l_z + PLAYER_HALF_WIDTH)) {
+      l_move_x = 0.0;
+      l_vx     = 0.0;
+    }
+    if (!physics_box_collides(l_x + l_move_x - PLAYER_HALF_WIDTH, l_y - 0.1, l_z + l_move_z - PLAYER_HALF_WIDTH,
+                              l_x + l_move_x + PLAYER_HALF_WIDTH, l_y - 0.01, l_z + l_move_z + PLAYER_HALF_WIDTH)) {
+      l_move_z = 0.0;
+      l_vz     = 0.0;
+    }
+  }
   l_longest = max_real(Absolute(l_move_y), max_real(Absolute(l_move_x), Absolute(l_move_z)));
   l_steps   = 1 + Floor(l_longest / MAX_MOVE_STEP);
 
@@ -652,7 +706,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   // Water
   l_in_water = physics_box_in_water(l_x, l_y, l_z, PLAYER_HALF_WIDTH, PLAYER_HEIGHT);
   record_set_integer(p_player, ATTR_PLAYER_IN_WATER,     l_in_water);
-  record_set_integer(p_player, ATTR_PLAYER_EYE_IN_WATER, world_get_block(floor_integer(l_x), floor_integer(l_y + PLAYER_EYE_HEIGHT), floor_integer(l_z)) == BLOCK_WATER);
+  record_set_integer(p_player, ATTR_PLAYER_EYE_IN_WATER, world_get_block(floor_integer(l_x), floor_integer(l_y + l_eye_height), floor_integer(l_z)) == BLOCK_WATER);
 
   player_set_position(p_player, l_x, l_y, l_z);
   player_set_velocity(p_player, l_vx, l_vy, l_vz);

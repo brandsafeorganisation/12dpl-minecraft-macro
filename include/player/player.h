@@ -30,6 +30,9 @@
 #define ATTR_PLAYER_AUTO_WALK    ("auto_walk")
 #define ATTR_PLAYER_FLYING       ("flying")
 #define ATTR_FLY_DOWN_UNTIL      ("fly_down_until")
+#define ATTR_CROUCH_UNTIL        ("crouch_until")      // crouched by Shift + a key until then
+#define ATTR_CROUCH_TOGGLE       ("crouch_toggle")     // crouched by C until C is pressed again
+#define ATTR_CROUCHING           ("crouching")         // crouched this frame
 #define ATTR_MOVE_KEY            ("move_key")
 #define ATTR_MOVE_UNTIL          ("move_until")
 #define ATTR_MOVE_LAST           ("move_last")
@@ -86,6 +89,8 @@ Integer player_break_stage     (Attributes &p_player, Real p_now);
 // ---------------------------------------------------------------- behaviour
 void    player_turn            (Attributes &p_player, Real p_yaw_change, Real p_pitch_change);
 void    player_key_pressed     (Attributes &p_player, Text p_key, Real p_now);
+void    player_shift_pressed   (Attributes &p_player, Real p_now);
+Integer player_crouching       (Attributes &p_player);
 void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_events);
 Integer player_flying          (Attributes &p_player);
 void    player_set_flying      (Attributes &p_player, Integer p_flying);

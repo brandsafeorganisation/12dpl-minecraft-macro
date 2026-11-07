@@ -14,6 +14,13 @@ call plant_row
 wait 3
 snap 180_plants_front
 wait 1
+call aim_poppy
+call aim_torch
+wait 1
+snap 183_torch_outline
+wait 1
+call restore_pos
+wait 2
 look 120 0
 wait 2
 snap 181_plants_angle

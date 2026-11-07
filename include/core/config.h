@@ -43,6 +43,9 @@
 #define FLY_SPEED_FACTOR     1.8      // horizontal speed while flying
 #define FLY_VERTICAL_SPEED   6.0      // blocks per second up (Space) or down (C)
 #define FLY_KEY_SECONDS      0.25     // a press of Space or C moves this long
+#define CROUCH_EYE_HEIGHT    1.27     // eye height while crouching
+#define CROUCH_SPEED_FACTOR  0.3      // walking speed while crouching
+#define CROUCH_HOLD_SECONDS  0.6      // a Shift + key press keeps you crouched this long
 #define FALL_DAMAGE_START    3.0
 #define REGEN_SECONDS        4.0
 #define BREAK_RESET_SECONDS  1.2

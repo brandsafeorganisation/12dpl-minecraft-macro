@@ -44,6 +44,7 @@
 #define BLOCK_LIT_FURNACE_NZ  32   // item for them
 #define MAX_BLOCK_ID          28   // highest block that is also an item
 #define TORCH_LIGHT           14
+#define DESTROY_STAGES        10   // crack stages shown while a block is broken
 #define FURNACE_LIGHT         13
 
 #define ITEM_NONE             0
@@ -116,6 +117,7 @@
 
 Integer block_is_solid       (Integer p_block);
 Integer block_is_plant       (Integer p_block);
+Integer block_box            (Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z);
 Integer block_hides_faces    (Integer p_block);
 Integer block_light_emission (Integer p_block);
 Integer block_is_see_through (Integer p_block);

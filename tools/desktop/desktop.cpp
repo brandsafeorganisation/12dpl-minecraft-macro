@@ -312,6 +312,9 @@ static LRESULT CALLBACK view_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
     }
     case WM_KEYDOWN:
       if (w == VK_ESCAPE) push_event(key_box_of(panel_of(id)), "keystroke", "q");
+      // Shift alone types nothing; held down it repeats, which the
+      // game reads as crouching (or sinking while flying)
+      if (w == VK_SHIFT) push_event(key_box_of(panel_of(id)), "keystroke", "shift");
       return 0;
     case WM_GETDLGCODE: return DLGC_WANTALLKEYS | DLGC_WANTCHARS;
   }
