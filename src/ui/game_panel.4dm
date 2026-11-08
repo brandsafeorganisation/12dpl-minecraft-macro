@@ -196,6 +196,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
   Text      l_msg             = "";
   Text      l_key             = "";
   Integer   l_chatting        = FALSE;   // a chat line is being typed (T or /)
+  Integer   l_was_flying      = FALSE;   // flying before a key that may have toggled it
   Text      l_chat            = "";
   Text      l_reply           = "";
   Text      l_why             = "";
@@ -507,7 +508,15 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
           if (l_key == "shift") player_shift_pressed(g_player, l_now);
           if (l_key == "w" || l_key == "a" || l_key == "s" || l_key == "d" || l_key == " " || l_key == "c") {
             if (l_msg != l_key) player_shift_pressed(g_player, l_now);
+            l_was_flying = player_flying(g_player);
             player_key_pressed(g_player, l_key, l_now);
+            if (player_flying(g_player) != l_was_flying) {
+              if (l_was_flying) {
+                hud_toast(g_hud, "Flying off", l_now);
+              } else {
+                hud_toast(g_hud, "Flying: Space goes up, Shift or C goes down, double Space lands", l_now);
+              }
+            }
             // a movement key while paused carries on (the keys only
             // reach the game while its panel has the focus)
             if (!l_captured) {
@@ -551,14 +560,6 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
             settings_save(g_settings, save_settings_path());
           }
           if (l_key == "o") l_open_settings = TRUE;
-          if (l_key == "g") {
-            player_set_flying(g_player, !player_flying(g_player));
-            if (player_flying(g_player)) {
-              hud_toast(g_hud, "Flying: Space goes up, C goes down, G lands", l_now);
-            } else {
-              hud_toast(g_hud, "Flying off", l_now);
-            }
-          }
           if (l_key == "p") {
             if (player_pick_block(g_player, g_inventory, l_report)) {
               hud_show_name(g_hud, l_now);
@@ -588,7 +589,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
         if (l_chatting) {
           if (Get_subtext(l_chat, 1, 1) == "/") {
             hud_chat(g_hud, l_chat, l_now);
-            l_reply = command_run(l_chat, g_info, g_inventory);
+            l_reply = command_run(l_chat, g_info, g_player, g_inventory);
             hud_chat(g_hud, l_reply, l_now);
           } else if (l_chat != "") {
             hud_chat(g_hud, "<You> " + l_chat, l_now);

@@ -422,14 +422,19 @@ void render_add_shaped(Integer p_x, Integer p_y, Integer p_z, Integer p_block, R
   Real    l_half_f = 0.0;
   Real    l_half_s = 0.0;
   Integer l_tex    = 0;
+  Integer l_edge   = 0;
   Integer l_facing = 0;
 
   block_box(p_block, l_min_x, l_min_y, l_min_z, l_max_x, l_max_y, l_max_z);
   g_box_light = p_light;
 
   if (block_is_door(p_block)) {
-    l_tex = TEX_DOOR_BOTTOM;
-    if (block_door_top(p_block)) l_tex = TEX_DOOR_TOP;
+    l_tex  = TEX_DOOR_BOTTOM;
+    l_edge = TEX_DOOR_EDGE_BOTTOM;
+    if (block_door_top(p_block)) {
+      l_tex  = TEX_DOOR_TOP;
+      l_edge = TEX_DOOR_EDGE_TOP;
+    }
     // the box faces across its thin side
     l_yaw    = 0.0;
     l_half_f = (l_max_x - l_min_x) * 0.5;
@@ -440,7 +445,7 @@ void render_add_shaped(Integer p_x, Integer p_y, Integer p_z, Integer p_block, R
       l_half_s = (l_max_x - l_min_x) * 0.5;
     }
     render_add_box(p_x + (l_min_x + l_max_x) * 0.5, p_y + 0.5, p_z + (l_min_z + l_max_z) * 0.5, l_yaw, 0.0,
-                   l_half_f, 0.5, l_half_s, TEX_PLANKS, TEX_PLANKS, l_tex, l_tex, 0.0, -1.0);
+                   l_half_f, 0.5, l_half_s, l_edge, l_edge, l_tex, l_tex, 0.0, -1.0);
     return;
   }
 

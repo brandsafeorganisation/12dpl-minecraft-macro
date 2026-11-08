@@ -24,10 +24,12 @@ void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)
   Real    l_yaw      = record_real   (p_player, ATTR_YAW);
   Real    l_pitch    = record_real   (p_player, ATTR_PITCH);
   Integer l_selected = record_integer(p_player, ATTR_PLAYER_SELECTED);
+  Integer l_creative = record_integer(p_player, ATTR_PLAYER_CREATIVE);
 
   if (l_selected < 1) l_selected = 1;
 
   record_clear(p_player, DATATYPE_PLAYER);
+  record_set_integer(p_player, ATTR_PLAYER_CREATIVE, l_creative);
   player_set_position (p_player, p_x, p_y, p_z);
   player_set_velocity (p_player, 0.0, 0.0, 0.0);
   player_set_look     (p_player, l_yaw, l_pitch);
@@ -50,6 +52,9 @@ void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)
   record_set_real   (p_player, ATTR_MOVE_START,          0.0);
   record_set_integer(p_player, ATTR_MOVE_HELD,           FALSE);
   record_set_real   (p_player, ATTR_JUMP_UNTIL,          0.0);
+  record_set_real   (p_player, ATTR_SPACE_LAST,          0.0);
+  record_set_real   (p_player, ATTR_SPACE_GAP,           0.0);
+  record_set_integer(p_player, ATTR_PLAYER_FLYING,       FALSE);
   record_set_integer(p_player, ATTR_TARGET_KIND,         TARGET_NONE);
   record_set_integer(p_player, ATTR_TARGET_X,            0);
   record_set_integer(p_player, ATTR_TARGET_Y,            0);
@@ -370,7 +375,8 @@ void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_ev
 
 Integer player_flying(Attributes &p_player)
 // ----------------------------------------------------------------
-// TRUE while fly mode is on (no gravity, Space rises, C sinks)
+// TRUE while fly mode is on (no gravity, Space rises, C sinks);
+// only creative mode can fly
 // ----------------------------------------------------------------
 {
   return record_integer(p_player, ATTR_PLAYER_FLYING);
@@ -388,6 +394,29 @@ void player_set_flying(Attributes &p_player, Integer p_flying)
   player_position(p_player, l_x, l_y, l_z);
   record_set_integer  (p_player, ATTR_PLAYER_FLYING, p_flying);
   player_set_fall_peak(p_player, l_y);
+}
+
+Integer player_creative(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE in creative mode: no health or damage, zombies leave you
+// alone, and a double tap of Space flies
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_PLAYER_CREATIVE) == TRUE;
+}
+
+void player_set_creative(Attributes &p_player, Integer p_creative)
+// ----------------------------------------------------------------
+// Switch between creative (TRUE) and survival (FALSE). Survival
+// can't fly, so it lands you; creative starts at full health.
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_player, ATTR_PLAYER_CREATIVE, p_creative == TRUE);
+  if (p_creative == TRUE) {
+    player_set_health(p_player, PLAYER_MAX_HEALTH);
+  } else if (player_flying(p_player)) {
+    player_set_flying(p_player, FALSE);
+  }
 }
 
 Integer player_pick_block(Attributes &p_player, Attributes &p_inventory, Text &p_report)
@@ -441,6 +470,7 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
   Text l_move_key   = record_text(p_player, ATTR_MOVE_KEY);
   Real l_move_last  = record_real(p_player, ATTR_MOVE_LAST);
   Real l_move_until = record_real(p_player, ATTR_MOVE_UNTIL);
+  Real l_gap        = 0.0;
 
   if (p_key == "w" || p_key == "a" || p_key == "s" || p_key == "d") {
     if (p_key == l_move_key && p_now - l_move_last < HELD_KEY_WINDOW) {
@@ -467,6 +497,17 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
   }
 
   if (p_key == " ") {
+    // Two quick taps fly or land in creative mode. A held Space
+    // repeats faster than DOUBLE_TAP_MIN, and the tap before has to
+    // stand on its own, so holding it or tapping on doesn't toggle.
+    l_gap = p_now - record_real(p_player, ATTR_SPACE_LAST);
+    if (player_creative(p_player) && l_gap >= DOUBLE_TAP_MIN && l_gap <= DOUBLE_TAP_MAX
+        && record_real(p_player, ATTR_SPACE_GAP) > DOUBLE_TAP_MAX) {
+      player_set_flying(p_player, !player_flying(p_player));
+      l_gap = 0.0;
+    }
+    record_set_real(p_player, ATTR_SPACE_GAP,  l_gap);
+    record_set_real(p_player, ATTR_SPACE_LAST, p_now);
     record_set_real(p_player, ATTR_JUMP_UNTIL, p_now + 0.25);
     if (l_move_until > p_now - 0.15) {
       record_set_real   (p_player, ATTR_MOVE_UNTIL, max_real(l_move_until, p_now + 0.55));
@@ -506,6 +547,7 @@ void player_damage(Attributes &p_player, Attributes &p_events, Integer p_amount)
   Integer l_health = player_health(p_player) - p_amount;
 
   if (player_is_dead(p_player) || p_amount <= 0) return;
+  if (player_creative(p_player)) return;
 
   player_set_health(p_player, l_health);
   record_set_real  (p_player, ATTR_PLAYER_HURT,  0.4);

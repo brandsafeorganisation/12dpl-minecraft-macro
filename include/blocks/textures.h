@@ -105,13 +105,15 @@
 #define TEX_DOOR_BOTTOM        93
 #define TEX_ITEM_DOOR          94
 #define TEX_BED_FOOT_TOP       95     // top of a bed's foot half (TEX_BED_TOP is the head)
-#define NUM_TEXTURES           95
+#define TEX_DOOR_EDGE_TOP      96     // the thin edges of a door, made from the door's outer columns
+#define TEX_DOOR_EDGE_BOTTOM   97
+#define NUM_TEXTURES           97
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         24320  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         24832  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       760    // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      380    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       776    // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      388    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

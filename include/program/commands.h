@@ -10,6 +10,7 @@
 //   /time query daytime|gametime|day
 //   /gamerule doDaylightCycle [true|false]
 //   /give <player> <item> [count]
+//   /gamemode creative|survival
 //   /help
 // Times are in the block game's ticks: 24000 to a day, 0 at
 // sunrise, 6000 at noon.
@@ -25,6 +26,7 @@ Integer command_time_value   (Text p_word, Integer &p_ticks);
 Text    command_time         (Dynamic_Text &p_words, Integer p_count, Attributes &p_info);
 Text    command_gamerule     (Dynamic_Text &p_words, Integer p_count, Attributes &p_info);
 Text    command_give         (Dynamic_Text &p_words, Integer p_count, Attributes &p_inventory);
-Text    command_run          (Text p_line, Attributes &p_info, Attributes &p_inventory);
+Text    command_gamemode     (Dynamic_Text &p_words, Attributes &p_player);
+Text    command_run          (Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory);
 
 #endif

@@ -408,10 +408,6 @@ void ui_draw_furnace(Draw_Box p_box, Attributes &p_furnaces, Integer p_furnace, 
   }
 
   ui_draw_arrow(p_box, l_inv_x + l_slot_size * 3.4, l_top_y + l_slot_size * 1.5, l_slot_size * 1.6, l_slot_size, l_progress);
-
-  hud_text(p_box, l_inv_x, l_top_y + l_slot_size * 2.7, 11.0, TEXT_ALIGN_LEFT, UI_HINT_R, UI_HINT_G, UI_HINT_B, "Cook");
-  hud_text(p_box, l_inv_x, l_top_y + l_slot_size * 0.7, 11.0, TEXT_ALIGN_LEFT, UI_HINT_R, UI_HINT_G, UI_HINT_B, "Fuel");
-  hud_text(p_box, l_inv_x + l_slot_size * 6.9, l_top_y + l_slot_size * 1.7, 11.0, TEXT_ALIGN_LEFT, UI_HINT_R, UI_HINT_G, UI_HINT_B, "Result");
 }
 
 void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid,
@@ -445,7 +441,6 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
   Real    l_x         = 0.0;
   Real    l_y         = 0.0;
   Real    l_size      = 0.0;
-  Text    l_title     = "";
   Text    l_name      = "";
 
   ui_mouse (p_ui, l_mouse_x, l_mouse_y);
@@ -460,14 +455,6 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
   render_fill_rect (p_box, l_x0, l_y0, l_x1, l_y1);
   render_set_colour(p_box, UI_FRAME_R, UI_FRAME_G, UI_FRAME_B);
   hud_frame(p_box, l_x0, l_y0, l_x1, l_y1);
-
-  if (l_screen == SCREEN_INVENTORY) l_title = "Inventory - crafting (2 x 2)";
-  if (l_screen == SCREEN_CRAFTING ) l_title = "Crafting Table (3 x 3)";
-  if (l_screen == SCREEN_FURNACE  ) l_title = "Furnace";
-  if (l_screen == SCREEN_CHEST    ) l_title = "Chest";
-  hud_text(p_box, l_inv_x, l_y1 - 8.0, 15.0, TEXT_ALIGN_LEFT, UI_TEXT_R, UI_TEXT_G, UI_TEXT_B, l_title);
-  hud_text(p_box, l_x1 - 150.0, l_y1 - 10.0, 11.0, TEXT_ALIGN_LEFT, UI_HINT_R, UI_HINT_G, UI_HINT_B, "E or Q to close");
-  hud_text(p_box, l_inv_x, l_inv_y + l_slot_size * 4.0 + 8.0 + 18.0, 13.0, TEXT_ALIGN_LEFT, UI_TEXT_R, UI_TEXT_G, UI_TEXT_B, "Inventory");
 
   for (l_slot = 1; l_slot <= UI_SLOT_LAST; ++l_slot) {
     if (!ui_slot_rect(l_screen, l_width, l_slot, p_w, p_h, l_x, l_y, l_size)) continue;
@@ -514,10 +501,6 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
       } else {
         ui_draw_arrow(p_box, l_x - l_size * 1.5, l_y + l_size * 0.5, l_size * 0.9, l_size, 0.0);
       }
-    }
-    if (l_screen == SCREEN_INVENTORY) {
-      hud_text(p_box, l_inv_x + l_slot_size * 6.7, l_top_y + l_slot_size * 2.2, 11.0, TEXT_ALIGN_LEFT, UI_HINT_R, UI_HINT_G, UI_HINT_B, "Bigger things need");
-      hud_text(p_box, l_inv_x + l_slot_size * 6.7, l_top_y + l_slot_size * 2.2 - 14.0, 11.0, TEXT_ALIGN_LEFT, UI_HINT_R, UI_HINT_G, UI_HINT_B, "a crafting table");
     }
   }
 

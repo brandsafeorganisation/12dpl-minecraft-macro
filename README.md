@@ -42,12 +42,11 @@ for how to rebuild it after you change the macro.
 | Left click    | break blocks (harder blocks take more hits), hit animals     |
 | Right click   | place blocks, eat food, open crafting tables, furnaces and chests, sleep in beds, open and shut doors |
 | W A S D       | walk                                                         |
-| Space         | jump, swim up, fly up                                        |
+| Space         | jump, swim up, fly up; tap twice quickly to fly or land (creative mode) |
 | 1 - 9         | choose a hotbar slot                                         |
 | E             | inventory and 2 x 2 crafting (E or Q closes any screen)      |
 | Q             | pause and free the mouse                                     |
 | F / J         | auto-walk on/off, auto-jump on/off                           |
-| G             | fly on/off (no gravity, no fall damage)                      |
 | C             | crouch on/off (sink while flying)                            |
 | Shift + W A S D | crouch while held: slower, and you don't walk off edges (sink while flying) |
 | T             | chat; Enter sends the line, Escape drops it                  |
@@ -72,6 +71,7 @@ block game's ticks: 24000 to a day, 0 at sunrise, 6000 at noon.
 | `/time set day\|noon\|night\|midnight\|<ticks>` | set the time of day |
 | `/time add <ticks>` | move the clock on |
 | `/time query daytime\|gametime\|day` | say the time |
+| `/gamemode creative\|survival` | creative: no health or damage, zombies leave you alone, and a double tap of Space flies; survival (where every world starts) brings health back and lands you |
 | `/gamerule doDaylightCycle true\|false` | start or stop the clock (saved with the world) |
 | `/give <player> <item> [count]` | give yourself items, e.g. `/give @p oak_door 3` or `/give @p minecraft:torch 64` (any player name means you) |
 | `/help` | list the commands |
@@ -182,8 +182,10 @@ it: it loads the chosen file for itself, then and every time it starts.
 - **Player:** 1.8 blocks tall, with 5 blocks of reach, gravity and collision,
   swimming, fall damage, a 10-heart health bar and slow healing. **C** (or
   Shift with a movement key) crouches: lower, slower, and you stop at
-  edges instead of walking off. **G** turns on flying: no gravity, Space
-  rises, C or Shift sinks, and you still collide with blocks.
+  edges instead of walking off. Worlds start in survival; in creative mode
+  (`/gamemode creative`) you take no damage, zombies ignore you, and a
+  double tap of Space turns on flying: no gravity, Space rises, C or Shift
+  sinks, and you still collide with blocks.
 - **Breaking and placing:** a block being broken cracks in 10 pixel-art
   stages (the resource pack's `destroy_stage` images if it has them).
   Broken blocks drop as items that are picked up when you walk near them.

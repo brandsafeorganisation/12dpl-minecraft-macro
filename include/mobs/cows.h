@@ -84,7 +84,7 @@ Integer mobs_spawn_random  (Attributes &p_cows, Attributes &p_random, Integer p_
 void    cow_update         (Attributes &p_cows, Attributes &p_random, Attributes &p_events, Integer p_cow,
                             Real p_player_x, Real p_player_y, Real p_player_z, Real p_dt);
 void    cows_update        (Attributes &p_cows, Attributes &p_random, Attributes &p_events,
-                            Real p_player_x, Real p_player_y, Real p_player_z, Integer p_night, Integer p_player_dead, Real p_dt);
+                            Real p_player_x, Real p_player_y, Real p_player_z, Integer p_night, Integer p_leave_player, Real p_dt);
 Integer cows_ray_hit       (Attributes &p_cows, Real p_origin_x, Real p_origin_y, Real p_origin_z, Real p_dir_x, Real p_dir_y, Real p_dir_z,
                             Real p_max_distance, Real &p_distance);
 void    cow_damage         (Attributes &p_cows, Attributes &p_events, Attributes &p_random, Integer p_cow, Integer p_amount, Real p_push_x, Real p_push_z);

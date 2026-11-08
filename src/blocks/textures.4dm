@@ -1654,6 +1654,31 @@ void make_texture_bed_foot_top(Integer p_tex)
   texture_fill_rect(p_tex, 2 , 12, 15, 13, 2);
 }
 
+void make_texture_door_edge(Integer p_tex, Integer p_door_tex)
+// ----------------------------------------------------------------
+// The thin edge of a door: its picture's three outer columns
+// stretched across, so squeezed onto the 3 pixel wide edge they look
+// like the door's own frame (and follow a resource pack's door)
+// ----------------------------------------------------------------
+{
+  Integer l_u     = 0;
+  Integer l_v     = 0;
+  Integer l_index = 0;
+  Integer l_from  = 0;
+
+  for (l_index = 1; l_index <= PALETTE_SIZE; ++l_index) {
+    g_tex_pal_r[texture_palette_index(p_tex, l_index)] = g_tex_pal_r[texture_palette_index(p_door_tex, l_index)];
+    g_tex_pal_g[texture_palette_index(p_tex, l_index)] = g_tex_pal_g[texture_palette_index(p_door_tex, l_index)];
+    g_tex_pal_b[texture_palette_index(p_tex, l_index)] = g_tex_pal_b[texture_palette_index(p_door_tex, l_index)];
+  }
+  for (l_v = 1; l_v <= 16; ++l_v) {
+    for (l_u = 1; l_u <= 16; ++l_u) {
+      l_from = Floor((l_u - 1) * 3.0 / 16.0);
+      texture_set(p_tex, l_u, l_v, texture_get(p_door_tex, 1 + l_from, l_v));
+    }
+  }
+}
+
 Integer texture_is_sprite(Integer p_tex)
 // ----------------------------------------------------------------
 // TRUE for the textures drawn as pictures with see-through pixels
@@ -1680,6 +1705,10 @@ void textures_finish_all()
 // ----------------------------------------------------------------
 {
   Integer l_tex = 0;
+
+  // made from other textures here, so they follow a resource pack's
+  make_texture_door_edge(TEX_DOOR_EDGE_TOP,    TEX_DOOR_TOP);
+  make_texture_door_edge(TEX_DOOR_EDGE_BOTTOM, TEX_DOOR_BOTTOM);
 
   g_rect_total = 0;
   for (l_tex = 1; l_tex <= NUM_TEXTURES; ++l_tex) texture_finish(l_tex);

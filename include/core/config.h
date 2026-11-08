@@ -43,6 +43,8 @@
 #define FLY_SPEED_FACTOR     1.8      // horizontal speed while flying
 #define FLY_VERTICAL_SPEED   6.0      // blocks per second up (Space) or down (C)
 #define FLY_KEY_SECONDS      0.25     // a press of Space or C moves this long
+#define DOUBLE_TAP_MIN       0.08     // two Spaces this far apart (no closer: that's a held key
+#define DOUBLE_TAP_MAX       0.35     // repeating) turn flying on or off in creative mode
 #define CROUCH_EYE_HEIGHT    1.27     // eye height while crouching
 #define CROUCH_SPEED_FACTOR  0.3      // walking speed while crouching
 #define CROUCH_HOLD_SECONDS  0.6      // a Shift + key press keeps you crouched this long
@@ -53,10 +55,10 @@
 // Movement keys: a fresh press moves for TAP_TIME seconds, easing from
 // TAP_START_SPEED to full speed over TAP_RAMP seconds. Auto-repeat of
 // a held key keeps it going. There are no key-up events in 12d.
-#define TAP_TIME             0.36
+#define TAP_TIME             0.55     // longer than Windows' usual 0.5 s wait before a key repeats
 #define TAP_START_SPEED      0.6
 #define TAP_RAMP             0.3
-#define HELD_KEY_WINDOW      0.6
+#define HELD_KEY_WINDOW      0.8
 #define HELD_KEY_EXTEND      0.12
 
 // ---------------------------------------------------------------- inventory

@@ -29,6 +29,9 @@
 #define ATTR_PLAYER_SELECTED     ("selected")
 #define ATTR_PLAYER_AUTO_WALK    ("auto_walk")
 #define ATTR_PLAYER_FLYING       ("flying")
+#define ATTR_PLAYER_CREATIVE     ("creative")          // TRUE in creative mode (/gamemode)
+#define ATTR_SPACE_LAST          ("space_last")        // when Space last arrived
+#define ATTR_SPACE_GAP           ("space_gap")         // seconds between the last two Spaces
 #define ATTR_FLY_DOWN_UNTIL      ("fly_down_until")
 #define ATTR_CROUCH_UNTIL        ("crouch_until")      // crouched by Shift + a key until then
 #define ATTR_CROUCH_TOGGLE       ("crouch_toggle")     // crouched by C until C is pressed again
@@ -99,6 +102,8 @@ Integer player_crouching       (Attributes &p_player);
 void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_events);
 Integer player_flying          (Attributes &p_player);
 void    player_set_flying      (Attributes &p_player, Integer p_flying);
+Integer player_creative        (Attributes &p_player);
+void    player_set_creative    (Attributes &p_player, Integer p_creative);
 Integer player_pick_block      (Attributes &p_player, Attributes &p_inventory, Text &p_report);
 Integer player_key_active      (Attributes &p_player, Text p_key, Real p_now);
 void    player_damage          (Attributes &p_player, Attributes &p_events, Integer p_amount);

@@ -131,7 +131,7 @@ that were looked up most often (to find hot spots).
 | `11_save_and_load`            | items, tool wear, a furnace and block edits survive save and load |
 | `12_delete_world`             | deleting a world empties and hides its file; the name can be reused |
 | `13_resource_pack`            | a missing pack is reported; the test pack loads from its folder and from its zip (see below) |
-| `14_iron_fly_pick`            | iron ore needs a stone pickaxe, iron recipes, pick block, hiding the HUD, frame statistics, flying |
+| `14_iron_fly_pick`            | iron ore needs a stone pickaxe, iron recipes, pick block, hiding the HUD, frame statistics, a double Space that does nothing in survival, then /gamemode creative and flying |
 | `15_night_torches_zombies`    | a torch lights a cave and the light goes when it's broken; sunset and night skies; a zombie walks up and hits, a sword kills it; zombies spawn at night and burn at noon; glass; the house at night; a bed skips to morning and sets the spawn point |
 | `16_chest`                    | items put in a chest survive save and load and spill out when it's broken |
 | `17_mob_models`               | the cow from the front, side and back, and a zombie, with their per-face textures |
@@ -139,8 +139,8 @@ that were looked up most often (to find hot spots).
 | `19_fonts`                    | the font list, a typed font name, family names read from font files (Windows and Mac names, a collection, a file that isn't a font, a missing file), and the game drawing its text with the chosen font; run `make_test_fonts.py` first |
 | `20_lit_furnace`              | a furnace with fuel becomes a lit furnace block that gives off light, and goes dark again when it stops burning |
 | `21_pigs`                     | a new world has pigs; the pig model from the side and the front; a pig killed with a sword drops raw porkchops |
-| `22_doors_beds_crouch`        | a door placed, opened, shut and walked into; a two block bed placed and broken (one bed drops); Shift stops you at a hole's edge; Shift sinks while flying; the house's door and bed |
-| `23_chat_commands`            | T and / open the chat line; /time set and add, /gamerule doDaylightCycle (the clock stops), /give (with and without minecraft:), an unknown item and command, Escape |
+| `22_doors_beds_crouch`        | a door placed, opened, shut and walked into; the door's edge; a two block bed placed and broken (one bed drops); Shift stops you at a hole's edge; Shift sinks while flying; the house's door and bed |
+| `23_chat_commands`            | T and / open the chat line; /time set and add, /gamerule doDaylightCycle (the clock stops), /give (with and without minecraft:), an unknown item and command, Escape, /gamemode creative (no hearts) and survival |
 
 ### Font files
 

@@ -22,6 +22,14 @@ call aim_door
 wait 1
 snap 220_door_shut
 wait 1
+# the door's thin edge shows its frame
+call view_door_edge
+wait 1
+snap 225_door_edge
+wait 1
+call restore_pos
+call aim_door
+wait 1
 caprclick
 wait 1
 call cells
@@ -35,6 +43,16 @@ call cells
 call face_x
 holdkey w 30
 call cells
+# flying needs creative mode: double Space does nothing in survival
+key space
+wait 3
+key space
+wait 2
+call dump
+key /
+type gamemode creative
+enter
+wait 1
 call face_x
 call hold_bed
 call aim_ground_side
@@ -59,12 +77,16 @@ holdkey W 40
 call cells
 holdkey w 30
 call cells
-key g
+key space
+wait 3
+key space
 holdkey space 20
 call cells
 holdkey W 10
 call cells
-key g
+key space
+wait 3
+key space
 call house_inside
 wait 2
 snap 223_house_bed

@@ -55,14 +55,28 @@ key i
 call to_hill
 wait 10
 call dump
-key g
+# flying needs creative mode: double Space does nothing in survival
+key space
+wait 3
+key space
+wait 2
+call dump
+key /
+type gamemode creative
+enter
+wait 1
+key space
+wait 3
+key space
 holdkey space 20
 wait 2
 call dump
 holdkey c 40
 wait 10
 call dump
-key g
+key space
+wait 3
+key space
 wait 20
 call dump
 quit

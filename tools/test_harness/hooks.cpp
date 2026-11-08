@@ -136,6 +136,7 @@ static void register_hooks(){
   g_calls["aim_ground_side"]=[]{ double dx=s_ox+1.5-px(), dy=s_oy-0.02-player_eye_y(g_player), dz=s_oz-1.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
   g_calls["aim_door"]=[]{ double dx=s_ox+2.9-px(), dy=s_oy+1.0-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
   g_calls["aim_open_door"]=[]{ double dx=s_ox+2.5-px(), dy=s_oy+1.0-player_eye_y(g_player), dz=s_oz+0.9-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["view_door_edge"]=[]{ player_position(g_player,s_saved_x,s_saved_y,s_saved_z); player_reset(g_player,s_ox+1.2,s_oy+0.01,s_oz+1.9); double dx=s_ox+2.9-px(), dy=s_oy+1.0-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
   g_calls["aim_bed_head"]=[]{ double dx=s_ox+1.5-px(), dy=s_oy+0.3-player_eye_y(g_player), dz=s_oz-2.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
   g_calls["cells"]=[]{ printf("[hook] door cells %d %d   bed cells %d %d %d %d (beside: %d %d)\n",
        world_get_block(s_ox+2,s_oy,s_oz),world_get_block(s_ox+2,s_oy+1,s_oz),

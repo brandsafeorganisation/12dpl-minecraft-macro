@@ -443,14 +443,13 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
   hud_help_line(p_box, l_x, l_y, "Right click"    , "place blocks, eat, use tables and furnaces, open doors");
   hud_help_heading(p_box, l_x, l_y, "KEYBOARD");
   hud_help_line(p_box, l_x, l_y, "W A S D"        , "walk (hold one key at a time)");
-  hud_help_line(p_box, l_x, l_y, "Space"          , "jump, swim up, fly up");
+  hud_help_line(p_box, l_x, l_y, "Space"          , "jump, swim up, fly up; twice quickly to fly in creative");
   hud_help_line(p_box, l_x, l_y, "1 - 9"          , "choose a hotbar slot");
   hud_help_line(p_box, l_x, l_y, "E"              , "inventory and 2 x 2 crafting");
   hud_help_line(p_box, l_x, l_y, "Q"              , "pause and free the mouse, or close a screen");
   hud_help_line(p_box, l_x, l_y, "F / J"          , "auto-walk on/off, auto-jump on/off");
   hud_help_line(p_box, l_x, l_y, "C / Shift + W"  , "crouch on/off, crouch while held (both sink when flying)");
-  hud_help_line(p_box, l_x, l_y, "G"              , "fly on/off");
-  hud_help_line(p_box, l_x, l_y, "T / slash"      , "chat, or a command: /time /gamerule /give /help");
+  hud_help_line(p_box, l_x, l_y, "T / slash"      , "chat, or a command: /gamemode /time /gamerule /give /help");
   hud_help_line(p_box, l_x, l_y, "P / U"          , "pick the block you look at, hide the HUD");
   hud_help_line(p_box, l_x, l_y, "- / ="          , "shorter / longer view distance");
   hud_help_line(p_box, l_x, l_y, "I / H / O"      , "position info, this help, settings");
@@ -578,6 +577,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   l_info = l_info + "   seed " + To_text(p_seed) + "   view " + To_text(settings_render_distance(p_settings))
        + "   " + To_text(p_frame_ms, 1) + " ms";
   if (settings_flag(p_settings, ATTR_SET_SHOW_DEBUG) && hud_frame_stats(p_hud) != "") l_info = l_info + "   " + hud_frame_stats(p_hud);
+  if (player_creative(p_player)) l_info = l_info + "   CREATIVE";
   if (player_flying(p_player)) l_info = l_info + "   FLYING";
   if (player_crouching(p_player)) l_info = l_info + "   CROUCHING";
   if (player_auto_walk(p_player)) l_info = l_info + "   AUTO-WALK";
@@ -601,7 +601,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
                     slot_item(p_inventory, l_slot), slot_count(p_inventory, l_slot), slot_damage(p_inventory, l_slot),
                     l_slot == player_selected(p_player));
     }
-    hud_draw_health(p_box, l_bar_x, l_bar_y + l_slot_size + 8.0, l_slot_size * 4.5 - 4.0, player_health(p_player), p_now);
+    if (!player_creative(p_player)) hud_draw_health(p_box, l_bar_x, l_bar_y + l_slot_size + 8.0, l_slot_size * 4.5 - 4.0, player_health(p_player), p_now);
 
     // Name of the item just selected
     if (p_now < record_real(p_hud, ATTR_HUD_NAME_UNTIL) && l_held != ITEM_NONE) {

@@ -7,6 +7,7 @@
 #include "../../include/blocks/blocks.h"
 #include "../../include/items/inventory.h"
 #include "../../include/world/world.h"
+#include "../../include/player/player.h"
 #include "../../include/program/commands.h"
 
 Text command_word(Dynamic_Text &p_words, Integer p_position)
@@ -165,7 +166,30 @@ Text command_give(Dynamic_Text &p_words, Integer p_count, Attributes &p_inventor
   return "Gave " + To_text(l_amount) + " " + item_name(l_item) + " to " + l_target;
 }
 
-Text command_run(Text p_line, Attributes &p_info, Attributes &p_inventory)
+Text command_gamemode(Dynamic_Text &p_words, Attributes &p_player)
+// ----------------------------------------------------------------
+// /gamemode creative|survival (also c, s, 1, 0): creative has no
+// health, isn't attacked and flies with a double tap of Space
+// ----------------------------------------------------------------
+{
+  Text l_mode = Text_lower(command_word(p_words, 2));
+
+  if (l_mode == "creative" || l_mode == "c" || l_mode == "1") {
+    player_set_creative(p_player, TRUE);
+    return "Set own game mode to Creative (double tap Space to fly)";
+  }
+  if (l_mode == "survival" || l_mode == "s" || l_mode == "0") {
+    player_set_creative(p_player, FALSE);
+    return "Set own game mode to Survival";
+  }
+  if (l_mode == "") {
+    if (player_creative(p_player)) return "Your game mode is Creative";
+    return "Your game mode is Survival";
+  }
+  return "Unknown game mode: " + command_word(p_words, 2) + " (creative or survival)";
+}
+
+Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory)
 // ----------------------------------------------------------------
 // Carry out a chat command (p_line starts with "/") and return what
 // to show in the chat
@@ -182,7 +206,8 @@ Text command_run(Text p_line, Attributes &p_info, Attributes &p_inventory)
   if (l_name == "time"    ) return command_time    (l_words, l_count, p_info);
   if (l_name == "gamerule") return command_gamerule(l_words, l_count, p_info);
   if (l_name == "give"    ) return command_give    (l_words, l_count, p_inventory);
-  if (l_name == "help"    ) return "Commands: /time set|add|query, /gamerule doDaylightCycle true|false, /give <player> <item> [count]";
+  if (l_name == "gamemode") return command_gamemode(l_words, p_player);
+  if (l_name == "help"    ) return "Commands: /gamemode creative|survival, /time set|add|query, /gamerule doDaylightCycle true|false, /give <player> <item> [count]";
   return "Unknown command: /" + command_word(l_words, 1) + " (try /help)";
 }
 

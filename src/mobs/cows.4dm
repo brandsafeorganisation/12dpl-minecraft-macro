@@ -462,7 +462,7 @@ void cow_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events, 
 }
 
 void cows_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events,
-                 Real p_player_x, Real p_player_y, Real p_player_z, Integer p_night, Integer p_player_dead, Real p_dt)
+                 Real p_player_x, Real p_player_y, Real p_player_z, Integer p_night, Integer p_leave_player, Real p_dt)
 // ----------------------------------------------------------------
 // Move every cow and zombie near the player, top the herd back up
 // now and then away from where the player can see it happen, bring
@@ -481,8 +481,8 @@ void cows_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events,
   Real    l_respawn = record_real(p_cows, ATTR_COW_RESPAWN) + p_dt;
   Real    l_zombies = record_real(p_cows, ATTR_ZOMBIE_SPAWN) + p_dt;
 
-  // A dead player isn't chased
-  if (p_player_dead) {
+  // A dead player, or one in creative mode, isn't chased
+  if (p_leave_player) {
     l_target_x = -1000.0;
     l_target_z = -1000.0;
   }
@@ -501,7 +501,7 @@ void cows_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events,
 
   if (l_zombies > ZOMBIE_SPAWN_SECONDS) {
     l_zombies = 0.0;
-    if (p_night && !p_player_dead && mobs_count_kind(p_cows, MOB_ZOMBIE) < MAX_ZOMBIES) zombies_spawn_near(p_cows, p_random, p_player_x, p_player_z);
+    if (p_night && !p_leave_player && mobs_count_kind(p_cows, MOB_ZOMBIE) < MAX_ZOMBIES) zombies_spawn_near(p_cows, p_random, p_player_x, p_player_z);
   }
   record_set_real(p_cows, ATTR_ZOMBIE_SPAWN, l_zombies);
 
