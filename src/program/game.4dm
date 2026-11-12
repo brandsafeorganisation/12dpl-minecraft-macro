@@ -18,6 +18,7 @@
 #include "../../include/items/crafting.h"
 #include "../../include/items/furnace.h"
 #include "../../include/mobs/cows.h"
+#include "../../include/net/net.h"
 #include "../../include/items/drops.h"
 #include "../../include/player/player.h"
 #include "../../include/program/settings.h"
@@ -147,6 +148,75 @@ Integer game_load_world(Text p_name, Attributes &p_game, Attributes &p_info, Att
   return SUCCESS;
 }
 
+Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                  Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
+                  Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_folder, Text p_session,
+                  Text p_id, Text p_name, Real p_now, Text &p_problem)
+// ----------------------------------------------------------------
+// Host the world being played: put a copy of it in the multiplayer
+// folder and name the session there, so others can join
+// ----------------------------------------------------------------
+{
+  p_problem = "";
+  if (!net_ensure_folder(p_folder)) {
+    p_problem = "the multiplayer folder " + p_folder + " couldn't be made";
+    return FAILURE;
+  }
+  if (save_world_to(net_snapshot_path(p_folder, p_session), game_world_name(p_game), p_info, p_player, p_inventory,
+                    p_furnaces, p_cows, p_drops, p_events) != SUCCESS) {
+    p_problem = "the world couldn't be written to " + p_folder;
+    return FAILURE;
+  }
+  if (net_write_session(p_folder, p_session, p_id, world_info_seed(p_info), game_world_name(p_game)) != SUCCESS) {
+    p_problem = "the session file couldn't be written in " + p_folder;
+    return FAILURE;
+  }
+  net_start(p_net, p_peers, p_inbox, NET_HOST, p_folder, p_session, p_id, p_id, p_name, p_now);
+  events_clear(p_events);
+  return SUCCESS;
+}
+
+Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                  Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
+                  Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox,
+                  Text p_id, Text p_name, Real p_now, Text &p_problem)
+// ----------------------------------------------------------------
+// Join the game hosted in the multiplayer folder: load the host's
+// world as it was when hosting started (everyone's changes since
+// then are read from their logs) and start at the spawn point with
+// an empty inventory, in survival. Your own copy is saved as
+// "MP <world>".
+// ----------------------------------------------------------------
+{
+  Text    l_session = "";
+  Text    l_host    = "";
+  Text    l_world   = "";
+  Integer l_seed    = 0;
+  Real    l_x       = 0.0;
+  Real    l_y       = 0.0;
+  Real    l_z       = 0.0;
+
+  if (net_read_session(p_folder, l_session, l_host, l_seed, l_world, p_problem) != SUCCESS) return FAILURE;
+
+  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_events, p_hud, p_ui);
+  record_set_text (p_game, ATTR_GAME_WORLD_NAME, "MP " + l_world);
+  if (load_world_from(net_snapshot_path(p_folder, l_session), p_info, p_player, p_inventory, p_furnaces, p_cows,
+                      p_drops, p_problem) != SUCCESS) return FAILURE;
+
+  // the snapshot holds the host's player, chests and furnaces: start
+  // afresh (chests and furnaces fill up as you use them)
+  world_info_spawn   (p_info, l_x, l_y, l_z);
+  player_reset       (p_player, l_x, l_y + COLLISION_EPSILON, l_z);
+  player_set_creative(p_player, FALSE);
+  inventory_clear    (p_inventory);
+  furnaces_clear     (p_furnaces);
+  drops_clear        (p_drops);
+
+  net_start(p_net, p_peers, p_inbox, NET_GUEST, p_folder, l_session, l_host, p_id, p_name, p_now);
+  events_clear(p_events);
+  return SUCCESS;
+}
+
 Integer game_save_world(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                         Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)
 // ----------------------------------------------------------------
@@ -204,7 +274,7 @@ void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_events
 
 void game_dispatch_events(Attributes &p_events, Attributes &p_event, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                           Attributes &p_grid, Attributes &p_furnaces, Attributes &p_drops, Attributes &p_random,
-                          Attributes &p_hud, Attributes &p_ui, Real p_now)
+                          Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Real p_now)
 // ----------------------------------------------------------------
 // Hand every queued event to each module's handler. Handlers may
 // emit more events; those are dispatched in the same pass.
@@ -227,6 +297,7 @@ void game_dispatch_events(Attributes &p_events, Attributes &p_event, Attributes 
     drops_on_event  (p_event, p_drops, p_random);
     hud_on_event    (p_event, p_hud, p_now);
     ui_on_event     (p_event, p_ui, p_inventory, p_grid, p_furnaces, p_events, l_x, l_y + 1.3, l_z);
+    net_on_event    (p_event, p_net);
 
     ++l_guard;
     if (l_guard > EVENT_QUEUE_SIZE * 4) break;
@@ -237,7 +308,7 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
                  Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                  Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
                  Attributes &p_events, Attributes &p_event, Attributes &p_random, Attributes &p_settings,
-                 Attributes &p_hud, Attributes &p_ui)
+                 Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox)
 // ----------------------------------------------------------------
 // Advance the game by dt seconds (capped so a slow frame can't make
 // things jump). running is FALSE while paused or in a screen; then
@@ -251,6 +322,11 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
   Real l_autosave = record_real(p_game, ATTR_GAME_AUTOSAVE);
 
   furnaces_update(p_furnaces, p_events, p_real_dt);
+
+  // Multiplayer: what the others did since the last frame (read by
+  // the controller's net_poll), and where you are for them
+  net_apply     (p_net, p_peers, p_inbox, p_info, p_hud, p_events, p_real_dt, p_now);
+  net_send_state(p_net, p_player, p_info, p_now);
 
   if (p_running) {
     if (world_daylight_cycle(p_info)) world_advance_time(p_info, p_dt);
@@ -268,7 +344,7 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
     record_set_real(p_game, ATTR_GAME_AUTOSAVE, l_autosave);
   }
 
-  game_dispatch_events(p_events, p_event, p_info, p_player, p_inventory, p_grid, p_furnaces, p_drops, p_random, p_hud, p_ui, p_now);
+  game_dispatch_events(p_events, p_event, p_info, p_player, p_inventory, p_grid, p_furnaces, p_drops, p_random, p_hud, p_ui, p_net, p_now);
 }
 
 void game_select_slot(Attributes &p_player, Attributes &p_hud, Integer p_slot, Real p_now)

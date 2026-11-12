@@ -169,4 +169,14 @@ Text event_text(Attributes &p_event)
   return record_text(p_event, ATTR_TEXT);
 }
 
+Integer event_is_remote(Attributes &p_event)
+// ----------------------------------------------------------------
+// TRUE for a block event caused by another player: it was already
+// handled on their machine, so it drops nothing here and isn't sent
+// back to them
+// ----------------------------------------------------------------
+{
+  return event_real(p_event, 3) > EVENT_REMOTE * 0.5;
+}
+
 #endif

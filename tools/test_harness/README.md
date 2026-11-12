@@ -80,6 +80,7 @@ One command per line; `#` starts a comment.
 | `input <title>\|<text>` | type text into the input box with that title                   |
 | `button <reply>`       | press a button (`create`, `play`, `delete`, `save`, `quit`)    |
 | `select <n>`           | select the nth saved world in the menu                         |
+| `select_name <name>`   | select the saved world with that name in the menu              |
 | `click <x> <y>`        | left click the view at (x, y), from the bottom left            |
 | `rclick`, `lbdown`, `move` | right click, mouse down, or mouse move at (x, y)           |
 | `capclick`, `caprclick` | left or right click at the cursor while it's captured         |
@@ -141,6 +142,7 @@ that were looked up most often (to find hot spots).
 | `21_pigs`                     | a new world has pigs; the pig model from the side and the front; a pig killed with a sword drops raw porkchops |
 | `22_doors_beds_crouch`        | a door placed, opened, shut and walked into; the door's edge; a two block bed placed and broken (one bed drops); Shift stops you at a hole's edge; Shift sinks while flying; the house's door and bed |
 | `23_chat_commands`            | T and / open the chat line; /time set and add, /gamerule doDaylightCycle (the clock stops), /give (with and without minecraft:), an unknown item and command, Escape, /gamemode creative (no hearts) and survival |
+| `24_multiplayer`              | hosting a world; a made-up second player's log (joining, chat, walking, a block, a half written line, a clock the host ignores, leaving); the host's broken block in its log; joining the session gets the snapshot plus every log |
 
 ### Font files
 

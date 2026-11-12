@@ -82,6 +82,38 @@ moves you for a moment and holding the key keeps you moving. Space keeps your
 current movement going so you can run and jump, and auto-jump (on by default)
 hops up one-block steps for you.
 
+## Multiplayer
+
+12dPL can't open network connections, so copies of the game talk through
+a shared folder of text files. Each player appends what they do to their
+own log file there and reads everyone else's a few times a second.
+
+1. Every player sets the same **Multiplayer folder** in the settings. The
+   default, `cubeland_worlds\mp`, works for two copies of the game on one
+   PC. Across PCs use a shared network folder whose name is `cubeland_mp`,
+   such as `\\host-pc\shared\cubeland_mp` (see Safety below). A
+   **Multiplayer name** can be set there too; blank uses your Windows name.
+2. The host selects a world and presses **Host selected**. A copy of the
+   world goes into the folder.
+3. Everyone else presses **Join game**. They get the host's world as it was
+   when hosting started, plus every change anyone has made since, and start
+   at the spawn point with an empty inventory. Their own copy is saved as
+   `MP <world>`.
+
+What is shared: players (drawn with their names over their heads), every
+block placed or broken (doors, beds and water included), chat, and the
+host's time of day. Joining and leaving show in the chat; the top right
+lists who is playing, with "(away)" after a player who has gone quiet
+(usually paused). Someone silent for a minute is dropped.
+
+What isn't: inventories, chests and furnaces are each player's own (a
+chest someone else breaks spills your copy of its contents), and animals
+and zombies run separately on each machine. A game only reads and writes
+while its view is running, so a paused player catches up when they carry
+on. Over a network share, expect delays of a fraction of a second to a few
+seconds. Files in the folder are never deleted: each hosted session uses
+new file names.
+
 ## Resource packs
 
 The textures can come from a block game resource pack instead of the
@@ -264,6 +296,7 @@ include/<part>/*.h    each module's constants, record field names and prototypes
   program/            settings (the settings record and its file), save
                       (world files), commands (the chat commands), game
                       (starting worlds, the per-frame update, event dispatch)
+  net/                net (multiplayer through a shared folder of log files)
   ui/                 menu_panel, settings_panel, game_panel (the 12d panels:
                       the controllers), font (font names and files)
 tools/test_harness/   runs the macro as C++ for testing (not used by 12d)
@@ -335,6 +368,18 @@ is blocked: files are opened with `safe_file_open()`, which reads any
 file but only writes inside `cubeland_worlds`. You can check what the
 macro is able to do by reading that one file. Deleting a world therefore
 empties its file (the menu then hides it) instead of deleting it.
+
+Two switches at the top of `src/build.4dm` loosen it, and each prints a
+`#warning` when the macro compiles:
+
+- `SAFE_ALLOW_SHARE_FOLDER` (on): files may also be written in any folder
+  named `cubeland_mp`, for multiplayer across PCs.
+- `SAFETY_OFF` (off): none of the dangerous calls are blocked. The game
+  doesn't need any of them.
+
+12d's preprocessor reads an apostrophe in `#warning` or `#error` text as
+the start of an unterminated character, so write "do not", not "don't";
+the test harness's lint checks for it.
 
 ## Testing note
 

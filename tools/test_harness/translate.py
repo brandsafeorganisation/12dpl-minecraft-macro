@@ -66,6 +66,17 @@ for k,l in enumerate(lines):
     for a,b in zip(lits,lits[1:]):
         if re.fullmatch(r'\s*\+\s*',l[a.end():b.start()]): problems.append(f'{k+1}: literal+literal: {l.strip()}')
 
+# #warning and #error text with a quote mark: 12d's preprocessor reads
+# it as the start of an unterminated character or string constant
+for root,_,files in os.walk(src_dir):
+    if os.sep+'tools' in root or os.sep+'resources' in root or os.sep+'.git' in root: continue
+    for f in files:
+        if not (f.endswith('.4dm') or f.endswith('.h')): continue
+        path=os.path.join(root,f)
+        for k,l in enumerate(open(path,encoding='latin-1')):
+            if re.match(r'\s*#\s*(warning|error)\b',l) and ("'" in l or '"' in l):
+                problems.append(f'{os.path.relpath(path,src_dir)}:{k+1}: quote mark in #warning/#error: {l.strip()}')
+
 # per-function duplicate declarations and names clashing with functions
 func_re=re.compile(r'^(?:void|Integer|Real|Text|Integer64)\s+(\w+)\s*\(([^)]*)\)\s*$',re.M)
 funcs=set(m.group(1) for m in func_re.finditer(code))

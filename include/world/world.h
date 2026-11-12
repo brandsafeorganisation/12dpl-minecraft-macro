@@ -105,6 +105,7 @@ Integer world_biome         (Integer p_x, Integer p_z);
 void    world_update_column_top(Integer p_x, Integer p_z);
 void    world_break_block   (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_tool_item);
 void    world_place_block   (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
+void    world_apply_remote_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 
 // ---------------------------------------------------------------- world record
 void    world_info_clear    (Attributes &p_info, Integer p_seed);

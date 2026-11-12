@@ -165,7 +165,9 @@ inline int Set_bk_mode(const Draw_Box&,int){ return 0; }
 // ---------------------------------------------------------------- files
 inline Text fix_path(Text p){ for(auto&c:p) if(c=='\\') c='/'; return p; }
 struct File { std::FILE* f=nullptr; };
-inline int File_open(const Text&n,const Text&m,const Text&,File&f){ const char*mode=m=="w"?"w":(m=="rb"?"rb":"r"); f.f=fopen(fix_path(n).c_str(), mode); return f.f?0:1; }
+inline int File_open(const Text&n,const Text&m,const Text&,File&f){ const char*mode=m=="w"?"w":m=="a"?"a":m=="a+"?"a+":m=="r+"?"r+":(m=="rb"?"rb":"r"); f.f=fopen(fix_path(n).c_str(), mode); return f.f?0:1; }
+inline int File_flush(File&f){ return f.f?fflush(f.f):1; }
+inline int Get_user_name(Text&t){ const char*u=getenv("CUBELAND_USER"); if(!u) u=getenv("USERNAME"); if(!u) u=getenv("USER"); t=u?u:"player"; return 0; }
 // Binary reads: little-endian, like 12d on Windows
 inline int File_read(File&f,int&v){ unsigned char b[4]; if(!f.f||fread(b,1,4,f.f)!=4) return 1; v=(int)((unsigned)b[0]|((unsigned)b[1]<<8)|((unsigned)b[2]<<16)|((unsigned)b[3]<<24)); return 0; }
 inline int Set_char(Text&t,int n,int c){ if(n<1||n>(int)t.size()) return 1; t[n-1]=(char)c; return 0; }

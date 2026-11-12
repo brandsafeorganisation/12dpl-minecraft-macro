@@ -19,6 +19,7 @@
 #include "../../include/program/commands.h"
 #include "../../include/ui/panels.h"
 #include "../../include/ui/font.h"
+#include "../../include/net/net.h"
 
 // ----------------------------------------------------------------
 // Real-time play inside a 12d panel
@@ -117,7 +118,7 @@ void game_panel_dispatch(Real p_now)
 // Dispatch the events an action caused, straight away
 // ----------------------------------------------------------------
 {
-  game_dispatch_events(g_events, g_event, g_info, g_player, g_inventory, g_grid, g_furnaces, g_drops, g_random, g_hud, g_ui, p_now);
+  game_dispatch_events(g_events, g_event, g_info, g_player, g_inventory, g_grid, g_furnaces, g_drops, g_random, g_hud, g_ui, g_net, p_now);
 }
 
 Integer game_panel_save()
@@ -162,19 +163,26 @@ void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real
              world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
     ui_draw (p_box, l_w, l_h, g_ui, g_inventory, g_grid, g_furnaces, g_book);
   } else {
-    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_settings, world_time_of_day(g_info), p_now);
+    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
     hud_draw    (p_box, l_w, l_h, p_captured, FALSE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
                  world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
+    // who is playing, top right
+    if (net_mode(g_net) != NET_OFF) {
+      hud_text(p_box, l_w - 8.0 - 6.5 * Text_length(net_players_text(g_net, g_peers, p_now)), l_h - 8.0, 11.0, TEXT_ALIGN_LEFT,
+               228, 228, 228, net_players_text(g_net, g_peers, p_now));
+    }
   }
   End_batch_draw(p_box);
 }
 
-Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
+Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
 // ----------------------------------------------------------------
-// Play a world until the player quits to the menu
-// create = TRUE generates a new world from seed, otherwise the
-// saved world is loaded. Returns 0, or SHUTDOWN_CODE if 12d asked
-// the macro to stop.
+// Play a world until the player quits to the menu. mode is the
+// menu's choice: MENU_RESULT_CREATE generates a new world from seed,
+// MENU_RESULT_PLAY loads the saved world, MENU_RESULT_HOST loads it
+// and hosts it for other players, MENU_RESULT_JOIN joins the game
+// hosted in the multiplayer folder (world name unused). Returns 0,
+// or SHUTDOWN_CODE if 12d asked the macro to stop.
 // ----------------------------------------------------------------
 {
   Text               l_title          = GAME_TITLE;
@@ -244,6 +252,10 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
   Text      l_report          = "";
   Integer   l_open_settings   = FALSE;
   Text      l_problem         = "";
+  Text      l_player_name     = settings_player_name(g_settings);
+  Text      l_player_id       = "";
+  Text      l_folder          = settings_mp_folder(g_settings);
+  Integer   l_session         = 0;
 
   Append(l_save_button    , l_buttons);
   Append(l_settings_button, l_buttons);
@@ -261,8 +273,21 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
   Show_widget(l_panel);
   Set_focus(l_key_box);
 
+  // Multiplayer: who you are to the others (a name and a number, so
+  // two players with the same name have different logs)
+  net_clear(g_net, g_peers, g_net_inbox);
+  if (l_player_name == "") Get_user_name(l_player_name);
+  l_player_name = net_clean_name(l_player_name);
+  l_player_id   = l_player_name + "_" + To_text(random_range(g_random, 1000, 9999));
+  Get_time(l_now);
+
   // Generate or load the world
-  if (p_create) {
+  if (p_mode == MENU_RESULT_JOIN) {
+    Set_data(l_message, "Joining the game in " + l_folder + " ...");
+    game_panel_notice(l_draw_box, "Joining", l_folder);
+    l_loaded = game_join(l_folder, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events,
+                         g_hud, g_ui, g_net, g_peers, g_net_inbox, l_player_id, l_player_name, l_now, l_problem);
+  } else if (p_mode == MENU_RESULT_CREATE) {
     Set_data(l_message, "Generating " + p_world_name + " from seed " + To_text(p_seed) + " ...");
     game_panel_notice(l_draw_box, "Generating world", "Seed " + To_text(p_seed) + " - this takes a few seconds");
     l_loaded = game_new_world(p_world_name, p_seed, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows,
@@ -273,10 +298,22 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
     game_panel_notice(l_draw_box, "Loading world", p_world_name);
     l_loaded = game_load_world(p_world_name, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows,
                              g_drops, g_events, g_hud, g_ui, l_problem);
+    if (l_loaded == SUCCESS && p_mode == MENU_RESULT_HOST) {
+      // the session is named after the time, so old logs in the
+      // folder (files are never deleted) aren't mistaken for new ones
+      l_session = Floor(l_now - Floor(l_now / 1000000000.0) * 1000000000.0);
+      l_loaded  = game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events,
+                            g_net, g_peers, g_net_inbox, l_folder, To_text(l_session), l_player_id, l_player_name,
+                            l_now, l_problem);
+    }
   }
 
   if (l_loaded != SUCCESS) {
-    Set_data(l_message, "Couldn't open the world " + p_world_name + ": " + l_problem + ". Close this panel to go back to the menu.");
+    if (p_mode == MENU_RESULT_JOIN) {
+      Set_data(l_message, "Couldn't join: " + l_problem + ". Close this panel to go back to the menu.");
+    } else {
+      Set_data(l_message, "Couldn't open the world " + p_world_name + ": " + l_problem + ". Close this panel to go back to the menu.");
+    }
     game_panel_notice(l_draw_box, "Something went wrong", "The world could not be opened: " + l_problem);
     while (l_running) {
       l_id = 0;
@@ -298,6 +335,11 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
   game_build_nearby(g_player, settings_render_distance(g_settings));
 
   Set_data(l_message, "Click the view to play. Press H for help.");
+  if (net_mode(g_net) == NET_HOST) {
+    hud_chat(g_hud, "Hosting as " + l_player_name + ": others press Join game with the multiplayer folder set to " + l_folder, l_now);
+  } else if (net_mode(g_net) == NET_GUEST) {
+    hud_chat(g_hud, "Joined as " + l_player_name + " (your copy is saved as " + game_world_name(g_game) + ")", l_now);
+  }
   Get_size(l_draw_box, l_last_w, l_last_h);
   Get_time(l_now);
   l_last_frame = l_now;
@@ -314,8 +356,9 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
       l_last_frame = l_frame_start;
 
       l_playing = l_captured && ui_screen(g_ui) == SCREEN_NONE && !hud_help_shown(g_hud) && !player_is_dead(g_player);
+      net_poll(g_net, g_peers, g_net_inbox, l_frame_start);
       game_update(l_dt, l_real_dt, l_frame_start, l_playing, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces,
-                  g_cows, g_drops, g_events, g_event, g_random, g_settings, g_hud, g_ui);
+                  g_cows, g_drops, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
 
       // A screen is open (crafting table, furnace): free the mouse
       if (ui_screen(g_ui) != SCREEN_NONE && l_captured) {
@@ -331,6 +374,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
       Get_time(l_frame_end);
       l_frame_ms = (l_frame_end - l_frame_start) * 1000.0;
       hud_note_frame(g_hud, l_frame_ms, l_frame_end);
+      net_flush(g_net);
       l_want_frame = FALSE;
     }
 
@@ -344,6 +388,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
     if (l_cmd == "CodeShutdown") {
       game_panel_close_screen();
       game_panel_save();
+      net_leave(g_net);
       Set_exit_code(l_cmd);
       Hide_widget(l_panel);
       return SHUTDOWN_CODE;
@@ -593,6 +638,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
             hud_chat(g_hud, l_reply, l_now);
           } else if (l_chat != "") {
             hud_chat(g_hud, "<You> " + l_chat, l_now);
+            net_say (g_net, l_chat);
           }
           l_chatting = FALSE;
           l_chat     = "";
@@ -647,6 +693,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
       }
       if (settings_panel_run(g_settings) == SHUTDOWN_CODE) {
         game_panel_save();
+        net_leave(g_net);
         Set_exit_code("CodeShutdown");
         Hide_widget(l_panel);
         return SHUTDOWN_CODE;
@@ -704,6 +751,7 @@ Integer game_panel_run(Text p_world_name, Integer p_create, Integer p_seed)
     }
   }
 
+  net_leave(g_net);
   Hide_widget(l_panel);
   return l_result;
 }

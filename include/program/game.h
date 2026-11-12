@@ -35,13 +35,16 @@
   Attributes g_hud;
   Attributes g_ui;
   Attributes g_book;        // recipes
+  Attributes g_net;         // multiplayer: the session and what to send
+  Attributes g_peers;       // multiplayer: the other players
+  Attributes g_net_inbox;   // multiplayer: lines read from their logs, not acted on yet
 }
 
 Integer game_load_textures    (Attributes &p_settings, Text &p_report);
 void    game_init_once        (Attributes &p_game, Attributes &p_book, Attributes &p_settings, Attributes &p_random, Integer p_time_seed);
 void    game_reset_state      (Attributes &p_game, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid,
                                Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
-                               Attributes &p_hud, Attributes &p_ui);
+                               Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox);
 Text    game_world_name       (Attributes &p_game);
 Integer game_new_world        (Text p_name, Integer p_seed, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                                Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
@@ -49,13 +52,21 @@ Integer game_new_world        (Text p_name, Integer p_seed, Attributes &p_game, 
 Integer game_load_world       (Text p_name, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                                Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
                                Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui, Text &p_problem);
+Integer game_host             (Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                               Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
+                               Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_folder, Text p_session,
+                               Text p_id, Text p_name, Real p_now, Text &p_problem);
+Integer game_join             (Text p_folder, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                               Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
+                               Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox,
+                               Text p_id, Text p_name, Real p_now, Text &p_problem);
 Integer game_save_world       (Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                                Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events);
 void    game_build_nearby     (Attributes &p_player, Integer p_range);
 void    game_respawn          (Attributes &p_info, Attributes &p_player, Attributes &p_events);
 void    game_dispatch_events  (Attributes &p_events, Attributes &p_event, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                                Attributes &p_grid, Attributes &p_furnaces, Attributes &p_drops, Attributes &p_random,
-                               Attributes &p_hud, Attributes &p_ui, Real p_now);
+                               Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Real p_now);
 void    game_update           (Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
                                Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                                Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,

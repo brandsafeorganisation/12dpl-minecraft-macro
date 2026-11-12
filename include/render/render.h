@@ -37,6 +37,7 @@
 #define CRACK_DARKEN       0.55    // crack pixels are drawn this much darker
 #define MOB_MAX_PARTS      8       // boxes an animal is built from, at most
 #define MOB_LEG_SWING      0.5     // how far legs swing from the hip while walking (radians)
+#define PEER_NAME_DISTANCE 48.0    // other players' names show up to this far away
 #define MOB_HEAD_TURN      0.9     // how far a head turns to look at you (radians)
 #define MOB_HEAD_SWAY      0.35    // how far a head sways while looking round
 #define MOB_LOOK_RANGE     8.0     // animals this close look at you
@@ -296,6 +297,9 @@ void    render_sky_colours     (Real p_time_of_day);
 void    render_sky_disc        (Draw_Box p_box, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_size, Integer p_moon);
 void    render_stars           (Draw_Box p_box, Real p_brightness);
 void    render_world           (Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows,
-                                Attributes &p_drops, Attributes &p_settings, Real p_time_of_day, Real p_now);
+                                Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now);
+void    render_person          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing);
+void    render_collect_peers   (Attributes &p_peers);
+void    render_peer_names      (Draw_Box p_box, Attributes &p_peers);
 
 #endif

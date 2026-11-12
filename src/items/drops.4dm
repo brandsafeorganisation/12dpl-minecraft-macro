@@ -275,6 +275,7 @@ void drops_on_event(Attributes &p_event, Attributes &p_drops, Attributes &p_rand
   Integer l_tool = 0;
 
   if (l_type == EVT_BLOCK_BROKEN) {
+    if (event_is_remote(p_event)) return;   // it dropped on the other player's machine
     l_tool = floor_integer(event_real(p_event, 1) + 0.5);
     l_item = block_drop_item(event_integer(p_event, 4), l_tool);
     if (l_item != ITEM_NONE) {

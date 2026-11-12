@@ -15,6 +15,8 @@
 #include "../../include/core/records.h"
 #include "../../include/program/settings.h"
 #include "../../include/render/render.h"
+#include "../../include/render/hud.h"
+#include "../../include/net/net.h"
 
 // ---------------------------------------------------------------- set up
 
@@ -1121,6 +1123,73 @@ void render_pig(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_t
   render_mob_end();
 }
 
+void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing)
+// ----------------------------------------------------------------
+// Another player: legs and arms that swing as they walk, a body,
+// and a head that looks up and down where they look
+// ----------------------------------------------------------------
+{
+  render_mob_begin(p_x, p_y, p_z, p_yaw, 0.0);
+  //              along  up     across  half f  half y  half s  turn  pitch     hip    side                   top                    front              back
+  render_mob_part(0.0  , 0.375,  0.12 , 0.12  , 0.375 , 0.12  , 0.0 ,  p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_PANTS , TEX_PERSON_PANTS     );
+  render_mob_part(0.0  , 0.375, -0.12 , 0.12  , 0.375 , 0.12  , 0.0 , -p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_PANTS , TEX_PERSON_PANTS     );
+  render_mob_part(0.0  , 1.125,  0.0  , 0.13  , 0.375 , 0.25  , 0.0 ,  0.0    , FALSE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT , TEX_PERSON_SHIRT     );
+  render_mob_part(0.0  , 1.125,  0.37 , 0.11  , 0.375 , 0.11  , 0.0 , -p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_SHIRT_SIDE, TEX_PERSON_ARM   , TEX_PERSON_ARM       );
+  render_mob_part(0.0  , 1.125, -0.37 , 0.11  , 0.375 , 0.11  , 0.0 ,  p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_SHIRT_SIDE, TEX_PERSON_ARM   , TEX_PERSON_ARM       );
+  render_mob_part(0.0  , 1.75 ,  0.0  , 0.25  , 0.25  , 0.25  , 0.0 ,  p_pitch, FALSE, TEX_PERSON_HEAD_SIDE , TEX_PERSON_HEAD_TOP  , TEX_PERSON_FACE  , TEX_PERSON_HEAD_SIDE );
+  render_mob_end();
+}
+
+void render_collect_peers(Attributes &p_peers)
+// ----------------------------------------------------------------
+// Queue the other players of a multiplayer game
+// ----------------------------------------------------------------
+{
+  Integer l_peer = 0;
+  Real    l_x    = 0.0;
+  Real    l_y    = 0.0;
+  Real    l_z    = 0.0;
+
+  for (l_peer = 1; l_peer <= peers_count(p_peers); ++l_peer) {
+    if (!peer_here(p_peers, l_peer)) continue;
+    peer_position(p_peers, l_peer, l_x, l_y, l_z);
+    if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > (g_render_distance + 2.0) * (g_render_distance + 2.0)) continue;
+    g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
+    render_person(l_x, l_y, l_z, peer_yaw(p_peers, l_peer), peer_pitch(p_peers, l_peer), Sin(peer_step(p_peers, l_peer)) * MOB_LEG_SWING);
+  }
+}
+
+void render_peer_names(Draw_Box p_box, Attributes &p_peers)
+// ----------------------------------------------------------------
+// Each other player's name above their head (drawn over everything,
+// so you can find them behind a hill)
+// ----------------------------------------------------------------
+{
+  Integer l_peer  = 0;
+  Real    l_x     = 0.0;
+  Real    l_y     = 0.0;
+  Real    l_z     = 0.0;
+  Real    l_sx    = 0.0;
+  Real    l_sy    = 0.0;
+  Real    l_half  = 0.0;
+  Text    l_name  = "";
+
+  for (l_peer = 1; l_peer <= peers_count(p_peers); ++l_peer) {
+    if (!peer_here(p_peers, l_peer)) continue;
+    peer_position(p_peers, l_peer, l_x, l_y, l_z);
+    if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > PEER_NAME_DISTANCE * PEER_NAME_DISTANCE) continue;
+    render_to_camera(l_x - g_cam_x, l_y + 2.25 - g_cam_y, l_z - g_cam_z);
+    if (g_tc_z < 0.3) continue;
+    l_sx   = g_centre_x + g_tc_x * g_focal / g_tc_z;
+    l_sy   = g_centre_y + g_tc_y * g_focal / g_tc_z;
+    l_name = peer_name(p_peers, l_peer);
+    l_half = Text_length(l_name) * 3.5 + 4.0;
+    render_set_colour(p_box, 30.0, 30.0, 34.0);
+    render_fill_rect (p_box, l_sx - l_half, l_sy - 15.0, l_sx + l_half, l_sy + 2.0);
+    hud_text(p_box, l_sx, l_sy, 12.0, TEXT_ALIGN_CENTRE, 240, 240, 240, l_name);
+  }
+}
+
 void render_collect_cows(Attributes &p_cows)
 // ----------------------------------------------------------------
 // Queue every animal in view: cows, pigs and zombies, each made of
@@ -2209,7 +2278,7 @@ void render_target_outline(Draw_Box p_box)
 }
 
 void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows,
-                  Attributes &p_drops, Attributes &p_settings, Real p_time_of_day, Real p_now)
+                  Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now)
 // ----------------------------------------------------------------
 // Draw the 3D view from the player's eyes: sky, then every face far
 // to near, then the outline of the targeted block. Must be inside a
@@ -2239,12 +2308,14 @@ void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attrib
   mesh_build_nearby(g_cam_x, g_cam_y, g_cam_z, min_integer(g_render_distance, VERTICAL_RANGE + SECTION_SIZE), BACKGROUND_BUILDS);
   render_collect_cows  (p_cows);
   render_collect_drops (p_drops);
+  render_collect_peers (p_peers);
   g_box_light = 1.0;
   g_stat_faces = g_face_total;
 
   render_hide_covered();
   render_draw_faces(p_box);
   render_target_outline(p_box);
+  render_peer_names(p_box, p_peers);
 }
 
 #endif

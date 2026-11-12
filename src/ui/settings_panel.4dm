@@ -100,6 +100,9 @@ Integer settings_panel_run(Attributes &p_settings)
   Button             l_font_name_use  = Create_button("Use this font name", "set_font_name");
   Button             l_font_file_use  = Create_button("Use this font file", "set_font_file");
 
+  Input_Box          l_name_box       = Create_input_box("Multiplayer name (blank for your Windows name)", l_message);
+  Input_Box          l_folder_box     = Create_input_box("Multiplayer folder (shared by every player)", l_message);
+
   Horizontal_Group   l_end_buttons    = Create_button_group();
   Button             l_reset_button   = Create_button("Reset to defaults", "set_defaults");
   Button             l_done_button    = Create_finish_button("Done", "set_done");
@@ -159,6 +162,8 @@ Integer settings_panel_run(Attributes &p_settings)
   Append(l_font_name_box , l_vgroup);
   Append(l_font_file_box , l_vgroup);
   Append(l_font_use      , l_vgroup);
+  Append(l_name_box      , l_vgroup);
+  Append(l_folder_box    , l_vgroup);
   Append(l_end_buttons   , l_vgroup);
   Append(l_message       , l_vgroup);
   Append(l_vgroup        , l_panel);
@@ -168,6 +173,8 @@ Integer settings_panel_run(Attributes &p_settings)
   Set_data(l_pack_box, settings_resource_pack(p_settings));
   Set_data(l_font_name_box, settings_font(p_settings));
   Set_data(l_font_file_box, settings_font_file(p_settings));
+  Set_data(l_name_box, settings_player_name(p_settings));
+  Set_data(l_folder_box, settings_mp_folder(p_settings));
   Set_data(l_message, "Longer views and higher detail look better but draw more slowly.");
 
   while (l_doit) {
@@ -181,6 +188,11 @@ Integer settings_panel_run(Attributes &p_settings)
       l_result = SHUTDOWN_CODE;
       l_doit   = FALSE;
     } else if (l_cmd == "Panel Quit" || l_cmd == "set_done") {
+      // the multiplayer boxes are kept as typed
+      Get_data(l_name_box, l_font);
+      settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, l_font);
+      Get_data(l_folder_box, l_font);
+      settings_set_text(p_settings, ATTR_SET_MP_FOLDER, l_font);
       l_doit = FALSE;
     } else if (l_cmd == "set_render_down") {
       settings_change(p_settings, ATTR_SET_RENDER_DISTANCE, -1);
@@ -263,6 +275,8 @@ Integer settings_panel_run(Attributes &p_settings)
       settings_set_resource_pack(p_settings, l_pack);   // keep the textures: there's a button for that
       Set_data(l_font_name_box, "");
       Set_data(l_font_file_box, "");
+      Set_data(l_name_box, settings_player_name(p_settings));
+      Set_data(l_folder_box, settings_mp_folder(p_settings));
     } else {
       continue;
     }

@@ -1,6 +1,12 @@
 #ifndef INCLUDE_BUILD_4DM
 #define INCLUDE_BUILD_4DM
 
+// Safety switches (see safety.h; each prints a warning when on):
+// multiplayer across PCs needs the shared folder; SAFETY_OFF unblocks
+// every dangerous call and is not needed by the game
+#define SAFE_ALLOW_SHARE_FOLDER
+//#define SAFETY_OFF
+
 // Safety first: blocks every dangerous library call for all the
 // source files below (see the header). Keep it the first include.
 #include "../include/core/safety.h"
@@ -67,6 +73,9 @@
 #include "program/settings.4dm"
 #include "program/save.4dm"
 #include "program/commands.4dm"
+
+// net: multiplayer through a shared folder
+#include "net/net.4dm"
 #include "program/game.4dm"
 
 // ui: the 12d panels (controllers) and fonts
@@ -78,5 +87,5 @@
 
 // Error for multiple inclusions of build.4dm
 #else
-#error Don't include build.4dm more than once
+#error Do not include build.4dm more than once
 #endif

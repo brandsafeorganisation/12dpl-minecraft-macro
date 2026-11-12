@@ -18,8 +18,9 @@
 
 // Event types and their payloads
 #define EVT_NONE              0
-#define EVT_BLOCK_BROKEN      1    // i1..i3 cell, i4 block that was there, r1 tool item used
-#define EVT_BLOCK_PLACED      2    // i1..i3 cell, i4 new block
+#define EVT_BLOCK_BROKEN      1    // i1..i3 cell, i4 block that was there, r1 tool item used, r3 EVENT_REMOTE
+#define EVT_BLOCK_PLACED      2    // i1..i3 cell, i4 new block, r3 EVENT_REMOTE
+                                   // (EVENT_REMOTE in r3: another player made the change, see net.h)
 #define EVT_COW_HURT          3    // i1 cow
 #define EVT_COW_KILLED        4    // i1 cow, r1..r3 position
 #define EVT_ITEM_PICKED_UP    5    // i1 item, i2 count
@@ -37,6 +38,8 @@
 #define EVT_ZOMBIE_ATTACK     17   // i1 damage (a zombie hit the player)
 #define EVT_LIGHT_CHANGED     18   // i1..i3 cell: block light may have changed up to LIGHT_RADIUS from it
 #define EVT_FURNACE_LIT       19   // i1..i3 cell of a furnace, i4 TRUE if it started burning, FALSE if it went out
+
+#define EVENT_REMOTE          1.0  // r3 of a block event another player caused
 
 // Screens that EVT_OPEN_SCREEN can open
 #define SCREEN_NONE           0
@@ -70,5 +73,6 @@ Integer event_type       (Attributes &p_event);
 Integer event_integer    (Attributes &p_event, Integer p_which);
 Real    event_real       (Attributes &p_event, Integer p_which);
 Text    event_text       (Attributes &p_event);
+Integer event_is_remote  (Attributes &p_event);
 
 #endif

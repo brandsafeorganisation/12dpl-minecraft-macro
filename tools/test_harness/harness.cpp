@@ -71,6 +71,7 @@ static void load_script(const char*path){ std::ifstream in(path); Text line; whi
   else if(k=="input"){ Text rest; std::getline(s,rest); rest=Text_justify(rest); script.push_back({"input",rest,0,0}); }
   else if(k=="button"){ Text b; s>>b; script.push_back({"button",b}); }
   else if(k=="select"){ int n; s>>n; script.push_back({"select","",(double)n,0}); }
+  else if(k=="select_name"){ Text rest; std::getline(s,rest); rest=Text_justify(rest); script.push_back({"select_name",rest,0,0}); }
   else if(k=="time"){ double t; s>>t; script.push_back({"time","",t,0}); }
   else if(k=="call"){ Text n; s>>n; script.push_back({"call",n}); }
   else if(k=="quit"){ script.push_back({"quit",""}); }
@@ -99,6 +100,7 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
     if(e.kind=="call"){ if(g_calls.count(e.a)) g_calls[e.a](); continue; }
     if(e.kind=="input"){ auto p=e.a.find('|'); g_input_value[g_widget_by_title[e.a.substr(0,p)]]=e.a.substr(p+1); continue; }
     if(e.kind=="select"){ g_list_sel[g_widget_by_title["Saved worlds"]]=(int)e.x; continue; }
+    if(e.kind=="select_name"){ long long l=g_widget_by_title["Saved worlds"]; auto&v=g_list_items[l]; for(size_t i=0;i<v.size();i++) if(v[i]==e.a) g_list_sel[l]=(int)i+1; continue; }
     if(e.kind=="button"){ id=g_widget_by_title["button:"+e.a]; cmd=e.a; msg=""; return 0; }
     if(e.kind=="quit"){ id=0; cmd="Panel Quit"; msg=""; return 0; }
   }

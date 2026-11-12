@@ -611,6 +611,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   Integer l_hit_up       = FALSE;
   Integer l_flying       = player_flying(p_player);
   Real    l_down_until   = record_real(p_player, ATTR_FLY_DOWN_UNTIL);
+  Real    l_vy_start     = 0.0;
   Integer l_crouching    = FALSE;
   Real    l_eye_height   = PLAYER_EYE_HEIGHT;
 
@@ -684,6 +685,11 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
     }
   }
 
+  // Gravity changes the speed during the frame, so the move uses the
+  // average of the speeds at its start and end: exact for any frame
+  // time (taking only the end speed cut a jump short when 12d draws
+  // few frames a second, too low to get up a block)
+  l_vy_start = l_vy;
   if (l_flying) {
     // no gravity
   } else if (l_in_water) {
@@ -696,7 +702,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
 
   // Move in steps short enough not to pass through a block
   l_move_x  = l_vx * p_dt;
-  l_move_y  = l_vy * p_dt;
+  l_move_y  = (l_vy_start + l_vy) * 0.5 * p_dt;
   l_move_z  = l_vz * p_dt;
   // crouched on the ground: refuse a step along x or z that would
   // leave nothing under you

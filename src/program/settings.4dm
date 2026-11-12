@@ -26,6 +26,51 @@ void settings_defaults(Attributes &p_settings)
   record_set_text   (p_settings, ATTR_SET_RESOURCE_PACK,   "");
   record_set_text   (p_settings, ATTR_SET_FONT,            "");
   record_set_text   (p_settings, ATTR_SET_FONT_FILE,       "");
+  record_set_text   (p_settings, ATTR_SET_MP_FOLDER,       MP_FOLDER_DEFAULT);
+  record_set_text   (p_settings, ATTR_SET_PLAYER_NAME,     "");
+}
+
+Text settings_mp_folder(Attributes &p_settings)
+// ----------------------------------------------------------------
+// The folder multiplayer games are shared through (the default is
+// inside the worlds folder, for two copies of the game on one PC)
+// ----------------------------------------------------------------
+{
+  Text l_folder = record_text(p_settings, ATTR_SET_MP_FOLDER);
+
+  if (l_folder == "") l_folder = MP_FOLDER_DEFAULT;
+  return l_folder;
+}
+
+Text settings_player_name(Attributes &p_settings)
+// ----------------------------------------------------------------
+// The name other players see; "" means the Windows user name
+// ----------------------------------------------------------------
+{
+  return record_text(p_settings, ATTR_SET_PLAYER_NAME);
+}
+
+void settings_set_text(Attributes &p_settings, Text p_field, Text p_value)
+// ----------------------------------------------------------------
+// Set a text setting (trimmed)
+// ----------------------------------------------------------------
+{
+  record_set_text(p_settings, p_field, Text_justify(p_value));
+}
+
+Integer settings_line_text(Text p_line, Text p_name, Text &p_value)
+// ----------------------------------------------------------------
+// TRUE if a settings line is "name rest of the line"; value is the
+// rest (which may contain spaces)
+// ----------------------------------------------------------------
+{
+  Integer l_skip = Text_length(p_name) + 1;
+
+  p_value = "";
+  if (Text_length(p_line) <= l_skip) return FALSE;
+  if (Get_subtext(p_line, 1, l_skip) != p_name + " ") return FALSE;
+  p_value = Get_subtext(p_line, l_skip + 1, Text_length(p_line));
+  return TRUE;
 }
 
 Text settings_font_file(Attributes &p_settings)
@@ -226,6 +271,10 @@ Integer settings_save(Attributes &p_settings, Text p_path)
   File_write_line(l_file, l_pack_line + " " + settings_resource_pack(p_settings));
   File_write_line(l_file, l_font_line + " " + settings_font(p_settings));
   File_write_line(l_file, l_file_line + " " + settings_font_file(p_settings));
+  l_pack_line = ATTR_SET_MP_FOLDER;
+  File_write_line(l_file, l_pack_line + " " + settings_mp_folder(p_settings));
+  l_pack_line = ATTR_SET_PLAYER_NAME;
+  File_write_line(l_file, l_pack_line + " " + settings_player_name(p_settings));
 
   File_close(l_file);
   return SUCCESS;
@@ -263,6 +312,14 @@ Integer settings_load(Attributes &p_settings, Text p_path)
   l_path_name = l_path_name + " ";
   l_path_skip = Text_length(l_path_name);
   while (File_read_line(l_file, l_line) == 0) {
+    if (settings_line_text(l_line, ATTR_SET_MP_FOLDER, l_word)) {
+      settings_set_text(p_settings, ATTR_SET_MP_FOLDER, l_word);
+      continue;
+    }
+    if (settings_line_text(l_line, ATTR_SET_PLAYER_NAME, l_word)) {
+      settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, l_word);
+      continue;
+    }
     if (Text_length(l_line) > l_skip) {
       if (Get_subtext(l_line, 1, l_skip) == l_pack) {
         settings_set_resource_pack(p_settings, Get_subtext(l_line, l_skip + 1, Text_length(l_line)));

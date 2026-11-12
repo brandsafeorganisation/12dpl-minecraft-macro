@@ -1,7 +1,22 @@
 # Multiplayer plan
 
-A plan only: nothing here is built yet. It was put together by reading the
-code and every entry of `resources/12dpl_functions_documentation.json`.
+It was put together by reading the code and every entry of
+`resources/12dpl_functions_documentation.json`.
+
+**Status:** phases 1 to 4 are built (`src/net/net.4dm`; see the README's
+Multiplayer section), with these differences from the plan below:
+
+- Every player applies every player's block lines as they arrive (no
+  re-sending through the host); the snapshot plus all logs from the start
+  gives a joining player the same world.
+- Block changes from others arrive as `EVT_BLOCK_BROKEN` / `EVT_BLOCK_PLACED`
+  marked `EVENT_REMOTE`, so the existing handlers follow them, nothing drops
+  and nothing is sent back. No new event types were needed.
+- Safety: option (b), as a switch: `SAFE_ALLOW_SHARE_FOLDER` lets the game
+  write in any folder named `cubeland_mp`, and prints a `#warning`.
+- Phases 5 and 6 (shared mobs, drops, chests and furnaces) aren't built.
+  Phase 0 hasn't been tried in real 12d either, so the risks listed
+  below still apply.
 
 ## 1. What 12dPL offers for talking to another copy of the game
 

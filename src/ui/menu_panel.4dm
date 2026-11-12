@@ -51,6 +51,9 @@ Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_s
   Button             l_play_button    = Create_button("&Play selected", "play");
   Button             l_create_button  = Create_button("&Create new world", "create");
   Button             l_delete_button  = Create_button("&Delete selected", "delete");
+  Horizontal_Group   l_mp_buttons     = Create_button_group();
+  Button             l_host_button    = Create_button("&Host selected", "host");
+  Button             l_join_button    = Create_button("&Join game", "join");
   Button             l_settings_button= Create_button("&Settings", "menu_settings");
   Button             l_quit_button    = Create_finish_button("Quit", "quit");
   Integer            l_result         = MENU_RESULT_QUIT;
@@ -67,6 +70,8 @@ Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_s
   Append(l_play_button  , l_buttons);
   Append(l_create_button, l_buttons);
   Append(l_delete_button, l_buttons);
+  Append(l_host_button  , l_mp_buttons);
+  Append(l_join_button  , l_mp_buttons);
   Append(l_settings_button, l_buttons);
   Append(l_quit_button  , l_buttons);
 
@@ -74,6 +79,7 @@ Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_s
   Append(l_name_box  , l_vgroup);
   Append(l_seed_box  , l_vgroup);
   Append(l_buttons   , l_vgroup);
+  Append(l_mp_buttons, l_vgroup);
   Append(l_message   , l_vgroup);
   Append(l_vgroup    , l_panel);
 
@@ -105,7 +111,7 @@ Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_s
     } else if (l_cmd == "Panel Quit" || l_cmd == "quit") {
       l_result = MENU_RESULT_QUIT;
       l_doit   = FALSE;
-    } else if (l_cmd == "play") {
+    } else if (l_cmd == "play" || l_cmd == "host") {
       l_selected = 0;
       Get_selection(l_world_list, l_selected);
       if (l_selected < 1) {
@@ -114,8 +120,13 @@ Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_s
         Get_item(l_world_list, l_selected, l_name);
         record_set_text(p_game, ATTR_MENU_WORLD, l_name);
         l_result = MENU_RESULT_PLAY;
+        if (l_cmd == "host") l_result = MENU_RESULT_HOST;
         l_doit   = FALSE;
       }
+    } else if (l_cmd == "join") {
+      record_set_text(p_game, ATTR_MENU_WORLD, "Multiplayer");
+      l_result = MENU_RESULT_JOIN;
+      l_doit   = FALSE;
     } else if (l_cmd == "create") {
       Get_data(l_name_box, l_name);
       l_name = Text_justify(l_name);

@@ -255,6 +255,27 @@ void world_place_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p
   emit_cell_event(p_events, EVT_BLOCK_PLACED, p_x, p_y, p_z, p_block);
 }
 
+void world_apply_remote_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)
+// ----------------------------------------------------------------
+// Another player changed a cell: set it to their block and announce
+// it as EVT_BLOCK_BROKEN (what was there) and EVT_BLOCK_PLACED (the
+// new block) marked EVENT_REMOTE, so the view, saving, chests and
+// furnaces follow but nothing drops and nothing is sent back
+// ----------------------------------------------------------------
+{
+  Integer l_old_block = world_get_block(p_x, p_y, p_z);
+
+  if (!world_in_bounds(p_x, p_y, p_z)) return;
+  if (p_block < 0 || p_block >= LIGHT_SHIFT) return;
+  if (l_old_block == p_block) return;
+
+  world_set_block        (p_x, p_y, p_z, p_block);
+  world_update_column_top(p_x, p_z);
+  if (world_light_update(p_x, p_y, p_z)) emit_cell_event(p_events, EVT_LIGHT_CHANGED, p_x, p_y, p_z, 0);
+  if (l_old_block != BLOCK_AIR) emit_event(p_events, EVT_BLOCK_BROKEN, p_x, p_y, p_z, l_old_block, 0.0, 0.0, EVENT_REMOTE, "");
+  if (p_block     != BLOCK_AIR) emit_event(p_events, EVT_BLOCK_PLACED, p_x, p_y, p_z, p_block,     0.0, 0.0, EVENT_REMOTE, "");
+}
+
 // ---------------------------------------------------------------- day and night
 
 Real world_time_of_day(Attributes &p_info)

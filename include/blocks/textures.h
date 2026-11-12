@@ -107,13 +107,20 @@
 #define TEX_BED_FOOT_TOP       95     // top of a bed's foot half (TEX_BED_TOP is the head)
 #define TEX_DOOR_EDGE_TOP      96     // the thin edges of a door, made from the door's outer columns
 #define TEX_DOOR_EDGE_BOTTOM   97
-#define NUM_TEXTURES           97
+#define TEX_PERSON_FACE        98     // other players in a multiplayer game
+#define TEX_PERSON_HEAD_SIDE   99
+#define TEX_PERSON_HEAD_TOP    100
+#define TEX_PERSON_SHIRT       101
+#define TEX_PERSON_SHIRT_SIDE  102
+#define TEX_PERSON_ARM         103
+#define TEX_PERSON_PANTS       104
+#define NUM_TEXTURES           104
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         24832  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         26624  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       776    // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      388    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       832    // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      416    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

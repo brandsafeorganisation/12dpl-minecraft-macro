@@ -300,15 +300,25 @@ Integer save_world(Text p_name, Attributes &p_info, Attributes &p_player, Attrib
 // Write a world to its file. Emits EVT_WORLD_SAVED.
 // ----------------------------------------------------------------
 {
+  if (p_name == "") return FAILURE;
+
+  save_ensure_folder();
+  return save_world_to(save_world_path(p_name), p_name, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_events);
+}
+
+Integer save_world_to(Text p_path, Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                      Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)
+// ----------------------------------------------------------------
+// Write a world to the file p_path (a world's own file, or a
+// multiplayer snapshot). Emits EVT_WORLD_SAVED with p_name.
+// ----------------------------------------------------------------
+{
   File    l_file;
   Text    l_line   = "";
   Integer l_edit   = 0;
   Integer l_on_row = 0;
 
-  if (p_name == "") return FAILURE;
-
-  save_ensure_folder();
-  if (safe_file_open(save_world_path(p_name), "w", l_file) != 0) return FAILURE;
+  if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
 
   l_line = WORLD_FILE_TAG;
   File_write_line(l_file, l_line + " " + To_text(WORLD_FILE_VERSION));
@@ -375,6 +385,20 @@ Real save_word_real(Dynamic_Text &p_words, Integer p_position)
 Integer load_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                    Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem)
 // ----------------------------------------------------------------
+// Read a saved world by name (see load_world_from)
+// ----------------------------------------------------------------
+{
+  p_problem = "";
+  if (!save_world_exists(p_name)) {
+    p_problem = "there is no saved world called " + p_name;
+    return FAILURE;
+  }
+  return load_world_from(save_world_path(p_name), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_problem);
+}
+
+Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                        Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem)
+// ----------------------------------------------------------------
 // Read a world file: regenerate the terrain from its seed, apply
 // the saved block changes and read the records back
 // Returns SUCCESS, or FAILURE with problem saying why
@@ -400,11 +424,11 @@ Integer load_world(Text p_name, Attributes &p_info, Attributes &p_player, Attrib
   Integer      l_seeded   = FALSE;
 
   p_problem = "";
-  if (!save_world_exists(p_name)) {
-    p_problem = "there is no saved world called " + p_name;
+  if (!File_exists(p_path)) {
+    p_problem = "there is no world file " + p_path;
     return FAILURE;
   }
-  if (safe_file_open(save_world_path(p_name), "r", l_file) != 0) {
+  if (safe_file_open(p_path, "r", l_file) != 0) {
     p_problem = "the world file couldn't be opened";
     return FAILURE;
   }

@@ -61,6 +61,10 @@ void    save_write_record (File &p_file, Text p_name, Attributes &p_record);
 Integer save_read_field   (Dynamic_Text &p_words, Integer p_count, Attributes &p_record);
 Integer save_world        (Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                            Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events);
+Integer save_world_to     (Text p_path, Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events);
+Integer load_world_from   (Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem);
 Integer load_world        (Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                            Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem);
 

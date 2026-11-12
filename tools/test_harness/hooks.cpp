@@ -100,6 +100,7 @@ static void register_hooks(){
   g_calls["cow_turn"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ double y=cow_yaw(g_cows,c)+1.3; record_set_real_at(g_cows,ATTR_YAW,c,y); record_set_real_at(g_cows,ATTR_COW_GOAL_YAW,c,y); record_set_real_at(g_cows,ATTR_TIMER,c,100.0); } };
   g_calls["mobs_calm"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ record_set_real_at(g_cows,ATTR_MOB_ATTACK,c,100.0); record_set_real_at(g_cows,ATTR_COW_FLASH,c,0.0); } };
   g_calls["noon"]=[]{ world_set_time_of_day(g_info,0.25); };
+  g_calls["shared_cells"]=[]{ printf("[hook] host broke 87 67 63: %d; bob placed 86 68 63: %d and 86 69 63: %d\n",world_get_block(87,67,63),world_get_block(86,68,63),world_get_block(86,69,63)); };
   g_calls["clock"]=[]{ double t=world_time_of_day(g_info); printf("[hook] clock %s (%.3f) day %d daylight %.2f\n",world_clock_text(t).c_str(),t,record_integer(g_info,ATTR_WORLD_DAYS),world_daylight(t)); };
   g_calls["give_night_kit"]=[]{ inventory_add(g_inventory,ITEM_TORCH,16); inventory_add(g_inventory,ITEM_GLASS,8); inventory_add(g_inventory,ITEM_BED,1); inventory_add(g_inventory,ITEM_IRON_SWORD,1); };
   g_calls["torch_ahead"]=[]{ int x=(int)px()+2,y=(int)py(),z=(int)pz(); if(world_get_block(x,y,z)!=0||!world_is_solid(x,y-1,z)){ y=world_top_solid_y(x,z)+1; } world_place_block(g_events,x,y,z,BLOCK_TORCH); printf("[hook] torch at %d %d %d: light here %d, 1 away %d, 5 away %d, 14 away %d, light steps %d\n",x,y,z,world_get_light(x,y,z),world_get_light(x,y+1,z),world_get_light(x,y+5,z),world_get_light(x,y+14,z),g_light_steps); };
@@ -185,4 +186,25 @@ static void register_hooks(){
        for(int y=1;y<WORLD_HEIGHT;y++){ int b=world_get_block(x,y,z); if(block_is_plant(b)) plants++; if(b==BLOCK_CACTUS) cactus++; if(b==BLOCK_COAL_ORE) coal++; if(b==0&&y<t-3) caves++; if(b==BLOCK_WATER&&y>=SEA_LEVEL) water_high++; } }
      printf("[terrain] plains %d forest %d desert %d beach %d ocean %d  plants %d cactus %d coal %d cave cells %d pond water %d  mean slope %.3f\n",biomes[1],biomes[2],biomes[3],biomes[4],biomes[5],plants,cactus,coal,caves,water_high,rough/n); };
   g_calls["records"]=[]{ int n; Get_number_of_attributes(g_player,n); printf("[records] player %d fields, ",n); Get_number_of_attributes(g_cows,n); printf("cows %d, ",n); Get_number_of_attributes(g_drops,n); printf("drops %d, ",n); Get_number_of_attributes(g_inventory,n); printf("inventory %d, ",n); Get_number_of_attributes(g_settings,n); printf("settings %d\n",n); };
+
+  // ---------------- multiplayer: a made-up second player "bob" writes his log by hand
+  auto bob_path=[]{ return Text("cubeland_worlds/mp/")+"log_"+record_text(g_net,"session")+"_bob_77.txt"; };
+  auto bob_write=[bob_path](const Text&t){ FILE*f=fopen(bob_path().c_str(),"a"); fputs(t.c_str(),f); fclose(f); };
+  g_calls["bob_join"]=[bob_write]{ char b[256]; snprintf(b,256,"J bob ~\nP %.2f %.2f %.2f 3.1416 0.2 ~\nC hello from bob ~\n",px()+5.5,py(),pz()+0.5); bob_write(b); };
+  g_calls["bob_walk"]=[bob_write]{ char b[256]; snprintf(b,256,"P %.2f %.2f %.2f 3.1416 -0.3 ~\n",px()+5.5,py(),pz()-0.8); bob_write(b); };
+  g_calls["bob_place"]=[bob_write]{ char b[256]; snprintf(b,256,"B %d %d %d %d ~\n",(int)floor(px())+2,(int)floor(py()),(int)floor(pz()),BLOCK_PLANKS); bob_write(b); };
+  g_calls["bob_half"]=[bob_write]{ char b[256]; snprintf(b,256,"B %d %d %d %d",(int)floor(px())+2,(int)floor(py())+1,(int)floor(pz()),BLOCK_STONE); bob_write(b); };
+  g_calls["bob_finish"]=[bob_write]{ bob_write(" ~\n"); };
+  g_calls["bob_time"]=[bob_write]{ bob_write("T 0.75 ~\n"); };
+  g_calls["bob_leave"]=[bob_write]{ bob_write("L ~\n"); };
+  g_calls["net"]=[]{
+     int x=(int)floor(px())+2, y=(int)floor(py()), z=(int)floor(pz());
+     printf("[net] mode %d players: %s; cells ahead %d %d\n",net_mode(g_net),net_players_text(g_net,g_peers,g_sim_time).c_str(),world_get_block(x,y,z),world_get_block(x,y+1,z));
+     for(int p=1;p<=peers_count(g_peers);p++){ double a,b,c; peer_position(g_peers,p,a,b,c); printf("[net] peer %d %s here %d at %.2f %.2f %.2f offset %d\n",p,peer_name(g_peers,p).c_str(),peer_here(g_peers,p),a,b,c,record_integer_at(g_peers,"offset",p)); }
+     Text mine=Text("cubeland_worlds/mp/")+"log_"+record_text(g_net,"session")+"_"+record_text(g_net,"id")+".txt";
+     FILE*f=fopen(mine.c_str(),"r"); int n=0; char line[512]; std::map<char,int> tags; Text last;
+     if(f){ while(fgets(line,512,f)){ n++; tags[line[0]]++; if(line[0]=='B') last=line; } fclose(f); }
+     printf("[net] my log: %d lines (J %d P %d H %d B %d C %d T %d L %d) last block line: %s",n,tags['J'],tags['P'],tags['H'],tags['B'],tags['C'],tags['T'],tags['L'],last.empty()?"none\n":last.c_str()); };
+  g_calls["break_ahead"]=[]{ int x=(int)floor(px())+3, y=(int)floor(py())-1, z=(int)floor(pz()); world_break_block(g_events,x,y,z,0); printf("[hook] broke %d %d %d\n",x,y,z); };
+  g_calls["ground_ahead"]=[]{ int x=(int)floor(px())+3, y=(int)floor(py())-1, z=(int)floor(pz()); printf("[hook] ground ahead %d %d %d is %d\n",x,y,z,world_get_block(x,y,z)); };
 }

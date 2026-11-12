@@ -1654,6 +1654,62 @@ void make_texture_bed_foot_top(Integer p_tex)
   texture_fill_rect(p_tex, 2 , 12, 15, 13, 2);
 }
 
+void make_texture_person(Integer p_tex, Integer p_part)
+// ----------------------------------------------------------------
+// Another player: a face (p_part 1), the side (2) and top (3) of a
+// head of brown hair, an orange shirt (4) and its side (5), an arm
+// with the sleeve at the shoulder (6) and grey trousers (7)
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 214, 164, 128);   // skin
+  texture_set_palette(p_tex, 2, 196, 146, 112);
+  texture_set_palette(p_tex, 3, 96 , 62 , 36 );   // hair
+  texture_set_palette(p_tex, 4, 74 , 46 , 26 );
+  texture_set_palette(p_tex, 5, 214, 112, 40 );   // shirt
+  texture_set_palette(p_tex, 6, 184, 92 , 30 );
+  texture_set_palette(p_tex, 7, 92 , 92 , 104);   // trousers
+  texture_set_palette(p_tex, 8, 40 , 40 , 52 );   // eyes, mouth
+  if (p_part == 1) {
+    texture_fill     (p_tex, 1);
+    texture_blotch   (p_tex, 2, 4, 0.0, 0.25, 81);
+    texture_fill_rect(p_tex, 1 , 1 , 16, 4 , 3);    // hair
+    texture_fill_rect(p_tex, 1 , 5 , 2 , 7 , 3);
+    texture_fill_rect(p_tex, 15, 5 , 16, 7 , 3);
+    texture_fill_rect(p_tex, 4 , 8 , 6 , 9 , 8);    // eyes
+    texture_fill_rect(p_tex, 11, 8 , 13, 9 , 8);
+    texture_fill_rect(p_tex, 7 , 11, 10, 11, 2);    // nose
+    texture_fill_rect(p_tex, 6 , 13, 11, 13, 8);    // mouth
+    return;
+  }
+  if (p_part == 2) {
+    texture_fill     (p_tex, 1);
+    texture_blotch   (p_tex, 2, 4, 0.0, 0.25, 83);
+    texture_fill_rect(p_tex, 1, 1, 16, 5 , 3);
+    texture_fill_rect(p_tex, 9, 6, 16, 9 , 3);      // hair over the back of the head
+    texture_blotch   (p_tex, 4, 3, 0.0, 0.20, 85);
+    return;
+  }
+  if (p_part == 3) {
+    texture_fill  (p_tex, 3);
+    texture_blotch(p_tex, 4, 3, 0.0, 0.35, 87);
+    return;
+  }
+  if (p_part == 4 || p_part == 5) {
+    texture_fill  (p_tex, 5);
+    texture_blotch(p_tex, 6, 4, 0.0, 0.30, 89);
+    if (p_part == 4) texture_fill_rect(p_tex, 6, 1, 11, 2, 1);   // neck
+    return;
+  }
+  if (p_part == 6) {
+    texture_fill     (p_tex, 1);
+    texture_blotch   (p_tex, 2, 4, 0.0, 0.25, 91);
+    texture_fill_rect(p_tex, 1, 1, 16, 6, 5);       // sleeve
+    return;
+  }
+  texture_fill  (p_tex, 7);
+  texture_blotch(p_tex, 8, 4, 0.0, 0.10, 93);
+}
+
 void make_texture_door_edge(Integer p_tex, Integer p_door_tex)
 // ----------------------------------------------------------------
 // The thin edge of a door: its picture's three outer columns
@@ -1808,6 +1864,13 @@ void textures_generate()
   make_texture_door          (TEX_DOOR_BOTTOM, FALSE);
   make_texture_item_door     (TEX_ITEM_DOOR);
   make_texture_bed_foot_top  (TEX_BED_FOOT_TOP);
+  make_texture_person        (TEX_PERSON_FACE,       1);
+  make_texture_person        (TEX_PERSON_HEAD_SIDE,  2);
+  make_texture_person        (TEX_PERSON_HEAD_TOP,   3);
+  make_texture_person        (TEX_PERSON_SHIRT,      4);
+  make_texture_person        (TEX_PERSON_SHIRT_SIDE, 5);
+  make_texture_person        (TEX_PERSON_ARM,        6);
+  make_texture_person        (TEX_PERSON_PANTS,      7);
 }
 
 #endif

@@ -72,8 +72,7 @@ void main()
     if (l_result == MENU_RESULT_QUIT || l_result == SHUTDOWN_CODE) {
       l_running = FALSE;
     } else {
-      l_result = game_panel_run(record_text(g_game, ATTR_MENU_WORLD), l_result == MENU_RESULT_CREATE,
-                              record_integer(g_game, ATTR_MENU_SEED));
+      l_result = game_panel_run(record_text(g_game, ATTR_MENU_WORLD), l_result, record_integer(g_game, ATTR_MENU_SEED));
       if (l_result == SHUTDOWN_CODE) l_running = FALSE;
     }
   }

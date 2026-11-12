@@ -12,6 +12,8 @@
 #define MENU_RESULT_QUIT     0
 #define MENU_RESULT_PLAY     1   // load the world named ATTR_MENU_WORLD
 #define MENU_RESULT_CREATE   2   // create it from ATTR_MENU_SEED
+#define MENU_RESULT_HOST     3   // load ATTR_MENU_WORLD and host it for other players
+#define MENU_RESULT_JOIN     4   // join the game hosted in the multiplayer folder
 
 #define GAME_VIEW_WIDTH      860
 #define GAME_VIEW_HEIGHT     520
@@ -35,6 +37,6 @@ void    game_panel_dispatch  (Real p_now);
 Integer game_panel_save      ();
 void    game_panel_close_screen();
 void    game_panel_render    (Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real p_now);
-Integer game_panel_run       (Text p_world_name, Integer p_create, Integer p_seed);
+Integer game_panel_run       (Text p_world_name, Integer p_mode, Integer p_seed);
 
 #endif

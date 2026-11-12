@@ -23,11 +23,28 @@
 // opens files inside SAFE_WRITE_FOLDER for writing.
 //
 // build.4dm includes this file before anything else, so the blocks
-// cover every source file. Don't include anything before it, and
+// cover every source file. Do not include anything before it, and
 // never #undef one of these names. It depends on no other header.
 //------------------------------------------------------------
 
 #define SAFE_WRITE_FOLDER  "cubeland_worlds"
+#define SAFE_SHARE_FOLDER  "cubeland_mp"   // see SAFE_ALLOW_SHARE_FOLDER
+
+// Two switches, set in build.4dm before it includes this file. Each
+// prints a #warning when the macro compiles, so it is never on by
+// accident (no apostrophes in #warning text: the preprocessor reads
+// one as the start of an unterminated character).
+//
+//   SAFE_ALLOW_SHARE_FOLDER  multiplayer across PCs: files may also be
+//                            written in any folder named cubeland_mp,
+//                            such as \\other-pc\share\cubeland_mp
+//   SAFETY_OFF               the blocked calls below are not blocked
+#ifdef SAFE_ALLOW_SHARE_FOLDER
+#warning Safety: files may be written in any folder named cubeland_mp (SAFE_ALLOW_SHARE_FOLDER)
+#endif
+#ifdef SAFETY_OFF
+#warning Safety is off: dangerous 12d calls are not blocked (SAFETY_OFF)
+#endif
 #define SAFE_OPEN_REFUSED  (-1)
 #define SAFE_YES           (1)
 #define SAFE_NO            (0)
@@ -39,7 +56,8 @@ Integer safe_path_is_writable(Text p_path)
 // ----------------------------------------------------------------
 // SAFE_YES if p_path is a file inside SAFE_WRITE_FOLDER (relative to the
 // 12d working folder), with no ".." or drive letter that could
-// climb out of it
+// climb out of it; with SAFE_ALLOW_SHARE_FOLDER, also a file in any
+// folder named SAFE_SHARE_FOLDER (still no "..")
 // ----------------------------------------------------------------
 {
   Text    l_folder = SAFE_WRITE_FOLDER;
@@ -49,9 +67,14 @@ Integer safe_path_is_writable(Text p_path)
   l_prefix = l_folder + "\\";
   l_length = Text_length(l_prefix);
 
+  if (Find_text(p_path, "..") > 0)                       return SAFE_NO;
+#ifdef SAFE_ALLOW_SHARE_FOLDER
+  l_folder = SAFE_SHARE_FOLDER;
+  if (Find_text(p_path, "\\" + l_folder + "\\") > 0)  return SAFE_YES;
+  l_folder = SAFE_WRITE_FOLDER;
+#endif
   if (Text_length(p_path) <= l_length)                   return SAFE_NO;
   if (Get_subtext(p_path, 1, l_length) != l_prefix)      return SAFE_NO;
-  if (Find_text(p_path, "..") > 0)                       return SAFE_NO;
   if (Find_text(p_path, ":")  > 0)                       return SAFE_NO;
   if (Find_text(p_path, "/")  > 0)                       return SAFE_NO;
   return SAFE_YES;
@@ -77,6 +100,7 @@ Integer safe_file_open(Text p_path, Text p_mode, File &p_file)
 }
 
 
+#ifndef SAFETY_OFF
 // ---------------------------------------------------------------- blocked calls
 // (defined after safe_file_open, which is the only code that may
 // call File_open)
@@ -171,5 +195,7 @@ Integer safe_file_open(Text p_path, Text p_mode, File &p_file)
 #define Synergy_connect                       illegal_call
 #define Synergy_check_out                     illegal_call
 #define Synergy_get                           illegal_call
+
+#endif   // SAFETY_OFF
 
 #endif
