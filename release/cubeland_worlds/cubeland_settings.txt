@@ -1,0 +1,11 @@
+render_distance 64
+texture_detail 3
+plants 1
+shading 1
+auto_jump 1
+field_of_view 90
+mouse_sensitivity 5
+show_hud 1
+show_debug 0
+resource_pack C:\Users\School\Downloads\Bare Bones 1.21.11.zip
+font Minecraft

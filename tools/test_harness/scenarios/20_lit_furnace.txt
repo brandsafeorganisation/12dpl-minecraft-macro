@@ -1,0 +1,46 @@
+# A burning furnace becomes a lit furnace block that gives off light
+# (and glows at night); when its fuel runs out it goes dark again
+input New world name|Lit Furnace
+input Seed (blank for random)|777
+button create
+wait 2
+click 430 300
+wait 2
+call clear_front
+call give_furnace
+call give_beef
+call aim_block_front
+wait 2
+caprclick
+wait 2
+call furnace_light
+call aim_last_placed
+wait 2
+caprclick
+wait 2
+move 400 300
+# beef (slot 3) to the input, planks (slot 2) to the fuel slot
+call slot3
+wait 1
+call slot51
+wait 1
+call slot2
+wait 1
+call slot52
+wait 1
+key e
+wait 2
+call night
+call mobs_calm
+wait 3
+call furnace_light
+call aim_block_front
+wait 1
+snap 200_furnace_lit
+wait 1
+time 20
+wait 3
+call furnace_light
+snap 201_furnace_out
+wait 1
+quit

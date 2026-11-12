@@ -1,0 +1,85 @@
+# Day and night, torches and their light, zombies, glass and beds
+input New world name|Night
+input Seed (blank for random)|31337
+button create
+wait 2
+click 430 300
+wait 2
+call clock
+call give_night_kit
+# a cave lit by a torch
+call to_cave
+wait 3
+snap 15_cave_dark
+wait 1
+call torch_ahead
+call torch_light_check
+wait 3
+snap 15_cave_torch
+wait 1
+# break the torch again: the light goes
+call aim_last_placed
+capclick
+wait 10
+call torch_light_check
+# sunset and night outside
+call to_hill
+call dusk
+wait 3
+snap 15_sunset
+wait 1
+call night
+wait 3
+snap 15_night
+wait 1
+call torch_ahead
+wait 2
+snap 15_night_torch
+wait 1
+# zombies come out at night; one walks up and hits
+call mobs
+call zombie_front
+wait 2
+snap 15_zombie
+wait 1
+wait 60
+call dump
+call mobs
+# a sword deals with it
+call hold_iron_sword
+capclick
+wait 5
+capclick
+wait 5
+capclick
+wait 5
+capclick
+wait 20
+call mobs
+call dump
+# zombies burn when the sun is up
+wait 200
+call mobs
+call noon
+wait 120
+call mobs
+# glass
+call glass_wall
+wait 3
+snap 15_glass
+wait 1
+# the starter house at night, lit by its torches
+call night
+call house_inside
+wait 3
+snap 15_house_night
+wait 1
+# a bed at night skips to morning and sets the spawn point
+call night
+call bed_front
+wait 2
+caprclick
+wait 2
+call clock
+call spawn_point
+quit

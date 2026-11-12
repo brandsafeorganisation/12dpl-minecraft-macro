@@ -1,0 +1,22 @@
+# Load the world saved by 05 (run with --keep after it), fall, die and respawn
+select 1
+button play
+wait 2
+call dump
+click 430 300
+wait 2
+call full
+call noclip_up
+wait 60
+call dump
+call hurt
+call noclip_up
+wait 60
+call dump
+snap 60_dead
+wait 1
+key r
+wait 3
+call dump
+button quit
+quit

@@ -1,0 +1,31 @@
+# The settings panel from the world menu and from the game, and the - / = keys
+button menu_settings
+button set_render_up
+button set_render_up
+button set_detail_high
+button set_plants
+button set_done
+call settings
+input New world name|Settings
+input Seed (blank for random)|99
+button create
+wait 2
+click 430 300
+wait 2
+call to_meadow
+wait 3
+snap 100_far_high_noplants
+wait 1
+key -
+key -
+key -
+call settings
+button game_settings
+button set_defaults
+button set_render_max
+button set_done
+call settings
+wait 3
+snap 101_max_view
+wait 1
+quit

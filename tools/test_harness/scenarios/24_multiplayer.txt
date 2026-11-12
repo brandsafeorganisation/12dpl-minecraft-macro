@@ -1,0 +1,57 @@
+# Multiplayer through the shared folder. Host a world; a made-up second
+# player, bob, writes his log by hand: he joins, says hello, walks,
+# places a block and sets the clock (which the host ignores). A line
+# without its end mark is half written and waits until it is finished.
+# The host breaks a block, which goes in the host's log. Then quit and
+# join the same session: the guest gets the snapshot plus every log,
+# so the block the host broke is gone and bob's block is there.
+input New world name|Shared
+input Seed (blank for random)|4242
+button create
+wait 2
+button quit
+wait 2
+select_name Shared
+button host
+wait 2
+click 430 300
+wait 2
+call noon
+call flat_area
+call net
+call bob_join
+wait 70
+call net
+snap 240_bob_joined
+wait 1
+call bob_walk
+call bob_place
+call bob_half
+wait 10
+call net
+call bob_finish
+call bob_time
+wait 10
+call net
+call clock
+call break_ahead
+call ground_ahead
+wait 5
+call net
+call bob_leave
+wait 10
+call net
+snap 241_bob_left
+wait 1
+button quit
+wait 2
+button join
+wait 2
+click 430 300
+wait 2
+wait 70
+call net
+call clock
+call shared_cells
+call dump
+quit

@@ -1,0 +1,8 @@
+input New world name|Help
+input Seed (blank for random)|5
+button create
+wait 1
+time 1
+snap 63_help
+move 300 300
+wait 1

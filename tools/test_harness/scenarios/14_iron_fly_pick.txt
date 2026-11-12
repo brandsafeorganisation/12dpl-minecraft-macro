@@ -1,0 +1,82 @@
+# Iron ore needs a stone pickaxe, iron recipes, pick block (P), flying
+# (G, Space, C), hiding the HUD (U) and the frame statistics (I)
+input New world name|Iron
+input Seed (blank for random)|4242
+button create
+wait 2
+click 430 300
+wait 2
+call give_tools
+call give_iron
+# iron ore with a wooden pickaxe: nothing
+call iron_eye
+call hold_pickaxe
+capclick
+capclick
+capclick
+capclick
+capclick
+capclick
+wait 20
+call dump
+# with a stone pickaxe: iron ore
+call iron_eye
+call hold_stone_pickaxe
+capclick
+capclick
+capclick
+wait 20
+call dump
+call iron_recipes
+# pick block: planks in the main inventory move to the selected slot
+call give_planks_far
+call planks_eye
+wait 2
+key p
+wait 2
+call block_below_target
+call dump
+# hide the HUD
+snap 14_hud_on
+wait 1
+key u
+snap 14_hud_off
+wait 1
+key u
+wait 1
+# frame statistics
+key i
+wait 40
+call frame_stats
+snap 14_stats
+wait 1
+key i
+# fly from the hill top: up, down to the ground, then land
+call to_hill
+wait 10
+call dump
+# flying needs creative mode: double Space does nothing in survival
+key space
+wait 3
+key space
+wait 2
+call dump
+key /
+type gamemode creative
+enter
+wait 1
+key space
+wait 3
+key space
+holdkey space 20
+wait 2
+call dump
+holdkey c 40
+wait 10
+call dump
+key space
+wait 3
+key space
+wait 20
+call dump
+quit

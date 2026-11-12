@@ -1,0 +1,37 @@
+# Pigs: a new world has some; the pig model from the side and the
+# front; killing one with a sword drops raw porkchops
+input New world name|Pigs
+input Seed (blank for random)|777
+button create
+wait 2
+click 430 300
+wait 2
+call mobs
+call noon
+call clear_front
+call give_tools
+call hold_sword
+call pig_near
+wait 2
+call aim_cow
+wait 1
+snap 210_pig_side
+wait 1
+call cow_turn
+wait 1
+call aim_cow
+wait 1
+snap 211_pig_front
+wait 1
+call aim_cow
+capclick
+wait 6
+call aim_cow
+capclick
+wait 6
+call aim_cow
+capclick
+wait 40
+call mobs
+call dump
+quit

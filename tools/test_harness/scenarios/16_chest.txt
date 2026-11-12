@@ -1,0 +1,46 @@
+# A chest: put things in, they survive save and load, and breaking
+# the chest spills them
+input New world name|Chest
+input Seed (blank for random)|2024
+button create
+wait 2
+click 430 300
+wait 2
+call clear_front
+call give_tools
+call chest_front
+wait 2
+call aim_last_placed
+caprclick
+wait 2
+snap 16_chest_screen
+wait 1
+# move the hotbar stacks in slots 3 and 4 into the chest's first slots
+call slot3
+call slot61
+call slot4
+call slot62
+wait 2
+snap 16_chest_filled
+wait 1
+key e
+wait 2
+call chests
+call dump
+button quit
+select 1
+button play
+wait 2
+click 430 300
+wait 2
+call chests
+# break it by hand: the contents drop and are picked up again
+call aim_last_placed
+capclick
+capclick
+capclick
+capclick
+wait 40
+call chests
+call dump
+quit

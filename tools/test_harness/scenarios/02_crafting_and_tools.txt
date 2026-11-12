@@ -1,0 +1,91 @@
+# Logs -> planks (2 x 2 grid) -> crafting table -> place it -> 3 x 3 pickaxe -> mine stone
+input New world name|Crafty
+input Seed (blank for random)|4242
+button create
+wait 2
+click 430 300
+wait 2
+call clear_front
+call give_wood
+key e
+wait 1
+move 300 300
+# 1 log -> 4 planks, put them in slot 30
+call grid_planks
+call output
+call slot30
+wait 1
+snap 20_grid_planks
+call grid_planks
+wait 1
+call dump
+call output
+call slot30
+# 4 planks in a square -> crafting table, into slot 31
+call grid_table
+wait 1
+snap 21_grid_table
+call dump
+call output
+call slot31
+wait 1
+call dump
+key e
+wait 1
+call dump
+# Place the table in front and open it
+call hold_table
+call aim_block_front
+wait 1
+caprclick
+wait 1
+call aim_last_placed
+wait 1
+caprclick
+wait 1
+call dump
+move 300 300
+# Planks for sticks, then sticks, then the pickaxe
+call grid_planks
+call output
+call slot30
+call grid_sticks
+call output
+call slot32
+call grid_planks
+call output
+call slot30
+call grid_pickaxe
+wait 1
+snap 22_grid_pickaxe
+call dump
+call output
+call slot33
+wait 1
+call dump
+key e
+wait 1
+# Stone by hand gives nothing, with the pickaxe it gives cobblestone
+call select_empty
+call stone_eye
+wait 2
+capclick
+capclick
+capclick
+capclick
+capclick
+capclick
+capclick
+capclick
+wait 30
+call dump
+call hold_pickaxe
+call stone_eye
+wait 2
+capclick
+capclick
+capclick
+wait 30
+snap 23_mined
+call dump
+quit

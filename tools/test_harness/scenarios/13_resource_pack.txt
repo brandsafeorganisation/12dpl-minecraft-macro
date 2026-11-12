@@ -1,0 +1,37 @@
+# Load a resource pack from the settings panel and look at a world with
+# it. Run "python3 make_test_pack.py make" first: it writes
+# packs/test_pack.zip, an image for every texture in every PNG format
+# the macro reads. "python3 make_test_pack.py check run/out/textures.txt"
+# then compares what the macro decoded with what it should be.
+# Then the unzipped folder is loaded too and compared the same way
+# (textures_folder.txt). A missing pack is reported and the built-in
+# textures stay.
+button menu_settings
+input Resource pack (.zip file or unzipped folder)|../packs/test_pack_missing.zip
+button set_pack_load
+input Resource pack (.zip file or unzipped folder)|../packs/test_pack
+button set_pack_load
+button set_done
+call dump_textures
+call rename_texture_dump
+button menu_settings
+input Resource pack (.zip file or unzipped folder)|../packs/test_pack.zip
+button set_pack_load
+button set_done
+call dump_textures
+input New world name|Packed
+input Seed (blank for random)|12345
+button create
+wait 2
+click 430 300
+wait 3
+call give_tools
+call hold_pickaxe
+snap 13_pack_view
+wait 1
+# back to the built-in textures, so later scenarios don't use the pack
+key o
+button set_pack_clear
+button set_done
+wait 1
+quit

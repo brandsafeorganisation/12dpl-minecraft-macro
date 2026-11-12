@@ -1,0 +1,16 @@
+# Delete a world (safety.h forbids deleting files, so the file is emptied
+# and hidden), then reuse its name for a new world
+input New world name|Doomed
+input Seed (blank for random)|5
+button create
+wait 2
+button quit
+select 1
+button delete
+button delete
+input New world name|Doomed
+input Seed (blank for random)|6
+button create
+wait 2
+call dump
+button quit

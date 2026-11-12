@@ -1,0 +1,32 @@
+# Plants are two pictures crossed in an X, fixed in the world: the same
+# row of grass, poppy, dandelion and dead bush (and a torch behind them)
+# seen from the front, from an angle and from above
+input New world name|Plants
+input Seed (blank for random)|2024
+button create
+wait 2
+click 430 300
+wait 2
+call noon
+call to_meadow
+wait 2
+call plant_row
+wait 3
+snap 180_plants_front
+wait 1
+call aim_poppy
+call aim_torch
+wait 1
+snap 183_torch_outline
+wait 1
+call restore_pos
+wait 2
+look 120 0
+wait 2
+snap 181_plants_angle
+wait 1
+look -120 60
+wait 2
+snap 182_plants_above
+wait 1
+quit

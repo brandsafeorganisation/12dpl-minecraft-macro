@@ -1,0 +1,38 @@
+# Fonts: cycle the list, type a name, read family names from font
+# files (Windows UTF-16 names, a Mac name, a collection, not a font),
+# then check the game draws its text with the chosen font and that
+# the choice is saved. Run make_test_fonts.py first.
+button menu_settings
+call font
+button set_font_next
+button set_font_next
+call font
+input Font name (any font installed in Windows)|  Lucida Console
+button set_font_name
+call font
+input ... or a font file (.ttf, .otf or .ttc)|../packs/test_font.ttf
+button set_font_file
+call font
+input ... or a font file (.ttf, .otf or .ttc)|../packs/test_mac.otf
+button set_font_file
+call font
+input ... or a font file (.ttf, .otf or .ttc)|../packs/test_collection.ttc
+button set_font_file
+call font
+input ... or a font file (.ttf, .otf or .ttc)|../packs/not_a_font.ttf
+button set_font_file
+call font
+input ... or a font file (.ttf, .otf or .ttc)|../packs/missing.ttf
+button set_font_file
+call font
+button set_done
+input New world name|Fonts
+input Seed (blank for random)|5
+button create
+wait 2
+click 430 300
+wait 2
+call font
+snap 190_font
+wait 1
+quit
