@@ -1,0 +1,47 @@
+# Look around the generated world: house, water, forest, desert, meadow, cave, hills
+input New world name|Scenery
+input Seed (blank for random)|2024
+button create
+wait 2
+click 430 300
+wait 2
+call terrain_stats
+call house_view
+wait 3
+snap 70_house
+wait 1
+call to_water
+wait 30
+snap 71_swim
+wait 1
+call water_above
+snap 71_water_above
+wait 1
+holdkey space 30
+call to_forest
+wait 20
+snap 72_forest
+wait 1
+call to_desert
+wait 20
+snap 73_desert
+wait 1
+call to_meadow
+wait 20
+snap 74_meadow
+wait 1
+call to_cave
+wait 20
+snap 75_cave
+wait 1
+call to_hill
+wait 20
+snap 76_hill
+wait 1
+key i
+look 0 0
+wait 2
+snap 77_debug
+wait 1
+call records
+quit

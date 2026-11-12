@@ -1,0 +1,72 @@
+# Chat and commands: T opens the chat line, / opens it with the /
+# typed; Enter sends it. /time set, /gamerule doDaylightCycle and /give
+# change the world; an unknown command and Escape are handled.
+input New world name|Chat
+input Seed (blank for random)|777
+button create
+wait 2
+click 430 300
+wait 2
+call clock
+key t
+type hello there
+snap 230_chat_typing
+wait 1
+enter
+wait 1
+key /
+type time set night
+enter
+wait 1
+call clock
+key /
+type gamerule doDaylightCycle false
+enter
+wait 1
+time 30
+wait 5
+call clock
+key /
+type gamerule doDaylightCycle
+enter
+key /
+type give @p oak_door 3
+enter
+key /
+type give @p minecraft:torch 70
+enter
+key /
+type give @p diamond
+enter
+key /
+type fly
+enter
+key t
+type oops
+key backspace
+key escape
+wait 1
+key /
+type time add 6000
+enter
+wait 1
+call clock
+key t
+snap 231_chat_log
+wait 1
+key escape
+call dump
+# creative mode hides the hearts, survival brings them back
+key /
+type gamemode creative
+enter
+wait 2
+snap 232_creative
+wait 1
+call dump
+key /
+type gamemode survival
+enter
+wait 2
+call dump
+quit

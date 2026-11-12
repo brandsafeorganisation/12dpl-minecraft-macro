@@ -1,0 +1,56 @@
+# Put beef and fuel in a furnace through its screen, cook for a minute, eat, save
+input New world name|Cook Test
+input Seed (blank for random)|777
+button create
+wait 2
+click 430 300
+wait 2
+call clear_front
+call give_furnace
+call give_beef
+call aim_block_front
+wait 2
+caprclick
+wait 2
+call aim_last_placed
+wait 2
+caprclick
+wait 2
+call dump
+move 400 300
+# beef (slot 3) to the input, planks (slot 2) to the fuel slot
+call slot3
+wait 1
+call slot51
+wait 1
+call slot2
+wait 1
+call slot52
+wait 1
+call dump
+snap 50_furnace_cooking
+move 410 300
+call time60
+move 420 300
+wait 2
+call dump
+call slot53
+wait 1
+call slot5
+wait 1
+snap 51_cooked
+move 430 300
+call dump
+key e
+wait 2
+call hurt
+click 430 300
+wait 2
+key 5
+wait 1
+caprclick
+wait 2
+call dump
+button save
+wait 2
+quit

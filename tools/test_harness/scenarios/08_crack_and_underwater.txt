@@ -1,0 +1,24 @@
+# Crack overlay on a block being broken, and the underwater view
+input New world name|Look
+input Seed (blank for random)|31337
+button create
+wait 1
+snap 80_help
+wait 1
+click 430 300
+wait 2
+call clear_front
+call stone_eye
+wait 3
+capclick
+wait 1
+capclick
+wait 1
+capclick
+snap 81_crack
+wait 1
+call to_water
+wait 25
+snap 82_underwater
+wait 1
+quit

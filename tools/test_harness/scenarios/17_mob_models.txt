@@ -1,0 +1,35 @@
+# Cow and zombie models with the built-in textures: a cow from the
+# front, the side and behind, and a zombie (kept from burning in the
+# sun so its colours show). With a resource pack the same parts come
+# from the pack's mob skins (scenario 13 checks the sampling).
+input New world name|Mob Models
+input Seed (blank for random)|777
+button create
+wait 2
+click 430 300
+wait 2
+call noon
+call clear_front
+call cow_near
+wait 2
+call aim_cow
+wait 1
+snap 170_cow_side
+call cow_turn
+wait 1
+call aim_cow
+wait 1
+snap 171_cow_front
+call cow_turn
+call cow_turn
+wait 1
+call aim_cow
+wait 1
+snap 172_cow_back
+call zombie_front
+call mobs_calm
+wait 1
+snap 173_zombie
+wait 1
+call mobs
+quit

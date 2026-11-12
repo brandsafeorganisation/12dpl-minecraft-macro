@@ -1,0 +1,37 @@
+# Kill a cow with a sword for beef, then place a furnace that faces the player
+input New world name|Cow Test
+input Seed (blank for random)|777
+button create
+wait 2
+click 430 300
+wait 2
+call clear_front
+call give_tools
+call hold_sword
+call cow_near
+wait 2
+call aim_cow
+wait 2
+snap 30_cow
+wait 1
+call aim_cow
+capclick
+wait 6
+call aim_cow
+capclick
+wait 6
+call aim_cow
+capclick
+wait 40
+call dump
+call give_furnace
+call aim_block_front
+wait 2
+caprclick
+wait 2
+call aim_last_placed
+wait 2
+snap 31_furnace
+wait 1
+call dump
+quit
