@@ -657,8 +657,8 @@ void ui_draw_search(Draw_Box p_box, Attributes &p_ui, Real p_x, Real p_y, Real p
 void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid,
              Attributes &p_furnaces, Attributes &p_book)
 // ----------------------------------------------------------------
-// Draw the open screen. The 3D view isn't drawn behind it, which
-// keeps the screen quick to redraw as the mouse moves.
+// Draw the open screen over the 3D view (which the controller draws
+// first, darkened).
 // ----------------------------------------------------------------
 {
   Integer l_screen    = ui_screen(p_ui);
@@ -692,9 +692,6 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
   ui_layout(l_screen, p_w, p_h, l_slot_size, l_x0, l_y0, l_x1, l_y1, l_inv_x, l_inv_y, l_top_y);
   l_hovered = ui_slot_at(l_screen, l_width, l_mouse_x, l_mouse_y, p_w, p_h);
   l_recipe  = crafting_match(p_book, p_grid);
-
-  render_set_colour(p_box, UI_BACKDROP_R, UI_BACKDROP_G, UI_BACKDROP_B);
-  render_fill_rect (p_box, 0.0, STATUS_STRIP_HEIGHT, p_w, p_h);
 
   render_set_colour(p_box, UI_PANEL_R, UI_PANEL_G, UI_PANEL_B);
   render_fill_rect (p_box, l_x0, l_y0, l_x1, l_y1);

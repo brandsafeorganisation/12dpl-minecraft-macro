@@ -51,7 +51,7 @@ call frame_stats
 snap 14_stats
 wait 1
 key i
-# fly from the hill top: up, down to the ground, then land
+# fly from the hill top: up, then down to the ground, which lands
 call to_hill
 wait 10
 call dump
@@ -74,9 +74,7 @@ call dump
 holdkey c 40
 wait 10
 call dump
-key space
-wait 3
-key space
+# sinking onto the ground landed: flying has stopped, so the player falls no further
 wait 20
 call dump
 quit

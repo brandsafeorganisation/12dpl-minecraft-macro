@@ -36,6 +36,14 @@
 #define ATTR_PLAYER_SELECTED     ("selected")
 #define ATTR_PLAYER_AUTO_WALK    ("auto_walk")
 #define ATTR_PLAYER_FLYING       ("flying")
+// The camera (F5, or V where 12d keeps F5): your own eyes, behind you
+// looking past your head, and in front of you looking back at you
+#define CAMERA_FIRST             0
+#define CAMERA_BEHIND            1
+#define CAMERA_FRONT             2
+#define CAMERA_DISTANCE          4.0     // blocks from the eyes in the two outside views
+
+#define ATTR_PLAYER_CAMERA       ("camera")            // CAMERA_... (not saved)
 #define ATTR_PLAYER_MODE         ("creative")          // GAMEMODE_...; the field name is from when it was TRUE in creative, so older worlds load
 #define ATTR_SPACE_LAST          ("space_last")        // when Space last arrived
 #define ATTR_SPACE_GAP           ("space_gap")         // seconds between the last two Spaces
@@ -108,6 +116,8 @@ void    player_toggle_door     (Attributes &p_events, Integer p_x, Integer p_y, 
 Integer player_crouching       (Attributes &p_player);
 void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_events);
 Integer player_flying          (Attributes &p_player);
+Integer player_camera          (Attributes &p_player);
+void    player_next_camera     (Attributes &p_player);
 void    player_set_flying      (Attributes &p_player, Integer p_flying);
 Integer player_game_mode       (Attributes &p_player);
 void    player_set_game_mode   (Attributes &p_player, Integer p_mode);

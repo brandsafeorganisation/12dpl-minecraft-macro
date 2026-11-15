@@ -7,15 +7,53 @@ like the game.
 
 1. Open the `release` folder of the repo.
 2. Double-click **`cubeland_test.exe`**.
-3. Wait a few seconds until the bottom line says *712 functions...*
-4. In **Source folder**, type `..` (so the report can show each function's
-   code).
-5. Press **Everything**.
-6. When it's done, the bottom line gives a file name. Open
-   `release\cubeland_worlds\test_reports`, then open the newest
-   `report_....html`. It opens in your web browser.
+3. Wait a few seconds until the bottom line says how many functions there are
+4. Press **Everything**.
+5. When it's done, the report opens in your web browser by itself.
+   **Open last report** opens it again later.
 
-At the top, **Failed checks** should be 0.
+At the top, **Checks passed** should be green.
+
+The report has tabs:
+
+- **Overview**: charts of the slowest functions on average, the slowest
+  single calls, the most time overall, the least steady, time by part of
+  the game, and which functions the inputs affect most. Click a bar to
+  see that function.
+- **Functions**: every function in a table. Click a column heading to
+  sort by it, type in the box to find one, and choose a part of the game
+  or one data set.
+- **Data sets**: each function's time and results with each data set
+  side by side (see below).
+- **Unit tests**: every check, failed ones first.
+- **Left out**: the functions that weren't run, and why.
+
+Click a function's name anywhere to see it in detail: its signature,
+what it calls and what calls it, each data set's times with charts, its
+first 12 calls with their inputs and outputs, and its code.
+
+## Data sets
+
+Every function is called with three sets of inputs, and the report
+compares them:
+
+- **typical**: each parameter's usual value;
+- **random**: random values from each parameter's range;
+- **edges**: the ends of each range (all low, all high, then mixed).
+
+**Data sets** in the panel picks one of them (`typical`, `random`,
+`edges`) or `all` (the default). "Suspicious" marks a function that
+returned NaN, infinity, or the largest or smallest whole number, which
+usually means a divide by zero or an overflow.
+
+## Where reports go
+
+**Report folder** says where reports are written (the default is
+`cubeland_worlds\test_reports` next to the program). Set **Open the
+report when it is written** to `no` to stop it opening by itself.
+
+**Source folder** is filled in for you when the program can find the
+game's code (for the code in the report).
 
 ## Run one function many times
 
@@ -24,8 +62,8 @@ At the top, **Failed checks** should be 0.
    - Type `library` to list the 12d library calls instead.
 2. Click the function in the list.
 3. In **Runs**, type how many times to call it (for example `25340`).
-4. Press **Run selected**.
-5. Open the newest report, as above.
+   Each data set gets that many calls.
+4. Press **Run selected**. The report opens when it's done.
 
 For that function, the report shows:
 

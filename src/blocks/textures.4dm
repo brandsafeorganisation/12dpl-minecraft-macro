@@ -1658,7 +1658,8 @@ void make_texture_person(Integer p_tex, Integer p_part)
 // ----------------------------------------------------------------
 // Another player: a face (p_part 1), the side (2) and top (3) of a
 // head of brown hair, an orange shirt (4) and its side (5), an arm
-// with the sleeve at the shoulder (6) and grey trousers (7)
+// with the sleeve at the shoulder (6), grey trousers (7) and the
+// back of the head (8). A skin (pack_apply_skin) replaces them all.
 // ----------------------------------------------------------------
 {
   texture_set_palette(p_tex, 1, 214, 164, 128);   // skin
@@ -1689,7 +1690,7 @@ void make_texture_person(Integer p_tex, Integer p_part)
     texture_blotch   (p_tex, 4, 3, 0.0, 0.20, 85);
     return;
   }
-  if (p_part == 3) {
+  if (p_part == 3 || p_part == 8) {
     texture_fill  (p_tex, 3);
     texture_blotch(p_tex, 4, 3, 0.0, 0.35, 87);
     return;
@@ -1871,6 +1872,11 @@ void textures_generate()
   make_texture_person        (TEX_PERSON_SHIRT_SIDE, 5);
   make_texture_person        (TEX_PERSON_ARM,        6);
   make_texture_person        (TEX_PERSON_PANTS,      7);
+  make_texture_person        (TEX_PERSON_HEAD_BACK,  8);
+  make_texture_person        (TEX_PERSON_SHIRT_BACK, 4);
+  make_texture_person        (TEX_PERSON_ARM_FRONT,  6);
+  make_texture_person        (TEX_PERSON_ARM_TOP,    5);
+  make_texture_person        (TEX_PERSON_LEG_FRONT,  7);
 }
 
 #endif

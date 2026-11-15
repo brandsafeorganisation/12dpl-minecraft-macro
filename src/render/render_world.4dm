@@ -107,12 +107,21 @@ void render_set_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blue)
 // differently coloured outline (and neighbours leave no gaps)
 // ----------------------------------------------------------------
 {
-  Integer l_r = to_byte(p_red);
-  Integer l_g = to_byte(p_green);
-  Integer l_b = to_byte(p_blue);
+  Integer l_r = to_byte(p_red   * g_view_shade);
+  Integer l_g = to_byte(p_green * g_view_shade);
+  Integer l_b = to_byte(p_blue  * g_view_shade);
 
   Set_colour     (p_box, l_r, l_g, l_b);
   Set_fill_colour(p_box, l_r, l_g, l_b);
+}
+
+void render_set_shade(Real p_shade)
+// ----------------------------------------------------------------
+// Multiply every colour drawn from now on by p_shade (1 normally; the
+// game draws the world darker behind its menus and screens)
+// ----------------------------------------------------------------
+{
+  g_view_shade = clamp_real(p_shade, 0.0, 1.0);
 }
 
 void render_set_face_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blue)
@@ -122,9 +131,9 @@ void render_set_face_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blu
 // because keep + fog <= 1 (see render_draw_face)
 // ----------------------------------------------------------------
 {
-  Integer l_r = Floor(p_red);
-  Integer l_g = Floor(p_green);
-  Integer l_b = Floor(p_blue);
+  Integer l_r = Floor(p_red   * g_view_shade);
+  Integer l_g = Floor(p_green * g_view_shade);
+  Integer l_b = Floor(p_blue  * g_view_shade);
 
   Set_colour     (p_box, l_r, l_g, l_b);
   Set_fill_colour(p_box, l_r, l_g, l_b);
@@ -1130,14 +1139,90 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real 
 // ----------------------------------------------------------------
 {
   render_mob_begin(p_x, p_y, p_z, p_yaw, 0.0);
-  //              along  up     across  half f  half y  half s  turn  pitch     hip    side                   top                    front              back
-  render_mob_part(0.0  , 0.375,  0.12 , 0.12  , 0.375 , 0.12  , 0.0 ,  p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_PANTS , TEX_PERSON_PANTS     );
-  render_mob_part(0.0  , 0.375, -0.12 , 0.12  , 0.375 , 0.12  , 0.0 , -p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_PANTS , TEX_PERSON_PANTS     );
-  render_mob_part(0.0  , 1.125,  0.0  , 0.13  , 0.375 , 0.25  , 0.0 ,  0.0    , FALSE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT , TEX_PERSON_SHIRT     );
-  render_mob_part(0.0  , 1.125,  0.37 , 0.11  , 0.375 , 0.11  , 0.0 , -p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_SHIRT_SIDE, TEX_PERSON_ARM   , TEX_PERSON_ARM       );
-  render_mob_part(0.0  , 1.125, -0.37 , 0.11  , 0.375 , 0.11  , 0.0 ,  p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_SHIRT_SIDE, TEX_PERSON_ARM   , TEX_PERSON_ARM       );
-  render_mob_part(0.0  , 1.75 ,  0.0  , 0.25  , 0.25  , 0.25  , 0.0 ,  p_pitch, FALSE, TEX_PERSON_HEAD_SIDE , TEX_PERSON_HEAD_TOP  , TEX_PERSON_FACE  , TEX_PERSON_HEAD_SIDE );
+  // sized like the block game's player (1 pixel of the skin is 1/16
+  // block): 4 x 12 x 4 legs and arms, an 8 x 12 x 4 body, an 8 x 8 x 8
+  // head, with each face from its own part of the skin
+  //              along  up     across  half f  half y  half s  turn  pitch     hip    side                   top                    front                 back
+  render_mob_part(0.0  , 0.375,  0.125, 0.125 , 0.375 , 0.125 , 0.0 ,  p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
+  render_mob_part(0.0  , 0.375, -0.125, 0.125 , 0.375 , 0.125 , 0.0 , -p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
+  render_mob_part(0.0  , 1.125,  0.0  , 0.125 , 0.375 , 0.25  , 0.0 ,  0.0    , FALSE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT    , TEX_PERSON_SHIRT_BACK);
+  render_mob_part(0.0  , 1.125,  0.375, 0.125 , 0.375 , 0.125 , 0.0 , -p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
+  render_mob_part(0.0  , 1.125, -0.375, 0.125 , 0.375 , 0.125 , 0.0 ,  p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
+  render_mob_part(0.0  , 1.75 ,  0.0  , 0.25  , 0.25  , 0.25  , 0.0 ,  p_pitch, FALSE, TEX_PERSON_HEAD_SIDE , TEX_PERSON_HEAD_TOP  , TEX_PERSON_FACE     , TEX_PERSON_HEAD_BACK );
   render_mob_end();
+}
+
+void render_camera_place(Attributes &p_player, Real &p_x, Real &p_y, Real &p_z, Real &p_yaw, Real &p_pitch)
+// ----------------------------------------------------------------
+// Where the view is seen from and which way it looks: the player's
+// eyes, or (player_camera) up to CAMERA_DISTANCE behind them looking
+// the same way, or in front of them looking back. The outside views
+// come in closer rather than go into a block.
+// ----------------------------------------------------------------
+{
+  Integer l_camera = player_camera(p_player);
+  Real    l_eye_x  = 0.0;
+  Real    l_eye_y  = 0.0;
+  Real    l_eye_z  = 0.0;
+  Real    l_dir_x  = 0.0;
+  Real    l_dir_y  = 0.0;
+  Real    l_dir_z  = 0.0;
+  Real    l_away   = 0.0;
+  Real    l_step   = 0.1;
+  Real    l_room   = 0.0;
+
+  player_position(p_player, l_eye_x, l_eye_y, l_eye_z);
+  player_look    (p_player, p_yaw, p_pitch);
+  l_eye_y = player_eye_y(p_player);
+  p_x = l_eye_x;
+  p_y = l_eye_y;
+  p_z = l_eye_z;
+  if (l_camera == CAMERA_FIRST) return;
+
+  // out from the eyes: backwards for the view from behind, forwards
+  // for the one from in front
+  l_dir_x = Cos(p_pitch) * Cos(p_yaw);
+  l_dir_y = Sin(p_pitch);
+  l_dir_z = Cos(p_pitch) * Sin(p_yaw);
+  if (l_camera == CAMERA_BEHIND) {
+    l_dir_x = -l_dir_x;
+    l_dir_y = -l_dir_y;
+    l_dir_z = -l_dir_z;
+  }
+  // step out until a solid block is in the way (keeping clear of it)
+  for (l_away = l_step; l_away <= CAMERA_DISTANCE + 0.3; l_away = l_away + l_step) {
+    if (block_is_solid(world_get_block(floor_integer(l_eye_x + l_dir_x * l_away), floor_integer(l_eye_y + l_dir_y * l_away),
+                                       floor_integer(l_eye_z + l_dir_z * l_away)))) break;
+    l_room = l_away;
+  }
+  l_room = max_real(0.0, min_real(CAMERA_DISTANCE, l_room - 0.3));
+  p_x = l_eye_x + l_dir_x * l_room;
+  p_y = l_eye_y + l_dir_y * l_room;
+  p_z = l_eye_z + l_dir_z * l_room;
+  if (l_camera == CAMERA_FRONT) {
+    p_yaw   = wrap_angle(p_yaw + PI);
+    p_pitch = -p_pitch;
+  }
+}
+
+void render_collect_self(Attributes &p_player)
+// ----------------------------------------------------------------
+// Queue the player's own body (in their skin) when the view is from
+// outside it; spectators have no body
+// ----------------------------------------------------------------
+{
+  Real l_x     = 0.0;
+  Real l_y     = 0.0;
+  Real l_z     = 0.0;
+  Real l_yaw   = 0.0;
+  Real l_pitch = 0.0;
+
+  if (player_camera(p_player) == CAMERA_FIRST) return;
+  if (player_spectator(p_player)) return;
+  player_position(p_player, l_x, l_y, l_z);
+  player_look    (p_player, l_yaw, l_pitch);
+  g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
+  render_person(l_x, l_y, l_z, l_yaw, l_pitch, Sin(player_bob(p_player)) * MOB_LEG_SWING);
 }
 
 void render_collect_peers(Attributes &p_peers)
@@ -2292,9 +2377,8 @@ void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attrib
   Real    l_pitch  = 0.0;
 
   render_view_from(p_player, p_settings, p_time_of_day, p_now);
-  player_position (p_player, l_x, l_y, l_z);
-  player_look     (p_player, l_yaw, l_pitch);
-  render_setup_camera(p_w, p_h, p_view_bottom, l_x, player_eye_y(p_player), l_z, l_yaw, l_pitch, settings_fov_radians(p_settings));
+  render_camera_place(p_player, l_x, l_y, l_z, l_yaw, l_pitch);
+  render_setup_camera(p_w, p_h, p_view_bottom, l_x, l_y, l_z, l_yaw, l_pitch, settings_fov_radians(p_settings));
 
   g_face_total     = 0;
   g_stat_faces     = 0;
@@ -2309,6 +2393,7 @@ void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attrib
   render_collect_cows  (p_cows);
   render_collect_drops (p_drops);
   render_collect_peers (p_peers);
+  render_collect_self  (p_player);
   g_box_light = 1.0;
   g_stat_faces = g_face_total;
 

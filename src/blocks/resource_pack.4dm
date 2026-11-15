@@ -1498,4 +1498,121 @@ Integer pack_apply(Text p_path, Text &p_report)
   return l_loaded;
 }
 
+// ---------------------------------------------------------------- player skins
+
+Integer pack_map_skin_part(Integer p_entry, Integer &p_tex, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h,
+                           Integer &p_over_x, Integer &p_over_y)
+// ----------------------------------------------------------------
+// Entry p_entry of the map from the player model's textures to a
+// player skin (a 64 x 64 PNG, or an old 64 x 32 one): the rectangle
+// of the part and of its second layer (hair, hood, jacket...), drawn
+// over it. The second layers of the body, arms and legs (under
+// y = 32) are only in 64 x 64 skins. Returns FALSE after the last.
+// ----------------------------------------------------------------
+{
+  p_over_x = -1;
+  p_over_y = -1;
+  //                                                       x   y   w   h              second layer
+  if (p_entry == 1 ) { p_tex = TEX_PERSON_FACE;       p_x = 8 ; p_y = 8 ; p_w = 8; p_h = 8 ; p_over_x = 40; p_over_y = 8 ; return TRUE; }
+  if (p_entry == 2 ) { p_tex = TEX_PERSON_HEAD_SIDE;  p_x = 0 ; p_y = 8 ; p_w = 8; p_h = 8 ; p_over_x = 32; p_over_y = 8 ; return TRUE; }
+  if (p_entry == 3 ) { p_tex = TEX_PERSON_HEAD_TOP;   p_x = 8 ; p_y = 0 ; p_w = 8; p_h = 8 ; p_over_x = 40; p_over_y = 0 ; return TRUE; }
+  if (p_entry == 4 ) { p_tex = TEX_PERSON_HEAD_BACK;  p_x = 24; p_y = 8 ; p_w = 8; p_h = 8 ; p_over_x = 56; p_over_y = 8 ; return TRUE; }
+  if (p_entry == 5 ) { p_tex = TEX_PERSON_SHIRT;      p_x = 20; p_y = 20; p_w = 8; p_h = 12; p_over_x = 20; p_over_y = 36; return TRUE; }
+  if (p_entry == 6 ) { p_tex = TEX_PERSON_SHIRT_SIDE; p_x = 16; p_y = 20; p_w = 4; p_h = 12; p_over_x = 16; p_over_y = 36; return TRUE; }
+  if (p_entry == 7 ) { p_tex = TEX_PERSON_SHIRT_BACK; p_x = 32; p_y = 20; p_w = 8; p_h = 12; p_over_x = 32; p_over_y = 36; return TRUE; }
+  if (p_entry == 8 ) { p_tex = TEX_PERSON_ARM;        p_x = 40; p_y = 20; p_w = 4; p_h = 12; p_over_x = 40; p_over_y = 36; return TRUE; }
+  if (p_entry == 9 ) { p_tex = TEX_PERSON_ARM_FRONT;  p_x = 44; p_y = 20; p_w = 4; p_h = 12; p_over_x = 44; p_over_y = 36; return TRUE; }
+  if (p_entry == 10) { p_tex = TEX_PERSON_ARM_TOP;    p_x = 44; p_y = 16; p_w = 4; p_h = 4 ; p_over_x = 44; p_over_y = 32; return TRUE; }
+  if (p_entry == 11) { p_tex = TEX_PERSON_PANTS;      p_x = 0 ; p_y = 20; p_w = 4; p_h = 12; p_over_x = 0 ; p_over_y = 36; return TRUE; }
+  if (p_entry == 12) { p_tex = TEX_PERSON_LEG_FRONT;  p_x = 4 ; p_y = 20; p_w = 4; p_h = 12; p_over_x = 4 ; p_over_y = 36; return TRUE; }
+  return FALSE;
+}
+
+Integer pack_load_png_file(Text p_path)
+// ----------------------------------------------------------------
+// Put the PNG file p_path into g_pack_file. Returns SUCCESS or
+// FAILURE (no file, or not a PNG).
+// ----------------------------------------------------------------
+{
+  File l_file;
+
+  if (!File_exists(p_path)) return FAILURE;
+  if (safe_file_open(p_path, "rb", l_file) != 0) return FAILURE;
+  pack_read_bytes(l_file, 0, PACK_BUFFER_FILE);
+  File_close(l_file);
+  if (!png_is_chunk(13, 73, 72, 68, 82)) return FAILURE;   // IHDR first
+  return SUCCESS;
+}
+
+Integer pack_skin_region(Integer p_x, Integer p_y, Integer p_w, Integer p_h)
+// ----------------------------------------------------------------
+// Decode one rectangle of the skin in g_pack_file into the 16 x 16
+// picture. Returns SUCCESS or FAILURE.
+// ----------------------------------------------------------------
+{
+  Integer l_result = 0;
+
+  g_pack_region_x    = p_x;
+  g_pack_region_y    = p_y;
+  g_pack_region_w    = p_w;
+  g_pack_region_h    = p_h;
+  g_pack_region_turn = PACK_TURN_NONE;
+  l_result = png_decode(-1, 0);
+  g_pack_region_w = 0;
+  return l_result;
+}
+
+Integer pack_apply_skin(Text p_path, Text &p_report)
+// ----------------------------------------------------------------
+// Dress the player model (the TEX_PERSON_* textures) in the skin
+// p_path, a PNG laid out like the block game's skins (64 x 64, or
+// 64 x 32 without the second layer of the body, arms and legs).
+// Call between textures_generate() and textures_finish_all(), after
+// any resource pack. Returns how many textures it replaced.
+// ----------------------------------------------------------------
+{
+  Integer l_entry  = 1;
+  Integer l_tex    = 0;
+  Integer l_x      = 0;
+  Integer l_y      = 0;
+  Integer l_w      = 0;
+  Integer l_h      = 0;
+  Integer l_over_x = 0;
+  Integer l_over_y = 0;
+  Integer l_width  = 0;
+  Integer l_height = 0;
+  Integer l_pixel  = 0;
+  Integer l_loaded = 0;
+
+  p_report = "";
+  if (p_path == "") return 0;
+  pack_init_tables();
+  if (pack_load_png_file(p_path) != SUCCESS) {
+    p_report = "Can't read the skin " + p_path;
+    return 0;
+  }
+  l_width  = png_number(17);
+  l_height = png_number(21);
+  if (l_width < 8 || l_height * 2 < l_width) {
+    p_report = "The skin " + p_path + " isn't laid out like a skin (64 x 64 or 64 x 32)";
+    return 0;
+  }
+
+  while (pack_map_skin_part(l_entry, l_tex, l_x, l_y, l_w, l_h, l_over_x, l_over_y)) {
+    ++l_entry;
+    // the second layer first (kept aside), then the part under it;
+    // 64 x 32 skins have no second layer below the head
+    for (l_pixel = 1; l_pixel <= 256; ++l_pixel) g_pack_overlay_a[l_pixel] = 0;
+    if (l_over_x >= 0 && (l_over_y < 32 || l_height >= l_width)) {
+      if (pack_skin_region(l_over_x, l_over_y, l_w, l_h) == SUCCESS) pack_keep_overlay();
+    }
+    if (pack_skin_region(l_x, l_y, l_w, l_h) != SUCCESS) continue;
+    pack_draw_overlay();
+    pack_to_texture(l_tex, FALSE);
+    ++l_loaded;
+  }
+  p_report = "Skin: " + To_text(l_loaded) + " parts from " + p_path;
+  return l_loaded;
+}
+
 #endif

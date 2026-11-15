@@ -20,7 +20,8 @@
 void settings_panel_show(Attributes &p_settings, Colour_Message_Box p_render_row, Colour_Message_Box p_detail_row,
                          Colour_Message_Box p_fov_row, Colour_Message_Box p_mouse_row, Colour_Message_Box p_plants_row,
                          Colour_Message_Box p_shading_row, Colour_Message_Box p_jump_row, Colour_Message_Box p_hud_row,
-                         Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row)
+                         Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row,
+                         Colour_Message_Box p_skin_row)
 // ----------------------------------------------------------------
 // Show the current value of every setting
 // ----------------------------------------------------------------
@@ -36,6 +37,7 @@ void settings_panel_show(Attributes &p_settings, Colour_Message_Box p_render_row
   Set_data(p_debug_row  , settings_describe(p_settings, ATTR_SET_SHOW_DEBUG));
   Set_data(p_pack_row   , settings_describe(p_settings, ATTR_SET_RESOURCE_PACK));
   Set_data(p_font_row   , settings_describe(p_settings, ATTR_SET_FONT));
+  Set_data(p_skin_row   , settings_describe(p_settings, ATTR_SET_SKIN));
 }
 
 Integer settings_panel_run(Attributes &p_settings)
@@ -100,6 +102,12 @@ Integer settings_panel_run(Attributes &p_settings)
   Button             l_font_name_use  = Create_button("Use this font name", "set_font_name");
   Button             l_font_file_use  = Create_button("Use this font file", "set_font_file");
 
+  Colour_Message_Box l_skin_row       = Create_colour_message_box("");
+  File_Box           l_skin_box       = Create_file_box("Skin (a .png laid out like a block game skin)", l_message, PACK_FILE_BOX_MODE, "*.png");
+  Horizontal_Group   l_skin_buttons   = Create_button_group();
+  Button             l_skin_use       = Create_button("Use this skin", "set_skin_load");
+  Button             l_skin_clear     = Create_button("Built-in skin", "set_skin_clear");
+
   Input_Box          l_name_box       = Create_input_box("Multiplayer name (blank for your Windows name)", l_message);
   Input_Box          l_folder_box     = Create_input_box("Multiplayer folder (shared by every player)", l_message);
 
@@ -137,6 +145,8 @@ Integer settings_panel_run(Attributes &p_settings)
   Append(l_font_default, l_font_buttons);
   Append(l_font_name_use, l_font_use);
   Append(l_font_file_use, l_font_use);
+  Append(l_skin_use     , l_skin_buttons);
+  Append(l_skin_clear   , l_skin_buttons);
   Append(l_reset_button, l_end_buttons);
   Append(l_done_button , l_end_buttons);
 
@@ -162,6 +172,9 @@ Integer settings_panel_run(Attributes &p_settings)
   Append(l_font_name_box , l_vgroup);
   Append(l_font_file_box , l_vgroup);
   Append(l_font_use      , l_vgroup);
+  Append(l_skin_row      , l_vgroup);
+  Append(l_skin_box      , l_vgroup);
+  Append(l_skin_buttons  , l_vgroup);
   Append(l_name_box      , l_vgroup);
   Append(l_folder_box    , l_vgroup);
   Append(l_end_buttons   , l_vgroup);
@@ -169,10 +182,11 @@ Integer settings_panel_run(Attributes &p_settings)
   Append(l_vgroup        , l_panel);
 
   Show_widget(l_panel);
-  settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row);
+  settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row, l_skin_row);
   Set_data(l_pack_box, settings_resource_pack(p_settings));
   Set_data(l_font_name_box, settings_font(p_settings));
   Set_data(l_font_file_box, settings_font_file(p_settings));
+  Set_data(l_skin_box, settings_skin(p_settings));
   Set_data(l_name_box, settings_player_name(p_settings));
   Set_data(l_folder_box, settings_mp_folder(p_settings));
   Set_data(l_message, "Longer views and higher detail look better but draw more slowly.");
@@ -235,6 +249,23 @@ Integer settings_panel_run(Attributes &p_settings)
         l_report = l_report + " Using the built-in textures.";
       }
       Set_data(l_message, l_report);
+    } else if (l_cmd == "set_skin_load") {
+      l_pack = "";
+      Get_data(l_skin_box, l_pack);
+      settings_set_text(p_settings, ATTR_SET_SKIN, Text_justify(l_pack));
+      game_load_textures(p_settings, l_report);
+      if (Find_text(l_report, "Skin: ") == 0) {
+        // not a skin we could read: back to the built-in one
+        settings_set_text(p_settings, ATTR_SET_SKIN, "");
+        game_load_textures(p_settings, l_font);
+        l_report = l_report + " Using the built-in skin.";
+      }
+      Set_data(l_message, l_report);
+    } else if (l_cmd == "set_skin_clear") {
+      settings_set_text(p_settings, ATTR_SET_SKIN, "");
+      Set_data(l_skin_box, "");
+      game_load_textures(p_settings, l_report);
+      Set_data(l_message, "Using the built-in skin.");
     } else if (l_cmd == "set_pack_clear") {
       settings_set_resource_pack(p_settings, "");
       Set_data(l_pack_box, "");
@@ -271,8 +302,10 @@ Integer settings_panel_run(Attributes &p_settings)
       }
     } else if (l_cmd == "set_defaults") {
       l_pack = settings_resource_pack(p_settings);
+      l_font = settings_skin(p_settings);
       settings_defaults(p_settings);
-      settings_set_resource_pack(p_settings, l_pack);   // keep the textures: there's a button for that
+      settings_set_resource_pack(p_settings, l_pack);   // keep the textures and skin: they have buttons
+      settings_set_text(p_settings, ATTR_SET_SKIN, l_font);
       Set_data(l_font_name_box, "");
       Set_data(l_font_file_box, "");
       Set_data(l_name_box, settings_player_name(p_settings));
@@ -280,7 +313,7 @@ Integer settings_panel_run(Attributes &p_settings)
     } else {
       continue;
     }
-    settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row);
+    settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row, l_skin_row);
   }
 
   save_ensure_folder();

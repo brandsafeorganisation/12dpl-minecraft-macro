@@ -333,6 +333,7 @@ static LRESULT CALLBACK view_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
     }
     case WM_KEYDOWN:
       if (w == VK_ESCAPE) push_event(key_box_of(panel_of(id)), "keystroke", "escape");
+      if (w == VK_F5)     push_event(key_box_of(panel_of(id)), "keystroke", "f5");     // the camera (V in 12d)
       // Shift alone types nothing; held down it repeats, which the
       // game reads as crouching (or sinking while flying)
       if (w == VK_SHIFT) push_event(key_box_of(panel_of(id)), "keystroke", "shift");

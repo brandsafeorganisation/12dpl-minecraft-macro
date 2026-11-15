@@ -128,6 +128,15 @@ void test_cases_run(Attributes &p_results)
   Real       l_py     = 0.0;
   Real       l_pz     = 0.0;
   Text       l_reply  = "";
+  Real       l_x0     = 0.0;
+  Real       l_y0     = 0.0;
+  Real       l_x1     = 0.0;
+  Real       l_y1     = 0.0;
+  Integer    l_tex    = 0;
+  Integer    l_w      = 0;
+  Integer    l_h      = 0;
+  Integer    l_over_x = 0;
+  Integer    l_over_y = 0;
 
   // ---------------------------------------------------- util
   test_group(p_results, "util");
@@ -267,6 +276,29 @@ void test_cases_run(Attributes &p_results)
   test_expect_text   (p_results, "player_game_mode_name(spectator)",  player_game_mode_name(GAMEMODE_SPECTATOR), "Spectator");
   player_set_health(g_player, PLAYER_MAX_HEALTH);
   events_clear(g_events);
+
+  // ---------------------------------------------------- camera, pause menu, skins
+  test_group(p_results, "camera and menu");
+  record_set_integer(g_player, ATTR_PLAYER_CAMERA, CAMERA_FIRST);
+  player_next_camera(g_player);
+  test_expect_integer(p_results, "V once: the camera behind you",     player_camera(g_player), CAMERA_BEHIND);
+  player_next_camera(g_player);
+  test_expect_integer(p_results, "V twice: in front, looking back",   player_camera(g_player), CAMERA_FRONT);
+  player_next_camera(g_player);
+  test_expect_integer(p_results, "V three times: your eyes again",    player_camera(g_player), CAMERA_FIRST);
+  hud_pause_button_rect(860.0, 520.0, PAUSE_BUTTON_BACK, l_x0, l_y0, l_x1, l_y1);
+  test_expect_integer(p_results, "the middle of Back to Game",        hud_pause_button_at(860.0, 520.0, (l_x0 + l_x1) / 2.0, (l_y0 + l_y1) / 2.0), PAUSE_BUTTON_BACK);
+  hud_pause_button_rect(860.0, 520.0, PAUSE_BUTTON_CONTROLS, l_x0, l_y0, l_x1, l_y1);
+  test_expect_integer(p_results, "the middle of Controls",            hud_pause_button_at(860.0, 520.0, (l_x0 + l_x1) / 2.0, (l_y0 + l_y1) / 2.0), PAUSE_BUTTON_CONTROLS);
+  test_expect_integer(p_results, "between the half buttons: none",    hud_pause_button_at(860.0, 520.0, 430.0, (l_y0 + l_y1) / 2.0), 0);
+  test_expect_integer(p_results, "a corner of the view: no button",   hud_pause_button_at(860.0, 520.0, 5.0, 500.0), 0);
+  l_i = 1;
+  while (pack_map_skin_part(l_i, l_tex, l_x, l_y, l_w, l_h, l_over_x, l_over_y)) ++l_i;
+  test_expect_integer(p_results, "a skin dresses 12 model textures",  l_i - 1, 12);
+  pack_map_skin_part(1, l_tex, l_x, l_y, l_w, l_h, l_over_x, l_over_y);
+  test_expect_integer(p_results, "the face is at 8, 8 of the skin",   l_x * 100 + l_y, 808);
+  test_expect_integer(p_results, "its second layer at 40, 8",         l_over_x * 100 + l_over_y, 4008);
+  test_expect_integer(p_results, "no skin file: nothing replaced",    pack_apply_skin("zz_no_such_skin.png", l_reply), 0);
 
   // ---------------------------------------------------- creative inventory
   test_group(p_results, "creative inventory");

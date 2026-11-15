@@ -1,0 +1,36 @@
+# Player skins and the camera. A missing skin is reported and the
+# built-in look stays; the supplied skin (release/skins/purple.png, a
+# 64 x 64 skin with a second layer) dresses the player model. V moves
+# the camera behind the player, then in front looking back, then back
+# to the eyes (the hand and crosshair only show from the eyes).
+button menu_settings
+input Skin (a .png laid out like a block game skin)|../no_such_skin.png
+button set_skin_load
+input Skin (a .png laid out like a block game skin)|../../../release/skins/purple.png
+button set_skin_load
+button set_done
+input New world name|Skin
+input Seed (blank for random)|4242
+button create
+wait 2
+click 430 300
+wait 2
+call look_level
+key v
+wait 3
+snap 280_camera_behind
+wait 2
+key v
+wait 3
+snap 281_camera_front
+wait 2
+key s
+holdkey s 20
+wait 6
+snap 282_front_walking
+wait 2
+key v
+wait 3
+snap 283_camera_eyes
+wait 2
+quit

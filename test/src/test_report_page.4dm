@@ -76,6 +76,7 @@ void test_report_page_start(File &p_file)
   File_write_line(p_file, "dl{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:12px 0}");
   File_write_line(p_file, "dt{color:var(--soft)}dd{margin:0;min-width:0;overflow-wrap:anywhere}");
   File_write_line(p_file, "pre.code{background:var(--code);color:var(--codeink);padding:12px 14px;border-radius:10px;overflow:auto;font-size:12px;line-height:1.5}");
+  File_write_line(p_file, "#drawer td:first-child{white-space:nowrap}");
   File_write_line(p_file, ".mono{font-family:Consolas,'Cascadia Mono',monospace;font-size:12px;overflow-wrap:anywhere}");
   File_write_line(p_file, ".tabs2 button{border:1px solid var(--line);background:var(--panel);color:var(--soft);border-radius:8px;padding:5px 10px;font:inherit;cursor:pointer;margin-right:6px}");
   File_write_line(p_file, ".tabs2 button.on{color:var(--ink);border-color:var(--accent)}");

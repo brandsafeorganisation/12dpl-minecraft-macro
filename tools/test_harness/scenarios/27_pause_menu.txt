@@ -1,0 +1,52 @@
+# The game menu: Q pauses and shows it over the darkened world; the
+# button under the mouse lights up; Controls shows the keys and a
+# click goes back; Mode cycles the game mode; Back to Game plays on.
+# Then creative flight lands on the ground, and the creative screen
+# shows the world behind it. Save and Quit to Title ends the game.
+input New world name|Menu
+input Seed (blank for random)|4242
+button create
+wait 2
+click 430 300
+wait 2
+key q
+wait 2
+snap 270_menu_hover
+move 330 295
+wait 2
+snap 271_controls
+click 530 295
+wait 2
+click 430 300
+wait 2
+click 530 247
+wait 2
+call mode
+click 430 343
+wait 2
+call mode
+# fly up, then sink back to the ground: landing stops flying
+key space
+wait 3
+key space
+holdkey space 40
+wait 2
+call mode
+holdkey c 150
+wait 10
+call mode
+key e
+wait 3
+call mode
+snap 273_creative_over_world
+move 300 200
+wait 2
+key escape
+wait 2
+key q
+wait 2
+click 330 247
+wait 2
+click 430 199
+wait 3
+quit

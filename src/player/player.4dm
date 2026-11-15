@@ -373,6 +373,23 @@ void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_ev
   player_set_velocity(p_player, event_real(p_event, 1) * 6.0, 4.5, event_real(p_event, 3) * 6.0);
 }
 
+Integer player_camera(Attributes &p_player)
+// ----------------------------------------------------------------
+// Where the view is seen from: CAMERA_FIRST (the eyes), CAMERA_BEHIND
+// or CAMERA_FRONT
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_PLAYER_CAMERA);
+}
+
+void player_next_camera(Attributes &p_player)
+// ----------------------------------------------------------------
+// The next camera: eyes, behind, in front, and back to the eyes
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_player, ATTR_PLAYER_CAMERA, positive_mod(player_camera(p_player) + 1, 3));
+}
+
 Integer player_flying(Attributes &p_player)
 // ----------------------------------------------------------------
 // TRUE while fly mode is on (no gravity, Space rises, Shift or C
@@ -791,6 +808,11 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
       }
       if (l_hit_up && l_vy > 0.0) l_vy = 0.0;
       if (l_hit_x || l_hit_z) l_blocked = TRUE;
+    }
+    // Flying down onto the ground lands: flying stops (creative)
+    if (l_flying && l_on_ground && l_move_y < 0.0) {
+      l_flying = FALSE;
+      player_set_flying(p_player, FALSE);
     }
   }
 

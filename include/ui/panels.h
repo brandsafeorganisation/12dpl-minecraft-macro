@@ -28,7 +28,8 @@ Integer settings_panel_run   (Attributes &p_settings);
 void    settings_panel_show  (Attributes &p_settings, Colour_Message_Box p_render_row, Colour_Message_Box p_detail_row,
                               Colour_Message_Box p_fov_row, Colour_Message_Box p_mouse_row, Colour_Message_Box p_plants_row,
                               Colour_Message_Box p_shading_row, Colour_Message_Box p_jump_row, Colour_Message_Box p_hud_row,
-                              Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row);
+                              Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row,
+                              Colour_Message_Box p_skin_row);
 Integer menu_refresh_worlds  (List_Box p_world_list);
 Integer game_panel_split_xy  (Text p_msg, Real &p_x, Real &p_y);
 Integer game_panel_calibrate (Draw_Box p_box, Real p_box_x, Real p_box_y, Integer p_width, Integer p_height, Integer &p_origin_x, Integer &p_origin_y);

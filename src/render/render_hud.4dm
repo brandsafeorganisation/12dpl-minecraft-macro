@@ -37,6 +37,9 @@ void hud_clear(Attributes &p_hud)
   record_set_real   (p_hud, ATTR_HUD_FRAME_MAX,  0.0);
   record_set_real   (p_hud, ATTR_HUD_WINDOW,     0.0);
   record_set_text   (p_hud, ATTR_HUD_STATS,      "");
+  record_set_real   (p_hud, ATTR_HUD_MOUSE_X,    -1.0);
+  record_set_real   (p_hud, ATTR_HUD_MOUSE_Y,    -1.0);
+  record_set_integer(p_hud, ATTR_HUD_MENU_HELP,  FALSE);
   for (l_toast = 1; l_toast <= MAX_CHAT_LINES; ++l_toast) {
     record_set_text_at(p_hud, ATTR_HUD_CHAT,       l_toast, "");
     record_set_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, l_toast, 0.0);
@@ -156,6 +159,33 @@ void hud_set_help(Attributes &p_hud, Integer p_shown)
 // ----------------------------------------------------------------
 {
   record_set_integer(p_hud, ATTR_HUD_HELP, p_shown);
+  if (!p_shown) record_set_integer(p_hud, ATTR_HUD_MENU_HELP, FALSE);
+}
+
+void hud_set_menu_help(Attributes &p_hud, Integer p_from_menu)
+// ----------------------------------------------------------------
+// Note that the help was opened from the pause menu (a click then
+// goes back to the menu instead of starting play)
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_hud, ATTR_HUD_MENU_HELP, p_from_menu);
+}
+
+Integer hud_menu_help(Attributes &p_hud)
+// ----------------------------------------------------------------
+// TRUE if the help showing was opened from the pause menu
+// ----------------------------------------------------------------
+{
+  return record_integer(p_hud, ATTR_HUD_HELP) && record_integer(p_hud, ATTR_HUD_MENU_HELP);
+}
+
+void hud_set_mouse(Attributes &p_hud, Real p_x, Real p_y)
+// ----------------------------------------------------------------
+// Where the mouse is over the view (for the pause menu's buttons)
+// ----------------------------------------------------------------
+{
+  record_set_real(p_hud, ATTR_HUD_MOUSE_X, p_x);
+  record_set_real(p_hud, ATTR_HUD_MOUSE_Y, p_y);
 }
 
 void hud_on_event(Attributes &p_event, Attributes &p_hud, Real p_now)
@@ -395,6 +425,115 @@ void hud_banner(Draw_Box p_box, Real p_centre_x, Real p_centre_y, Real p_half_w,
   hud_text(p_box, p_centre_x, p_centre_y - p_half_h + 30.0, 13.0, TEXT_ALIGN_CENTRE, 225, 225, 225, p_line);
 }
 
+void hud_pause_button_rect(Real p_w, Real p_h, Integer p_button, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1)
+// ----------------------------------------------------------------
+// Where pause menu button p_button is in a w x h view: a full width
+// button, two half width ones, two more, then a full width one,
+// centred in the view below the status strip
+// ----------------------------------------------------------------
+{
+  Real    l_width  = min_real(PAUSE_BUTTON_WIDTH, p_w - 40.0);
+  Real    l_half   = (l_width - PAUSE_BUTTON_GAP) / 2.0;
+  Real    l_row_h  = PAUSE_BUTTON_HEIGHT + PAUSE_BUTTON_GAP;
+  Real    l_middle = STATUS_STRIP_HEIGHT + (p_h - STATUS_STRIP_HEIGHT) / 2.0;
+  Real    l_top    = l_middle + 2.0 * l_row_h - PAUSE_BUTTON_GAP / 2.0;
+  Real    l_left   = p_w / 2.0 - l_width / 2.0;
+  Integer l_row    = 1;
+
+  if (p_button == PAUSE_BUTTON_OPTIONS || p_button == PAUSE_BUTTON_CONTROLS) l_row = 2;
+  if (p_button == PAUSE_BUTTON_SAVE    || p_button == PAUSE_BUTTON_MODE    ) l_row = 3;
+  if (p_button == PAUSE_BUTTON_QUIT) l_row = 4;
+  p_y1 = l_top - (l_row - 1) * l_row_h;
+  p_y0 = p_y1 - PAUSE_BUTTON_HEIGHT;
+  p_x0 = l_left;
+  p_x1 = l_left + l_width;
+  if (p_button == PAUSE_BUTTON_OPTIONS || p_button == PAUSE_BUTTON_SAVE) p_x1 = l_left + l_half;
+  if (p_button == PAUSE_BUTTON_CONTROLS || p_button == PAUSE_BUTTON_MODE) p_x0 = l_left + l_width - l_half;
+}
+
+Integer hud_pause_button_at(Real p_w, Real p_h, Real p_x, Real p_y)
+// ----------------------------------------------------------------
+// The pause menu button at (x, y) in a w x h view, 0 if none
+// ----------------------------------------------------------------
+{
+  Integer l_button = 0;
+  Real    l_x0     = 0.0;
+  Real    l_y0     = 0.0;
+  Real    l_x1     = 0.0;
+  Real    l_y1     = 0.0;
+
+  for (l_button = 1; l_button <= PAUSE_BUTTONS; ++l_button) {
+    hud_pause_button_rect(p_w, p_h, l_button, l_x0, l_y0, l_x1, l_y1);
+    if (p_x >= l_x0 && p_x <= l_x1 && p_y >= l_y0 && p_y <= l_y1) return l_button;
+  }
+  return 0;
+}
+
+void hud_draw_button(Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1, Text p_text, Integer p_hover)
+// ----------------------------------------------------------------
+// A stone grey button with a black edge, a light top and left and a
+// dark bottom and right, and white text with a shadow; the button
+// under the mouse gets a white edge and a lighter face
+// ----------------------------------------------------------------
+{
+  Real l_middle = (p_y0 + p_y1) / 2.0;
+  Real l_centre = (p_x0 + p_x1) / 2.0;
+
+  if (p_hover) {
+    render_set_colour(p_box, 255.0, 255.0, 255.0);
+  } else {
+    render_set_colour(p_box, 0.0, 0.0, 0.0);
+  }
+  render_fill_rect(p_box, p_x0, p_y0, p_x1, p_y1);
+  // dark bottom and right, light top and left, then the face
+  render_set_colour(p_box, 76.0, 76.0, 76.0);
+  render_fill_rect(p_box, p_x0 + 2.0, p_y0 + 2.0, p_x1 - 2.0, p_y1 - 2.0);
+  render_set_colour(p_box, 168.0, 168.0, 168.0);
+  render_fill_rect(p_box, p_x0 + 2.0, p_y0 + 5.0, p_x1 - 4.0, p_y1 - 2.0);
+  if (p_hover) {
+    render_set_colour(p_box, 132.0, 132.0, 140.0);
+  } else {
+    render_set_colour(p_box, 111.0, 111.0, 111.0);
+  }
+  render_fill_rect(p_box, p_x0 + 4.0, p_y0 + 5.0, p_x1 - 4.0, p_y1 - 4.0);
+
+  hud_text(p_box, l_centre + 2.0, l_middle + 6.0, 16.0, TEXT_ALIGN_CENTRE, 56, 56, 56, p_text);
+  if (p_hover) {
+    hud_text(p_box, l_centre, l_middle + 8.0, 16.0, TEXT_ALIGN_CENTRE, 255, 255, 160, p_text);
+  } else {
+    hud_text(p_box, l_centre, l_middle + 8.0, 16.0, TEXT_ALIGN_CENTRE, 230, 230, 230, p_text);
+  }
+}
+
+void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Text p_mode_name)
+// ----------------------------------------------------------------
+// The pause menu: "Game Menu" and its buttons (the world is already
+// drawn behind it, darkened)
+// ----------------------------------------------------------------
+{
+  Integer l_button = 0;
+  Integer l_hover  = hud_pause_button_at(p_w, p_h, p_mouse_x, p_mouse_y);
+  Real    l_x0     = 0.0;
+  Real    l_y0     = 0.0;
+  Real    l_x1     = 0.0;
+  Real    l_y1     = 0.0;
+  Text    l_label  = "";
+
+  hud_pause_button_rect(p_w, p_h, PAUSE_BUTTON_BACK, l_x0, l_y0, l_x1, l_y1);
+  hud_shadow_text(p_box, p_w / 2.0, l_y1 + 44.0, 18.0, TEXT_ALIGN_CENTRE, 255, 255, 255, "Game Menu");
+
+  for (l_button = 1; l_button <= PAUSE_BUTTONS; ++l_button) {
+    hud_pause_button_rect(p_w, p_h, l_button, l_x0, l_y0, l_x1, l_y1);
+    if (l_button == PAUSE_BUTTON_BACK    ) l_label = "Back to Game";
+    if (l_button == PAUSE_BUTTON_OPTIONS ) l_label = "Options...";
+    if (l_button == PAUSE_BUTTON_CONTROLS) l_label = "Controls...";
+    if (l_button == PAUSE_BUTTON_SAVE    ) l_label = "Save Game";
+    if (l_button == PAUSE_BUTTON_MODE    ) l_label = "Mode: " + p_mode_name;
+    if (l_button == PAUSE_BUTTON_QUIT    ) l_label = "Save and Quit to Title";
+    hud_draw_button(p_box, l_x0, l_y0, l_x1, l_y1, l_label, l_button == l_hover);
+  }
+}
+
 void hud_help_line(Draw_Box p_box, Real p_x, Real &p_y, Text p_key, Text p_what)
 // ----------------------------------------------------------------
 // One line of the help: key in yellow, description in white
@@ -415,7 +554,7 @@ void hud_help_heading(Draw_Box p_box, Real p_x, Real &p_y, Text p_text)
   p_y = p_y - 17.0;
 }
 
-void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
+void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h, Integer p_from_menu)
 // ----------------------------------------------------------------
 // The controls, shown at the start and with H
 // ----------------------------------------------------------------
@@ -450,7 +589,7 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
   hud_help_line(p_box, l_x, l_y, "F / J"          , "auto-walk on/off, auto-jump on/off");
   hud_help_line(p_box, l_x, l_y, "C / Shift + W"  , "crouch on/off, crouch while held (both sink when flying)");
   hud_help_line(p_box, l_x, l_y, "T / slash"      , "chat, or a command: /gamemode /time /gamerule /give /help");
-  hud_help_line(p_box, l_x, l_y, "P / U"          , "pick the block you look at, hide the HUD");
+  hud_help_line(p_box, l_x, l_y, "P / U / V or F5" , "pick the block you look at, hide the HUD, camera behind / in front");
   hud_help_line(p_box, l_x, l_y, "- / ="          , "shorter / longer view distance");
   hud_help_line(p_box, l_x, l_y, "I / H / O"      , "position info, this help, settings");
   hud_help_heading(p_box, l_x, l_y, "GETTING STARTED");
@@ -460,7 +599,11 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
   l_y = l_y - 15.0;
   hud_text(p_box, l_x, l_y, 12.0, TEXT_ALIGN_LEFT, 228, 228, 228, "Zombies come out at night: make torches (coal over a stick) or sleep in a bed.");
 
-  hud_text(p_box, l_centre, l_middle - l_panel_h / 2.0 + 22.0, 13.0, TEXT_ALIGN_CENTRE, 250, 215, 90, "Click the view to play");
+  if (p_from_menu) {
+    hud_text(p_box, l_centre, l_middle - l_panel_h / 2.0 + 22.0, 13.0, TEXT_ALIGN_CENTRE, 250, 215, 90, "Click to go back");
+  } else {
+    hud_text(p_box, l_centre, l_middle - l_panel_h / 2.0 + 22.0, 13.0, TEXT_ALIGN_CENTRE, 250, 215, 90, "Click the view to play");
+  }
 }
 
 Text hud_facing_name(Real p_yaw)
@@ -587,16 +730,26 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
 
   if (p_screen_open) return;
 
+  // Paused: the game menu over the darkened world, nothing else
+  if (!p_captured && !l_dead && !hud_help_shown(p_hud)) {
+    hud_draw_pause_menu(p_box, p_w, p_h, record_real(p_hud, ATTR_HUD_MOUSE_X), record_real(p_hud, ATTR_HUD_MOUSE_Y),
+                        player_game_mode_name(player_game_mode(p_player)));
+    return;
+  }
+
   // Spectators hold nothing and touch nothing: no hand, crosshair or hotbar
   if (settings_flag(p_settings, ATTR_SET_SHOW_HUD) && !player_spectator(p_player)) {
     // Hand, crosshair, hotbar and health (only survival has health)
-    if (!l_dead) hud_draw_hand(p_box, p_w, l_strip, p_h, l_held, player_bob(p_player), player_swing_time(p_player));
-
-    render_set_colour(p_box, 240.0, 240.0, 240.0);
-    render_line(p_box, p_w / 2.0 - 9.0, l_centre_y, p_w / 2.0 - 3.0, l_centre_y);
-    render_line(p_box, p_w / 2.0 + 3.0, l_centre_y, p_w / 2.0 + 9.0, l_centre_y);
-    render_line(p_box, p_w / 2.0, l_centre_y - 9.0, p_w / 2.0, l_centre_y - 3.0);
-    render_line(p_box, p_w / 2.0, l_centre_y + 3.0, p_w / 2.0, l_centre_y + 9.0);
+    // (seen from outside, your body shows instead of the hand and
+    // the crosshair)
+    if (player_camera(p_player) == CAMERA_FIRST) {
+      if (!l_dead) hud_draw_hand(p_box, p_w, l_strip, p_h, l_held, player_bob(p_player), player_swing_time(p_player));
+      render_set_colour(p_box, 240.0, 240.0, 240.0);
+      render_line(p_box, p_w / 2.0 - 9.0, l_centre_y, p_w / 2.0 - 3.0, l_centre_y);
+      render_line(p_box, p_w / 2.0 + 3.0, l_centre_y, p_w / 2.0 + 9.0, l_centre_y);
+      render_line(p_box, p_w / 2.0, l_centre_y - 9.0, p_w / 2.0, l_centre_y - 3.0);
+      render_line(p_box, p_w / 2.0, l_centre_y + 3.0, p_w / 2.0, l_centre_y + 9.0);
+    }
 
     for (l_slot = 1; l_slot <= HOTBAR_SLOTS; ++l_slot) {
       hud_draw_slot(p_box, l_bar_x + (l_slot - 1) * l_slot_size, l_bar_y, l_slot_size,
@@ -661,9 +814,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   if (l_dead) {
     hud_banner(p_box, p_w / 2.0, l_centre_y, 210.0, 54.0, "You died", "Press R or click the view to respawn", 230, 60, 50);
   } else if (hud_help_shown(p_hud)) {
-    hud_draw_help(p_box, p_w, p_h);
-  } else if (!p_captured) {
-    hud_banner(p_box, p_w / 2.0, l_centre_y, 210.0, 54.0, "Paused", "Click the view to play  -  H for help", 250, 215, 90);
+    hud_draw_help(p_box, p_w, p_h, hud_menu_help(p_hud));
   }
 }
 

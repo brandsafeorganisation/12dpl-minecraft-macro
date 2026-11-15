@@ -96,6 +96,7 @@
   Real    g_view_time         = 0.25;
   Real    g_view_now          = 0.0;   // clock for animation (water shimmer)  // time of day, 0 sunrise, 0.25 noon, 0.5 sunset, 0.75 midnight
   Real    g_box_light         = 1.0;   // light of the entity being queued
+  Real    g_view_shade        = 1.0;   // every colour is multiplied by this (dims the world behind menus)
 
   // The boxes of the animal being queued (render_mob_begin .. end)
   Real    g_mob_x      = 0.0;
@@ -245,6 +246,7 @@
 void    render_init            ();
 void    render_set_detail      (Integer p_level);
 void    render_set_colour      (Draw_Box p_box, Real p_red, Real p_green, Real p_blue);
+void    render_set_shade       (Real p_shade);
 void    render_set_face_colour (Draw_Box p_box, Real p_red, Real p_green, Real p_blue);
 void    render_fill_rect       (Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1);
 void    render_line            (Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1);
@@ -300,6 +302,8 @@ void    render_world           (Draw_Box p_box, Real p_w, Real p_h, Real p_view_
                                 Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now);
 void    render_person          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing);
 void    render_collect_peers   (Attributes &p_peers);
+void    render_camera_place    (Attributes &p_player, Real &p_x, Real &p_y, Real &p_z, Real &p_yaw, Real &p_pitch);
+void    render_collect_self    (Attributes &p_player);
 void    render_peer_names      (Draw_Box p_box, Attributes &p_peers);
 
 #endif

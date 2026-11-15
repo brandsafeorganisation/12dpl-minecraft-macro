@@ -28,6 +28,15 @@ void settings_defaults(Attributes &p_settings)
   record_set_text   (p_settings, ATTR_SET_FONT_FILE,       "");
   record_set_text   (p_settings, ATTR_SET_MP_FOLDER,       MP_FOLDER_DEFAULT);
   record_set_text   (p_settings, ATTR_SET_PLAYER_NAME,     "");
+  record_set_text   (p_settings, ATTR_SET_SKIN,            "");
+}
+
+Text settings_skin(Attributes &p_settings)
+// ----------------------------------------------------------------
+// The player's skin file, "" for the built-in look
+// ----------------------------------------------------------------
+{
+  return record_text(p_settings, ATTR_SET_SKIN);
 }
 
 Text settings_mp_folder(Attributes &p_settings)
@@ -212,6 +221,10 @@ Text settings_describe(Attributes &p_settings, Text p_field)
     if (settings_resource_pack(p_settings) == "") return "Textures: built in";
     return "Textures: " + settings_resource_pack(p_settings);
   }
+  if (p_field == ATTR_SET_SKIN) {
+    if (settings_skin(p_settings) == "") return "Skin: built in";
+    return "Skin: " + settings_skin(p_settings);
+  }
   if (p_field == ATTR_SET_FONT) {
     if (settings_font(p_settings) == "") return "Font: 12d's default";
     return "Font: " + settings_font(p_settings);
@@ -275,6 +288,8 @@ Integer settings_save(Attributes &p_settings, Text p_path)
   File_write_line(l_file, l_pack_line + " " + settings_mp_folder(p_settings));
   l_pack_line = ATTR_SET_PLAYER_NAME;
   File_write_line(l_file, l_pack_line + " " + settings_player_name(p_settings));
+  l_pack_line = ATTR_SET_SKIN;
+  File_write_line(l_file, l_pack_line + " " + settings_skin(p_settings));
 
   File_close(l_file);
   return SUCCESS;
@@ -318,6 +333,10 @@ Integer settings_load(Attributes &p_settings, Text p_path)
     }
     if (settings_line_text(l_line, ATTR_SET_PLAYER_NAME, l_word)) {
       settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, l_word);
+      continue;
+    }
+    if (settings_line_text(l_line, ATTR_SET_SKIN, l_word)) {
+      settings_set_text(p_settings, ATTR_SET_SKIN, l_word);
       continue;
     }
     if (Text_length(l_line) > l_skip) {

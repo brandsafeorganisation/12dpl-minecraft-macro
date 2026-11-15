@@ -159,9 +159,21 @@ void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real
   Start_batch_draw(p_box);
   font_apply(p_box, settings_font(g_settings));
   if (ui_screen(g_ui) != SCREEN_NONE) {
+    // the screen over the world, darkened
+    render_set_shade(MENU_WORLD_SHADE);
+    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
+    render_set_shade(1.0);
     hud_draw(p_box, l_w, l_h, p_captured, TRUE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
              world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
     ui_draw (p_box, l_w, l_h, g_ui, g_inventory, g_grid, g_furnaces, g_book);
+  } else if (!p_captured) {
+    // paused (the game menu), the help or the death screen, over the
+    // world darkened
+    render_set_shade(MENU_WORLD_SHADE);
+    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
+    render_set_shade(1.0);
+    hud_draw    (p_box, l_w, l_h, p_captured, FALSE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
+                 world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
   } else {
     render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
     hud_draw    (p_box, l_w, l_h, p_captured, FALSE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
@@ -197,6 +209,9 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
   Button             l_quit_button    = Create_button("Save and &quit to menu", "quit");
 
   Integer   l_result          = 0;
+  Integer   l_button          = 0;
+  Integer   l_hover_button    = 0;
+  Integer   l_mode            = 0;
   Integer   l_running         = TRUE;
   Integer   l_loaded          = FAILURE;
   Integer64 l_id              = 0;
@@ -456,8 +471,13 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
         if (ui_screen(g_ui) != SCREEN_NONE) {
           ui_set_mouse(g_ui, l_box_x, l_box_y);
           l_want_frame = TRUE;
-        } else if (l_now - l_last_frame > PAUSED_FRAME_GAP) {
-          l_want_frame = TRUE;
+        } else {
+          // the pause menu lights the button under the mouse
+          l_button = hud_pause_button_at(l_width, l_height, l_box_x, l_box_y);
+          hud_set_mouse(g_hud, l_box_x, l_box_y);
+          if (l_button != l_hover_button) l_want_frame = TRUE;
+          l_hover_button = l_button;
+          if (l_now - l_last_frame > PAUSED_FRAME_GAP) l_want_frame = TRUE;
         }
 
       } else if (l_cmd == "mouse_leave" && l_captured) {
@@ -501,8 +521,47 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
           l_want_frame = TRUE;
         }
 
+      } else if (!l_captured && l_has_xy && (l_cmd == "click_lb" || l_cmd == "click_rb") && hud_menu_help(g_hud)) {
+        // The help opened from the game menu: a click goes back to it
+        hud_set_help(g_hud, FALSE);
+        l_want_frame = TRUE;
+
+      } else if (!l_captured && l_has_xy && l_cmd == "click_lb" && !player_is_dead(g_player) && !hud_help_shown(g_hud) &&
+                 hud_pause_button_at(l_width, l_height, l_box_x, l_box_y) != PAUSE_BUTTON_BACK) {
+        // The game menu's buttons (a click beside them does nothing)
+        l_button = hud_pause_button_at(l_width, l_height, l_box_x, l_box_y);
+        if (l_button == PAUSE_BUTTON_OPTIONS) l_open_settings = TRUE;
+        if (l_button == PAUSE_BUTTON_CONTROLS) {
+          hud_set_help     (g_hud, TRUE);
+          hud_set_menu_help(g_hud, TRUE);
+        }
+        if (l_button == PAUSE_BUTTON_SAVE) {
+          if (game_panel_save() == SUCCESS) {
+            hud_toast(g_hud, "Saved " + p_world_name, l_now);
+          } else {
+            hud_toast(g_hud, "Couldn't save " + p_world_name, l_now);
+          }
+          game_panel_dispatch(l_now);
+        }
+        if (l_button == PAUSE_BUTTON_MODE) {
+          // survival, creative, spectator and round again
+          l_mode = GAMEMODE_SURVIVAL;
+          if (player_survival(g_player)) l_mode = GAMEMODE_CREATIVE;
+          if (player_creative(g_player)) l_mode = GAMEMODE_SPECTATOR;
+          player_set_game_mode(g_player, l_mode);
+          hud_toast(g_hud, "Game mode: " + player_game_mode_name(l_mode), l_now);
+        }
+        if (l_button == PAUSE_BUTTON_QUIT) {
+          game_panel_close_screen();
+          game_panel_save();
+          l_running = FALSE;
+          continue;
+        }
+        l_want_frame = TRUE;
+
       } else if (!l_captured && l_has_xy && (l_cmd == "click_lb" || l_cmd == "click_rb")) {
-        // Clicking the view starts (or resumes) play
+        // Clicking the view (Back to Game, the help or the death
+        // screen) starts or resumes play
         l_calibration = game_panel_calibrate(l_draw_box, l_box_x, l_box_y, l_width, l_height, l_request_x, l_request_y);
         if (l_calibration == 1) {
           Set_data(l_message, "Click inside the view to play.");
@@ -603,6 +662,9 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
             if (hud_help_shown(g_hud) && l_captured) l_release = TRUE;
           }
           if (l_key == "f") player_set_auto_walk(g_player, !player_auto_walk(g_player));
+          // the camera: your eyes, behind you, in front of you (F5 if
+          // 12d passes it on, otherwise V)
+          if (l_key == "v" || l_key == "f5") player_next_camera(g_player);
           if (l_key == "j") {
             settings_toggle(g_settings, ATTR_SET_AUTO_JUMP);
             hud_toast(g_hud, settings_describe(g_settings, ATTR_SET_AUTO_JUMP), l_now);
@@ -758,9 +820,9 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
     if (l_release && l_captured) {
       l_captured = FALSE;
       if (l_why == "") {
-        Set_data(l_message, "Paused. Click the view or press W to carry on.");
+        Set_data(l_message, "Paused. Back to Game (or W) carries on.");
       } else {
-        Set_data(l_message, "Paused (" + l_why + "). Click the view or press W to carry on.");
+        Set_data(l_message, "Paused (" + l_why + "). Back to Game (or W) carries on.");
       }
       // The panel may have moved: check the mapping again next time
       if (l_why != "") l_have_origin = FALSE;

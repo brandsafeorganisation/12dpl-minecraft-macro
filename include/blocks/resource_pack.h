@@ -164,6 +164,11 @@
 // Table functions
 void    pack_init_tables      ();
 Integer pack_apply            (Text p_path, Text &p_report);
+Integer pack_map_skin_part    (Integer p_entry, Integer &p_tex, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h,
+                              Integer &p_over_x, Integer &p_over_y);
+Integer pack_load_png_file    (Text p_path);
+Integer pack_skin_region      (Integer p_x, Integer p_y, Integer p_w, Integer p_h);
+Integer pack_apply_skin       (Text p_path, Text &p_report);
 
 // Honest helpers
 Integer pack_is_zip           (Text p_path);

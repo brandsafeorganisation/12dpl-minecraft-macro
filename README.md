@@ -40,15 +40,15 @@ it to run the tests (see [test/README.md](test/README.md)).
 
 | Input         | Action                                                       |
 |---------------|--------------------------------------------------------------|
-| Click view    | start playing (the mouse then turns the camera); after a pause, W A S D or Space also carries on |
+| Click view    | start playing (the mouse then turns the camera); after a pause, **Back to Game** or W A S D or Space carries on |
 | Mouse         | look around                                                  |
 | Left click    | break blocks (harder blocks take more hits), hit animals     |
 | Right click   | place blocks, eat food, open crafting tables, furnaces and chests, sleep in beds, open and shut doors |
 | W A S D       | walk                                                         |
-| Space         | jump, swim up, fly up; tap twice quickly to fly or land (creative mode only) |
+| Space         | jump, swim up, fly up; tap twice quickly to fly or stop flying (creative mode only); flying down onto the ground lands you |
 | 1 - 9         | choose a hotbar slot                                         |
 | E             | inventory and 2 x 2 crafting (E or Q closes any screen); in creative mode, every item (see below) |
-| Q             | pause and free the mouse                                     |
+| Q / Escape    | pause: the game menu (see below)                             |
 | F / J         | auto-walk on/off, auto-jump on/off                           |
 | C             | crouch on/off (sink while flying)                            |
 | Shift + W A S D | crouch while held: slower, and you don't walk off edges (sink while flying) |
@@ -56,6 +56,7 @@ it to run the tests (see [test/README.md](test/README.md)).
 | /             | chat with a / already typed, for a command (see below)       |
 | P             | pick block: hold the item of the block you're looking at     |
 | U             | hide or show the HUD                                         |
+| V (or F5)     | camera: behind you, then in front of you looking back, then your own eyes again. Use V in 12d: 12d keeps F5 for itself (the Windows build takes either) |
 | - / =         | shorter / longer render distance (8 to 64 blocks)            |
 | I / H / O     | position, render and frame-time statistics, help, settings   |
 
@@ -63,6 +64,21 @@ The keys go to the **Keys** box under the view. If they stop working, click
 that box. 12d doesn't report Shift on its own, only the capital letter it
 makes, so Shift crouches together with a movement key (the Windows build
 also sees Shift held by itself); Caps Lock does the same.
+
+### The game menu
+
+**Q** (or Escape) pauses the game and shows the game menu over the world,
+drawn darker behind it, like the block game's:
+
+- **Back to Game** carries on (so do W A S D and Space).
+- **Options...** opens the settings.
+- **Controls...** shows the keys; a click goes back to the menu.
+- **Save Game** saves the world.
+- **Mode** shows the game mode; each click moves on to the next one
+  (survival, creative, spectator).
+- **Save and Quit to Title** saves and goes back to the world list.
+
+The inventory and every other screen also show over the darkened world.
 
 ### Commands
 
@@ -83,7 +99,7 @@ block game's ticks: 24000 to a day, 0 at sunrise, 6000 at noon.
 
 | Mode | Health | Flying | Blocks | Inventory |
 |------|--------|--------|--------|-----------|
-| Survival (every world starts here) | yes: falls, zombies and drowning hurt | no | collide; break and place | your own, with crafting |
+| Survival (every world starts here; change it with `/gamemode` or the game menu's Mode button) | yes: falls, zombies and drowning hurt | no | collide; break and place | your own, with crafting |
 | Creative | none; zombies leave you alone | double tap Space to fly or land; Space up, Shift or C down | collide; break and place | every item, endlessly |
 | Spectator | none; zombies leave you alone | always | fly straight through them; can't break, place or pick anything up | none (no hotbar either) |
 
@@ -158,6 +174,20 @@ the pack's mob skins (`entity/cow/cow.png`, `entity/pig/pig.png`,
 face of the model is cut from its own rectangle of the skin. Packs made for
 16 x 16 work best: bigger images are sampled down, and only 8 colours of
 a detailed image survive. Interlaced PNGs aren't supported.
+
+## Skins
+
+Your player wears a skin: a PNG laid out like the block game's player
+skins (64 x 64, or the older 64 x 32). In **Settings**, type or browse
+to the file in the **Skin** box and press **Use this skin**; **Built-in
+skin** goes back to the plain look. One comes with the game:
+`release/skins/purple.png`. The choice is saved with the other settings.
+
+You see your skin with the camera behind or in front of you (**V**).
+Every face of the model comes from its own part of the skin, with the
+skin's second layer (hair, hoods, jackets) drawn over it. As with resource
+packs, each face keeps 8 colours. In a multiplayer game the other players
+are drawn in your skin too (skins aren't shared through the folder).
 
 ## Fonts
 

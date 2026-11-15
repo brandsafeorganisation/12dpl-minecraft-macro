@@ -24,10 +24,22 @@
 #define SLOT_STYLE_DARK     0     // hotbar slots over the world
 #define SLOT_STYLE_LIGHT    1     // slots on the light inventory panel
 
+// The world is drawn this much darker behind menus and screens
+#define MENU_WORLD_SHADE    0.42
+
+// The pause menu ("Game Menu"): its buttons, top to bottom, left to right
+#define PAUSE_BUTTON_BACK     1
+#define PAUSE_BUTTON_OPTIONS  2
+#define PAUSE_BUTTON_CONTROLS 3
+#define PAUSE_BUTTON_SAVE     4
+#define PAUSE_BUTTON_MODE     5
+#define PAUSE_BUTTON_QUIT     6
+#define PAUSE_BUTTONS         6
+#define PAUSE_BUTTON_WIDTH    400.0   // a full width button (two half buttons and a gap)
+#define PAUSE_BUTTON_HEIGHT   40.0
+#define PAUSE_BUTTON_GAP      8.0
+
 // Inventory screen colours (light grey panel, dark text)
-#define UI_BACKDROP_R       104.0
-#define UI_BACKDROP_G       108.0
-#define UI_BACKDROP_B       116.0
 #define UI_PANEL_R          198.0
 #define UI_PANEL_G          198.0
 #define UI_PANEL_B          198.0
@@ -55,6 +67,9 @@
 #define ATTR_HUD_CHAT_UNTIL ("chat_until")
 #define ATTR_HUD_CHAT_OPEN  ("chat_open")       // TRUE while a chat line is being typed
 #define ATTR_HUD_CHAT_INPUT ("chat_input")      // the line being typed
+#define ATTR_HUD_MOUSE_X    ("mouse_x")         // the mouse over the pause menu (box coordinates)
+#define ATTR_HUD_MOUSE_Y    ("mouse_y")
+#define ATTR_HUD_MENU_HELP  ("menu_help")       // TRUE: the help was opened from the pause menu
 #define FRAME_STATS_SECONDS 1.0
 
 /*Global variables*/ {
@@ -71,6 +86,13 @@ Integer hud_chat_open   (Attributes &p_hud);
 void hud_show_name      (Attributes &p_hud, Real p_now);
 Integer hud_help_shown  (Attributes &p_hud);
 void hud_set_help       (Attributes &p_hud, Integer p_shown);
+void hud_set_menu_help  (Attributes &p_hud, Integer p_from_menu);
+Integer hud_menu_help   (Attributes &p_hud);
+void hud_set_mouse      (Attributes &p_hud, Real p_x, Real p_y);
+void hud_pause_button_rect(Real p_w, Real p_h, Integer p_button, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1);
+Integer hud_pause_button_at(Real p_w, Real p_h, Real p_x, Real p_y);
+void hud_draw_button    (Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1, Text p_text, Integer p_hover);
+void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Text p_mode_name);
 void hud_note_frame     (Attributes &p_hud, Real p_frame_ms, Real p_now);
 Text hud_frame_stats    (Attributes &p_hud);
 void hud_on_event       (Attributes &p_event, Attributes &p_hud, Real p_now);
@@ -86,7 +108,7 @@ void hud_draw_slot_style(Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Inte
 Text hud_facing_name    (Real p_yaw);
 void hud_draw_hand      (Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integer p_item, Real p_bob, Real p_swing_time);
 void hud_draw_health    (Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_health, Real p_now);
-void hud_draw_help      (Draw_Box p_box, Real p_w, Real p_h);
+void hud_draw_help      (Draw_Box p_box, Real p_w, Real p_h, Integer p_from_menu);
 void hud_draw           (Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_screen_open,
                          Attributes &p_hud, Attributes &p_player, Attributes &p_inventory, Attributes &p_settings,
                          Integer p_seed, Real p_time_of_day, Real p_frame_ms, Text p_render_stats, Real p_now);

@@ -815,70 +815,70 @@ void test_registry_info_3(Integer p_id, Attributes &p_info)
                               "Integer pack_load_image(Text p_path, Integer p_zip, Attributes &p_index, Text p_kind, Text p_name, Integer p_map_x, Integer p_map_y)", 0, "", "pack_key, pack_load_png_from_folder, pack_load_png_from_zip, png_decode");
   if (p_id == 88) test_info_set(p_info, "pack_apply", "macro", "blocks", "resource_pack", "src/blocks/resource_pack.4dm", 1370, 1499, "Integer", "T:p_path &T:p_report",
                               "Integer pack_apply(Text p_path, Text &p_report)", 0, "", "pack_draw_overlay, pack_init_tables, pack_is_zip, pack_keep_overlay, pack_key, pack_load_image, pack_map_entry, pack_map_part, pack_tint, pack_to_texture, pack_zip_index, record_clear, record_set_integer, texture_is_sprite");
-  if (p_id == 89) test_info_set(p_info, "texture_palette_index", "macro", "blocks", "textures", "src/blocks/textures.4dm", 11, 18, "Integer", "I:p_tex I:p_index",
+  if (p_id == 89) test_info_set(p_info, "pack_map_skin_part", "macro", "blocks", "resource_pack", "src/blocks/resource_pack.4dm", 1503, 1529, "Integer", "I:p_entry &I:p_tex &I:p_x &I:p_y &I:p_w &I:p_h &I:p_over_x &I:p_over_y",
+                              "Integer pack_map_skin_part(Integer p_entry, Integer &p_tex, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h, Integer &p_over_x, Integer &p_over_y)", 0, "", "");
+  if (p_id == 90) test_info_set(p_info, "pack_load_png_file", "macro", "blocks", "resource_pack", "src/blocks/resource_pack.4dm", 1531, 1545, "Integer", "T:p_path",
+                              "Integer pack_load_png_file(Text p_path)", 0, "", "pack_read_bytes, png_is_chunk");
+  if (p_id == 91) test_info_set(p_info, "pack_skin_region", "macro", "blocks", "resource_pack", "src/blocks/resource_pack.4dm", 1547, 1563, "Integer", "I:p_x I:p_y I:p_w I:p_h",
+                              "Integer pack_skin_region(Integer p_x, Integer p_y, Integer p_w, Integer p_h)", 0, "", "png_decode");
+  if (p_id == 92) test_info_set(p_info, "pack_apply_skin", "macro", "blocks", "resource_pack", "src/blocks/resource_pack.4dm", 1565, 1616, "Integer", "T:p_path &T:p_report",
+                              "Integer pack_apply_skin(Text p_path, Text &p_report)", 0, "", "pack_draw_overlay, pack_init_tables, pack_keep_overlay, pack_load_png_file, pack_map_skin_part, pack_skin_region, pack_to_texture, png_number");
+  if (p_id == 93) test_info_set(p_info, "texture_palette_index", "macro", "blocks", "textures", "src/blocks/textures.4dm", 11, 18, "Integer", "I:p_tex I:p_index",
                               "Integer texture_palette_index(Integer p_tex, Integer p_index)", 0, "", "");
-  if (p_id == 90) test_info_set(p_info, "texture_set_palette", "macro", "blocks", "textures", "src/blocks/textures.4dm", 20, 30, "void", "I:p_tex I:p_index I:p_red I:p_green I:p_blue",
+  if (p_id == 94) test_info_set(p_info, "texture_set_palette", "macro", "blocks", "textures", "src/blocks/textures.4dm", 20, 30, "void", "I:p_tex I:p_index I:p_red I:p_green I:p_blue",
                               "void texture_set_palette(Integer p_tex, Integer p_index, Integer p_red, Integer p_green, Integer p_blue)", 0, "", "texture_palette_index");
-  if (p_id == 91) test_info_set(p_info, "texture_set", "macro", "blocks", "textures", "src/blocks/textures.4dm", 32, 41, "void", "I:p_tex I:p_u I:p_v I:p_index",
+  if (p_id == 95) test_info_set(p_info, "texture_set", "macro", "blocks", "textures", "src/blocks/textures.4dm", 32, 41, "void", "I:p_tex I:p_u I:p_v I:p_index",
                               "void texture_set(Integer p_tex, Integer p_u, Integer p_v, Integer p_index)", 0, "", "");
-  if (p_id == 92) test_info_set(p_info, "texture_get", "macro", "blocks", "textures", "src/blocks/textures.4dm", 43, 51, "Integer", "I:p_tex I:p_u I:p_v",
+  if (p_id == 96) test_info_set(p_info, "texture_get", "macro", "blocks", "textures", "src/blocks/textures.4dm", 43, 51, "Integer", "I:p_tex I:p_u I:p_v",
                               "Integer texture_get(Integer p_tex, Integer p_u, Integer p_v)", 0, "", "");
-  if (p_id == 93) test_info_set(p_info, "texture_fill", "macro", "blocks", "textures", "src/blocks/textures.4dm", 53, 59, "void", "I:p_tex I:p_index",
+  if (p_id == 97) test_info_set(p_info, "texture_fill", "macro", "blocks", "textures", "src/blocks/textures.4dm", 53, 59, "void", "I:p_tex I:p_index",
                               "void texture_fill(Integer p_tex, Integer p_index)", 0, "", "texture_fill_rect");
-  if (p_id == 94) test_info_set(p_info, "texture_fill_rect", "macro", "blocks", "textures", "src/blocks/textures.4dm", 61, 74, "void", "I:p_tex I:p_u0 I:p_v0 I:p_u1 I:p_v1 I:p_index",
+  if (p_id == 98) test_info_set(p_info, "texture_fill_rect", "macro", "blocks", "textures", "src/blocks/textures.4dm", 61, 74, "void", "I:p_tex I:p_u0 I:p_v0 I:p_u1 I:p_v1 I:p_index",
                               "void texture_fill_rect(Integer p_tex, Integer p_u0, Integer p_v0, Integer p_u1, Integer p_v1, Integer p_index)", 0, "", "texture_set");
-  if (p_id == 95) test_info_set(p_info, "texture_copy", "macro", "blocks", "textures", "src/blocks/textures.4dm", 76, 92, "void", "I:p_from_tex I:p_to_tex",
+  if (p_id == 99) test_info_set(p_info, "texture_copy", "macro", "blocks", "textures", "src/blocks/textures.4dm", 76, 92, "void", "I:p_from_tex I:p_to_tex",
                               "void texture_copy(Integer p_from_tex, Integer p_to_tex)", 0, "", "texture_palette_index");
-  if (p_id == 96) test_info_set(p_info, "texture_row", "macro", "blocks", "textures", "src/blocks/textures.4dm", 94, 108, "void", "I:p_tex I:p_v T:p_pixels",
+  if (p_id == 100) test_info_set(p_info, "texture_row", "macro", "blocks", "textures", "src/blocks/textures.4dm", 94, 108, "void", "I:p_tex I:p_v T:p_pixels",
                               "void texture_row(Integer p_tex, Integer p_v, Text p_pixels)", 0, "", "texture_set");
-  if (p_id == 97) test_info_set(p_info, "texture_random", "macro", "blocks", "textures", "src/blocks/textures.4dm", 110, 116, "Real", "I:p_tex I:p_u I:p_v I:p_salt",
+  if (p_id == 101) test_info_set(p_info, "texture_random", "macro", "blocks", "textures", "src/blocks/textures.4dm", 110, 116, "Real", "I:p_tex I:p_u I:p_v I:p_salt",
                               "Real texture_random(Integer p_tex, Integer p_u, Integer p_v, Integer p_salt)", 0, "", "hash_real");
-  if (p_id == 98) test_info_set(p_info, "texture_noise", "macro", "blocks", "textures", "src/blocks/textures.4dm", 118, 146, "Real", "I:p_tex I:p_u I:p_v I:p_cell I:p_salt",
+  if (p_id == 102) test_info_set(p_info, "texture_noise", "macro", "blocks", "textures", "src/blocks/textures.4dm", 118, 146, "Real", "I:p_tex I:p_u I:p_v I:p_cell I:p_salt",
                               "Real texture_noise(Integer p_tex, Integer p_u, Integer p_v, Integer p_cell, Integer p_salt)", 0, "", "floor_divide, hash_real, lerp_real, positive_mod, smooth_curve");
-  if (p_id == 99) test_info_set(p_info, "texture_finish", "macro", "blocks", "textures", "src/blocks/textures.4dm", 150, 297, "void", "I:p_tex",
+  if (p_id == 103) test_info_set(p_info, "texture_finish", "macro", "blocks", "textures", "src/blocks/textures.4dm", 150, 297, "void", "I:p_tex",
                               "void texture_finish(Integer p_tex)", 0, "", "texture_get, texture_palette_index");
-  if (p_id == 100) test_info_set(p_info, "texture_speckle", "macro", "blocks", "textures", "src/blocks/textures.4dm", 301, 314, "void", "I:p_tex I:p_index R:p_chance I:p_salt",
+  if (p_id == 104) test_info_set(p_info, "texture_speckle", "macro", "blocks", "textures", "src/blocks/textures.4dm", 301, 314, "void", "I:p_tex I:p_index R:p_chance I:p_salt",
                               "void texture_speckle(Integer p_tex, Integer p_index, Real p_chance, Integer p_salt)", 0, "", "texture_random, texture_set");
-  if (p_id == 101) test_info_set(p_info, "texture_blotch", "macro", "blocks", "textures", "src/blocks/textures.4dm", 316, 331, "void", "I:p_tex I:p_index I:p_cell R:p_below R:p_above I:p_salt",
+  if (p_id == 105) test_info_set(p_info, "texture_blotch", "macro", "blocks", "textures", "src/blocks/textures.4dm", 316, 331, "void", "I:p_tex I:p_index I:p_cell R:p_below R:p_above I:p_salt",
                               "void texture_blotch(Integer p_tex, Integer p_index, Integer p_cell, Real p_below, Real p_above, Integer p_salt)", 0, "", "texture_noise, texture_set");
-  if (p_id == 102) test_info_set(p_info, "make_texture_stone", "macro", "blocks", "textures", "src/blocks/textures.4dm", 333, 344, "void", "I:p_tex",
+  if (p_id == 106) test_info_set(p_info, "make_texture_stone", "macro", "blocks", "textures", "src/blocks/textures.4dm", 333, 344, "void", "I:p_tex",
                               "void make_texture_stone(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette");
-  if (p_id == 103) test_info_set(p_info, "make_texture_bedrock", "macro", "blocks", "textures", "src/blocks/textures.4dm", 346, 357, "void", "I:p_tex",
+  if (p_id == 107) test_info_set(p_info, "make_texture_bedrock", "macro", "blocks", "textures", "src/blocks/textures.4dm", 346, 357, "void", "I:p_tex",
                               "void make_texture_bedrock(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette");
-  if (p_id == 104) test_info_set(p_info, "make_texture_cobblestone", "macro", "blocks", "textures", "src/blocks/textures.4dm", 359, 412, "void", "I:p_tex",
+  if (p_id == 108) test_info_set(p_info, "make_texture_cobblestone", "macro", "blocks", "textures", "src/blocks/textures.4dm", 359, 412, "void", "I:p_tex",
                               "void make_texture_cobblestone(Integer p_tex)", 0, "", "positive_mod, texture_random, texture_set, texture_set_palette");
-  if (p_id == 105) test_info_set(p_info, "make_texture_dirt", "macro", "blocks", "textures", "src/blocks/textures.4dm", 414, 426, "void", "I:p_tex",
+  if (p_id == 109) test_info_set(p_info, "make_texture_dirt", "macro", "blocks", "textures", "src/blocks/textures.4dm", 414, 426, "void", "I:p_tex",
                               "void make_texture_dirt(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette, texture_speckle");
-  if (p_id == 106) test_info_set(p_info, "make_texture_grass_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 428, 440, "void", "I:p_tex",
+  if (p_id == 110) test_info_set(p_info, "make_texture_grass_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 428, 440, "void", "I:p_tex",
                               "void make_texture_grass_top(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette, texture_speckle");
-  if (p_id == 107) test_info_set(p_info, "make_texture_grass_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 442, 459, "void", "I:p_tex",
+  if (p_id == 111) test_info_set(p_info, "make_texture_grass_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 442, 459, "void", "I:p_tex",
                               "void make_texture_grass_side(Integer p_tex)", 0, "", "texture_copy, texture_fill_rect, texture_random, texture_set, texture_set_palette");
-  if (p_id == 108) test_info_set(p_info, "make_texture_log_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 461, 485, "void", "I:p_tex",
+  if (p_id == 112) test_info_set(p_info, "make_texture_log_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 461, 485, "void", "I:p_tex",
                               "void make_texture_log_side(Integer p_tex)", 0, "", "texture_fill, texture_random, texture_set, texture_set_palette");
-  if (p_id == 109) test_info_set(p_info, "make_texture_log_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 487, 514, "void", "I:p_tex",
+  if (p_id == 113) test_info_set(p_info, "make_texture_log_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 487, 514, "void", "I:p_tex",
                               "void make_texture_log_top(Integer p_tex)", 0, "", "positive_mod, texture_set, texture_set_palette");
-  if (p_id == 110) test_info_set(p_info, "make_texture_leaves", "macro", "blocks", "textures", "src/blocks/textures.4dm", 516, 529, "void", "I:p_tex",
+  if (p_id == 114) test_info_set(p_info, "make_texture_leaves", "macro", "blocks", "textures", "src/blocks/textures.4dm", 516, 529, "void", "I:p_tex",
                               "void make_texture_leaves(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette, texture_speckle");
-  if (p_id == 111) test_info_set(p_info, "make_texture_water", "macro", "blocks", "textures", "src/blocks/textures.4dm", 531, 550, "void", "I:p_tex",
+  if (p_id == 115) test_info_set(p_info, "make_texture_water", "macro", "blocks", "textures", "src/blocks/textures.4dm", 531, 550, "void", "I:p_tex",
                               "void make_texture_water(Integer p_tex)", 0, "", "positive_mod, texture_fill, texture_set, texture_set_palette");
-  if (p_id == 112) test_info_set(p_info, "make_texture_planks", "macro", "blocks", "textures", "src/blocks/textures.4dm", 552, 577, "void", "I:p_tex",
+  if (p_id == 116) test_info_set(p_info, "make_texture_planks", "macro", "blocks", "textures", "src/blocks/textures.4dm", 552, 577, "void", "I:p_tex",
                               "void make_texture_planks(Integer p_tex)", 0, "", "positive_mod, texture_fill, texture_fill_rect, texture_random, texture_set, texture_set_palette");
-  if (p_id == 113) test_info_set(p_info, "make_texture_table_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 579, 594, "void", "I:p_tex",
+  if (p_id == 117) test_info_set(p_info, "make_texture_table_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 579, 594, "void", "I:p_tex",
                               "void make_texture_table_top(Integer p_tex)", 0, "", "texture_copy, texture_fill_rect, texture_set_palette");
-  if (p_id == 114) test_info_set(p_info, "make_texture_table_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 596, 614, "void", "I:p_tex",
+  if (p_id == 118) test_info_set(p_info, "make_texture_table_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 596, 614, "void", "I:p_tex",
                               "void make_texture_table_side(Integer p_tex)", 0, "", "texture_copy, texture_fill_rect, texture_set_palette");
-  if (p_id == 115) test_info_set(p_info, "make_texture_furnace_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 616, 638, "void", "I:p_tex",
+  if (p_id == 119) test_info_set(p_info, "make_texture_furnace_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 616, 638, "void", "I:p_tex",
                               "void make_texture_furnace_side(Integer p_tex)", 0, "", "positive_mod, texture_fill, texture_fill_rect, texture_set_palette, texture_speckle");
-  if (p_id == 116) test_info_set(p_info, "make_texture_furnace_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 640, 655, "void", "I:p_tex",
+  if (p_id == 120) test_info_set(p_info, "make_texture_furnace_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 640, 655, "void", "I:p_tex",
                               "void make_texture_furnace_top(Integer p_tex)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette, texture_speckle");
-  if (p_id == 117) test_info_set(p_info, "make_texture_furnace_front", "macro", "blocks", "textures", "src/blocks/textures.4dm", 657, 687, "void", "I:p_tex I:p_lit",
-                              "void make_texture_furnace_front(Integer p_tex, Integer p_lit)", 0, "", "texture_copy, texture_fill_rect, texture_random, texture_set, texture_set_palette");
-  if (p_id == 118) test_info_set(p_info, "make_texture_sand", "macro", "blocks", "textures", "src/blocks/textures.4dm", 689, 700, "void", "I:p_tex",
-                              "void make_texture_sand(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette, texture_speckle");
-  if (p_id == 119) test_info_set(p_info, "make_texture_cow_palette", "macro", "blocks", "textures", "src/blocks/textures.4dm", 702, 715, "void", "I:p_tex",
-                              "void make_texture_cow_palette(Integer p_tex)", 0, "", "texture_set_palette");
-  if (p_id == 120) test_info_set(p_info, "make_texture_cow_hide", "macro", "blocks", "textures", "src/blocks/textures.4dm", 717, 726, "void", "I:p_tex",
-                              "void make_texture_cow_hide(Integer p_tex)", 0, "", "make_texture_cow_palette, texture_blotch, texture_fill");
 }
 
 void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -969,13 +969,52 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_ret_i = pack_apply(l_t1, l_t2);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T2, l_t2);
-  } else if (p_id == 89) {   // texture_palette_index
+  } else if (p_id == 89) {   // pack_map_skin_part
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    l_i5 = record_integer(p_in, ATTR_TEST_I5);
+    l_i6 = record_integer(p_in, ATTR_TEST_I6);
+    l_i7 = record_integer(p_in, ATTR_TEST_I7);
+    l_i8 = record_integer(p_in, ATTR_TEST_I8);
+    Get_time(l_start);
+    l_ret_i = pack_map_skin_part(l_i1, l_i2, l_i3, l_i4, l_i5, l_i6, l_i7, l_i8);
+    Get_time(l_end);
+    record_set_integer(p_out, ATTR_TEST_I2, l_i2);
+    record_set_integer(p_out, ATTR_TEST_I3, l_i3);
+    record_set_integer(p_out, ATTR_TEST_I4, l_i4);
+    record_set_integer(p_out, ATTR_TEST_I5, l_i5);
+    record_set_integer(p_out, ATTR_TEST_I6, l_i6);
+    record_set_integer(p_out, ATTR_TEST_I7, l_i7);
+    record_set_integer(p_out, ATTR_TEST_I8, l_i8);
+  } else if (p_id == 90) {   // pack_load_png_file
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_i = pack_load_png_file(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 91) {   // pack_skin_region
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    l_ret_i = pack_skin_region(l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 92) {   // pack_apply_skin
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_t2 = record_text(p_in, ATTR_TEST_T2);
+    Get_time(l_start);
+    l_ret_i = pack_apply_skin(l_t1, l_t2);
+    Get_time(l_end);
+    record_set_text(p_out, ATTR_TEST_T2, l_t2);
+  } else if (p_id == 93) {   // texture_palette_index
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = texture_palette_index(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 90) {   // texture_set_palette
+  } else if (p_id == 94) {   // texture_set_palette
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -984,7 +1023,7 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     texture_set_palette(l_i1, l_i2, l_i3, l_i4, l_i5);
     Get_time(l_end);
-  } else if (p_id == 91) {   // texture_set
+  } else if (p_id == 95) {   // texture_set
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -992,20 +1031,20 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     texture_set(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 92) {   // texture_get
+  } else if (p_id == 96) {   // texture_get
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = texture_get(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 93) {   // texture_fill
+  } else if (p_id == 97) {   // texture_fill
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     texture_fill(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 94) {   // texture_fill_rect
+  } else if (p_id == 98) {   // texture_fill_rect
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1015,20 +1054,20 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     texture_fill_rect(l_i1, l_i2, l_i3, l_i4, l_i5, l_i6);
     Get_time(l_end);
-  } else if (p_id == 95) {   // texture_copy
+  } else if (p_id == 99) {   // texture_copy
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     texture_copy(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 96) {   // texture_row
+  } else if (p_id == 100) {   // texture_row
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     texture_row(l_i1, l_i2, l_t1);
     Get_time(l_end);
-  } else if (p_id == 97) {   // texture_random
+  } else if (p_id == 101) {   // texture_random
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1036,7 +1075,7 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_r = texture_random(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 98) {   // texture_noise
+  } else if (p_id == 102) {   // texture_noise
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1045,12 +1084,12 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_r = texture_noise(l_i1, l_i2, l_i3, l_i4, l_i5);
     Get_time(l_end);
-  } else if (p_id == 99) {   // texture_finish
+  } else if (p_id == 103) {   // texture_finish
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     texture_finish(l_i1);
     Get_time(l_end);
-  } else if (p_id == 100) {   // texture_speckle
+  } else if (p_id == 104) {   // texture_speckle
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
@@ -1058,7 +1097,7 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     texture_speckle(l_i1, l_i2, l_r1, l_i3);
     Get_time(l_end);
-  } else if (p_id == 101) {   // texture_blotch
+  } else if (p_id == 105) {   // texture_blotch
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1068,101 +1107,80 @@ void test_registry_call_3(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     texture_blotch(l_i1, l_i2, l_i3, l_r1, l_r2, l_i4);
     Get_time(l_end);
-  } else if (p_id == 102) {   // make_texture_stone
+  } else if (p_id == 106) {   // make_texture_stone
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_stone(l_i1);
     Get_time(l_end);
-  } else if (p_id == 103) {   // make_texture_bedrock
+  } else if (p_id == 107) {   // make_texture_bedrock
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_bedrock(l_i1);
     Get_time(l_end);
-  } else if (p_id == 104) {   // make_texture_cobblestone
+  } else if (p_id == 108) {   // make_texture_cobblestone
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_cobblestone(l_i1);
     Get_time(l_end);
-  } else if (p_id == 105) {   // make_texture_dirt
+  } else if (p_id == 109) {   // make_texture_dirt
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_dirt(l_i1);
     Get_time(l_end);
-  } else if (p_id == 106) {   // make_texture_grass_top
+  } else if (p_id == 110) {   // make_texture_grass_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_grass_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 107) {   // make_texture_grass_side
+  } else if (p_id == 111) {   // make_texture_grass_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_grass_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 108) {   // make_texture_log_side
+  } else if (p_id == 112) {   // make_texture_log_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_log_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 109) {   // make_texture_log_top
+  } else if (p_id == 113) {   // make_texture_log_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_log_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 110) {   // make_texture_leaves
+  } else if (p_id == 114) {   // make_texture_leaves
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_leaves(l_i1);
     Get_time(l_end);
-  } else if (p_id == 111) {   // make_texture_water
+  } else if (p_id == 115) {   // make_texture_water
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_water(l_i1);
     Get_time(l_end);
-  } else if (p_id == 112) {   // make_texture_planks
+  } else if (p_id == 116) {   // make_texture_planks
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_planks(l_i1);
     Get_time(l_end);
-  } else if (p_id == 113) {   // make_texture_table_top
+  } else if (p_id == 117) {   // make_texture_table_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_table_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 114) {   // make_texture_table_side
+  } else if (p_id == 118) {   // make_texture_table_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_table_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 115) {   // make_texture_furnace_side
+  } else if (p_id == 119) {   // make_texture_furnace_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_furnace_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 116) {   // make_texture_furnace_top
+  } else if (p_id == 120) {   // make_texture_furnace_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_furnace_top(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 117) {   // make_texture_furnace_front
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    make_texture_furnace_front(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 118) {   // make_texture_sand
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    make_texture_sand(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 119) {   // make_texture_cow_palette
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    make_texture_cow_palette(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 120) {   // make_texture_cow_hide
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    make_texture_cow_hide(l_i1);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -1176,86 +1194,86 @@ void test_registry_info_4(Integer p_id, Attributes &p_info)
 // What functions 121 to 160 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 121) test_info_set(p_info, "make_texture_cow_face", "macro", "blocks", "textures", "src/blocks/textures.4dm", 728, 751, "void", "I:p_tex",
+  if (p_id == 121) test_info_set(p_info, "make_texture_furnace_front", "macro", "blocks", "textures", "src/blocks/textures.4dm", 657, 687, "void", "I:p_tex I:p_lit",
+                              "void make_texture_furnace_front(Integer p_tex, Integer p_lit)", 0, "", "texture_copy, texture_fill_rect, texture_random, texture_set, texture_set_palette");
+  if (p_id == 122) test_info_set(p_info, "make_texture_sand", "macro", "blocks", "textures", "src/blocks/textures.4dm", 689, 700, "void", "I:p_tex",
+                              "void make_texture_sand(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette, texture_speckle");
+  if (p_id == 123) test_info_set(p_info, "make_texture_cow_palette", "macro", "blocks", "textures", "src/blocks/textures.4dm", 702, 715, "void", "I:p_tex",
+                              "void make_texture_cow_palette(Integer p_tex)", 0, "", "texture_set_palette");
+  if (p_id == 124) test_info_set(p_info, "make_texture_cow_hide", "macro", "blocks", "textures", "src/blocks/textures.4dm", 717, 726, "void", "I:p_tex",
+                              "void make_texture_cow_hide(Integer p_tex)", 0, "", "make_texture_cow_palette, texture_blotch, texture_fill");
+  if (p_id == 125) test_info_set(p_info, "make_texture_cow_face", "macro", "blocks", "textures", "src/blocks/textures.4dm", 728, 751, "void", "I:p_tex",
                               "void make_texture_cow_face(Integer p_tex)", 0, "", "make_texture_cow_palette, texture_row");
-  if (p_id == 122) test_info_set(p_info, "make_texture_cow", "macro", "blocks", "textures", "src/blocks/textures.4dm", 753, 782, "void", "I:p_tex I:p_part",
+  if (p_id == 126) test_info_set(p_info, "make_texture_cow", "macro", "blocks", "textures", "src/blocks/textures.4dm", 753, 782, "void", "I:p_tex I:p_part",
                               "void make_texture_cow(Integer p_tex, Integer p_part)", 0, "", "make_texture_cow_palette, texture_blotch, texture_fill, texture_fill_rect");
-  if (p_id == 123) test_info_set(p_info, "make_texture_sandstone_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 784, 797, "void", "I:p_tex",
+  if (p_id == 127) test_info_set(p_info, "make_texture_sandstone_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 784, 797, "void", "I:p_tex",
                               "void make_texture_sandstone_side(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 124) test_info_set(p_info, "make_texture_sandstone_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 799, 808, "void", "I:p_tex",
+  if (p_id == 128) test_info_set(p_info, "make_texture_sandstone_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 799, 808, "void", "I:p_tex",
                               "void make_texture_sandstone_top(Integer p_tex)", 0, "", "texture_fill, texture_set_palette, texture_speckle");
-  if (p_id == 125) test_info_set(p_info, "make_texture_cactus_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 810, 823, "void", "I:p_tex",
+  if (p_id == 129) test_info_set(p_info, "make_texture_cactus_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 810, 823, "void", "I:p_tex",
                               "void make_texture_cactus_side(Integer p_tex)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette, texture_speckle");
-  if (p_id == 126) test_info_set(p_info, "make_texture_cactus_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 825, 836, "void", "I:p_tex",
+  if (p_id == 130) test_info_set(p_info, "make_texture_cactus_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 825, 836, "void", "I:p_tex",
                               "void make_texture_cactus_top(Integer p_tex)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 127) test_info_set(p_info, "make_texture_coal_ore", "macro", "blocks", "textures", "src/blocks/textures.4dm", 838, 852, "void", "I:p_tex",
+  if (p_id == 131) test_info_set(p_info, "make_texture_coal_ore", "macro", "blocks", "textures", "src/blocks/textures.4dm", 838, 852, "void", "I:p_tex",
                               "void make_texture_coal_ore(Integer p_tex)", 0, "", "make_texture_stone, texture_fill_rect, texture_set_palette");
-  if (p_id == 128) test_info_set(p_info, "make_texture_gravel", "macro", "blocks", "textures", "src/blocks/textures.4dm", 854, 867, "void", "I:p_tex",
+  if (p_id == 132) test_info_set(p_info, "make_texture_gravel", "macro", "blocks", "textures", "src/blocks/textures.4dm", 854, 867, "void", "I:p_tex",
                               "void make_texture_gravel(Integer p_tex)", 0, "", "texture_blotch, texture_fill, texture_set_palette, texture_speckle");
-  if (p_id == 129) test_info_set(p_info, "make_texture_plant_grass", "macro", "blocks", "textures", "src/blocks/textures.4dm", 869, 892, "void", "I:p_tex",
+  if (p_id == 133) test_info_set(p_info, "make_texture_plant_grass", "macro", "blocks", "textures", "src/blocks/textures.4dm", 869, 892, "void", "I:p_tex",
                               "void make_texture_plant_grass(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 130) test_info_set(p_info, "make_texture_plant_flower", "macro", "blocks", "textures", "src/blocks/textures.4dm", 894, 927, "void", "I:p_tex I:p_red I:p_green I:p_blue",
+  if (p_id == 134) test_info_set(p_info, "make_texture_plant_flower", "macro", "blocks", "textures", "src/blocks/textures.4dm", 894, 927, "void", "I:p_tex I:p_red I:p_green I:p_blue",
                               "void make_texture_plant_flower(Integer p_tex, Integer p_red, Integer p_green, Integer p_blue)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 131) test_info_set(p_info, "make_texture_plant_dead_bush", "macro", "blocks", "textures", "src/blocks/textures.4dm", 929, 951, "void", "I:p_tex",
+  if (p_id == 135) test_info_set(p_info, "make_texture_plant_dead_bush", "macro", "blocks", "textures", "src/blocks/textures.4dm", 929, 951, "void", "I:p_tex",
                               "void make_texture_plant_dead_bush(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 132) test_info_set(p_info, "make_texture_item_stick", "macro", "blocks", "textures", "src/blocks/textures.4dm", 953, 977, "void", "I:p_tex",
+  if (p_id == 136) test_info_set(p_info, "make_texture_item_stick", "macro", "blocks", "textures", "src/blocks/textures.4dm", 953, 977, "void", "I:p_tex",
                               "void make_texture_item_stick(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 133) test_info_set(p_info, "make_texture_pig", "macro", "blocks", "textures", "src/blocks/textures.4dm", 979, 1025, "void", "I:p_tex I:p_part",
+  if (p_id == 137) test_info_set(p_info, "make_texture_pig", "macro", "blocks", "textures", "src/blocks/textures.4dm", 979, 1025, "void", "I:p_tex I:p_part",
                               "void make_texture_pig(Integer p_tex, Integer p_part)", 0, "", "texture_blotch, texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 134) test_info_set(p_info, "make_texture_item_porkchop", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1027, 1059, "void", "I:p_tex I:p_cooked",
+  if (p_id == 138) test_info_set(p_info, "make_texture_item_porkchop", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1027, 1059, "void", "I:p_tex I:p_cooked",
                               "void make_texture_item_porkchop(Integer p_tex, Integer p_cooked)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 135) test_info_set(p_info, "make_texture_item_beef", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1061, 1092, "void", "I:p_tex I:p_cooked",
+  if (p_id == 139) test_info_set(p_info, "make_texture_item_beef", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1061, 1092, "void", "I:p_tex I:p_cooked",
                               "void make_texture_item_beef(Integer p_tex, Integer p_cooked)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 136) test_info_set(p_info, "make_texture_iron_ore", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1094, 1110, "void", "I:p_tex",
+  if (p_id == 140) test_info_set(p_info, "make_texture_iron_ore", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1094, 1110, "void", "I:p_tex",
                               "void make_texture_iron_ore(Integer p_tex)", 0, "", "make_texture_stone, texture_fill_rect, texture_set_palette");
-  if (p_id == 137) test_info_set(p_info, "make_texture_item_ingot", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1112, 1137, "void", "I:p_tex",
+  if (p_id == 141) test_info_set(p_info, "make_texture_item_ingot", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1112, 1137, "void", "I:p_tex",
                               "void make_texture_item_ingot(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 138) test_info_set(p_info, "make_texture_bed_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1139, 1158, "void", "I:p_tex",
+  if (p_id == 142) test_info_set(p_info, "make_texture_bed_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1139, 1158, "void", "I:p_tex",
                               "void make_texture_bed_top(Integer p_tex)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 139) test_info_set(p_info, "make_texture_bed_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1160, 1178, "void", "I:p_tex",
+  if (p_id == 143) test_info_set(p_info, "make_texture_bed_side", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1160, 1178, "void", "I:p_tex",
                               "void make_texture_bed_side(Integer p_tex)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 140) test_info_set(p_info, "make_texture_zombie", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1180, 1234, "void", "I:p_tex I:p_part",
+  if (p_id == 144) test_info_set(p_info, "make_texture_zombie", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1180, 1234, "void", "I:p_tex I:p_part",
                               "void make_texture_zombie(Integer p_tex, Integer p_part)", 0, "", "texture_blotch, texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 141) test_info_set(p_info, "make_texture_chest", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1236, 1259, "void", "I:p_tex I:p_side",
+  if (p_id == 145) test_info_set(p_info, "make_texture_chest", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1236, 1259, "void", "I:p_tex I:p_side",
                               "void make_texture_chest(Integer p_tex, Integer p_side)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 142) test_info_set(p_info, "make_texture_torch", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1261, 1287, "void", "I:p_tex",
+  if (p_id == 146) test_info_set(p_info, "make_texture_torch", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1261, 1287, "void", "I:p_tex",
                               "void make_texture_torch(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 143) test_info_set(p_info, "make_texture_glass", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1289, 1313, "void", "I:p_tex",
+  if (p_id == 147) test_info_set(p_info, "make_texture_glass", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1289, 1313, "void", "I:p_tex",
                               "void make_texture_glass(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 144) test_info_set(p_info, "make_texture_item_rotten_flesh", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1315, 1340, "void", "I:p_tex",
+  if (p_id == 148) test_info_set(p_info, "make_texture_item_rotten_flesh", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1315, 1340, "void", "I:p_tex",
                               "void make_texture_item_rotten_flesh(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 145) test_info_set(p_info, "make_texture_item_coal", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1342, 1367, "void", "I:p_tex",
+  if (p_id == 149) test_info_set(p_info, "make_texture_item_coal", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1342, 1367, "void", "I:p_tex",
                               "void make_texture_item_coal(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 146) test_info_set(p_info, "make_tool_palette", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1369, 1388, "void", "I:p_tex I:p_tier",
+  if (p_id == 150) test_info_set(p_info, "make_tool_palette", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1369, 1388, "void", "I:p_tex I:p_tier",
                               "void make_tool_palette(Integer p_tex, Integer p_tier)", 0, "", "texture_set_palette");
-  if (p_id == 147) test_info_set(p_info, "make_texture_item_pickaxe", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1390, 1412, "void", "I:p_tex I:p_tier",
+  if (p_id == 151) test_info_set(p_info, "make_texture_item_pickaxe", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1390, 1412, "void", "I:p_tex I:p_tier",
                               "void make_texture_item_pickaxe(Integer p_tex, Integer p_tier)", 0, "", "make_tool_palette, texture_row");
-  if (p_id == 148) test_info_set(p_info, "make_texture_item_axe", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1414, 1436, "void", "I:p_tex I:p_tier",
+  if (p_id == 152) test_info_set(p_info, "make_texture_item_axe", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1414, 1436, "void", "I:p_tex I:p_tier",
                               "void make_texture_item_axe(Integer p_tex, Integer p_tier)", 0, "", "make_tool_palette, texture_row");
-  if (p_id == 149) test_info_set(p_info, "make_texture_item_shovel", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1438, 1460, "void", "I:p_tex I:p_tier",
+  if (p_id == 153) test_info_set(p_info, "make_texture_item_shovel", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1438, 1460, "void", "I:p_tex I:p_tier",
                               "void make_texture_item_shovel(Integer p_tex, Integer p_tier)", 0, "", "make_tool_palette, texture_row");
-  if (p_id == 150) test_info_set(p_info, "make_texture_item_sword", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1462, 1484, "void", "I:p_tex I:p_tier",
+  if (p_id == 154) test_info_set(p_info, "make_texture_item_sword", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1462, 1484, "void", "I:p_tex I:p_tier",
                               "void make_texture_item_sword(Integer p_tex, Integer p_tier)", 0, "", "make_tool_palette, texture_row");
-  if (p_id == 151) test_info_set(p_info, "make_texture_destroy", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1486, 1541, "void", "I:p_tex I:p_stage",
+  if (p_id == 155) test_info_set(p_info, "make_texture_destroy", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1486, 1541, "void", "I:p_tex I:p_stage",
                               "void make_texture_destroy(Integer p_tex, Integer p_stage)", 0, "", "floor_divide, floor_integer, hash_real, texture_fill, texture_get, texture_set, texture_set_palette");
-  if (p_id == 152) test_info_set(p_info, "make_texture_heart", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1543, 1583, "void", "I:p_tex I:p_fill",
+  if (p_id == 156) test_info_set(p_info, "make_texture_heart", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1543, 1583, "void", "I:p_tex I:p_fill",
                               "void make_texture_heart(Integer p_tex, Integer p_fill)", 0, "", "texture_get, texture_row, texture_set, texture_set_palette");
-  if (p_id == 153) test_info_set(p_info, "make_texture_door", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1585, 1612, "void", "I:p_tex I:p_top",
+  if (p_id == 157) test_info_set(p_info, "make_texture_door", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1585, 1612, "void", "I:p_tex I:p_top",
                               "void make_texture_door(Integer p_tex, Integer p_top)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 154) test_info_set(p_info, "make_texture_item_door", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1614, 1638, "void", "I:p_tex",
+  if (p_id == 158) test_info_set(p_info, "make_texture_item_door", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1614, 1638, "void", "I:p_tex",
                               "void make_texture_item_door(Integer p_tex)", 0, "", "texture_row, texture_set_palette");
-  if (p_id == 155) test_info_set(p_info, "make_texture_bed_foot_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1640, 1655, "void", "I:p_tex",
+  if (p_id == 159) test_info_set(p_info, "make_texture_bed_foot_top", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1640, 1655, "void", "I:p_tex",
                               "void make_texture_bed_foot_top(Integer p_tex)", 0, "", "texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 156) test_info_set(p_info, "make_texture_person", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1657, 1711, "void", "I:p_tex I:p_part",
+  if (p_id == 160) test_info_set(p_info, "make_texture_person", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1657, 1712, "void", "I:p_tex I:p_part",
                               "void make_texture_person(Integer p_tex, Integer p_part)", 0, "", "texture_blotch, texture_fill, texture_fill_rect, texture_set_palette");
-  if (p_id == 157) test_info_set(p_info, "make_texture_door_edge", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1713, 1736, "void", "I:p_tex I:p_door_tex",
-                              "void make_texture_door_edge(Integer p_tex, Integer p_door_tex)", 0, "", "texture_get, texture_palette_index, texture_set");
-  if (p_id == 158) test_info_set(p_info, "texture_is_sprite", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1738, 1746, "Integer", "I:p_tex",
-                              "Integer texture_is_sprite(Integer p_tex)", 0, "", "");
-  if (p_id == 159) test_info_set(p_info, "textures_init", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1748, 1755, "void", "",
-                              "void textures_init()", 0, "", "textures_finish_all, textures_generate");
-  if (p_id == 160) test_info_set(p_info, "textures_finish_all", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1757, 1771, "void", "",
-                              "void textures_finish_all()", 0, "", "make_texture_door_edge, texture_finish");
 }
 
 void test_registry_call_4(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -1300,53 +1318,74 @@ void test_registry_call_4(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 121) {   // make_texture_cow_face
+  if (p_id == 121) {   // make_texture_furnace_front
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    make_texture_furnace_front(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 122) {   // make_texture_sand
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    make_texture_sand(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 123) {   // make_texture_cow_palette
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    make_texture_cow_palette(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 124) {   // make_texture_cow_hide
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    make_texture_cow_hide(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 125) {   // make_texture_cow_face
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_cow_face(l_i1);
     Get_time(l_end);
-  } else if (p_id == 122) {   // make_texture_cow
+  } else if (p_id == 126) {   // make_texture_cow
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_cow(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 123) {   // make_texture_sandstone_side
+  } else if (p_id == 127) {   // make_texture_sandstone_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_sandstone_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 124) {   // make_texture_sandstone_top
+  } else if (p_id == 128) {   // make_texture_sandstone_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_sandstone_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 125) {   // make_texture_cactus_side
+  } else if (p_id == 129) {   // make_texture_cactus_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_cactus_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 126) {   // make_texture_cactus_top
+  } else if (p_id == 130) {   // make_texture_cactus_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_cactus_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 127) {   // make_texture_coal_ore
+  } else if (p_id == 131) {   // make_texture_coal_ore
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_coal_ore(l_i1);
     Get_time(l_end);
-  } else if (p_id == 128) {   // make_texture_gravel
+  } else if (p_id == 132) {   // make_texture_gravel
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_gravel(l_i1);
     Get_time(l_end);
-  } else if (p_id == 129) {   // make_texture_plant_grass
+  } else if (p_id == 133) {   // make_texture_plant_grass
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_plant_grass(l_i1);
     Get_time(l_end);
-  } else if (p_id == 130) {   // make_texture_plant_flower
+  } else if (p_id == 134) {   // make_texture_plant_flower
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1354,168 +1393,149 @@ void test_registry_call_4(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     make_texture_plant_flower(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 131) {   // make_texture_plant_dead_bush
+  } else if (p_id == 135) {   // make_texture_plant_dead_bush
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_plant_dead_bush(l_i1);
     Get_time(l_end);
-  } else if (p_id == 132) {   // make_texture_item_stick
+  } else if (p_id == 136) {   // make_texture_item_stick
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_item_stick(l_i1);
     Get_time(l_end);
-  } else if (p_id == 133) {   // make_texture_pig
+  } else if (p_id == 137) {   // make_texture_pig
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_pig(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 134) {   // make_texture_item_porkchop
+  } else if (p_id == 138) {   // make_texture_item_porkchop
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_item_porkchop(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 135) {   // make_texture_item_beef
+  } else if (p_id == 139) {   // make_texture_item_beef
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_item_beef(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 136) {   // make_texture_iron_ore
+  } else if (p_id == 140) {   // make_texture_iron_ore
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_iron_ore(l_i1);
     Get_time(l_end);
-  } else if (p_id == 137) {   // make_texture_item_ingot
+  } else if (p_id == 141) {   // make_texture_item_ingot
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_item_ingot(l_i1);
     Get_time(l_end);
-  } else if (p_id == 138) {   // make_texture_bed_top
+  } else if (p_id == 142) {   // make_texture_bed_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_bed_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 139) {   // make_texture_bed_side
+  } else if (p_id == 143) {   // make_texture_bed_side
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_bed_side(l_i1);
     Get_time(l_end);
-  } else if (p_id == 140) {   // make_texture_zombie
+  } else if (p_id == 144) {   // make_texture_zombie
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_zombie(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 141) {   // make_texture_chest
+  } else if (p_id == 145) {   // make_texture_chest
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_chest(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 142) {   // make_texture_torch
+  } else if (p_id == 146) {   // make_texture_torch
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_torch(l_i1);
     Get_time(l_end);
-  } else if (p_id == 143) {   // make_texture_glass
+  } else if (p_id == 147) {   // make_texture_glass
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_glass(l_i1);
     Get_time(l_end);
-  } else if (p_id == 144) {   // make_texture_item_rotten_flesh
+  } else if (p_id == 148) {   // make_texture_item_rotten_flesh
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_item_rotten_flesh(l_i1);
     Get_time(l_end);
-  } else if (p_id == 145) {   // make_texture_item_coal
+  } else if (p_id == 149) {   // make_texture_item_coal
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_item_coal(l_i1);
     Get_time(l_end);
-  } else if (p_id == 146) {   // make_tool_palette
+  } else if (p_id == 150) {   // make_tool_palette
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_tool_palette(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 147) {   // make_texture_item_pickaxe
+  } else if (p_id == 151) {   // make_texture_item_pickaxe
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_item_pickaxe(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 148) {   // make_texture_item_axe
+  } else if (p_id == 152) {   // make_texture_item_axe
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_item_axe(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 149) {   // make_texture_item_shovel
+  } else if (p_id == 153) {   // make_texture_item_shovel
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_item_shovel(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 150) {   // make_texture_item_sword
+  } else if (p_id == 154) {   // make_texture_item_sword
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_item_sword(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 151) {   // make_texture_destroy
+  } else if (p_id == 155) {   // make_texture_destroy
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_destroy(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 152) {   // make_texture_heart
+  } else if (p_id == 156) {   // make_texture_heart
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_heart(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 153) {   // make_texture_door
+  } else if (p_id == 157) {   // make_texture_door
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_door(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 154) {   // make_texture_item_door
+  } else if (p_id == 158) {   // make_texture_item_door
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_item_door(l_i1);
     Get_time(l_end);
-  } else if (p_id == 155) {   // make_texture_bed_foot_top
+  } else if (p_id == 159) {   // make_texture_bed_foot_top
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     make_texture_bed_foot_top(l_i1);
     Get_time(l_end);
-  } else if (p_id == 156) {   // make_texture_person
+  } else if (p_id == 160) {   // make_texture_person
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     make_texture_person(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 157) {   // make_texture_door_edge
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    make_texture_door_edge(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 158) {   // texture_is_sprite
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    l_ret_i = texture_is_sprite(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 159) {   // textures_init
-    Get_time(l_start);
-    textures_init();
-    Get_time(l_end);
-  } else if (p_id == 160) {   // textures_finish_all
-    Get_time(l_start);
-    textures_finish_all();
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -1529,86 +1549,86 @@ void test_registry_info_5(Integer p_id, Attributes &p_info)
 // What functions 161 to 200 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 161) test_info_set(p_info, "textures_generate", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1773, 1874, "void", "",
+  if (p_id == 161) test_info_set(p_info, "make_texture_door_edge", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1714, 1737, "void", "I:p_tex I:p_door_tex",
+                              "void make_texture_door_edge(Integer p_tex, Integer p_door_tex)", 0, "", "texture_get, texture_palette_index, texture_set");
+  if (p_id == 162) test_info_set(p_info, "texture_is_sprite", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1739, 1747, "Integer", "I:p_tex",
+                              "Integer texture_is_sprite(Integer p_tex)", 0, "", "");
+  if (p_id == 163) test_info_set(p_info, "textures_init", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1749, 1756, "void", "",
+                              "void textures_init()", 0, "", "textures_finish_all, textures_generate");
+  if (p_id == 164) test_info_set(p_info, "textures_finish_all", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1758, 1772, "void", "",
+                              "void textures_finish_all()", 0, "", "make_texture_door_edge, texture_finish");
+  if (p_id == 165) test_info_set(p_info, "textures_generate", "macro", "blocks", "textures", "src/blocks/textures.4dm", 1774, 1880, "void", "",
                               "void textures_generate()", 0, "", "make_texture_bed_foot_top, make_texture_bed_side, make_texture_bed_top, make_texture_bedrock, make_texture_cactus_side, make_texture_cactus_top, make_texture_chest, make_texture_coal_ore, make_texture_cobblestone, make_texture_cow, make_texture_cow_face, make_texture_cow_hide, make_texture_destroy, make_texture_dirt, make_texture_door, make_texture_furnace_front, make_texture_furnace_side, make_texture_furnace_top, make_texture_glass, make_texture_grass_side, make_texture_grass_top, make_texture_gravel, make_texture_heart, make_texture_iron_ore, make_texture_item_axe, make_texture_item_beef, make_texture_item_coal, make_texture_item_door, make_texture_item_ingot, make_texture_item_pickaxe, make_texture_item_porkchop, make_texture_item_rotten_flesh, make_texture_item_shovel, make_texture_item_stick, make_texture_item_sword, make_texture_leaves, make_texture_log_side, make_texture_log_top, make_texture_person, make_texture_pig, make_texture_planks, make_texture_plant_dead_bush, make_texture_plant_flower, make_texture_plant_grass, make_texture_sand, make_texture_sandstone_side, make_texture_sandstone_top, make_texture_stone, make_texture_table_side, make_texture_table_top, make_texture_torch, make_texture_water, make_texture_zombie");
-  if (p_id == 162) test_info_set(p_info, "events_clear", "macro", "core", "events", "src/core/events.4dm", 8, 17, "void", "&A:p_events",
+  if (p_id == 166) test_info_set(p_info, "events_clear", "macro", "core", "events", "src/core/events.4dm", 8, 17, "void", "&A:p_events",
                               "void events_clear(Attributes &p_events)", 0, "", "record_clear, record_set_integer");
-  if (p_id == 163) test_info_set(p_info, "emit_event", "macro", "core", "events", "src/core/events.4dm", 19, 51, "void", "&A:p_events I:p_type I:p_i1 I:p_i2 I:p_i3 I:p_i4 R:p_r1 R:p_r2 R:p_r3 T:p_text",
+  if (p_id == 167) test_info_set(p_info, "emit_event", "macro", "core", "events", "src/core/events.4dm", 19, 51, "void", "&A:p_events I:p_type I:p_i1 I:p_i2 I:p_i3 I:p_i4 R:p_r1 R:p_r2 R:p_r3 T:p_text",
                               "void emit_event(Attributes &p_events, Integer p_type, Integer p_i1, Integer p_i2, Integer p_i3, Integer p_i4, Real p_r1, Real p_r2, Real p_r3, Text p_text)", 0, "", "record_integer, record_set_integer, record_set_integer_at, record_set_real_at, record_set_text_at");
-  if (p_id == 164) test_info_set(p_info, "emit_simple_event", "macro", "core", "events", "src/core/events.4dm", 53, 59, "void", "&A:p_events I:p_type",
+  if (p_id == 168) test_info_set(p_info, "emit_simple_event", "macro", "core", "events", "src/core/events.4dm", 53, 59, "void", "&A:p_events I:p_type",
                               "void emit_simple_event(Attributes &p_events, Integer p_type)", 0, "", "emit_event");
-  if (p_id == 165) test_info_set(p_info, "emit_cell_event", "macro", "core", "events", "src/core/events.4dm", 61, 67, "void", "&A:p_events I:p_type I:p_x I:p_y I:p_z I:p_block",
+  if (p_id == 169) test_info_set(p_info, "emit_cell_event", "macro", "core", "events", "src/core/events.4dm", 61, 67, "void", "&A:p_events I:p_type I:p_x I:p_y I:p_z I:p_block",
                               "void emit_cell_event(Attributes &p_events, Integer p_type, Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "emit_event");
-  if (p_id == 166) test_info_set(p_info, "emit_item_event", "macro", "core", "events", "src/core/events.4dm", 69, 75, "void", "&A:p_events I:p_type I:p_item I:p_count",
+  if (p_id == 170) test_info_set(p_info, "emit_item_event", "macro", "core", "events", "src/core/events.4dm", 69, 75, "void", "&A:p_events I:p_type I:p_item I:p_count",
                               "void emit_item_event(Attributes &p_events, Integer p_type, Integer p_item, Integer p_count)", 0, "", "emit_event");
-  if (p_id == 167) test_info_set(p_info, "emit_drop_event", "macro", "core", "events", "src/core/events.4dm", 77, 84, "void", "&A:p_events I:p_item I:p_count I:p_damage R:p_x R:p_y R:p_z",
+  if (p_id == 171) test_info_set(p_info, "emit_drop_event", "macro", "core", "events", "src/core/events.4dm", 77, 84, "void", "&A:p_events I:p_item I:p_count I:p_damage R:p_x R:p_y R:p_z",
                               "void emit_drop_event(Attributes &p_events, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z)", 0, "", "emit_event");
-  if (p_id == 168) test_info_set(p_info, "emit_toast", "macro", "core", "events", "src/core/events.4dm", 86, 92, "void", "&A:p_events T:p_text",
+  if (p_id == 172) test_info_set(p_info, "emit_toast", "macro", "core", "events", "src/core/events.4dm", 86, 92, "void", "&A:p_events T:p_text",
                               "void emit_toast(Attributes &p_events, Text p_text)", 0, "", "emit_event");
-  if (p_id == 169) test_info_set(p_info, "events_pending", "macro", "core", "events", "src/core/events.4dm", 94, 100, "Integer", "&A:p_events",
+  if (p_id == 173) test_info_set(p_info, "events_pending", "macro", "core", "events", "src/core/events.4dm", 94, 100, "Integer", "&A:p_events",
                               "Integer events_pending(Attributes &p_events)", 0, "", "record_integer");
-  if (p_id == 170) test_info_set(p_info, "next_event", "macro", "core", "events", "src/core/events.4dm", 102, 133, "Integer", "&A:p_events &A:p_event",
+  if (p_id == 174) test_info_set(p_info, "next_event", "macro", "core", "events", "src/core/events.4dm", 102, 133, "Integer", "&A:p_events &A:p_event",
                               "Integer next_event(Attributes &p_events, Attributes &p_event)", 0, "", "record_clear, record_integer, record_integer_at, record_real_at, record_set_integer, record_set_real, record_set_text, record_text_at");
-  if (p_id == 171) test_info_set(p_info, "event_type", "macro", "core", "events", "src/core/events.4dm", 135, 141, "Integer", "&A:p_event",
+  if (p_id == 175) test_info_set(p_info, "event_type", "macro", "core", "events", "src/core/events.4dm", 135, 141, "Integer", "&A:p_event",
                               "Integer event_type(Attributes &p_event)", 0, "", "record_integer");
-  if (p_id == 172) test_info_set(p_info, "event_integer", "macro", "core", "events", "src/core/events.4dm", 143, 152, "Integer", "&A:p_event I:p_which",
+  if (p_id == 176) test_info_set(p_info, "event_integer", "macro", "core", "events", "src/core/events.4dm", 143, 152, "Integer", "&A:p_event I:p_which",
                               "Integer event_integer(Attributes &p_event, Integer p_which)", 0, "", "record_integer");
-  if (p_id == 173) test_info_set(p_info, "event_real", "macro", "core", "events", "src/core/events.4dm", 154, 162, "Real", "&A:p_event I:p_which",
+  if (p_id == 177) test_info_set(p_info, "event_real", "macro", "core", "events", "src/core/events.4dm", 154, 162, "Real", "&A:p_event I:p_which",
                               "Real event_real(Attributes &p_event, Integer p_which)", 0, "", "record_real");
-  if (p_id == 174) test_info_set(p_info, "event_text", "macro", "core", "events", "src/core/events.4dm", 164, 170, "Text", "&A:p_event",
+  if (p_id == 178) test_info_set(p_info, "event_text", "macro", "core", "events", "src/core/events.4dm", 164, 170, "Text", "&A:p_event",
                               "Text event_text(Attributes &p_event)", 0, "", "record_text");
-  if (p_id == 175) test_info_set(p_info, "event_is_remote", "macro", "core", "events", "src/core/events.4dm", 172, 180, "Integer", "&A:p_event",
+  if (p_id == 179) test_info_set(p_info, "event_is_remote", "macro", "core", "events", "src/core/events.4dm", 172, 180, "Integer", "&A:p_event",
                               "Integer event_is_remote(Attributes &p_event)", 0, "", "event_real");
-  if (p_id == 176) test_info_set(p_info, "record_integer", "macro", "core", "records", "src/core/records.4dm", 9, 19, "Integer", "&A:p_record T:p_field",
+  if (p_id == 180) test_info_set(p_info, "record_integer", "macro", "core", "records", "src/core/records.4dm", 9, 19, "Integer", "&A:p_record T:p_field",
                               "Integer record_integer(Attributes &p_record, Text p_field)", 0, "", "");
-  if (p_id == 177) test_info_set(p_info, "record_real", "macro", "core", "records", "src/core/records.4dm", 21, 31, "Real", "&A:p_record T:p_field",
+  if (p_id == 181) test_info_set(p_info, "record_real", "macro", "core", "records", "src/core/records.4dm", 21, 31, "Real", "&A:p_record T:p_field",
                               "Real record_real(Attributes &p_record, Text p_field)", 0, "", "");
-  if (p_id == 178) test_info_set(p_info, "record_text", "macro", "core", "records", "src/core/records.4dm", 33, 43, "Text", "&A:p_record T:p_field",
+  if (p_id == 182) test_info_set(p_info, "record_text", "macro", "core", "records", "src/core/records.4dm", 33, 43, "Text", "&A:p_record T:p_field",
                               "Text record_text(Attributes &p_record, Text p_field)", 0, "", "");
-  if (p_id == 179) test_info_set(p_info, "record_set_integer", "macro", "core", "records", "src/core/records.4dm", 45, 53, "void", "&A:p_record T:p_field I:p_value",
+  if (p_id == 183) test_info_set(p_info, "record_set_integer", "macro", "core", "records", "src/core/records.4dm", 45, 53, "void", "&A:p_record T:p_field I:p_value",
                               "void record_set_integer(Attributes &p_record, Text p_field, Integer p_value)", 0, "", "");
-  if (p_id == 180) test_info_set(p_info, "record_set_real", "macro", "core", "records", "src/core/records.4dm", 55, 61, "void", "&A:p_record T:p_field R:p_value",
+  if (p_id == 184) test_info_set(p_info, "record_set_real", "macro", "core", "records", "src/core/records.4dm", 55, 61, "void", "&A:p_record T:p_field R:p_value",
                               "void record_set_real(Attributes &p_record, Text p_field, Real p_value)", 0, "", "");
-  if (p_id == 181) test_info_set(p_info, "record_set_text", "macro", "core", "records", "src/core/records.4dm", 63, 69, "void", "&A:p_record T:p_field T:p_value",
+  if (p_id == 185) test_info_set(p_info, "record_set_text", "macro", "core", "records", "src/core/records.4dm", 63, 69, "void", "&A:p_record T:p_field T:p_value",
                               "void record_set_text(Attributes &p_record, Text p_field, Text p_value)", 0, "", "");
-  if (p_id == 182) test_info_set(p_info, "record_clear", "macro", "core", "records", "src/core/records.4dm", 71, 79, "void", "&A:p_record T:p_datatype",
+  if (p_id == 186) test_info_set(p_info, "record_clear", "macro", "core", "records", "src/core/records.4dm", 71, 79, "void", "&A:p_record T:p_datatype",
                               "void record_clear(Attributes &p_record, Text p_datatype)", 0, "", "");
-  if (p_id == 183) test_info_set(p_info, "record_datatype", "macro", "core", "records", "src/core/records.4dm", 81, 87, "Text", "&A:p_record",
+  if (p_id == 187) test_info_set(p_info, "record_datatype", "macro", "core", "records", "src/core/records.4dm", 81, 87, "Text", "&A:p_record",
                               "Text record_datatype(Attributes &p_record)", 0, "", "record_text");
-  if (p_id == 184) test_info_set(p_info, "record_field_at", "macro", "core", "records", "src/core/records.4dm", 91, 97, "Text", "T:p_field I:p_index",
+  if (p_id == 188) test_info_set(p_info, "record_field_at", "macro", "core", "records", "src/core/records.4dm", 91, 97, "Text", "T:p_field I:p_index",
                               "Text record_field_at(Text p_field, Integer p_index)", 0, "", "");
-  if (p_id == 185) test_info_set(p_info, "record_integer_at", "macro", "core", "records", "src/core/records.4dm", 99, 105, "Integer", "&A:p_record T:p_field I:p_index",
+  if (p_id == 189) test_info_set(p_info, "record_integer_at", "macro", "core", "records", "src/core/records.4dm", 99, 105, "Integer", "&A:p_record T:p_field I:p_index",
                               "Integer record_integer_at(Attributes &p_record, Text p_field, Integer p_index)", 0, "", "record_field_at, record_integer");
-  if (p_id == 186) test_info_set(p_info, "record_real_at", "macro", "core", "records", "src/core/records.4dm", 107, 113, "Real", "&A:p_record T:p_field I:p_index",
+  if (p_id == 190) test_info_set(p_info, "record_real_at", "macro", "core", "records", "src/core/records.4dm", 107, 113, "Real", "&A:p_record T:p_field I:p_index",
                               "Real record_real_at(Attributes &p_record, Text p_field, Integer p_index)", 0, "", "record_field_at, record_real");
-  if (p_id == 187) test_info_set(p_info, "record_text_at", "macro", "core", "records", "src/core/records.4dm", 115, 121, "Text", "&A:p_record T:p_field I:p_index",
+  if (p_id == 191) test_info_set(p_info, "record_text_at", "macro", "core", "records", "src/core/records.4dm", 115, 121, "Text", "&A:p_record T:p_field I:p_index",
                               "Text record_text_at(Attributes &p_record, Text p_field, Integer p_index)", 0, "", "record_field_at, record_text");
-  if (p_id == 188) test_info_set(p_info, "record_set_integer_at", "macro", "core", "records", "src/core/records.4dm", 123, 129, "void", "&A:p_record T:p_field I:p_index I:p_value",
+  if (p_id == 192) test_info_set(p_info, "record_set_integer_at", "macro", "core", "records", "src/core/records.4dm", 123, 129, "void", "&A:p_record T:p_field I:p_index I:p_value",
                               "void record_set_integer_at(Attributes &p_record, Text p_field, Integer p_index, Integer p_value)", 0, "", "record_field_at, record_set_integer");
-  if (p_id == 189) test_info_set(p_info, "record_set_real_at", "macro", "core", "records", "src/core/records.4dm", 131, 137, "void", "&A:p_record T:p_field I:p_index R:p_value",
+  if (p_id == 193) test_info_set(p_info, "record_set_real_at", "macro", "core", "records", "src/core/records.4dm", 131, 137, "void", "&A:p_record T:p_field I:p_index R:p_value",
                               "void record_set_real_at(Attributes &p_record, Text p_field, Integer p_index, Real p_value)", 0, "", "record_field_at, record_set_real");
-  if (p_id == 190) test_info_set(p_info, "record_set_text_at", "macro", "core", "records", "src/core/records.4dm", 139, 145, "void", "&A:p_record T:p_field I:p_index T:p_value",
+  if (p_id == 194) test_info_set(p_info, "record_set_text_at", "macro", "core", "records", "src/core/records.4dm", 139, 145, "void", "&A:p_record T:p_field I:p_index T:p_value",
                               "void record_set_text_at(Attributes &p_record, Text p_field, Integer p_index, Text p_value)", 0, "", "record_field_at, record_set_text");
-  if (p_id == 191) test_info_set(p_info, "random_seed", "macro", "core", "records", "src/core/records.4dm", 149, 160, "void", "&A:p_random I:p_seed",
+  if (p_id == 195) test_info_set(p_info, "random_seed", "macro", "core", "records", "src/core/records.4dm", 149, 160, "void", "&A:p_random I:p_seed",
                               "void random_seed(Attributes &p_random, Integer p_seed)", 0, "", "record_clear, record_set_real");
-  if (p_id == 192) test_info_set(p_info, "random_next", "macro", "core", "records", "src/core/records.4dm", 162, 176, "Real", "&A:p_random",
+  if (p_id == 196) test_info_set(p_info, "random_next", "macro", "core", "records", "src/core/records.4dm", 162, 176, "Real", "&A:p_random",
                               "Real random_next(Attributes &p_random)", 0, "", "record_real, record_set_real");
-  if (p_id == 193) test_info_set(p_info, "random_range", "macro", "core", "records", "src/core/records.4dm", 178, 188, "Integer", "&A:p_random I:p_low I:p_high",
+  if (p_id == 197) test_info_set(p_info, "random_range", "macro", "core", "records", "src/core/records.4dm", 178, 188, "Integer", "&A:p_random I:p_low I:p_high",
                               "Integer random_range(Attributes &p_random, Integer p_low, Integer p_high)", 0, "", "random_next");
-  if (p_id == 194) test_info_set(p_info, "random_between", "macro", "core", "records", "src/core/records.4dm", 190, 196, "Real", "&A:p_random R:p_low R:p_high",
+  if (p_id == 198) test_info_set(p_info, "random_between", "macro", "core", "records", "src/core/records.4dm", 190, 196, "Real", "&A:p_random R:p_low R:p_high",
                               "Real random_between(Attributes &p_random, Real p_low, Real p_high)", 0, "", "random_next");
-  if (p_id == 195) test_info_set(p_info, "slots_reset", "macro", "core", "slots", "src/core/slots.4dm", 8, 18, "void", "I:p_pool",
+  if (p_id == 199) test_info_set(p_info, "slots_reset", "macro", "core", "slots", "src/core/slots.4dm", 8, 18, "void", "I:p_pool",
                               "void slots_reset(Integer p_pool)", 0, "", "");
-  if (p_id == 196) test_info_set(p_info, "slots_set", "macro", "core", "slots", "src/core/slots.4dm", 20, 58, "void", "I:p_pool I:p_slot I:p_used",
+  if (p_id == 200) test_info_set(p_info, "slots_set", "macro", "core", "slots", "src/core/slots.4dm", 20, 58, "void", "I:p_pool I:p_slot I:p_used",
                               "void slots_set(Integer p_pool, Integer p_slot, Integer p_used)", 0, "", "");
-  if (p_id == 197) test_info_set(p_info, "slots_used", "macro", "core", "slots", "src/core/slots.4dm", 60, 67, "Integer", "I:p_pool I:p_slot",
-                              "Integer slots_used(Integer p_pool, Integer p_slot)", 0, "", "");
-  if (p_id == 198) test_info_set(p_info, "slots_count", "macro", "core", "slots", "src/core/slots.4dm", 69, 75, "Integer", "I:p_pool",
-                              "Integer slots_count(Integer p_pool)", 0, "", "");
-  if (p_id == 199) test_info_set(p_info, "slots_at", "macro", "core", "slots", "src/core/slots.4dm", 77, 84, "Integer", "I:p_pool I:p_position",
-                              "Integer slots_at(Integer p_pool, Integer p_position)", 0, "", "");
-  if (p_id == 200) test_info_set(p_info, "slots_rebuild", "macro", "core", "slots", "src/core/slots.4dm", 86, 98, "void", "I:p_pool &A:p_record I:p_capacity",
-                              "void slots_rebuild(Integer p_pool, Attributes &p_record, Integer p_capacity)", 0, "", "record_integer_at, slots_reset, slots_set");
 }
 
 void test_registry_call_5(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -1653,15 +1673,34 @@ void test_registry_call_5(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 161) {   // textures_generate
+  if (p_id == 161) {   // make_texture_door_edge
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    make_texture_door_edge(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 162) {   // texture_is_sprite
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    l_ret_i = texture_is_sprite(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 163) {   // textures_init
+    Get_time(l_start);
+    textures_init();
+    Get_time(l_end);
+  } else if (p_id == 164) {   // textures_finish_all
+    Get_time(l_start);
+    textures_finish_all();
+    Get_time(l_end);
+  } else if (p_id == 165) {   // textures_generate
     Get_time(l_start);
     textures_generate();
     Get_time(l_end);
-  } else if (p_id == 162) {   // events_clear
+  } else if (p_id == 166) {   // events_clear
     Get_time(l_start);
     events_clear(g_events);
     Get_time(l_end);
-  } else if (p_id == 163) {   // emit_event
+  } else if (p_id == 167) {   // emit_event
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1674,12 +1713,12 @@ void test_registry_call_5(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     emit_event(g_events, l_i1, l_i2, l_i3, l_i4, l_i5, l_r1, l_r2, l_r3, l_t1);
     Get_time(l_end);
-  } else if (p_id == 164) {   // emit_simple_event
+  } else if (p_id == 168) {   // emit_simple_event
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     emit_simple_event(g_events, l_i1);
     Get_time(l_end);
-  } else if (p_id == 165) {   // emit_cell_event
+  } else if (p_id == 169) {   // emit_cell_event
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1688,14 +1727,14 @@ void test_registry_call_5(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     emit_cell_event(g_events, l_i1, l_i2, l_i3, l_i4, l_i5);
     Get_time(l_end);
-  } else if (p_id == 166) {   // emit_item_event
+  } else if (p_id == 170) {   // emit_item_event
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     emit_item_event(g_events, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 167) {   // emit_drop_event
+  } else if (p_id == 171) {   // emit_drop_event
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -1705,183 +1744,160 @@ void test_registry_call_5(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     emit_drop_event(g_events, l_i1, l_i2, l_i3, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 168) {   // emit_toast
+  } else if (p_id == 172) {   // emit_toast
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     emit_toast(g_events, l_t1);
     Get_time(l_end);
-  } else if (p_id == 169) {   // events_pending
+  } else if (p_id == 173) {   // events_pending
     Get_time(l_start);
     l_ret_i = events_pending(g_events);
     Get_time(l_end);
-  } else if (p_id == 170) {   // next_event
+  } else if (p_id == 174) {   // next_event
     Get_time(l_start);
     l_ret_i = next_event(g_events, g_event);
     Get_time(l_end);
-  } else if (p_id == 171) {   // event_type
+  } else if (p_id == 175) {   // event_type
     Get_time(l_start);
     l_ret_i = event_type(g_event);
     Get_time(l_end);
-  } else if (p_id == 172) {   // event_integer
+  } else if (p_id == 176) {   // event_integer
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = event_integer(g_event, l_i1);
     Get_time(l_end);
-  } else if (p_id == 173) {   // event_real
+  } else if (p_id == 177) {   // event_real
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = event_real(g_event, l_i1);
     Get_time(l_end);
-  } else if (p_id == 174) {   // event_text
+  } else if (p_id == 178) {   // event_text
     Get_time(l_start);
     l_ret_t = event_text(g_event);
     Get_time(l_end);
-  } else if (p_id == 175) {   // event_is_remote
+  } else if (p_id == 179) {   // event_is_remote
     Get_time(l_start);
     l_ret_i = event_is_remote(g_event);
     Get_time(l_end);
-  } else if (p_id == 176) {   // record_integer
+  } else if (p_id == 180) {   // record_integer
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = record_integer(g_test_record, l_t1);
     Get_time(l_end);
-  } else if (p_id == 177) {   // record_real
+  } else if (p_id == 181) {   // record_real
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_r = record_real(g_test_record, l_t1);
     Get_time(l_end);
-  } else if (p_id == 178) {   // record_text
+  } else if (p_id == 182) {   // record_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = record_text(g_test_record, l_t1);
     Get_time(l_end);
-  } else if (p_id == 179) {   // record_set_integer
+  } else if (p_id == 183) {   // record_set_integer
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     record_set_integer(g_test_record, l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 180) {   // record_set_real
+  } else if (p_id == 184) {   // record_set_real
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     record_set_real(g_test_record, l_t1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 181) {   // record_set_text
+  } else if (p_id == 185) {   // record_set_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     record_set_text(g_test_record, l_t1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 182) {   // record_clear
+  } else if (p_id == 186) {   // record_clear
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     record_clear(g_test_record, l_t1);
     Get_time(l_end);
-  } else if (p_id == 183) {   // record_datatype
+  } else if (p_id == 187) {   // record_datatype
     Get_time(l_start);
     l_ret_t = record_datatype(g_test_record);
     Get_time(l_end);
-  } else if (p_id == 184) {   // record_field_at
+  } else if (p_id == 188) {   // record_field_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = record_field_at(l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 185) {   // record_integer_at
+  } else if (p_id == 189) {   // record_integer_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = record_integer_at(g_test_record, l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 186) {   // record_real_at
+  } else if (p_id == 190) {   // record_real_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = record_real_at(g_test_record, l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 187) {   // record_text_at
+  } else if (p_id == 191) {   // record_text_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = record_text_at(g_test_record, l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 188) {   // record_set_integer_at
+  } else if (p_id == 192) {   // record_set_integer_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     record_set_integer_at(g_test_record, l_t1, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 189) {   // record_set_real_at
+  } else if (p_id == 193) {   // record_set_real_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     record_set_real_at(g_test_record, l_t1, l_i1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 190) {   // record_set_text_at
+  } else if (p_id == 194) {   // record_set_text_at
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     record_set_text_at(g_test_record, l_t1, l_i1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 191) {   // random_seed
+  } else if (p_id == 195) {   // random_seed
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     random_seed(g_random, l_i1);
     Get_time(l_end);
-  } else if (p_id == 192) {   // random_next
+  } else if (p_id == 196) {   // random_next
     Get_time(l_start);
     l_ret_r = random_next(g_random);
     Get_time(l_end);
-  } else if (p_id == 193) {   // random_range
+  } else if (p_id == 197) {   // random_range
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = random_range(g_random, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 194) {   // random_between
+  } else if (p_id == 198) {   // random_between
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_r = random_between(g_random, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 195) {   // slots_reset
+  } else if (p_id == 199) {   // slots_reset
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     slots_reset(l_i1);
     Get_time(l_end);
-  } else if (p_id == 196) {   // slots_set
+  } else if (p_id == 200) {   // slots_set
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     slots_set(l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 197) {   // slots_used
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = slots_used(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 198) {   // slots_count
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    l_ret_i = slots_count(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 199) {   // slots_at
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = slots_at(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 200) {   // slots_rebuild
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    slots_rebuild(l_i1, g_test_record, l_i2);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -1895,86 +1911,86 @@ void test_registry_info_6(Integer p_id, Attributes &p_info)
 // What functions 201 to 240 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 201) test_info_set(p_info, "clamp_real", "macro", "core", "util", "src/core/util.4dm", 7, 18, "Real", "R:p_value R:p_low R:p_high",
+  if (p_id == 201) test_info_set(p_info, "slots_used", "macro", "core", "slots", "src/core/slots.4dm", 60, 67, "Integer", "I:p_pool I:p_slot",
+                              "Integer slots_used(Integer p_pool, Integer p_slot)", 0, "", "");
+  if (p_id == 202) test_info_set(p_info, "slots_count", "macro", "core", "slots", "src/core/slots.4dm", 69, 75, "Integer", "I:p_pool",
+                              "Integer slots_count(Integer p_pool)", 0, "", "");
+  if (p_id == 203) test_info_set(p_info, "slots_at", "macro", "core", "slots", "src/core/slots.4dm", 77, 84, "Integer", "I:p_pool I:p_position",
+                              "Integer slots_at(Integer p_pool, Integer p_position)", 0, "", "");
+  if (p_id == 204) test_info_set(p_info, "slots_rebuild", "macro", "core", "slots", "src/core/slots.4dm", 86, 98, "void", "I:p_pool &A:p_record I:p_capacity",
+                              "void slots_rebuild(Integer p_pool, Attributes &p_record, Integer p_capacity)", 0, "", "record_integer_at, slots_reset, slots_set");
+  if (p_id == 205) test_info_set(p_info, "clamp_real", "macro", "core", "util", "src/core/util.4dm", 7, 18, "Real", "R:p_value R:p_low R:p_high",
                               "Real clamp_real(Real p_value, Real p_low, Real p_high)", 0, "", "");
-  if (p_id == 202) test_info_set(p_info, "angle_of", "macro", "core", "util", "src/core/util.4dm", 20, 43, "Real", "R:p_y R:p_x",
+  if (p_id == 206) test_info_set(p_info, "angle_of", "macro", "core", "util", "src/core/util.4dm", 20, 43, "Real", "R:p_y R:p_x",
                               "Real angle_of(Real p_y, Real p_x)", 0, "", "");
-  if (p_id == 203) test_info_set(p_info, "two_digits", "macro", "core", "util", "src/core/util.4dm", 45, 52, "Text", "I:p_value",
+  if (p_id == 207) test_info_set(p_info, "two_digits", "macro", "core", "util", "src/core/util.4dm", 45, 52, "Text", "I:p_value",
                               "Text two_digits(Integer p_value)", 0, "", "");
-  if (p_id == 204) test_info_set(p_info, "max_integer", "macro", "core", "util", "src/core/util.4dm", 54, 61, "Integer", "I:p_a I:p_b",
+  if (p_id == 208) test_info_set(p_info, "max_integer", "macro", "core", "util", "src/core/util.4dm", 54, 61, "Integer", "I:p_a I:p_b",
                               "Integer max_integer(Integer p_a, Integer p_b)", 0, "", "");
-  if (p_id == 205) test_info_set(p_info, "min_integer", "macro", "core", "util", "src/core/util.4dm", 63, 70, "Integer", "I:p_a I:p_b",
+  if (p_id == 209) test_info_set(p_info, "min_integer", "macro", "core", "util", "src/core/util.4dm", 63, 70, "Integer", "I:p_a I:p_b",
                               "Integer min_integer(Integer p_a, Integer p_b)", 0, "", "");
-  if (p_id == 206) test_info_set(p_info, "clamp_integer", "macro", "core", "util", "src/core/util.4dm", 72, 83, "Integer", "I:p_value I:p_low I:p_high",
+  if (p_id == 210) test_info_set(p_info, "clamp_integer", "macro", "core", "util", "src/core/util.4dm", 72, 83, "Integer", "I:p_value I:p_low I:p_high",
                               "Integer clamp_integer(Integer p_value, Integer p_low, Integer p_high)", 0, "", "");
-  if (p_id == 207) test_info_set(p_info, "min_real", "macro", "core", "util", "src/core/util.4dm", 85, 92, "Real", "R:p_first R:p_second",
+  if (p_id == 211) test_info_set(p_info, "min_real", "macro", "core", "util", "src/core/util.4dm", 85, 92, "Real", "R:p_first R:p_second",
                               "Real min_real(Real p_first, Real p_second)", 0, "", "");
-  if (p_id == 208) test_info_set(p_info, "max_real", "macro", "core", "util", "src/core/util.4dm", 94, 101, "Real", "R:p_first R:p_second",
+  if (p_id == 212) test_info_set(p_info, "max_real", "macro", "core", "util", "src/core/util.4dm", 94, 101, "Real", "R:p_first R:p_second",
                               "Real max_real(Real p_first, Real p_second)", 0, "", "");
-  if (p_id == 209) test_info_set(p_info, "floor_integer", "macro", "core", "util", "src/core/util.4dm", 103, 110, "Integer", "R:p_value",
+  if (p_id == 213) test_info_set(p_info, "floor_integer", "macro", "core", "util", "src/core/util.4dm", 103, 110, "Integer", "R:p_value",
                               "Integer floor_integer(Real p_value)", 0, "", "");
-  if (p_id == 210) test_info_set(p_info, "floor_divide", "macro", "core", "util", "src/core/util.4dm", 112, 121, "Integer", "I:p_numerator I:p_denominator",
+  if (p_id == 214) test_info_set(p_info, "floor_divide", "macro", "core", "util", "src/core/util.4dm", 112, 121, "Integer", "I:p_numerator I:p_denominator",
                               "Integer floor_divide(Integer p_numerator, Integer p_denominator)", 0, "", "");
-  if (p_id == 211) test_info_set(p_info, "positive_mod", "macro", "core", "util", "src/core/util.4dm", 123, 130, "Integer", "I:p_value I:p_modulus",
+  if (p_id == 215) test_info_set(p_info, "positive_mod", "macro", "core", "util", "src/core/util.4dm", 123, 130, "Integer", "I:p_value I:p_modulus",
                               "Integer positive_mod(Integer p_value, Integer p_modulus)", 0, "", "floor_divide");
-  if (p_id == 212) test_info_set(p_info, "to_byte", "macro", "core", "util", "src/core/util.4dm", 132, 139, "Integer", "R:p_value",
+  if (p_id == 216) test_info_set(p_info, "to_byte", "macro", "core", "util", "src/core/util.4dm", 132, 139, "Integer", "R:p_value",
                               "Integer to_byte(Real p_value)", 0, "", "clamp_real");
-  if (p_id == 213) test_info_set(p_info, "lerp_real", "macro", "core", "util", "src/core/util.4dm", 141, 147, "Real", "R:p_from R:p_to R:p_amount",
+  if (p_id == 217) test_info_set(p_info, "lerp_real", "macro", "core", "util", "src/core/util.4dm", 141, 147, "Real", "R:p_from R:p_to R:p_amount",
                               "Real lerp_real(Real p_from, Real p_to, Real p_amount)", 0, "", "");
-  if (p_id == 214) test_info_set(p_info, "smooth_curve", "macro", "core", "util", "src/core/util.4dm", 149, 155, "Real", "R:p_amount",
+  if (p_id == 218) test_info_set(p_info, "smooth_curve", "macro", "core", "util", "src/core/util.4dm", 149, 155, "Real", "R:p_amount",
                               "Real smooth_curve(Real p_amount)", 0, "", "");
-  if (p_id == 215) test_info_set(p_info, "hash_real", "macro", "core", "util", "src/core/util.4dm", 157, 166, "Real", "R:p_first R:p_second R:p_third",
+  if (p_id == 219) test_info_set(p_info, "hash_real", "macro", "core", "util", "src/core/util.4dm", 157, 166, "Real", "R:p_first R:p_second R:p_third",
                               "Real hash_real(Real p_first, Real p_second, Real p_third)", 0, "", "");
-  if (p_id == 216) test_info_set(p_info, "wrap_angle", "macro", "core", "util", "src/core/util.4dm", 168, 174, "Real", "R:p_angle",
+  if (p_id == 220) test_info_set(p_info, "wrap_angle", "macro", "core", "util", "src/core/util.4dm", 168, 174, "Real", "R:p_angle",
                               "Real wrap_angle(Real p_angle)", 0, "", "");
-  if (p_id == 217) test_info_set(p_info, "text_to_seed", "macro", "core", "util", "src/core/util.4dm", 176, 228, "Integer", "T:p_text",
+  if (p_id == 221) test_info_set(p_info, "text_to_seed", "macro", "core", "util", "src/core/util.4dm", 176, 228, "Integer", "T:p_text",
                               "Integer text_to_seed(Text p_text)", 0, "", "");
-  if (p_id == 218) test_info_set(p_info, "file_title_from_path", "macro", "core", "util", "src/core/util.4dm", 230, 257, "Text", "T:p_path",
+  if (p_id == 222) test_info_set(p_info, "file_title_from_path", "macro", "core", "util", "src/core/util.4dm", 230, 257, "Text", "T:p_path",
                               "Text file_title_from_path(Text p_path)", 0, "", "");
-  if (p_id == 219) test_info_set(p_info, "text_is_safe_name", "macro", "core", "util", "src/core/util.4dm", 259, 278, "Integer", "T:p_name",
+  if (p_id == 223) test_info_set(p_info, "text_is_safe_name", "macro", "core", "util", "src/core/util.4dm", 259, 278, "Integer", "T:p_name",
                               "Integer text_is_safe_name(Text p_name)", 0, "", "");
-  if (p_id == 220) test_info_set(p_info, "chest_slot", "macro", "items", "chest", "src/items/chest.4dm", 12, 18, "Integer", "I:p_chest I:p_which",
+  if (p_id == 224) test_info_set(p_info, "chest_slot", "macro", "items", "chest", "src/items/chest.4dm", 12, 18, "Integer", "I:p_chest I:p_which",
                               "Integer chest_slot(Integer p_chest, Integer p_which)", 0, "", "");
-  if (p_id == 221) test_info_set(p_info, "chest_used", "macro", "items", "chest", "src/items/chest.4dm", 20, 27, "Integer", "&A:p_store I:p_chest",
+  if (p_id == 225) test_info_set(p_info, "chest_used", "macro", "items", "chest", "src/items/chest.4dm", 20, 27, "Integer", "&A:p_store I:p_chest",
                               "Integer chest_used(Attributes &p_store, Integer p_chest)", 0, "", "record_integer_at");
-  if (p_id == 222) test_info_set(p_info, "chest_find", "macro", "items", "chest", "src/items/chest.4dm", 29, 44, "Integer", "&A:p_store I:p_x I:p_y I:p_z",
+  if (p_id == 226) test_info_set(p_info, "chest_find", "macro", "items", "chest", "src/items/chest.4dm", 29, 44, "Integer", "&A:p_store I:p_x I:p_y I:p_z",
                               "Integer chest_find(Attributes &p_store, Integer p_x, Integer p_y, Integer p_z)", 0, "", "chest_used, record_integer_at");
-  if (p_id == 223) test_info_set(p_info, "chest_get_or_create", "macro", "items", "chest", "src/items/chest.4dm", 46, 67, "Integer", "&A:p_store I:p_x I:p_y I:p_z",
+  if (p_id == 227) test_info_set(p_info, "chest_get_or_create", "macro", "items", "chest", "src/items/chest.4dm", 46, 67, "Integer", "&A:p_store I:p_x I:p_y I:p_z",
                               "Integer chest_get_or_create(Attributes &p_store, Integer p_x, Integer p_y, Integer p_z)", 0, "", "chest_find, chest_slot, chest_used, record_set_integer_at, slot_clear");
-  if (p_id == 224) test_info_set(p_info, "chest_item_count", "macro", "items", "chest", "src/items/chest.4dm", 69, 80, "Integer", "&A:p_store I:p_chest",
+  if (p_id == 228) test_info_set(p_info, "chest_item_count", "macro", "items", "chest", "src/items/chest.4dm", 69, 80, "Integer", "&A:p_store I:p_chest",
                               "Integer chest_item_count(Attributes &p_store, Integer p_chest)", 0, "", "chest_slot, chest_used, slot_count");
-  if (p_id == 225) test_info_set(p_info, "chest_remove", "macro", "items", "chest", "src/items/chest.4dm", 82, 106, "void", "&A:p_store &A:p_events I:p_chest",
+  if (p_id == 229) test_info_set(p_info, "chest_remove", "macro", "items", "chest", "src/items/chest.4dm", 82, 106, "void", "&A:p_store &A:p_events I:p_chest",
                               "void chest_remove(Attributes &p_store, Attributes &p_events, Integer p_chest)", 0, "", "chest_slot, chest_used, emit_drop_event, record_integer_at, record_set_integer_at, slot_clear, slot_count, slot_damage, slot_is_empty, slot_item");
-  if (p_id == 226) test_info_set(p_info, "chest_on_event", "macro", "items", "chest", "src/items/chest.4dm", 108, 126, "void", "&A:p_event &A:p_store &A:p_events",
+  if (p_id == 230) test_info_set(p_info, "chest_on_event", "macro", "items", "chest", "src/items/chest.4dm", 108, 126, "void", "&A:p_event &A:p_store &A:p_events",
                               "void chest_on_event(Attributes &p_event, Attributes &p_store, Attributes &p_events)", 0, "", "chest_find, chest_get_or_create, chest_remove, event_integer, event_type");
-  if (p_id == 227) test_info_set(p_info, "crafting_add_recipe", "macro", "items", "crafting", "src/items/crafting.4dm", 13, 41, "void", "&A:p_book I:p_output I:p_output_count I:p_width I:p_height T:p_pattern I:p_item_a I:p_item_b",
+  if (p_id == 231) test_info_set(p_info, "crafting_add_recipe", "macro", "items", "crafting", "src/items/crafting.4dm", 13, 41, "void", "&A:p_book I:p_output I:p_output_count I:p_width I:p_height T:p_pattern I:p_item_a I:p_item_b",
                               "void crafting_add_recipe(Attributes &p_book, Integer p_output, Integer p_output_count, Integer p_width, Integer p_height, Text p_pattern, Integer p_item_a, Integer p_item_b)", 0, "", "crafting_recipe_count, record_field_at, record_set_integer, record_set_integer_at");
-  if (p_id == 228) test_info_set(p_info, "crafting_init_book", "macro", "items", "crafting", "src/items/crafting.4dm", 43, 73, "void", "&A:p_book",
+  if (p_id == 232) test_info_set(p_info, "crafting_init_book", "macro", "items", "crafting", "src/items/crafting.4dm", 43, 73, "void", "&A:p_book",
                               "void crafting_init_book(Attributes &p_book)", 0, "", "crafting_add_recipe, record_clear, record_set_integer");
-  if (p_id == 229) test_info_set(p_info, "crafting_recipe_count", "macro", "items", "crafting", "src/items/crafting.4dm", 75, 81, "Integer", "&A:p_book",
+  if (p_id == 233) test_info_set(p_info, "crafting_recipe_count", "macro", "items", "crafting", "src/items/crafting.4dm", 75, 81, "Integer", "&A:p_book",
                               "Integer crafting_recipe_count(Attributes &p_book)", 0, "", "record_integer");
-  if (p_id == 230) test_info_set(p_info, "crafting_recipe_output", "macro", "items", "crafting", "src/items/crafting.4dm", 83, 89, "Integer", "&A:p_book I:p_recipe",
+  if (p_id == 234) test_info_set(p_info, "crafting_recipe_output", "macro", "items", "crafting", "src/items/crafting.4dm", 83, 89, "Integer", "&A:p_book I:p_recipe",
                               "Integer crafting_recipe_output(Attributes &p_book, Integer p_recipe)", 0, "", "record_integer_at");
-  if (p_id == 231) test_info_set(p_info, "crafting_recipe_cell", "macro", "items", "crafting", "src/items/crafting.4dm", 91, 104, "Integer", "&A:p_book I:p_recipe I:p_column I:p_row",
+  if (p_id == 235) test_info_set(p_info, "crafting_recipe_cell", "macro", "items", "crafting", "src/items/crafting.4dm", 91, 104, "Integer", "&A:p_book I:p_recipe I:p_column I:p_row",
                               "Integer crafting_recipe_cell(Attributes &p_book, Integer p_recipe, Integer p_column, Integer p_row)", 0, "", "record_field_at, record_integer, record_integer_at");
-  if (p_id == 232) test_info_set(p_info, "grid_clear", "macro", "items", "crafting", "src/items/crafting.4dm", 108, 115, "void", "&A:p_grid I:p_width",
+  if (p_id == 236) test_info_set(p_info, "grid_clear", "macro", "items", "crafting", "src/items/crafting.4dm", 108, 115, "void", "&A:p_grid I:p_width",
                               "void grid_clear(Attributes &p_grid, Integer p_width)", 0, "", "container_clear, record_set_integer");
-  if (p_id == 233) test_info_set(p_info, "grid_width", "macro", "items", "crafting", "src/items/crafting.4dm", 117, 123, "Integer", "&A:p_grid",
+  if (p_id == 237) test_info_set(p_info, "grid_width", "macro", "items", "crafting", "src/items/crafting.4dm", 117, 123, "Integer", "&A:p_grid",
                               "Integer grid_width(Attributes &p_grid)", 0, "", "record_integer");
-  if (p_id == 234) test_info_set(p_info, "grid_slot", "macro", "items", "crafting", "src/items/crafting.4dm", 125, 131, "Integer", "I:p_column I:p_row",
+  if (p_id == 238) test_info_set(p_info, "grid_slot", "macro", "items", "crafting", "src/items/crafting.4dm", 125, 131, "Integer", "I:p_column I:p_row",
                               "Integer grid_slot(Integer p_column, Integer p_row)", 0, "", "");
-  if (p_id == 235) test_info_set(p_info, "grid_slot_used", "macro", "items", "crafting", "src/items/crafting.4dm", 133, 145, "Integer", "&A:p_grid I:p_slot",
+  if (p_id == 239) test_info_set(p_info, "grid_slot_used", "macro", "items", "crafting", "src/items/crafting.4dm", 133, 145, "Integer", "&A:p_grid I:p_slot",
                               "Integer grid_slot_used(Attributes &p_grid, Integer p_slot)", 0, "", "grid_width");
-  if (p_id == 236) test_info_set(p_info, "crafting_match_at", "macro", "items", "crafting", "src/items/crafting.4dm", 147, 171, "Integer", "&A:p_book I:p_recipe &A:p_grid I:p_left I:p_top I:p_mirrored",
+  if (p_id == 240) test_info_set(p_info, "crafting_match_at", "macro", "items", "crafting", "src/items/crafting.4dm", 147, 171, "Integer", "&A:p_book I:p_recipe &A:p_grid I:p_left I:p_top I:p_mirrored",
                               "Integer crafting_match_at(Attributes &p_book, Integer p_recipe, Attributes &p_grid, Integer p_left, Integer p_top, Integer p_mirrored)", 0, "", "crafting_recipe_cell, grid_slot, grid_width, record_integer_at, slot_item");
-  if (p_id == 237) test_info_set(p_info, "crafting_match", "macro", "items", "crafting", "src/items/crafting.4dm", 173, 204, "Integer", "&A:p_book &A:p_grid",
-                              "Integer crafting_match(Attributes &p_book, Attributes &p_grid)", 0, "", "crafting_match_at, crafting_recipe_count, grid_width, record_integer_at, slot_is_empty");
-  if (p_id == 238) test_info_set(p_info, "crafting_take_output", "macro", "items", "crafting", "src/items/crafting.4dm", 206, 238, "Integer", "&A:p_book &A:p_grid &A:p_holder &A:p_events",
-                              "Integer crafting_take_output(Attributes &p_book, Attributes &p_grid, Attributes &p_holder, Attributes &p_events)", 0, "", "crafting_match, crafting_recipe_output, emit_item_event, item_max_stack, record_integer_at, slot_count, slot_is_empty, slot_item, slot_set, slot_take_one");
-  if (p_id == 239) test_info_set(p_info, "grid_return_items", "macro", "items", "crafting", "src/items/crafting.4dm", 240, 255, "void", "&A:p_grid &A:p_inventory &A:p_events R:p_x R:p_y R:p_z",
-                              "void grid_return_items(Attributes &p_grid, Attributes &p_inventory, Attributes &p_events, Real p_x, Real p_y, Real p_z)", 0, "", "emit_drop_event, inventory_add_worn, slot_clear, slot_count, slot_damage, slot_is_empty, slot_item");
-  if (p_id == 240) test_info_set(p_info, "drops_clear", "macro", "items", "drops", "src/items/drops.4dm", 18, 28, "void", "&A:p_drops",
-                              "void drops_clear(Attributes &p_drops)", 0, "", "record_clear, record_set_integer_at, slots_reset");
 }
 
 void test_registry_call_6(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -2019,156 +2035,179 @@ void test_registry_call_6(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 201) {   // clamp_real
+  if (p_id == 201) {   // slots_used
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = slots_used(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 202) {   // slots_count
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    l_ret_i = slots_count(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 203) {   // slots_at
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = slots_at(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 204) {   // slots_rebuild
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    slots_rebuild(l_i1, g_test_record, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 205) {   // clamp_real
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     l_ret_r = clamp_real(l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 202) {   // angle_of
+  } else if (p_id == 206) {   // angle_of
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_r = angle_of(l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 203) {   // two_digits
+  } else if (p_id == 207) {   // two_digits
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = two_digits(l_i1);
     Get_time(l_end);
-  } else if (p_id == 204) {   // max_integer
+  } else if (p_id == 208) {   // max_integer
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = max_integer(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 205) {   // min_integer
+  } else if (p_id == 209) {   // min_integer
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = min_integer(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 206) {   // clamp_integer
+  } else if (p_id == 210) {   // clamp_integer
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = clamp_integer(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 207) {   // min_real
+  } else if (p_id == 211) {   // min_real
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_r = min_real(l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 208) {   // max_real
+  } else if (p_id == 212) {   // max_real
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_r = max_real(l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 209) {   // floor_integer
+  } else if (p_id == 213) {   // floor_integer
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = floor_integer(l_r1);
     Get_time(l_end);
-  } else if (p_id == 210) {   // floor_divide
+  } else if (p_id == 214) {   // floor_divide
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = floor_divide(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 211) {   // positive_mod
+  } else if (p_id == 215) {   // positive_mod
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = positive_mod(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 212) {   // to_byte
+  } else if (p_id == 216) {   // to_byte
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = to_byte(l_r1);
     Get_time(l_end);
-  } else if (p_id == 213) {   // lerp_real
+  } else if (p_id == 217) {   // lerp_real
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     l_ret_r = lerp_real(l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 214) {   // smooth_curve
+  } else if (p_id == 218) {   // smooth_curve
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = smooth_curve(l_r1);
     Get_time(l_end);
-  } else if (p_id == 215) {   // hash_real
+  } else if (p_id == 219) {   // hash_real
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     l_ret_r = hash_real(l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 216) {   // wrap_angle
+  } else if (p_id == 220) {   // wrap_angle
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = wrap_angle(l_r1);
     Get_time(l_end);
-  } else if (p_id == 217) {   // text_to_seed
+  } else if (p_id == 221) {   // text_to_seed
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = text_to_seed(l_t1);
     Get_time(l_end);
-  } else if (p_id == 218) {   // file_title_from_path
+  } else if (p_id == 222) {   // file_title_from_path
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = file_title_from_path(l_t1);
     Get_time(l_end);
-  } else if (p_id == 219) {   // text_is_safe_name
+  } else if (p_id == 223) {   // text_is_safe_name
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = text_is_safe_name(l_t1);
     Get_time(l_end);
-  } else if (p_id == 220) {   // chest_slot
+  } else if (p_id == 224) {   // chest_slot
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = chest_slot(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 221) {   // chest_used
+  } else if (p_id == 225) {   // chest_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = chest_used(g_test_record, l_i1);
     Get_time(l_end);
-  } else if (p_id == 222) {   // chest_find
+  } else if (p_id == 226) {   // chest_find
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = chest_find(g_test_record, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 223) {   // chest_get_or_create
+  } else if (p_id == 227) {   // chest_get_or_create
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = chest_get_or_create(g_test_record, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 224) {   // chest_item_count
+  } else if (p_id == 228) {   // chest_item_count
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = chest_item_count(g_test_record, l_i1);
     Get_time(l_end);
-  } else if (p_id == 225) {   // chest_remove
+  } else if (p_id == 229) {   // chest_remove
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     chest_remove(g_test_record, g_events, l_i1);
     Get_time(l_end);
-  } else if (p_id == 226) {   // chest_on_event
+  } else if (p_id == 230) {   // chest_on_event
     Get_time(l_start);
     chest_on_event(g_event, g_test_record, g_events);
     Get_time(l_end);
-  } else if (p_id == 227) {   // crafting_add_recipe
+  } else if (p_id == 231) {   // crafting_add_recipe
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2179,72 +2218,53 @@ void test_registry_call_6(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     crafting_add_recipe(g_book, l_i1, l_i2, l_i3, l_i4, l_t1, l_i5, l_i6);
     Get_time(l_end);
-  } else if (p_id == 228) {   // crafting_init_book
+  } else if (p_id == 232) {   // crafting_init_book
     Get_time(l_start);
     crafting_init_book(g_book);
     Get_time(l_end);
-  } else if (p_id == 229) {   // crafting_recipe_count
+  } else if (p_id == 233) {   // crafting_recipe_count
     Get_time(l_start);
     l_ret_i = crafting_recipe_count(g_book);
     Get_time(l_end);
-  } else if (p_id == 230) {   // crafting_recipe_output
+  } else if (p_id == 234) {   // crafting_recipe_output
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = crafting_recipe_output(g_book, l_i1);
     Get_time(l_end);
-  } else if (p_id == 231) {   // crafting_recipe_cell
+  } else if (p_id == 235) {   // crafting_recipe_cell
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = crafting_recipe_cell(g_book, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 232) {   // grid_clear
+  } else if (p_id == 236) {   // grid_clear
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     grid_clear(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 233) {   // grid_width
+  } else if (p_id == 237) {   // grid_width
     Get_time(l_start);
     l_ret_i = grid_width(g_grid);
     Get_time(l_end);
-  } else if (p_id == 234) {   // grid_slot
+  } else if (p_id == 238) {   // grid_slot
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = grid_slot(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 235) {   // grid_slot_used
+  } else if (p_id == 239) {   // grid_slot_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = grid_slot_used(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 236) {   // crafting_match_at
+  } else if (p_id == 240) {   // crafting_match_at
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     l_i4 = record_integer(p_in, ATTR_TEST_I4);
     Get_time(l_start);
     l_ret_i = crafting_match_at(g_book, l_i1, g_grid, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 237) {   // crafting_match
-    Get_time(l_start);
-    l_ret_i = crafting_match(g_book, g_grid);
-    Get_time(l_end);
-  } else if (p_id == 238) {   // crafting_take_output
-    Get_time(l_start);
-    l_ret_i = crafting_take_output(g_book, g_grid, g_inventory, g_events);
-    Get_time(l_end);
-  } else if (p_id == 239) {   // grid_return_items
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    Get_time(l_start);
-    grid_return_items(g_grid, g_inventory, g_events, l_r1, l_r2, l_r3);
-    Get_time(l_end);
-  } else if (p_id == 240) {   // drops_clear
-    Get_time(l_start);
-    drops_clear(g_drops);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -2258,86 +2278,86 @@ void test_registry_info_7(Integer p_id, Attributes &p_info)
 // What functions 241 to 280 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 241) test_info_set(p_info, "drops_rebuild_index", "macro", "items", "drops", "src/items/drops.4dm", 30, 37, "void", "&A:p_drops",
+  if (p_id == 241) test_info_set(p_info, "crafting_match", "macro", "items", "crafting", "src/items/crafting.4dm", 173, 204, "Integer", "&A:p_book &A:p_grid",
+                              "Integer crafting_match(Attributes &p_book, Attributes &p_grid)", 0, "", "crafting_match_at, crafting_recipe_count, grid_width, record_integer_at, slot_is_empty");
+  if (p_id == 242) test_info_set(p_info, "crafting_take_output", "macro", "items", "crafting", "src/items/crafting.4dm", 206, 238, "Integer", "&A:p_book &A:p_grid &A:p_holder &A:p_events",
+                              "Integer crafting_take_output(Attributes &p_book, Attributes &p_grid, Attributes &p_holder, Attributes &p_events)", 0, "", "crafting_match, crafting_recipe_output, emit_item_event, item_max_stack, record_integer_at, slot_count, slot_is_empty, slot_item, slot_set, slot_take_one");
+  if (p_id == 243) test_info_set(p_info, "grid_return_items", "macro", "items", "crafting", "src/items/crafting.4dm", 240, 255, "void", "&A:p_grid &A:p_inventory &A:p_events R:p_x R:p_y R:p_z",
+                              "void grid_return_items(Attributes &p_grid, Attributes &p_inventory, Attributes &p_events, Real p_x, Real p_y, Real p_z)", 0, "", "emit_drop_event, inventory_add_worn, slot_clear, slot_count, slot_damage, slot_is_empty, slot_item");
+  if (p_id == 244) test_info_set(p_info, "drops_clear", "macro", "items", "drops", "src/items/drops.4dm", 18, 28, "void", "&A:p_drops",
+                              "void drops_clear(Attributes &p_drops)", 0, "", "record_clear, record_set_integer_at, slots_reset");
+  if (p_id == 245) test_info_set(p_info, "drops_rebuild_index", "macro", "items", "drops", "src/items/drops.4dm", 30, 37, "void", "&A:p_drops",
                               "void drops_rebuild_index(Attributes &p_drops)", 0, "", "slots_rebuild");
-  if (p_id == 242) test_info_set(p_info, "drop_set_used", "macro", "items", "drops", "src/items/drops.4dm", 39, 47, "void", "&A:p_drops I:p_drop I:p_used",
+  if (p_id == 246) test_info_set(p_info, "drop_set_used", "macro", "items", "drops", "src/items/drops.4dm", 39, 47, "void", "&A:p_drops I:p_drop I:p_used",
                               "void drop_set_used(Attributes &p_drops, Integer p_drop, Integer p_used)", 0, "", "record_set_integer_at, slots_set");
-  if (p_id == 243) test_info_set(p_info, "drop_used", "macro", "items", "drops", "src/items/drops.4dm", 49, 56, "Integer", "&A:p_drops I:p_drop",
+  if (p_id == 247) test_info_set(p_info, "drop_used", "macro", "items", "drops", "src/items/drops.4dm", 49, 56, "Integer", "&A:p_drops I:p_drop",
                               "Integer drop_used(Attributes &p_drops, Integer p_drop)", 0, "", "slots_used");
-  if (p_id == 244) test_info_set(p_info, "drop_item", "macro", "items", "drops", "src/items/drops.4dm", 58, 64, "Integer", "&A:p_drops I:p_drop",
+  if (p_id == 248) test_info_set(p_info, "drop_item", "macro", "items", "drops", "src/items/drops.4dm", 58, 64, "Integer", "&A:p_drops I:p_drop",
                               "Integer drop_item(Attributes &p_drops, Integer p_drop)", 0, "", "record_integer_at");
-  if (p_id == 245) test_info_set(p_info, "drop_count", "macro", "items", "drops", "src/items/drops.4dm", 66, 72, "Integer", "&A:p_drops I:p_drop",
+  if (p_id == 249) test_info_set(p_info, "drop_count", "macro", "items", "drops", "src/items/drops.4dm", 66, 72, "Integer", "&A:p_drops I:p_drop",
                               "Integer drop_count(Attributes &p_drops, Integer p_drop)", 0, "", "record_integer_at");
-  if (p_id == 246) test_info_set(p_info, "drop_damage", "macro", "items", "drops", "src/items/drops.4dm", 74, 80, "Integer", "&A:p_drops I:p_drop",
+  if (p_id == 250) test_info_set(p_info, "drop_damage", "macro", "items", "drops", "src/items/drops.4dm", 74, 80, "Integer", "&A:p_drops I:p_drop",
                               "Integer drop_damage(Attributes &p_drops, Integer p_drop)", 0, "", "record_integer_at");
-  if (p_id == 247) test_info_set(p_info, "drop_age", "macro", "items", "drops", "src/items/drops.4dm", 82, 88, "Real", "&A:p_drops I:p_drop",
+  if (p_id == 251) test_info_set(p_info, "drop_age", "macro", "items", "drops", "src/items/drops.4dm", 82, 88, "Real", "&A:p_drops I:p_drop",
                               "Real drop_age(Attributes &p_drops, Integer p_drop)", 0, "", "record_real_at");
-  if (p_id == 248) test_info_set(p_info, "drop_position", "macro", "items", "drops", "src/items/drops.4dm", 90, 98, "void", "&A:p_drops I:p_drop &R:p_x &R:p_y &R:p_z",
+  if (p_id == 252) test_info_set(p_info, "drop_position", "macro", "items", "drops", "src/items/drops.4dm", 90, 98, "void", "&A:p_drops I:p_drop &R:p_x &R:p_y &R:p_z",
                               "void drop_position(Attributes &p_drops, Integer p_drop, Real &p_x, Real &p_y, Real &p_z)", 0, "", "record_real_at");
-  if (p_id == 249) test_info_set(p_info, "drops_restore", "macro", "items", "drops", "src/items/drops.4dm", 102, 139, "Integer", "&A:p_drops I:p_item I:p_count I:p_damage R:p_x R:p_y R:p_z R:p_age",
+  if (p_id == 253) test_info_set(p_info, "drops_restore", "macro", "items", "drops", "src/items/drops.4dm", 102, 139, "Integer", "&A:p_drops I:p_item I:p_count I:p_damage R:p_x R:p_y R:p_z R:p_age",
                               "Integer drops_restore(Attributes &p_drops, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z, Real p_age)", 0, "", "drop_age, drop_set_used, drop_used, record_set_integer_at, record_set_real_at");
-  if (p_id == 250) test_info_set(p_info, "drops_spawn", "macro", "items", "drops", "src/items/drops.4dm", 141, 156, "Integer", "&A:p_drops &A:p_random I:p_item I:p_count I:p_damage R:p_x R:p_y R:p_z",
+  if (p_id == 254) test_info_set(p_info, "drops_spawn", "macro", "items", "drops", "src/items/drops.4dm", 141, 156, "Integer", "&A:p_drops &A:p_random I:p_item I:p_count I:p_damage R:p_x R:p_y R:p_z",
                               "Integer drops_spawn(Attributes &p_drops, Attributes &p_random, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z)", 0, "", "drops_restore, random_between, record_set_real_at");
-  if (p_id == 251) test_info_set(p_info, "drops_update", "macro", "items", "drops", "src/items/drops.4dm", 158, 264, "void", "&A:p_drops &A:p_inventory &A:p_events R:p_player_x R:p_player_y R:p_player_z I:p_player_dead R:p_dt",
+  if (p_id == 255) test_info_set(p_info, "drops_update", "macro", "items", "drops", "src/items/drops.4dm", 158, 264, "void", "&A:p_drops &A:p_inventory &A:p_events R:p_player_x R:p_player_y R:p_player_z I:p_player_dead R:p_dt",
                               "void drops_update(Attributes &p_drops, Attributes &p_inventory, Attributes &p_events, Real p_player_x, Real p_player_y, Real p_player_z, Integer p_player_dead, Real p_dt)", 0, "", "drop_age, drop_count, drop_damage, drop_item, drop_position, drop_set_used, emit_item_event, inventory_add_worn, max_real, min_real, physics_box_in_water, physics_move_box, record_real_at, record_set_integer_at, record_set_real_at, slots_at, slots_count");
-  if (p_id == 252) test_info_set(p_info, "drops_on_event", "macro", "items", "drops", "src/items/drops.4dm", 266, 296, "void", "&A:p_event &A:p_drops &A:p_random",
+  if (p_id == 256) test_info_set(p_info, "drops_on_event", "macro", "items", "drops", "src/items/drops.4dm", 266, 296, "void", "&A:p_event &A:p_drops &A:p_random",
                               "void drops_on_event(Attributes &p_event, Attributes &p_drops, Attributes &p_random)", 0, "", "block_drop_item, drops_spawn, event_integer, event_is_remote, event_real, event_type, floor_integer, random_range");
-  if (p_id == 253) test_info_set(p_info, "furnaces_clear", "macro", "items", "furnace", "src/items/furnace.4dm", 16, 26, "void", "&A:p_furnaces",
+  if (p_id == 257) test_info_set(p_info, "furnaces_clear", "macro", "items", "furnace", "src/items/furnace.4dm", 16, 26, "void", "&A:p_furnaces",
                               "void furnaces_clear(Attributes &p_furnaces)", 0, "", "record_clear, record_set_integer_at, slots_reset");
-  if (p_id == 254) test_info_set(p_info, "furnaces_rebuild_index", "macro", "items", "furnace", "src/items/furnace.4dm", 28, 35, "void", "&A:p_furnaces",
+  if (p_id == 258) test_info_set(p_info, "furnaces_rebuild_index", "macro", "items", "furnace", "src/items/furnace.4dm", 28, 35, "void", "&A:p_furnaces",
                               "void furnaces_rebuild_index(Attributes &p_furnaces)", 0, "", "slots_rebuild");
-  if (p_id == 255) test_info_set(p_info, "furnace_set_used", "macro", "items", "furnace", "src/items/furnace.4dm", 37, 45, "void", "&A:p_furnaces I:p_furnace I:p_used",
+  if (p_id == 259) test_info_set(p_info, "furnace_set_used", "macro", "items", "furnace", "src/items/furnace.4dm", 37, 45, "void", "&A:p_furnaces I:p_furnace I:p_used",
                               "void furnace_set_used(Attributes &p_furnaces, Integer p_furnace, Integer p_used)", 0, "", "record_set_integer_at, slots_set");
-  if (p_id == 256) test_info_set(p_info, "furnace_slot", "macro", "items", "furnace", "src/items/furnace.4dm", 47, 53, "Integer", "I:p_furnace I:p_which",
+  if (p_id == 260) test_info_set(p_info, "furnace_slot", "macro", "items", "furnace", "src/items/furnace.4dm", 47, 53, "Integer", "I:p_furnace I:p_which",
                               "Integer furnace_slot(Integer p_furnace, Integer p_which)", 0, "", "");
-  if (p_id == 257) test_info_set(p_info, "furnace_used", "macro", "items", "furnace", "src/items/furnace.4dm", 55, 62, "Integer", "&A:p_furnaces I:p_furnace",
+  if (p_id == 261) test_info_set(p_info, "furnace_used", "macro", "items", "furnace", "src/items/furnace.4dm", 55, 62, "Integer", "&A:p_furnaces I:p_furnace",
                               "Integer furnace_used(Attributes &p_furnaces, Integer p_furnace)", 0, "", "slots_used");
-  if (p_id == 258) test_info_set(p_info, "furnace_cell", "macro", "items", "furnace", "src/items/furnace.4dm", 64, 72, "void", "&A:p_furnaces I:p_furnace &I:p_x &I:p_y &I:p_z",
+  if (p_id == 262) test_info_set(p_info, "furnace_cell", "macro", "items", "furnace", "src/items/furnace.4dm", 64, 72, "void", "&A:p_furnaces I:p_furnace &I:p_x &I:p_y &I:p_z",
                               "void furnace_cell(Attributes &p_furnaces, Integer p_furnace, Integer &p_x, Integer &p_y, Integer &p_z)", 0, "", "record_integer_at");
-  if (p_id == 259) test_info_set(p_info, "furnace_burn_left", "macro", "items", "furnace", "src/items/furnace.4dm", 74, 80, "Real", "&A:p_furnaces I:p_furnace",
+  if (p_id == 263) test_info_set(p_info, "furnace_burn_left", "macro", "items", "furnace", "src/items/furnace.4dm", 74, 80, "Real", "&A:p_furnaces I:p_furnace",
                               "Real furnace_burn_left(Attributes &p_furnaces, Integer p_furnace)", 0, "", "record_real_at");
-  if (p_id == 260) test_info_set(p_info, "furnace_burn_total", "macro", "items", "furnace", "src/items/furnace.4dm", 82, 88, "Real", "&A:p_furnaces I:p_furnace",
+  if (p_id == 264) test_info_set(p_info, "furnace_burn_total", "macro", "items", "furnace", "src/items/furnace.4dm", 82, 88, "Real", "&A:p_furnaces I:p_furnace",
                               "Real furnace_burn_total(Attributes &p_furnaces, Integer p_furnace)", 0, "", "record_real_at");
-  if (p_id == 261) test_info_set(p_info, "furnace_progress", "macro", "items", "furnace", "src/items/furnace.4dm", 90, 96, "Real", "&A:p_furnaces I:p_furnace",
+  if (p_id == 265) test_info_set(p_info, "furnace_progress", "macro", "items", "furnace", "src/items/furnace.4dm", 90, 96, "Real", "&A:p_furnaces I:p_furnace",
                               "Real furnace_progress(Attributes &p_furnaces, Integer p_furnace)", 0, "", "record_real_at");
-  if (p_id == 262) test_info_set(p_info, "furnace_set_state", "macro", "items", "furnace", "src/items/furnace.4dm", 98, 106, "void", "&A:p_furnaces I:p_furnace R:p_burn_left R:p_burn_total R:p_progress",
+  if (p_id == 266) test_info_set(p_info, "furnace_set_state", "macro", "items", "furnace", "src/items/furnace.4dm", 98, 106, "void", "&A:p_furnaces I:p_furnace R:p_burn_left R:p_burn_total R:p_progress",
                               "void furnace_set_state(Attributes &p_furnaces, Integer p_furnace, Real p_burn_left, Real p_burn_total, Real p_progress)", 0, "", "record_set_real_at");
-  if (p_id == 263) test_info_set(p_info, "furnace_find", "macro", "items", "furnace", "src/items/furnace.4dm", 110, 126, "Integer", "&A:p_furnaces I:p_x I:p_y I:p_z",
+  if (p_id == 267) test_info_set(p_info, "furnace_find", "macro", "items", "furnace", "src/items/furnace.4dm", 110, 126, "Integer", "&A:p_furnaces I:p_x I:p_y I:p_z",
                               "Integer furnace_find(Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p_z)", 0, "", "furnace_cell, furnace_used");
-  if (p_id == 264) test_info_set(p_info, "furnace_get_or_create", "macro", "items", "furnace", "src/items/furnace.4dm", 128, 150, "Integer", "&A:p_furnaces I:p_x I:p_y I:p_z",
+  if (p_id == 268) test_info_set(p_info, "furnace_get_or_create", "macro", "items", "furnace", "src/items/furnace.4dm", 128, 150, "Integer", "&A:p_furnaces I:p_x I:p_y I:p_z",
                               "Integer furnace_get_or_create(Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p_z)", 0, "", "furnace_find, furnace_set_state, furnace_set_used, furnace_slot, furnace_used, record_set_integer_at, slot_clear");
-  if (p_id == 265) test_info_set(p_info, "furnace_remove", "macro", "items", "furnace", "src/items/furnace.4dm", 152, 175, "void", "&A:p_furnaces &A:p_events I:p_furnace",
+  if (p_id == 269) test_info_set(p_info, "furnace_remove", "macro", "items", "furnace", "src/items/furnace.4dm", 152, 175, "void", "&A:p_furnaces &A:p_events I:p_furnace",
                               "void furnace_remove(Attributes &p_furnaces, Attributes &p_events, Integer p_furnace)", 0, "", "emit_drop_event, furnace_cell, furnace_set_used, furnace_slot, furnace_used, slot_clear, slot_count, slot_damage, slot_is_empty, slot_item");
-  if (p_id == 266) test_info_set(p_info, "furnace_can_cook", "macro", "items", "furnace", "src/items/furnace.4dm", 177, 194, "Integer", "&A:p_furnaces I:p_furnace",
+  if (p_id == 270) test_info_set(p_info, "furnace_can_cook", "macro", "items", "furnace", "src/items/furnace.4dm", 177, 194, "Integer", "&A:p_furnaces I:p_furnace",
                               "Integer furnace_can_cook(Attributes &p_furnaces, Integer p_furnace)", 0, "", "furnace_slot, item_max_stack, item_smelt_result, slot_count, slot_is_empty, slot_item");
-  if (p_id == 267) test_info_set(p_info, "furnace_step", "macro", "items", "furnace", "src/items/furnace.4dm", 196, 243, "void", "&A:p_furnaces I:p_furnace R:p_dt",
+  if (p_id == 271) test_info_set(p_info, "furnace_step", "macro", "items", "furnace", "src/items/furnace.4dm", 196, 243, "void", "&A:p_furnaces I:p_furnace R:p_dt",
                               "void furnace_step(Attributes &p_furnaces, Integer p_furnace, Real p_dt)", 0, "", "furnace_burn_left, furnace_burn_total, furnace_can_cook, furnace_progress, furnace_set_state, furnace_slot, item_fuel_seconds, item_smelt_result, slot_count, slot_is_empty, slot_item, slot_set, slot_take_one");
-  if (p_id == 268) test_info_set(p_info, "furnaces_update", "macro", "items", "furnace", "src/items/furnace.4dm", 245, 283, "void", "&A:p_furnaces &A:p_events R:p_dt",
+  if (p_id == 272) test_info_set(p_info, "furnaces_update", "macro", "items", "furnace", "src/items/furnace.4dm", 245, 283, "void", "&A:p_furnaces &A:p_events R:p_dt",
                               "void furnaces_update(Attributes &p_furnaces, Attributes &p_events, Real p_dt)", 0, "", "block_furnace_is_lit, block_is_furnace, emit_event, furnace_burn_left, furnace_cell, furnace_step, slots_at, slots_count, world_get_block");
-  if (p_id == 269) test_info_set(p_info, "furnace_on_event", "macro", "items", "furnace", "src/items/furnace.4dm", 285, 303, "void", "&A:p_event &A:p_furnaces &A:p_events",
+  if (p_id == 273) test_info_set(p_info, "furnace_on_event", "macro", "items", "furnace", "src/items/furnace.4dm", 285, 303, "void", "&A:p_event &A:p_furnaces &A:p_events",
                               "void furnace_on_event(Attributes &p_event, Attributes &p_furnaces, Attributes &p_events)", 0, "", "block_is_furnace, event_integer, event_type, furnace_find, furnace_get_or_create, furnace_remove");
-  if (p_id == 270) test_info_set(p_info, "slot_item", "macro", "items", "inventory", "src/items/inventory.4dm", 14, 20, "Integer", "&A:p_container I:p_slot",
+  if (p_id == 274) test_info_set(p_info, "slot_item", "macro", "items", "inventory", "src/items/inventory.4dm", 14, 20, "Integer", "&A:p_container I:p_slot",
                               "Integer slot_item(Attributes &p_container, Integer p_slot)", 0, "", "record_integer_at");
-  if (p_id == 271) test_info_set(p_info, "slot_count", "macro", "items", "inventory", "src/items/inventory.4dm", 22, 28, "Integer", "&A:p_container I:p_slot",
+  if (p_id == 275) test_info_set(p_info, "slot_count", "macro", "items", "inventory", "src/items/inventory.4dm", 22, 28, "Integer", "&A:p_container I:p_slot",
                               "Integer slot_count(Attributes &p_container, Integer p_slot)", 0, "", "record_integer_at");
-  if (p_id == 272) test_info_set(p_info, "slot_damage", "macro", "items", "inventory", "src/items/inventory.4dm", 30, 36, "Integer", "&A:p_container I:p_slot",
+  if (p_id == 276) test_info_set(p_info, "slot_damage", "macro", "items", "inventory", "src/items/inventory.4dm", 30, 36, "Integer", "&A:p_container I:p_slot",
                               "Integer slot_damage(Attributes &p_container, Integer p_slot)", 0, "", "record_integer_at");
-  if (p_id == 273) test_info_set(p_info, "slot_is_empty", "macro", "items", "inventory", "src/items/inventory.4dm", 38, 46, "Integer", "&A:p_container I:p_slot",
+  if (p_id == 277) test_info_set(p_info, "slot_is_empty", "macro", "items", "inventory", "src/items/inventory.4dm", 38, 46, "Integer", "&A:p_container I:p_slot",
                               "Integer slot_is_empty(Attributes &p_container, Integer p_slot)", 0, "", "slot_count, slot_item");
-  if (p_id == 274) test_info_set(p_info, "slot_set", "macro", "items", "inventory", "src/items/inventory.4dm", 48, 65, "void", "&A:p_container I:p_slot I:p_item I:p_count I:p_damage",
+  if (p_id == 278) test_info_set(p_info, "slot_set", "macro", "items", "inventory", "src/items/inventory.4dm", 48, 65, "void", "&A:p_container I:p_slot I:p_item I:p_count I:p_damage",
                               "void slot_set(Attributes &p_container, Integer p_slot, Integer p_item, Integer p_count, Integer p_damage)", 0, "", "record_set_integer_at");
-  if (p_id == 275) test_info_set(p_info, "slot_clear", "macro", "items", "inventory", "src/items/inventory.4dm", 67, 73, "void", "&A:p_container I:p_slot",
+  if (p_id == 279) test_info_set(p_info, "slot_clear", "macro", "items", "inventory", "src/items/inventory.4dm", 67, 73, "void", "&A:p_container I:p_slot",
                               "void slot_clear(Attributes &p_container, Integer p_slot)", 0, "", "slot_set");
-  if (p_id == 276) test_info_set(p_info, "slot_swap", "macro", "items", "inventory", "src/items/inventory.4dm", 75, 86, "void", "&A:p_container I:p_slot_a I:p_slot_b",
+  if (p_id == 280) test_info_set(p_info, "slot_swap", "macro", "items", "inventory", "src/items/inventory.4dm", 75, 86, "void", "&A:p_container I:p_slot_a I:p_slot_b",
                               "void slot_swap(Attributes &p_container, Integer p_slot_a, Integer p_slot_b)", 0, "", "slot_count, slot_damage, slot_item, slot_set");
-  if (p_id == 277) test_info_set(p_info, "slot_take_one", "macro", "items", "inventory", "src/items/inventory.4dm", 88, 94, "void", "&A:p_container I:p_slot",
-                              "void slot_take_one(Attributes &p_container, Integer p_slot)", 0, "", "slot_count, slot_damage, slot_item, slot_set");
-  if (p_id == 278) test_info_set(p_info, "slot_wear", "macro", "items", "inventory", "src/items/inventory.4dm", 96, 115, "Integer", "&A:p_container I:p_slot",
-                              "Integer slot_wear(Attributes &p_container, Integer p_slot)", 0, "", "item_max_uses, record_set_integer_at, slot_clear, slot_damage, slot_item");
-  if (p_id == 279) test_info_set(p_info, "slot_click_left", "macro", "items", "inventory", "src/items/inventory.4dm", 117, 162, "void", "&A:p_holder &A:p_container I:p_slot I:p_take_only",
-                              "void slot_click_left(Attributes &p_holder, Attributes &p_container, Integer p_slot, Integer p_take_only)", 0, "", "item_max_stack, slot_clear, slot_count, slot_damage, slot_item, slot_set");
-  if (p_id == 280) test_info_set(p_info, "slot_click_right", "macro", "items", "inventory", "src/items/inventory.4dm", 164, 193, "void", "&A:p_holder &A:p_container I:p_slot I:p_take_only",
-                              "void slot_click_right(Attributes &p_holder, Attributes &p_container, Integer p_slot, Integer p_take_only)", 0, "", "floor_divide, item_max_stack, slot_count, slot_damage, slot_item, slot_set");
 }
 
 void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -2382,42 +2402,61 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 241) {   // drops_rebuild_index
+  if (p_id == 241) {   // crafting_match
+    Get_time(l_start);
+    l_ret_i = crafting_match(g_book, g_grid);
+    Get_time(l_end);
+  } else if (p_id == 242) {   // crafting_take_output
+    Get_time(l_start);
+    l_ret_i = crafting_take_output(g_book, g_grid, g_inventory, g_events);
+    Get_time(l_end);
+  } else if (p_id == 243) {   // grid_return_items
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    Get_time(l_start);
+    grid_return_items(g_grid, g_inventory, g_events, l_r1, l_r2, l_r3);
+    Get_time(l_end);
+  } else if (p_id == 244) {   // drops_clear
+    Get_time(l_start);
+    drops_clear(g_drops);
+    Get_time(l_end);
+  } else if (p_id == 245) {   // drops_rebuild_index
     Get_time(l_start);
     drops_rebuild_index(g_drops);
     Get_time(l_end);
-  } else if (p_id == 242) {   // drop_set_used
+  } else if (p_id == 246) {   // drop_set_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     drop_set_used(g_drops, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 243) {   // drop_used
+  } else if (p_id == 247) {   // drop_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = drop_used(g_drops, l_i1);
     Get_time(l_end);
-  } else if (p_id == 244) {   // drop_item
+  } else if (p_id == 248) {   // drop_item
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = drop_item(g_drops, l_i1);
     Get_time(l_end);
-  } else if (p_id == 245) {   // drop_count
+  } else if (p_id == 249) {   // drop_count
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = drop_count(g_drops, l_i1);
     Get_time(l_end);
-  } else if (p_id == 246) {   // drop_damage
+  } else if (p_id == 250) {   // drop_damage
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = drop_damage(g_drops, l_i1);
     Get_time(l_end);
-  } else if (p_id == 247) {   // drop_age
+  } else if (p_id == 251) {   // drop_age
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = drop_age(g_drops, l_i1);
     Get_time(l_end);
-  } else if (p_id == 248) {   // drop_position
+  } else if (p_id == 252) {   // drop_position
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2428,7 +2467,7 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 249) {   // drops_restore
+  } else if (p_id == 253) {   // drops_restore
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2439,7 +2478,7 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = drops_restore(g_drops, l_i1, l_i2, l_i3, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 250) {   // drops_spawn
+  } else if (p_id == 254) {   // drops_spawn
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2449,7 +2488,7 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = drops_spawn(g_drops, g_random, l_i1, l_i2, l_i3, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 251) {   // drops_update
+  } else if (p_id == 255) {   // drops_update
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -2458,36 +2497,36 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     drops_update(g_drops, g_inventory, g_events, l_r1, l_r2, l_r3, l_i1, l_r4);
     Get_time(l_end);
-  } else if (p_id == 252) {   // drops_on_event
+  } else if (p_id == 256) {   // drops_on_event
     Get_time(l_start);
     drops_on_event(g_event, g_drops, g_random);
     Get_time(l_end);
-  } else if (p_id == 253) {   // furnaces_clear
+  } else if (p_id == 257) {   // furnaces_clear
     Get_time(l_start);
     furnaces_clear(g_furnaces);
     Get_time(l_end);
-  } else if (p_id == 254) {   // furnaces_rebuild_index
+  } else if (p_id == 258) {   // furnaces_rebuild_index
     Get_time(l_start);
     furnaces_rebuild_index(g_furnaces);
     Get_time(l_end);
-  } else if (p_id == 255) {   // furnace_set_used
+  } else if (p_id == 259) {   // furnace_set_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     furnace_set_used(g_furnaces, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 256) {   // furnace_slot
+  } else if (p_id == 260) {   // furnace_slot
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = furnace_slot(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 257) {   // furnace_used
+  } else if (p_id == 261) {   // furnace_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = furnace_used(g_furnaces, l_i1);
     Get_time(l_end);
-  } else if (p_id == 258) {   // furnace_cell
+  } else if (p_id == 262) {   // furnace_cell
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2498,22 +2537,22 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I2, l_i2);
     record_set_integer(p_out, ATTR_TEST_I3, l_i3);
     record_set_integer(p_out, ATTR_TEST_I4, l_i4);
-  } else if (p_id == 259) {   // furnace_burn_left
+  } else if (p_id == 263) {   // furnace_burn_left
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = furnace_burn_left(g_furnaces, l_i1);
     Get_time(l_end);
-  } else if (p_id == 260) {   // furnace_burn_total
+  } else if (p_id == 264) {   // furnace_burn_total
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = furnace_burn_total(g_furnaces, l_i1);
     Get_time(l_end);
-  } else if (p_id == 261) {   // furnace_progress
+  } else if (p_id == 265) {   // furnace_progress
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = furnace_progress(g_furnaces, l_i1);
     Get_time(l_end);
-  } else if (p_id == 262) {   // furnace_set_state
+  } else if (p_id == 266) {   // furnace_set_state
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2521,66 +2560,66 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     furnace_set_state(g_furnaces, l_i1, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 263) {   // furnace_find
+  } else if (p_id == 267) {   // furnace_find
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = furnace_find(g_furnaces, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 264) {   // furnace_get_or_create
+  } else if (p_id == 268) {   // furnace_get_or_create
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = furnace_get_or_create(g_furnaces, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 265) {   // furnace_remove
+  } else if (p_id == 269) {   // furnace_remove
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     furnace_remove(g_furnaces, g_events, l_i1);
     Get_time(l_end);
-  } else if (p_id == 266) {   // furnace_can_cook
+  } else if (p_id == 270) {   // furnace_can_cook
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = furnace_can_cook(g_furnaces, l_i1);
     Get_time(l_end);
-  } else if (p_id == 267) {   // furnace_step
+  } else if (p_id == 271) {   // furnace_step
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     furnace_step(g_furnaces, l_i1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 268) {   // furnaces_update
+  } else if (p_id == 272) {   // furnaces_update
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     furnaces_update(g_furnaces, g_events, l_r1);
     Get_time(l_end);
-  } else if (p_id == 269) {   // furnace_on_event
+  } else if (p_id == 273) {   // furnace_on_event
     Get_time(l_start);
     furnace_on_event(g_event, g_furnaces, g_events);
     Get_time(l_end);
-  } else if (p_id == 270) {   // slot_item
+  } else if (p_id == 274) {   // slot_item
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = slot_item(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 271) {   // slot_count
+  } else if (p_id == 275) {   // slot_count
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = slot_count(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 272) {   // slot_damage
+  } else if (p_id == 276) {   // slot_damage
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = slot_damage(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 273) {   // slot_is_empty
+  } else if (p_id == 277) {   // slot_is_empty
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = slot_is_empty(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 274) {   // slot_set
+  } else if (p_id == 278) {   // slot_set
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2588,38 +2627,16 @@ void test_registry_call_7(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     slot_set(g_grid, l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 275) {   // slot_clear
+  } else if (p_id == 279) {   // slot_clear
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     slot_clear(g_grid, l_i1);
     Get_time(l_end);
-  } else if (p_id == 276) {   // slot_swap
+  } else if (p_id == 280) {   // slot_swap
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     slot_swap(g_grid, l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 277) {   // slot_take_one
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    slot_take_one(g_grid, l_i1);
-    Get_time(l_end);
-  } else if (p_id == 278) {   // slot_wear
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    l_ret_i = slot_wear(g_grid, l_i1);
-    Get_time(l_end);
-  } else if (p_id == 279) {   // slot_click_left
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    slot_click_left(g_inventory, g_grid, l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 280) {   // slot_click_right
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    slot_click_right(g_inventory, g_grid, l_i1, l_i2);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -2633,86 +2650,86 @@ void test_registry_info_8(Integer p_id, Attributes &p_info)
 // What functions 281 to 320 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 281) test_info_set(p_info, "slot_move_all", "macro", "items", "inventory", "src/items/inventory.4dm", 195, 204, "void", "&A:p_from I:p_from_slot &A:p_to I:p_first I:p_last",
+  if (p_id == 281) test_info_set(p_info, "slot_take_one", "macro", "items", "inventory", "src/items/inventory.4dm", 88, 94, "void", "&A:p_container I:p_slot",
+                              "void slot_take_one(Attributes &p_container, Integer p_slot)", 0, "", "slot_count, slot_damage, slot_item, slot_set");
+  if (p_id == 282) test_info_set(p_info, "slot_wear", "macro", "items", "inventory", "src/items/inventory.4dm", 96, 115, "Integer", "&A:p_container I:p_slot",
+                              "Integer slot_wear(Attributes &p_container, Integer p_slot)", 0, "", "item_max_uses, record_set_integer_at, slot_clear, slot_damage, slot_item");
+  if (p_id == 283) test_info_set(p_info, "slot_click_left", "macro", "items", "inventory", "src/items/inventory.4dm", 117, 162, "void", "&A:p_holder &A:p_container I:p_slot I:p_take_only",
+                              "void slot_click_left(Attributes &p_holder, Attributes &p_container, Integer p_slot, Integer p_take_only)", 0, "", "item_max_stack, slot_clear, slot_count, slot_damage, slot_item, slot_set");
+  if (p_id == 284) test_info_set(p_info, "slot_click_right", "macro", "items", "inventory", "src/items/inventory.4dm", 164, 193, "void", "&A:p_holder &A:p_container I:p_slot I:p_take_only",
+                              "void slot_click_right(Attributes &p_holder, Attributes &p_container, Integer p_slot, Integer p_take_only)", 0, "", "floor_divide, item_max_stack, slot_count, slot_damage, slot_item, slot_set");
+  if (p_id == 285) test_info_set(p_info, "slot_move_all", "macro", "items", "inventory", "src/items/inventory.4dm", 195, 204, "void", "&A:p_from I:p_from_slot &A:p_to I:p_first I:p_last",
                               "void slot_move_all(Attributes &p_from, Integer p_from_slot, Attributes &p_to, Integer p_first, Integer p_last)", 0, "", "container_add, slot_count, slot_damage, slot_item, slot_set");
-  if (p_id == 282) test_info_set(p_info, "container_clear", "macro", "items", "inventory", "src/items/inventory.4dm", 208, 218, "void", "&A:p_container T:p_datatype I:p_first I:p_last",
+  if (p_id == 286) test_info_set(p_info, "container_clear", "macro", "items", "inventory", "src/items/inventory.4dm", 208, 218, "void", "&A:p_container T:p_datatype I:p_first I:p_last",
                               "void container_clear(Attributes &p_container, Text p_datatype, Integer p_first, Integer p_last)", 0, "", "record_clear, slot_clear");
-  if (p_id == 283) test_info_set(p_info, "container_add", "macro", "items", "inventory", "src/items/inventory.4dm", 220, 258, "Integer", "&A:p_container I:p_first I:p_last I:p_item I:p_count I:p_damage",
+  if (p_id == 287) test_info_set(p_info, "container_add", "macro", "items", "inventory", "src/items/inventory.4dm", 220, 258, "Integer", "&A:p_container I:p_first I:p_last I:p_item I:p_count I:p_damage",
                               "Integer container_add(Attributes &p_container, Integer p_first, Integer p_last, Integer p_item, Integer p_count, Integer p_damage)", 0, "", "item_max_stack, slot_count, slot_is_empty, slot_item, slot_set");
-  if (p_id == 284) test_info_set(p_info, "container_count_item", "macro", "items", "inventory", "src/items/inventory.4dm", 260, 272, "Integer", "&A:p_container I:p_first I:p_last I:p_item",
+  if (p_id == 288) test_info_set(p_info, "container_count_item", "macro", "items", "inventory", "src/items/inventory.4dm", 260, 272, "Integer", "&A:p_container I:p_first I:p_last I:p_item",
                               "Integer container_count_item(Attributes &p_container, Integer p_first, Integer p_last, Integer p_item)", 0, "", "slot_count, slot_item");
-  if (p_id == 285) test_info_set(p_info, "container_remove_item", "macro", "items", "inventory", "src/items/inventory.4dm", 274, 298, "Integer", "&A:p_container I:p_first I:p_last I:p_item I:p_count",
+  if (p_id == 289) test_info_set(p_info, "container_remove_item", "macro", "items", "inventory", "src/items/inventory.4dm", 274, 298, "Integer", "&A:p_container I:p_first I:p_last I:p_item I:p_count",
                               "Integer container_remove_item(Attributes &p_container, Integer p_first, Integer p_last, Integer p_item, Integer p_count)", 0, "", "container_count_item, slot_count, slot_damage, slot_item, slot_set");
-  if (p_id == 286) test_info_set(p_info, "inventory_clear", "macro", "items", "inventory", "src/items/inventory.4dm", 302, 308, "void", "&A:p_inventory",
+  if (p_id == 290) test_info_set(p_info, "inventory_clear", "macro", "items", "inventory", "src/items/inventory.4dm", 302, 308, "void", "&A:p_inventory",
                               "void inventory_clear(Attributes &p_inventory)", 0, "", "container_clear");
-  if (p_id == 287) test_info_set(p_info, "inventory_add", "macro", "items", "inventory", "src/items/inventory.4dm", 310, 316, "Integer", "&A:p_inventory I:p_item I:p_count",
+  if (p_id == 291) test_info_set(p_info, "inventory_add", "macro", "items", "inventory", "src/items/inventory.4dm", 310, 316, "Integer", "&A:p_inventory I:p_item I:p_count",
                               "Integer inventory_add(Attributes &p_inventory, Integer p_item, Integer p_count)", 0, "", "container_add");
-  if (p_id == 288) test_info_set(p_info, "inventory_add_worn", "macro", "items", "inventory", "src/items/inventory.4dm", 318, 325, "Integer", "&A:p_inventory I:p_item I:p_count I:p_damage",
+  if (p_id == 292) test_info_set(p_info, "inventory_add_worn", "macro", "items", "inventory", "src/items/inventory.4dm", 318, 325, "Integer", "&A:p_inventory I:p_item I:p_count I:p_damage",
                               "Integer inventory_add_worn(Attributes &p_inventory, Integer p_item, Integer p_count, Integer p_damage)", 0, "", "container_add");
-  if (p_id == 289) test_info_set(p_info, "inventory_count_item", "macro", "items", "inventory", "src/items/inventory.4dm", 327, 333, "Integer", "&A:p_inventory I:p_item",
+  if (p_id == 293) test_info_set(p_info, "inventory_count_item", "macro", "items", "inventory", "src/items/inventory.4dm", 327, 333, "Integer", "&A:p_inventory I:p_item",
                               "Integer inventory_count_item(Attributes &p_inventory, Integer p_item)", 0, "", "container_count_item");
-  if (p_id == 290) test_info_set(p_info, "inventory_remove_item", "macro", "items", "inventory", "src/items/inventory.4dm", 335, 342, "Integer", "&A:p_inventory I:p_item I:p_count",
+  if (p_id == 294) test_info_set(p_info, "inventory_remove_item", "macro", "items", "inventory", "src/items/inventory.4dm", 335, 342, "Integer", "&A:p_inventory I:p_item I:p_count",
                               "Integer inventory_remove_item(Attributes &p_inventory, Integer p_item, Integer p_count)", 0, "", "container_remove_item");
-  if (p_id == 291) test_info_set(p_info, "inventory_return_cursor", "macro", "items", "inventory", "src/items/inventory.4dm", 344, 359, "void", "&A:p_inventory &A:p_events R:p_x R:p_y R:p_z",
+  if (p_id == 295) test_info_set(p_info, "inventory_return_cursor", "macro", "items", "inventory", "src/items/inventory.4dm", 344, 359, "void", "&A:p_inventory &A:p_events R:p_x R:p_y R:p_z",
                               "void inventory_return_cursor(Attributes &p_inventory, Attributes &p_events, Real p_x, Real p_y, Real p_z)", 0, "", "emit_drop_event, inventory_add_worn, slot_clear, slot_count, slot_damage, slot_item");
-  if (p_id == 292) test_info_set(p_info, "cows_clear", "macro", "mobs", "cows", "src/mobs/cows.4dm", 17, 28, "void", "&A:p_cows",
+  if (p_id == 296) test_info_set(p_info, "cows_clear", "macro", "mobs", "cows", "src/mobs/cows.4dm", 17, 28, "void", "&A:p_cows",
                               "void cows_clear(Attributes &p_cows)", 0, "", "record_clear, record_set_integer_at, record_set_real, slots_reset");
-  if (p_id == 293) test_info_set(p_info, "mobs_rebuild_index", "macro", "mobs", "cows", "src/mobs/cows.4dm", 30, 37, "void", "&A:p_cows",
+  if (p_id == 297) test_info_set(p_info, "mobs_rebuild_index", "macro", "mobs", "cows", "src/mobs/cows.4dm", 30, 37, "void", "&A:p_cows",
                               "void mobs_rebuild_index(Attributes &p_cows)", 0, "", "slots_rebuild");
-  if (p_id == 294) test_info_set(p_info, "mob_set_used", "macro", "mobs", "cows", "src/mobs/cows.4dm", 39, 47, "void", "&A:p_cows I:p_cow I:p_used",
+  if (p_id == 298) test_info_set(p_info, "mob_set_used", "macro", "mobs", "cows", "src/mobs/cows.4dm", 39, 47, "void", "&A:p_cows I:p_cow I:p_used",
                               "void mob_set_used(Attributes &p_cows, Integer p_cow, Integer p_used)", 0, "", "record_set_integer_at, slots_set");
-  if (p_id == 295) test_info_set(p_info, "cow_alive", "macro", "mobs", "cows", "src/mobs/cows.4dm", 49, 57, "Integer", "&A:p_cows I:p_cow",
+  if (p_id == 299) test_info_set(p_info, "cow_alive", "macro", "mobs", "cows", "src/mobs/cows.4dm", 49, 57, "Integer", "&A:p_cows I:p_cow",
                               "Integer cow_alive(Attributes &p_cows, Integer p_cow)", 0, "", "slots_used");
-  if (p_id == 296) test_info_set(p_info, "cow_position", "macro", "mobs", "cows", "src/mobs/cows.4dm", 59, 67, "void", "&A:p_cows I:p_cow &R:p_x &R:p_y &R:p_z",
+  if (p_id == 300) test_info_set(p_info, "cow_position", "macro", "mobs", "cows", "src/mobs/cows.4dm", 59, 67, "void", "&A:p_cows I:p_cow &R:p_x &R:p_y &R:p_z",
                               "void cow_position(Attributes &p_cows, Integer p_cow, Real &p_x, Real &p_y, Real &p_z)", 0, "", "record_real_at");
-  if (p_id == 297) test_info_set(p_info, "cow_set_position", "macro", "mobs", "cows", "src/mobs/cows.4dm", 69, 77, "void", "&A:p_cows I:p_cow R:p_x R:p_y R:p_z",
+  if (p_id == 301) test_info_set(p_info, "cow_set_position", "macro", "mobs", "cows", "src/mobs/cows.4dm", 69, 77, "void", "&A:p_cows I:p_cow R:p_x R:p_y R:p_z",
                               "void cow_set_position(Attributes &p_cows, Integer p_cow, Real p_x, Real p_y, Real p_z)", 0, "", "record_set_real_at");
-  if (p_id == 298) test_info_set(p_info, "cow_yaw", "macro", "mobs", "cows", "src/mobs/cows.4dm", 79, 85, "Real", "&A:p_cows I:p_cow",
+  if (p_id == 302) test_info_set(p_info, "cow_yaw", "macro", "mobs", "cows", "src/mobs/cows.4dm", 79, 85, "Real", "&A:p_cows I:p_cow",
                               "Real cow_yaw(Attributes &p_cows, Integer p_cow)", 0, "", "record_real_at");
-  if (p_id == 299) test_info_set(p_info, "cow_flash", "macro", "mobs", "cows", "src/mobs/cows.4dm", 87, 93, "Real", "&A:p_cows I:p_cow",
+  if (p_id == 303) test_info_set(p_info, "cow_flash", "macro", "mobs", "cows", "src/mobs/cows.4dm", 87, 93, "Real", "&A:p_cows I:p_cow",
                               "Real cow_flash(Attributes &p_cows, Integer p_cow)", 0, "", "record_real_at");
-  if (p_id == 300) test_info_set(p_info, "cow_step", "macro", "mobs", "cows", "src/mobs/cows.4dm", 95, 101, "Real", "&A:p_cows I:p_cow",
+  if (p_id == 304) test_info_set(p_info, "cow_step", "macro", "mobs", "cows", "src/mobs/cows.4dm", 95, 101, "Real", "&A:p_cows I:p_cow",
                               "Real cow_step(Attributes &p_cows, Integer p_cow)", 0, "", "record_real_at");
-  if (p_id == 301) test_info_set(p_info, "cows_alive_count", "macro", "mobs", "cows", "src/mobs/cows.4dm", 103, 109, "Integer", "&A:p_cows",
+  if (p_id == 305) test_info_set(p_info, "cows_alive_count", "macro", "mobs", "cows", "src/mobs/cows.4dm", 103, 109, "Integer", "&A:p_cows",
                               "Integer cows_alive_count(Attributes &p_cows)", 0, "", "mobs_count_kind");
-  if (p_id == 302) test_info_set(p_info, "mob_kind", "macro", "mobs", "cows", "src/mobs/cows.4dm", 111, 117, "Integer", "&A:p_cows I:p_cow",
+  if (p_id == 306) test_info_set(p_info, "mob_kind", "macro", "mobs", "cows", "src/mobs/cows.4dm", 111, 117, "Integer", "&A:p_cows I:p_cow",
                               "Integer mob_kind(Attributes &p_cows, Integer p_cow)", 0, "", "record_integer_at");
-  if (p_id == 303) test_info_set(p_info, "mob_half_width", "macro", "mobs", "cows", "src/mobs/cows.4dm", 119, 127, "Real", "I:p_kind",
+  if (p_id == 307) test_info_set(p_info, "mob_half_width", "macro", "mobs", "cows", "src/mobs/cows.4dm", 119, 127, "Real", "I:p_kind",
                               "Real mob_half_width(Integer p_kind)", 0, "", "");
-  if (p_id == 304) test_info_set(p_info, "mob_height", "macro", "mobs", "cows", "src/mobs/cows.4dm", 129, 137, "Real", "I:p_kind",
+  if (p_id == 308) test_info_set(p_info, "mob_height", "macro", "mobs", "cows", "src/mobs/cows.4dm", 129, 137, "Real", "I:p_kind",
                               "Real mob_height(Integer p_kind)", 0, "", "");
-  if (p_id == 305) test_info_set(p_info, "mobs_count_kind", "macro", "mobs", "cows", "src/mobs/cows.4dm", 139, 153, "Integer", "&A:p_cows I:p_kind",
+  if (p_id == 309) test_info_set(p_info, "mobs_count_kind", "macro", "mobs", "cows", "src/mobs/cows.4dm", 139, 153, "Integer", "&A:p_cows I:p_kind",
                               "Integer mobs_count_kind(Attributes &p_cows, Integer p_kind)", 0, "", "mob_kind, slots_at, slots_count");
-  if (p_id == 306) test_info_set(p_info, "cows_spawn", "macro", "mobs", "cows", "src/mobs/cows.4dm", 157, 163, "Integer", "&A:p_cows &A:p_random R:p_x R:p_y R:p_z R:p_yaw",
+  if (p_id == 310) test_info_set(p_info, "cows_spawn", "macro", "mobs", "cows", "src/mobs/cows.4dm", 157, 163, "Integer", "&A:p_cows &A:p_random R:p_x R:p_y R:p_z R:p_yaw",
                               "Integer cows_spawn(Attributes &p_cows, Attributes &p_random, Real p_x, Real p_y, Real p_z, Real p_yaw)", 0, "", "mobs_spawn");
-  if (p_id == 307) test_info_set(p_info, "mobs_spawn", "macro", "mobs", "cows", "src/mobs/cows.4dm", 165, 196, "Integer", "&A:p_cows &A:p_random I:p_kind R:p_x R:p_y R:p_z R:p_yaw",
+  if (p_id == 311) test_info_set(p_info, "mobs_spawn", "macro", "mobs", "cows", "src/mobs/cows.4dm", 165, 196, "Integer", "&A:p_cows &A:p_random I:p_kind R:p_x R:p_y R:p_z R:p_yaw",
                               "Integer mobs_spawn(Attributes &p_cows, Attributes &p_random, Integer p_kind, Real p_x, Real p_y, Real p_z, Real p_yaw)", 0, "", "cow_alive, cow_set_position, mob_set_used, random_between, record_set_integer_at, record_set_real_at");
-  if (p_id == 308) test_info_set(p_info, "cows_spawn_random", "macro", "mobs", "cows", "src/mobs/cows.4dm", 198, 204, "Integer", "&A:p_cows &A:p_random I:p_count R:p_away_x R:p_away_z R:p_keep_away",
+  if (p_id == 312) test_info_set(p_info, "cows_spawn_random", "macro", "mobs", "cows", "src/mobs/cows.4dm", 198, 204, "Integer", "&A:p_cows &A:p_random I:p_count R:p_away_x R:p_away_z R:p_keep_away",
                               "Integer cows_spawn_random(Attributes &p_cows, Attributes &p_random, Integer p_count, Real p_away_x, Real p_away_z, Real p_keep_away)", 0, "", "mobs_spawn_random");
-  if (p_id == 309) test_info_set(p_info, "mobs_spawn_random", "macro", "mobs", "cows", "src/mobs/cows.4dm", 206, 234, "Integer", "&A:p_cows &A:p_random I:p_kind I:p_count R:p_away_x R:p_away_z R:p_keep_away",
+  if (p_id == 313) test_info_set(p_info, "mobs_spawn_random", "macro", "mobs", "cows", "src/mobs/cows.4dm", 206, 234, "Integer", "&A:p_cows &A:p_random I:p_kind I:p_count R:p_away_x R:p_away_z R:p_keep_away",
                               "Integer mobs_spawn_random(Attributes &p_cows, Attributes &p_random, Integer p_kind, Integer p_count, Real p_away_x, Real p_away_z, Real p_keep_away)", 0, "", "mobs_spawn, random_between, random_range, world_get_block, world_top_solid_y");
-  if (p_id == 310) test_info_set(p_info, "zombies_spawn_near", "macro", "mobs", "cows", "src/mobs/cows.4dm", 236, 265, "Integer", "&A:p_cows &A:p_random R:p_player_x R:p_player_z",
+  if (p_id == 314) test_info_set(p_info, "zombies_spawn_near", "macro", "mobs", "cows", "src/mobs/cows.4dm", 236, 265, "Integer", "&A:p_cows &A:p_random R:p_player_x R:p_player_z",
                               "Integer zombies_spawn_near(Attributes &p_cows, Attributes &p_random, Real p_player_x, Real p_player_z)", 0, "", "floor_integer, mobs_spawn, random_between, world_get_block, world_get_light, world_top_solid_y");
-  if (p_id == 311) test_info_set(p_info, "zombie_sunlight", "macro", "mobs", "cows", "src/mobs/cows.4dm", 267, 295, "void", "&A:p_cows &A:p_events I:p_cow R:p_dt",
+  if (p_id == 315) test_info_set(p_info, "zombie_sunlight", "macro", "mobs", "cows", "src/mobs/cows.4dm", 267, 295, "void", "&A:p_cows &A:p_events I:p_cow R:p_dt",
                               "void zombie_sunlight(Attributes &p_cows, Attributes &p_events, Integer p_cow, Real p_dt)", 0, "", "cow_position, emit_event, floor_integer, mob_set_used, record_integer_at, record_real_at, record_set_integer_at, record_set_real_at, world_sky_top");
-  if (p_id == 312) test_info_set(p_info, "cow_update", "macro", "mobs", "cows", "src/mobs/cows.4dm", 297, 462, "void", "&A:p_cows &A:p_random &A:p_events I:p_cow R:p_player_x R:p_player_y R:p_player_z R:p_dt",
+  if (p_id == 316) test_info_set(p_info, "cow_update", "macro", "mobs", "cows", "src/mobs/cows.4dm", 297, 462, "void", "&A:p_cows &A:p_random &A:p_events I:p_cow R:p_player_x R:p_player_y R:p_player_z R:p_dt",
                               "void cow_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events, Integer p_cow, Real p_player_x, Real p_player_y, Real p_player_z, Real p_dt)", 0, "", "angle_of, cow_set_position, emit_event, floor_integer, max_real, min_real, mob_half_width, mob_height, mob_kind, physics_box_in_water, physics_move_box, random_between, random_next, record_integer_at, record_real_at, record_set_integer_at, record_set_real_at, world_get_block, world_is_solid, wrap_angle");
-  if (p_id == 313) test_info_set(p_info, "cows_update", "macro", "mobs", "cows", "src/mobs/cows.4dm", 464, 517, "void", "&A:p_cows &A:p_random &A:p_events R:p_player_x R:p_player_y R:p_player_z I:p_night I:p_leave_player R:p_dt",
+  if (p_id == 317) test_info_set(p_info, "cows_update", "macro", "mobs", "cows", "src/mobs/cows.4dm", 464, 517, "void", "&A:p_cows &A:p_random &A:p_events R:p_player_x R:p_player_y R:p_player_z I:p_night I:p_leave_player R:p_dt",
                               "void cows_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events, Real p_player_x, Real p_player_y, Real p_player_z, Integer p_night, Integer p_leave_player, Real p_dt)", 0, "", "cow_alive, cow_position, cow_update, cows_alive_count, cows_spawn_random, mob_kind, mobs_count_kind, mobs_spawn_random, record_real, record_set_real, slots_at, slots_count, zombie_sunlight, zombies_spawn_near");
-  if (p_id == 314) test_info_set(p_info, "cows_ray_hit", "macro", "mobs", "cows", "src/mobs/cows.4dm", 519, 552, "Integer", "&A:p_cows R:p_origin_x R:p_origin_y R:p_origin_z R:p_dir_x R:p_dir_y R:p_dir_z R:p_max_distance &R:p_distance",
+  if (p_id == 318) test_info_set(p_info, "cows_ray_hit", "macro", "mobs", "cows", "src/mobs/cows.4dm", 519, 552, "Integer", "&A:p_cows R:p_origin_x R:p_origin_y R:p_origin_z R:p_dir_x R:p_dir_y R:p_dir_z R:p_max_distance &R:p_distance",
                               "Integer cows_ray_hit(Attributes &p_cows, Real p_origin_x, Real p_origin_y, Real p_origin_z, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_max_distance, Real &p_distance)", 0, "", "cow_position, mob_half_width, mob_height, mob_kind, physics_ray_box, slots_at, slots_count");
-  if (p_id == 315) test_info_set(p_info, "cow_damage", "macro", "mobs", "cows", "src/mobs/cows.4dm", 554, 590, "void", "&A:p_cows &A:p_events &A:p_random I:p_cow I:p_amount R:p_push_x R:p_push_z",
+  if (p_id == 319) test_info_set(p_info, "cow_damage", "macro", "mobs", "cows", "src/mobs/cows.4dm", 554, 590, "void", "&A:p_cows &A:p_events &A:p_random I:p_cow I:p_amount R:p_push_x R:p_push_z",
                               "void cow_damage(Attributes &p_cows, Attributes &p_events, Attributes &p_random, Integer p_cow, Integer p_amount, Real p_push_x, Real p_push_z)", 0, "", "cow_alive, cow_position, emit_event, mob_kind, mob_set_used, random_between, record_integer_at, record_set_integer_at, record_set_real_at");
-  if (p_id == 316) test_info_set(p_info, "cows_box_overlaps", "macro", "mobs", "cows", "src/mobs/cows.4dm", 592, 616, "Integer", "&A:p_cows R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z",
+  if (p_id == 320) test_info_set(p_info, "cows_box_overlaps", "macro", "mobs", "cows", "src/mobs/cows.4dm", 592, 616, "Integer", "&A:p_cows R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z",
                               "Integer cows_box_overlaps(Attributes &p_cows, Real p_min_x, Real p_min_y, Real p_min_z, Real p_max_x, Real p_max_y, Real p_max_z)", 0, "", "cow_position, mob_half_width, mob_height, mob_kind, slots_at, slots_count");
-  if (p_id == 317) test_info_set(p_info, "net_clear", "macro", "net", "net", "src/net/net.4dm", 15, 28, "void", "&A:p_net &A:p_peers &A:p_inbox",
-                              "void net_clear(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox)", 0, "", "record_clear, record_set_integer, record_set_text");
-  if (p_id == 318) test_info_set(p_info, "net_mode", "macro", "net", "net", "src/net/net.4dm", 30, 36, "Integer", "&A:p_net",
-                              "Integer net_mode(Attributes &p_net)", 0, "", "record_integer");
-  if (p_id == 319) test_info_set(p_info, "net_clean_name", "macro", "net", "net", "src/net/net.4dm", 38, 58, "Text", "T:p_name",
-                              "Text net_clean_name(Text p_name)", 0, "", "");
-  if (p_id == 320) test_info_set(p_info, "net_session_path", "macro", "net", "net", "src/net/net.4dm", 60, 66, "Text", "T:p_folder",
-                              "Text net_session_path(Text p_folder)", 0, "", "");
 }
 
 void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -2757,21 +2774,43 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 281) {   // slot_move_all
+  if (p_id == 281) {   // slot_take_one
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    slot_take_one(g_grid, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 282) {   // slot_wear
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    l_ret_i = slot_wear(g_grid, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 283) {   // slot_click_left
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    slot_click_left(g_inventory, g_grid, l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 284) {   // slot_click_right
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    slot_click_right(g_inventory, g_grid, l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 285) {   // slot_move_all
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     slot_move_all(g_inventory, l_i1, g_grid, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 282) {   // container_clear
+  } else if (p_id == 286) {   // container_clear
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     container_clear(g_grid, l_t1, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 283) {   // container_add
+  } else if (p_id == 287) {   // container_add
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2780,14 +2819,14 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = container_add(g_grid, l_i1, l_i2, l_i3, l_i4, l_i5);
     Get_time(l_end);
-  } else if (p_id == 284) {   // container_count_item
+  } else if (p_id == 288) {   // container_count_item
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = container_count_item(g_grid, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 285) {   // container_remove_item
+  } else if (p_id == 289) {   // container_remove_item
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -2795,61 +2834,61 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = container_remove_item(g_grid, l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 286) {   // inventory_clear
+  } else if (p_id == 290) {   // inventory_clear
     Get_time(l_start);
     inventory_clear(g_inventory);
     Get_time(l_end);
-  } else if (p_id == 287) {   // inventory_add
+  } else if (p_id == 291) {   // inventory_add
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = inventory_add(g_inventory, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 288) {   // inventory_add_worn
+  } else if (p_id == 292) {   // inventory_add_worn
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = inventory_add_worn(g_inventory, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 289) {   // inventory_count_item
+  } else if (p_id == 293) {   // inventory_count_item
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = inventory_count_item(g_inventory, l_i1);
     Get_time(l_end);
-  } else if (p_id == 290) {   // inventory_remove_item
+  } else if (p_id == 294) {   // inventory_remove_item
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_i = inventory_remove_item(g_inventory, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 291) {   // inventory_return_cursor
+  } else if (p_id == 295) {   // inventory_return_cursor
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     inventory_return_cursor(g_inventory, g_events, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 292) {   // cows_clear
+  } else if (p_id == 296) {   // cows_clear
     Get_time(l_start);
     cows_clear(g_cows);
     Get_time(l_end);
-  } else if (p_id == 293) {   // mobs_rebuild_index
+  } else if (p_id == 297) {   // mobs_rebuild_index
     Get_time(l_start);
     mobs_rebuild_index(g_cows);
     Get_time(l_end);
-  } else if (p_id == 294) {   // mob_set_used
+  } else if (p_id == 298) {   // mob_set_used
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     mob_set_used(g_cows, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 295) {   // cow_alive
+  } else if (p_id == 299) {   // cow_alive
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = cow_alive(g_cows, l_i1);
     Get_time(l_end);
-  } else if (p_id == 296) {   // cow_position
+  } else if (p_id == 300) {   // cow_position
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2860,7 +2899,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 297) {   // cow_set_position
+  } else if (p_id == 301) {   // cow_set_position
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2868,46 +2907,46 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     cow_set_position(g_cows, l_i1, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 298) {   // cow_yaw
+  } else if (p_id == 302) {   // cow_yaw
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = cow_yaw(g_cows, l_i1);
     Get_time(l_end);
-  } else if (p_id == 299) {   // cow_flash
+  } else if (p_id == 303) {   // cow_flash
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = cow_flash(g_cows, l_i1);
     Get_time(l_end);
-  } else if (p_id == 300) {   // cow_step
+  } else if (p_id == 304) {   // cow_step
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = cow_step(g_cows, l_i1);
     Get_time(l_end);
-  } else if (p_id == 301) {   // cows_alive_count
+  } else if (p_id == 305) {   // cows_alive_count
     Get_time(l_start);
     l_ret_i = cows_alive_count(g_cows);
     Get_time(l_end);
-  } else if (p_id == 302) {   // mob_kind
+  } else if (p_id == 306) {   // mob_kind
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = mob_kind(g_cows, l_i1);
     Get_time(l_end);
-  } else if (p_id == 303) {   // mob_half_width
+  } else if (p_id == 307) {   // mob_half_width
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = mob_half_width(l_i1);
     Get_time(l_end);
-  } else if (p_id == 304) {   // mob_height
+  } else if (p_id == 308) {   // mob_height
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = mob_height(l_i1);
     Get_time(l_end);
-  } else if (p_id == 305) {   // mobs_count_kind
+  } else if (p_id == 309) {   // mobs_count_kind
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = mobs_count_kind(g_cows, l_i1);
     Get_time(l_end);
-  } else if (p_id == 306) {   // cows_spawn
+  } else if (p_id == 310) {   // cows_spawn
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -2915,7 +2954,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = cows_spawn(g_cows, g_random, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 307) {   // mobs_spawn
+  } else if (p_id == 311) {   // mobs_spawn
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2924,7 +2963,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = mobs_spawn(g_cows, g_random, l_i1, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 308) {   // cows_spawn_random
+  } else if (p_id == 312) {   // cows_spawn_random
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2932,7 +2971,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = cows_spawn_random(g_cows, g_random, l_i1, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 309) {   // mobs_spawn_random
+  } else if (p_id == 313) {   // mobs_spawn_random
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
@@ -2941,19 +2980,19 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = mobs_spawn_random(g_cows, g_random, l_i1, l_i2, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 310) {   // zombies_spawn_near
+  } else if (p_id == 314) {   // zombies_spawn_near
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_i = zombies_spawn_near(g_cows, g_random, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 311) {   // zombie_sunlight
+  } else if (p_id == 315) {   // zombie_sunlight
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     zombie_sunlight(g_cows, g_events, l_i1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 312) {   // cow_update
+  } else if (p_id == 316) {   // cow_update
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -2962,7 +3001,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     cow_update(g_cows, g_random, g_events, l_i1, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 313) {   // cows_update
+  } else if (p_id == 317) {   // cows_update
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -2972,7 +3011,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     cows_update(g_cows, g_random, g_events, l_r1, l_r2, l_r3, l_i1, l_i2, l_r4);
     Get_time(l_end);
-  } else if (p_id == 314) {   // cows_ray_hit
+  } else if (p_id == 318) {   // cows_ray_hit
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -2985,7 +3024,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_ret_i = cows_ray_hit(g_cows, l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8);
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R8, l_r8);
-  } else if (p_id == 315) {   // cow_damage
+  } else if (p_id == 319) {   // cow_damage
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
@@ -2993,7 +3032,7 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     cow_damage(g_cows, g_events, g_random, l_i1, l_i2, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 316) {   // cows_box_overlaps
+  } else if (p_id == 320) {   // cows_box_overlaps
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -3002,24 +3041,6 @@ void test_registry_call_8(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_r6 = record_real(p_in, ATTR_TEST_R6);
     Get_time(l_start);
     l_ret_i = cows_box_overlaps(g_cows, l_r1, l_r2, l_r3, l_r4, l_r5, l_r6);
-    Get_time(l_end);
-  } else if (p_id == 317) {   // net_clear
-    Get_time(l_start);
-    net_clear(g_net, g_peers, g_net_inbox);
-    Get_time(l_end);
-  } else if (p_id == 318) {   // net_mode
-    Get_time(l_start);
-    l_ret_i = net_mode(g_net);
-    Get_time(l_end);
-  } else if (p_id == 319) {   // net_clean_name
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_t = net_clean_name(l_t1);
-    Get_time(l_end);
-  } else if (p_id == 320) {   // net_session_path
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_t = net_session_path(l_t1);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -3033,86 +3054,86 @@ void test_registry_info_9(Integer p_id, Attributes &p_info)
 // What functions 321 to 360 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 321) test_info_set(p_info, "net_snapshot_path", "macro", "net", "net", "src/net/net.4dm", 68, 74, "Text", "T:p_folder T:p_session",
+  if (p_id == 321) test_info_set(p_info, "net_clear", "macro", "net", "net", "src/net/net.4dm", 15, 28, "void", "&A:p_net &A:p_peers &A:p_inbox",
+                              "void net_clear(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox)", 0, "", "record_clear, record_set_integer, record_set_text");
+  if (p_id == 322) test_info_set(p_info, "net_mode", "macro", "net", "net", "src/net/net.4dm", 30, 36, "Integer", "&A:p_net",
+                              "Integer net_mode(Attributes &p_net)", 0, "", "record_integer");
+  if (p_id == 323) test_info_set(p_info, "net_clean_name", "macro", "net", "net", "src/net/net.4dm", 38, 58, "Text", "T:p_name",
+                              "Text net_clean_name(Text p_name)", 0, "", "");
+  if (p_id == 324) test_info_set(p_info, "net_session_path", "macro", "net", "net", "src/net/net.4dm", 60, 66, "Text", "T:p_folder",
+                              "Text net_session_path(Text p_folder)", 0, "", "");
+  if (p_id == 325) test_info_set(p_info, "net_snapshot_path", "macro", "net", "net", "src/net/net.4dm", 68, 74, "Text", "T:p_folder T:p_session",
                               "Text net_snapshot_path(Text p_folder, Text p_session)", 0, "", "");
-  if (p_id == 322) test_info_set(p_info, "net_log_name", "macro", "net", "net", "src/net/net.4dm", 76, 82, "Text", "T:p_session T:p_id",
+  if (p_id == 326) test_info_set(p_info, "net_log_name", "macro", "net", "net", "src/net/net.4dm", 76, 82, "Text", "T:p_session T:p_id",
                               "Text net_log_name(Text p_session, Text p_id)", 0, "", "");
-  if (p_id == 323) test_info_set(p_info, "net_ensure_folder", "macro", "net", "net", "src/net/net.4dm", 84, 96, "Integer", "T:p_folder",
+  if (p_id == 327) test_info_set(p_info, "net_ensure_folder", "macro", "net", "net", "src/net/net.4dm", 84, 96, "Integer", "T:p_folder",
                               "Integer net_ensure_folder(Text p_folder)", 1, "", "");
-  if (p_id == 324) test_info_set(p_info, "net_write_session", "macro", "net", "net", "src/net/net.4dm", 98, 114, "Integer", "T:p_folder T:p_session T:p_host_id I:p_seed T:p_world_name",
+  if (p_id == 328) test_info_set(p_info, "net_write_session", "macro", "net", "net", "src/net/net.4dm", 98, 114, "Integer", "T:p_folder T:p_session T:p_host_id I:p_seed T:p_world_name",
                               "Integer net_write_session(Text p_folder, Text p_session, Text p_host_id, Integer p_seed, Text p_world_name)", 1, "", "net_session_path");
-  if (p_id == 325) test_info_set(p_info, "net_read_session", "macro", "net", "net", "src/net/net.4dm", 116, 166, "Integer", "T:p_folder &T:p_session &T:p_host_id &I:p_seed &T:p_world_name &T:p_problem",
+  if (p_id == 329) test_info_set(p_info, "net_read_session", "macro", "net", "net", "src/net/net.4dm", 116, 166, "Integer", "T:p_folder &T:p_session &T:p_host_id &I:p_seed &T:p_world_name &T:p_problem",
                               "Integer net_read_session(Text p_folder, Text &p_session, Text &p_host_id, Integer &p_seed, Text &p_world_name, Text &p_problem)", 0, "", "net_rest_of_line, net_session_path, net_snapshot_path, net_word_integer");
-  if (p_id == 326) test_info_set(p_info, "net_start", "macro", "net", "net", "src/net/net.4dm", 168, 190, "void", "&A:p_net &A:p_peers &A:p_inbox I:p_mode T:p_folder T:p_session T:p_host_id T:p_id T:p_name R:p_now",
+  if (p_id == 330) test_info_set(p_info, "net_start", "macro", "net", "net", "src/net/net.4dm", 168, 190, "void", "&A:p_net &A:p_peers &A:p_inbox I:p_mode T:p_folder T:p_session T:p_host_id T:p_id T:p_name R:p_now",
                               "void net_start(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Integer p_mode, Text p_folder, Text p_session, Text p_host_id, Text p_id, Text p_name, Real p_now)", 1, "", "net_clear, net_flush, net_log_name, net_queue, record_set_integer, record_set_real, record_set_text");
-  if (p_id == 327) test_info_set(p_info, "net_queue", "macro", "net", "net", "src/net/net.4dm", 194, 205, "void", "&A:p_net T:p_line",
+  if (p_id == 331) test_info_set(p_info, "net_queue", "macro", "net", "net", "src/net/net.4dm", 194, 205, "void", "&A:p_net T:p_line",
                               "void net_queue(Attributes &p_net, Text p_line)", 0, "", "net_mode, record_integer, record_set_integer, record_set_text_at");
-  if (p_id == 328) test_info_set(p_info, "net_flush", "macro", "net", "net", "src/net/net.4dm", 207, 232, "Integer", "&A:p_net",
+  if (p_id == 332) test_info_set(p_info, "net_flush", "macro", "net", "net", "src/net/net.4dm", 207, 232, "Integer", "&A:p_net",
                               "Integer net_flush(Attributes &p_net)", 1, "", "net_log_name, net_mode, record_integer, record_set_integer, record_set_text, record_text, record_text_at");
-  if (p_id == 329) test_info_set(p_info, "net_leave", "macro", "net", "net", "src/net/net.4dm", 234, 243, "void", "&A:p_net",
+  if (p_id == 333) test_info_set(p_info, "net_leave", "macro", "net", "net", "src/net/net.4dm", 234, 243, "void", "&A:p_net",
                               "void net_leave(Attributes &p_net)", 1, "", "net_flush, net_mode, net_queue, record_set_integer");
-  if (p_id == 330) test_info_set(p_info, "net_say", "macro", "net", "net", "src/net/net.4dm", 245, 251, "void", "&A:p_net T:p_text",
+  if (p_id == 334) test_info_set(p_info, "net_say", "macro", "net", "net", "src/net/net.4dm", 245, 251, "void", "&A:p_net T:p_text",
                               "void net_say(Attributes &p_net, Text p_text)", 0, "", "net_queue");
-  if (p_id == 331) test_info_set(p_info, "net_send_state", "macro", "net", "net", "src/net/net.4dm", 253, 295, "void", "&A:p_net &A:p_player &A:p_info R:p_now",
+  if (p_id == 335) test_info_set(p_info, "net_send_state", "macro", "net", "net", "src/net/net.4dm", 253, 295, "void", "&A:p_net &A:p_player &A:p_info R:p_now",
                               "void net_send_state(Attributes &p_net, Attributes &p_player, Attributes &p_info, Real p_now)", 0, "", "net_mode, net_queue, player_look, player_position, record_real, record_set_real, world_time_of_day");
-  if (p_id == 332) test_info_set(p_info, "net_on_event", "macro", "net", "net", "src/net/net.4dm", 297, 312, "void", "&A:p_event &A:p_net",
+  if (p_id == 336) test_info_set(p_info, "net_on_event", "macro", "net", "net", "src/net/net.4dm", 297, 312, "void", "&A:p_event &A:p_net",
                               "void net_on_event(Attributes &p_event, Attributes &p_net)", 0, "", "event_integer, event_is_remote, event_type, net_mode, net_queue, world_get_block");
-  if (p_id == 333) test_info_set(p_info, "net_find_peer", "macro", "net", "net", "src/net/net.4dm", 316, 327, "Integer", "&A:p_peers T:p_file",
+  if (p_id == 337) test_info_set(p_info, "net_find_peer", "macro", "net", "net", "src/net/net.4dm", 316, 327, "Integer", "&A:p_peers T:p_file",
                               "Integer net_find_peer(Attributes &p_peers, Text p_file)", 0, "", "peers_count, record_text_at");
-  if (p_id == 334) test_info_set(p_info, "net_add_peer", "macro", "net", "net", "src/net/net.4dm", 329, 355, "Integer", "&A:p_peers T:p_file R:p_now",
+  if (p_id == 338) test_info_set(p_info, "net_add_peer", "macro", "net", "net", "src/net/net.4dm", 329, 355, "Integer", "&A:p_peers T:p_file R:p_now",
                               "Integer net_add_peer(Attributes &p_peers, Text p_file, Real p_now)", 0, "", "peers_count, record_set_integer, record_set_integer_at, record_set_real_at, record_set_text_at");
-  if (p_id == 335) test_info_set(p_info, "net_scan", "macro", "net", "net", "src/net/net.4dm", 357, 381, "void", "&A:p_net &A:p_peers R:p_now",
+  if (p_id == 339) test_info_set(p_info, "net_scan", "macro", "net", "net", "src/net/net.4dm", 357, 381, "void", "&A:p_net &A:p_peers R:p_now",
                               "void net_scan(Attributes &p_net, Attributes &p_peers, Real p_now)", 0, "", "file_title_from_path, net_add_peer, net_find_peer, net_log_name, record_text");
-  if (p_id == 336) test_info_set(p_info, "net_inbox_add", "macro", "net", "net", "src/net/net.4dm", 383, 393, "void", "&A:p_inbox I:p_peer T:p_line",
+  if (p_id == 340) test_info_set(p_info, "net_inbox_add", "macro", "net", "net", "src/net/net.4dm", 383, 393, "void", "&A:p_inbox I:p_peer T:p_line",
                               "void net_inbox_add(Attributes &p_inbox, Integer p_peer, Text p_line)", 0, "", "record_integer, record_set_integer, record_set_integer_at, record_set_text_at");
-  if (p_id == 337) test_info_set(p_info, "net_read_peer", "macro", "net", "net", "src/net/net.4dm", 395, 426, "Integer", "&A:p_net &A:p_peers &A:p_inbox I:p_peer",
+  if (p_id == 341) test_info_set(p_info, "net_read_peer", "macro", "net", "net", "src/net/net.4dm", 395, 426, "Integer", "&A:p_net &A:p_peers &A:p_inbox I:p_peer",
                               "Integer net_read_peer(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Integer p_peer)", 0, "", "net_inbox_add, record_integer_at, record_set_integer_at, record_text, record_text_at");
-  if (p_id == 338) test_info_set(p_info, "net_poll", "macro", "net", "net", "src/net/net.4dm", 428, 445, "void", "&A:p_net &A:p_peers &A:p_inbox R:p_now",
+  if (p_id == 342) test_info_set(p_info, "net_poll", "macro", "net", "net", "src/net/net.4dm", 428, 445, "void", "&A:p_net &A:p_peers &A:p_inbox R:p_now",
                               "void net_poll(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Real p_now)", 0, "", "net_mode, net_read_peer, net_scan, peers_count, record_real, record_set_real");
-  if (p_id == 339) test_info_set(p_info, "net_word_real", "macro", "net", "net", "src/net/net.4dm", 449, 464, "Real", "&D:p_words I:p_position",
+  if (p_id == 343) test_info_set(p_info, "net_word_real", "macro", "net", "net", "src/net/net.4dm", 449, 464, "Real", "&D:p_words I:p_position",
                               "Real net_word_real(Dynamic_Text &p_words, Integer p_position)", 0, "", "");
-  if (p_id == 340) test_info_set(p_info, "net_word_integer", "macro", "net", "net", "src/net/net.4dm", 466, 481, "Integer", "&D:p_words I:p_position",
+  if (p_id == 344) test_info_set(p_info, "net_word_integer", "macro", "net", "net", "src/net/net.4dm", 466, 481, "Integer", "&D:p_words I:p_position",
                               "Integer net_word_integer(Dynamic_Text &p_words, Integer p_position)", 0, "", "");
-  if (p_id == 341) test_info_set(p_info, "net_rest_of_line", "macro", "net", "net", "src/net/net.4dm", 483, 493, "Text", "T:p_line",
+  if (p_id == 345) test_info_set(p_info, "net_rest_of_line", "macro", "net", "net", "src/net/net.4dm", 483, 493, "Text", "T:p_line",
                               "Text net_rest_of_line(Text p_line)", 0, "", "");
-  if (p_id == 342) test_info_set(p_info, "net_apply_line", "macro", "net", "net", "src/net/net.4dm", 495, 546, "void", "&A:p_net &A:p_peers I:p_peer T:p_line &A:p_info &A:p_hud &A:p_events R:p_now",
+  if (p_id == 346) test_info_set(p_info, "net_apply_line", "macro", "net", "net", "src/net/net.4dm", 495, 546, "void", "&A:p_net &A:p_peers I:p_peer T:p_line &A:p_info &A:p_hud &A:p_events R:p_now",
                               "void net_apply_line(Attributes &p_net, Attributes &p_peers, Integer p_peer, Text p_line, Attributes &p_info, Attributes &p_hud, Attributes &p_events, Real p_now)", 0, "", "hud_chat, hud_toast, net_clean_name, net_rest_of_line, net_word_integer, net_word_real, peer_here, peer_name, record_real_at, record_set_integer_at, record_set_real_at, record_set_text_at, record_text, record_text_at, world_apply_remote_block, world_set_time_of_day");
-  if (p_id == 343) test_info_set(p_info, "net_apply", "macro", "net", "net", "src/net/net.4dm", 548, 588, "void", "&A:p_net &A:p_peers &A:p_inbox &A:p_info &A:p_hud &A:p_events R:p_dt R:p_now",
+  if (p_id == 347) test_info_set(p_info, "net_apply", "macro", "net", "net", "src/net/net.4dm", 548, 588, "void", "&A:p_net &A:p_peers &A:p_inbox &A:p_info &A:p_hud &A:p_events R:p_dt R:p_now",
                               "void net_apply(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Attributes &p_info, Attributes &p_hud, Attributes &p_events, Real p_dt, Real p_now)", 0, "", "hud_chat, min_real, net_apply_line, peer_here, peer_name, peer_position, peer_step, peers_count, record_clear, record_integer, record_integer_at, record_real_at, record_set_integer, record_set_integer_at, record_set_real_at, record_text_at");
-  if (p_id == 344) test_info_set(p_info, "peers_count", "macro", "net", "net", "src/net/net.4dm", 592, 598, "Integer", "&A:p_peers",
+  if (p_id == 348) test_info_set(p_info, "peers_count", "macro", "net", "net", "src/net/net.4dm", 592, 598, "Integer", "&A:p_peers",
                               "Integer peers_count(Attributes &p_peers)", 0, "", "record_integer");
-  if (p_id == 345) test_info_set(p_info, "peer_here", "macro", "net", "net", "src/net/net.4dm", 600, 606, "Integer", "&A:p_peers I:p_peer",
+  if (p_id == 349) test_info_set(p_info, "peer_here", "macro", "net", "net", "src/net/net.4dm", 600, 606, "Integer", "&A:p_peers I:p_peer",
                               "Integer peer_here(Attributes &p_peers, Integer p_peer)", 0, "", "record_integer_at");
-  if (p_id == 346) test_info_set(p_info, "peer_name", "macro", "net", "net", "src/net/net.4dm", 608, 614, "Text", "&A:p_peers I:p_peer",
+  if (p_id == 350) test_info_set(p_info, "peer_name", "macro", "net", "net", "src/net/net.4dm", 608, 614, "Text", "&A:p_peers I:p_peer",
                               "Text peer_name(Attributes &p_peers, Integer p_peer)", 0, "", "record_text_at");
-  if (p_id == 347) test_info_set(p_info, "peer_position", "macro", "net", "net", "src/net/net.4dm", 616, 624, "void", "&A:p_peers I:p_peer &R:p_x &R:p_y &R:p_z",
+  if (p_id == 351) test_info_set(p_info, "peer_position", "macro", "net", "net", "src/net/net.4dm", 616, 624, "void", "&A:p_peers I:p_peer &R:p_x &R:p_y &R:p_z",
                               "void peer_position(Attributes &p_peers, Integer p_peer, Real &p_x, Real &p_y, Real &p_z)", 0, "", "record_real_at");
-  if (p_id == 348) test_info_set(p_info, "peer_yaw", "macro", "net", "net", "src/net/net.4dm", 626, 632, "Real", "&A:p_peers I:p_peer",
+  if (p_id == 352) test_info_set(p_info, "peer_yaw", "macro", "net", "net", "src/net/net.4dm", 626, 632, "Real", "&A:p_peers I:p_peer",
                               "Real peer_yaw(Attributes &p_peers, Integer p_peer)", 0, "", "record_real_at");
-  if (p_id == 349) test_info_set(p_info, "peer_pitch", "macro", "net", "net", "src/net/net.4dm", 634, 640, "Real", "&A:p_peers I:p_peer",
+  if (p_id == 353) test_info_set(p_info, "peer_pitch", "macro", "net", "net", "src/net/net.4dm", 634, 640, "Real", "&A:p_peers I:p_peer",
                               "Real peer_pitch(Attributes &p_peers, Integer p_peer)", 0, "", "record_real_at");
-  if (p_id == 350) test_info_set(p_info, "peer_step", "macro", "net", "net", "src/net/net.4dm", 642, 648, "Real", "&A:p_peers I:p_peer",
+  if (p_id == 354) test_info_set(p_info, "peer_step", "macro", "net", "net", "src/net/net.4dm", 642, 648, "Real", "&A:p_peers I:p_peer",
                               "Real peer_step(Attributes &p_peers, Integer p_peer)", 0, "", "record_real_at");
-  if (p_id == 351) test_info_set(p_info, "net_players_text", "macro", "net", "net", "src/net/net.4dm", 650, 672, "Text", "&A:p_net &A:p_peers R:p_now",
+  if (p_id == 355) test_info_set(p_info, "net_players_text", "macro", "net", "net", "src/net/net.4dm", 650, 672, "Text", "&A:p_net &A:p_peers R:p_now",
                               "Text net_players_text(Attributes &p_net, Attributes &p_peers, Real p_now)", 0, "", "net_mode, peer_here, peer_name, peers_count, record_real_at, record_text");
-  if (p_id == 352) test_info_set(p_info, "player_reset", "macro", "player", "player", "src/player/player.4dm", 18, 72, "void", "&A:p_player R:p_x R:p_y R:p_z",
+  if (p_id == 356) test_info_set(p_info, "player_reset", "macro", "player", "player", "src/player/player.4dm", 18, 72, "void", "&A:p_player R:p_x R:p_y R:p_z",
                               "void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)", 0, "", "player_set_auto_walk, player_set_fall_peak, player_set_health, player_set_look, player_set_position, player_set_selected, player_set_velocity, record_clear, record_integer, record_real, record_set_integer, record_set_real, record_set_text");
-  if (p_id == 353) test_info_set(p_info, "player_position", "macro", "player", "player", "src/player/player.4dm", 74, 82, "void", "&A:p_player &R:p_x &R:p_y &R:p_z",
+  if (p_id == 357) test_info_set(p_info, "player_position", "macro", "player", "player", "src/player/player.4dm", 74, 82, "void", "&A:p_player &R:p_x &R:p_y &R:p_z",
                               "void player_position(Attributes &p_player, Real &p_x, Real &p_y, Real &p_z)", 0, "", "record_real");
-  if (p_id == 354) test_info_set(p_info, "player_set_position", "macro", "player", "player", "src/player/player.4dm", 84, 92, "void", "&A:p_player R:p_x R:p_y R:p_z",
+  if (p_id == 358) test_info_set(p_info, "player_set_position", "macro", "player", "player", "src/player/player.4dm", 84, 92, "void", "&A:p_player R:p_x R:p_y R:p_z",
                               "void player_set_position(Attributes &p_player, Real p_x, Real p_y, Real p_z)", 0, "", "record_set_real");
-  if (p_id == 355) test_info_set(p_info, "player_velocity", "macro", "player", "player", "src/player/player.4dm", 94, 102, "void", "&A:p_player &R:p_vx &R:p_vy &R:p_vz",
+  if (p_id == 359) test_info_set(p_info, "player_velocity", "macro", "player", "player", "src/player/player.4dm", 94, 102, "void", "&A:p_player &R:p_vx &R:p_vy &R:p_vz",
                               "void player_velocity(Attributes &p_player, Real &p_vx, Real &p_vy, Real &p_vz)", 0, "", "record_real");
-  if (p_id == 356) test_info_set(p_info, "player_set_velocity", "macro", "player", "player", "src/player/player.4dm", 104, 112, "void", "&A:p_player R:p_vx R:p_vy R:p_vz",
+  if (p_id == 360) test_info_set(p_info, "player_set_velocity", "macro", "player", "player", "src/player/player.4dm", 104, 112, "void", "&A:p_player R:p_vx R:p_vy R:p_vz",
                               "void player_set_velocity(Attributes &p_player, Real p_vx, Real p_vy, Real p_vz)", 0, "", "record_set_real");
-  if (p_id == 357) test_info_set(p_info, "player_look", "macro", "player", "player", "src/player/player.4dm", 114, 121, "void", "&A:p_player &R:p_yaw &R:p_pitch",
-                              "void player_look(Attributes &p_player, Real &p_yaw, Real &p_pitch)", 0, "", "record_real");
-  if (p_id == 358) test_info_set(p_info, "player_set_look", "macro", "player", "player", "src/player/player.4dm", 123, 130, "void", "&A:p_player R:p_yaw R:p_pitch",
-                              "void player_set_look(Attributes &p_player, Real p_yaw, Real p_pitch)", 0, "", "record_set_real");
-  if (p_id == 359) test_info_set(p_info, "player_eye_y", "macro", "player", "player", "src/player/player.4dm", 132, 139, "Real", "&A:p_player",
-                              "Real player_eye_y(Attributes &p_player)", 0, "", "player_crouching, record_real");
-  if (p_id == 360) test_info_set(p_info, "player_crouching", "macro", "player", "player", "src/player/player.4dm", 141, 148, "Integer", "&A:p_player",
-                              "Integer player_crouching(Attributes &p_player)", 0, "", "record_integer");
 }
 
 void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -3157,24 +3178,42 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 321) {   // net_snapshot_path
+  if (p_id == 321) {   // net_clear
+    Get_time(l_start);
+    net_clear(g_net, g_peers, g_net_inbox);
+    Get_time(l_end);
+  } else if (p_id == 322) {   // net_mode
+    Get_time(l_start);
+    l_ret_i = net_mode(g_net);
+    Get_time(l_end);
+  } else if (p_id == 323) {   // net_clean_name
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_t = net_clean_name(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 324) {   // net_session_path
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_t = net_session_path(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 325) {   // net_snapshot_path
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_t = net_snapshot_path(l_t1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 322) {   // net_log_name
+  } else if (p_id == 326) {   // net_log_name
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_t = net_log_name(l_t1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 323) {   // net_ensure_folder
+  } else if (p_id == 327) {   // net_ensure_folder
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = net_ensure_folder(l_t1);
     Get_time(l_end);
-  } else if (p_id == 324) {   // net_write_session
+  } else if (p_id == 328) {   // net_write_session
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     l_t3 = record_text(p_in, ATTR_TEST_T3);
@@ -3183,7 +3222,7 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = net_write_session(l_t1, l_t2, l_t3, l_i1, l_t4);
     Get_time(l_end);
-  } else if (p_id == 325) {   // net_read_session
+  } else if (p_id == 329) {   // net_read_session
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     l_t3 = record_text(p_in, ATTR_TEST_T3);
@@ -3198,7 +3237,7 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
     record_set_text(p_out, ATTR_TEST_T4, l_t4);
     record_set_text(p_out, ATTR_TEST_T5, l_t5);
-  } else if (p_id == 326) {   // net_start
+  } else if (p_id == 330) {   // net_start
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
@@ -3209,112 +3248,112 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     net_start(g_net, g_peers, g_net_inbox, l_i1, l_t1, l_t2, l_t3, l_t4, l_t5, l_r1);
     Get_time(l_end);
-  } else if (p_id == 327) {   // net_queue
+  } else if (p_id == 331) {   // net_queue
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     net_queue(g_net, l_t1);
     Get_time(l_end);
-  } else if (p_id == 328) {   // net_flush
+  } else if (p_id == 332) {   // net_flush
     Get_time(l_start);
     l_ret_i = net_flush(g_net);
     Get_time(l_end);
-  } else if (p_id == 329) {   // net_leave
+  } else if (p_id == 333) {   // net_leave
     Get_time(l_start);
     net_leave(g_net);
     Get_time(l_end);
-  } else if (p_id == 330) {   // net_say
+  } else if (p_id == 334) {   // net_say
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     net_say(g_net, l_t1);
     Get_time(l_end);
-  } else if (p_id == 331) {   // net_send_state
+  } else if (p_id == 335) {   // net_send_state
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     net_send_state(g_net, g_player, g_info, l_r1);
     Get_time(l_end);
-  } else if (p_id == 332) {   // net_on_event
+  } else if (p_id == 336) {   // net_on_event
     Get_time(l_start);
     net_on_event(g_event, g_net);
     Get_time(l_end);
-  } else if (p_id == 333) {   // net_find_peer
+  } else if (p_id == 337) {   // net_find_peer
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = net_find_peer(g_peers, l_t1);
     Get_time(l_end);
-  } else if (p_id == 334) {   // net_add_peer
+  } else if (p_id == 338) {   // net_add_peer
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = net_add_peer(g_peers, l_t1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 335) {   // net_scan
+  } else if (p_id == 339) {   // net_scan
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     net_scan(g_net, g_peers, l_r1);
     Get_time(l_end);
-  } else if (p_id == 336) {   // net_inbox_add
+  } else if (p_id == 340) {   // net_inbox_add
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     net_inbox_add(g_net_inbox, l_i1, l_t1);
     Get_time(l_end);
-  } else if (p_id == 337) {   // net_read_peer
+  } else if (p_id == 341) {   // net_read_peer
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = net_read_peer(g_net, g_peers, g_net_inbox, l_i1);
     Get_time(l_end);
-  } else if (p_id == 338) {   // net_poll
+  } else if (p_id == 342) {   // net_poll
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     net_poll(g_net, g_peers, g_net_inbox, l_r1);
     Get_time(l_end);
-  } else if (p_id == 339) {   // net_word_real
+  } else if (p_id == 343) {   // net_word_real
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = net_word_real(g_test_words, l_i1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 340) {   // net_word_integer
+  } else if (p_id == 344) {   // net_word_integer
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = net_word_integer(g_test_words, l_i1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 341) {   // net_rest_of_line
+  } else if (p_id == 345) {   // net_rest_of_line
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = net_rest_of_line(l_t1);
     Get_time(l_end);
-  } else if (p_id == 342) {   // net_apply_line
+  } else if (p_id == 346) {   // net_apply_line
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     net_apply_line(g_net, g_peers, l_i1, l_t1, g_info, g_hud, g_events, l_r1);
     Get_time(l_end);
-  } else if (p_id == 343) {   // net_apply
+  } else if (p_id == 347) {   // net_apply
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     net_apply(g_net, g_peers, g_net_inbox, g_info, g_hud, g_events, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 344) {   // peers_count
+  } else if (p_id == 348) {   // peers_count
     Get_time(l_start);
     l_ret_i = peers_count(g_peers);
     Get_time(l_end);
-  } else if (p_id == 345) {   // peer_here
+  } else if (p_id == 349) {   // peer_here
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = peer_here(g_peers, l_i1);
     Get_time(l_end);
-  } else if (p_id == 346) {   // peer_name
+  } else if (p_id == 350) {   // peer_name
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = peer_name(g_peers, l_i1);
     Get_time(l_end);
-  } else if (p_id == 347) {   // peer_position
+  } else if (p_id == 351) {   // peer_position
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -3325,34 +3364,34 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 348) {   // peer_yaw
+  } else if (p_id == 352) {   // peer_yaw
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = peer_yaw(g_peers, l_i1);
     Get_time(l_end);
-  } else if (p_id == 349) {   // peer_pitch
+  } else if (p_id == 353) {   // peer_pitch
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = peer_pitch(g_peers, l_i1);
     Get_time(l_end);
-  } else if (p_id == 350) {   // peer_step
+  } else if (p_id == 354) {   // peer_step
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = peer_step(g_peers, l_i1);
     Get_time(l_end);
-  } else if (p_id == 351) {   // net_players_text
+  } else if (p_id == 355) {   // net_players_text
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_t = net_players_text(g_net, g_peers, l_r1);
     Get_time(l_end);
-  } else if (p_id == 352) {   // player_reset
+  } else if (p_id == 356) {   // player_reset
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     player_reset(g_player, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 353) {   // player_position
+  } else if (p_id == 357) {   // player_position
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -3362,14 +3401,14 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 354) {   // player_set_position
+  } else if (p_id == 358) {   // player_set_position
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     player_set_position(g_player, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 355) {   // player_velocity
+  } else if (p_id == 359) {   // player_velocity
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -3379,34 +3418,12 @@ void test_registry_call_9(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 356) {   // player_set_velocity
+  } else if (p_id == 360) {   // player_set_velocity
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     player_set_velocity(g_player, l_r1, l_r2, l_r3);
-    Get_time(l_end);
-  } else if (p_id == 357) {   // player_look
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    player_look(g_player, l_r1, l_r2);
-    Get_time(l_end);
-    record_set_real(p_out, ATTR_TEST_R1, l_r1);
-    record_set_real(p_out, ATTR_TEST_R2, l_r2);
-  } else if (p_id == 358) {   // player_set_look
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    player_set_look(g_player, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 359) {   // player_eye_y
-    Get_time(l_start);
-    l_ret_r = player_eye_y(g_player);
-    Get_time(l_end);
-  } else if (p_id == 360) {   // player_crouching
-    Get_time(l_start);
-    l_ret_i = player_crouching(g_player);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -3420,86 +3437,86 @@ void test_registry_info_10(Integer p_id, Attributes &p_info)
 // What functions 361 to 400 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 361) test_info_set(p_info, "player_look_direction", "macro", "player", "player", "src/player/player.4dm", 150, 162, "void", "&A:p_player &R:p_dir_x &R:p_dir_y &R:p_dir_z",
+  if (p_id == 361) test_info_set(p_info, "player_look", "macro", "player", "player", "src/player/player.4dm", 114, 121, "void", "&A:p_player &R:p_yaw &R:p_pitch",
+                              "void player_look(Attributes &p_player, Real &p_yaw, Real &p_pitch)", 0, "", "record_real");
+  if (p_id == 362) test_info_set(p_info, "player_set_look", "macro", "player", "player", "src/player/player.4dm", 123, 130, "void", "&A:p_player R:p_yaw R:p_pitch",
+                              "void player_set_look(Attributes &p_player, Real p_yaw, Real p_pitch)", 0, "", "record_set_real");
+  if (p_id == 363) test_info_set(p_info, "player_eye_y", "macro", "player", "player", "src/player/player.4dm", 132, 139, "Real", "&A:p_player",
+                              "Real player_eye_y(Attributes &p_player)", 0, "", "player_crouching, record_real");
+  if (p_id == 364) test_info_set(p_info, "player_crouching", "macro", "player", "player", "src/player/player.4dm", 141, 148, "Integer", "&A:p_player",
+                              "Integer player_crouching(Attributes &p_player)", 0, "", "record_integer");
+  if (p_id == 365) test_info_set(p_info, "player_look_direction", "macro", "player", "player", "src/player/player.4dm", 150, 162, "void", "&A:p_player &R:p_dir_x &R:p_dir_y &R:p_dir_z",
                               "void player_look_direction(Attributes &p_player, Real &p_dir_x, Real &p_dir_y, Real &p_dir_z)", 0, "", "player_look");
-  if (p_id == 362) test_info_set(p_info, "player_health", "macro", "player", "player", "src/player/player.4dm", 164, 170, "Integer", "&A:p_player",
+  if (p_id == 366) test_info_set(p_info, "player_health", "macro", "player", "player", "src/player/player.4dm", 164, 170, "Integer", "&A:p_player",
                               "Integer player_health(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 363) test_info_set(p_info, "player_set_health", "macro", "player", "player", "src/player/player.4dm", 172, 178, "void", "&A:p_player I:p_health",
+  if (p_id == 367) test_info_set(p_info, "player_set_health", "macro", "player", "player", "src/player/player.4dm", 172, 178, "void", "&A:p_player I:p_health",
                               "void player_set_health(Attributes &p_player, Integer p_health)", 0, "", "clamp_integer, record_set_integer");
-  if (p_id == 364) test_info_set(p_info, "player_is_dead", "macro", "player", "player", "src/player/player.4dm", 180, 186, "Integer", "&A:p_player",
+  if (p_id == 368) test_info_set(p_info, "player_is_dead", "macro", "player", "player", "src/player/player.4dm", 180, 186, "Integer", "&A:p_player",
                               "Integer player_is_dead(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 365) test_info_set(p_info, "player_on_ground", "macro", "player", "player", "src/player/player.4dm", 188, 194, "Integer", "&A:p_player",
+  if (p_id == 369) test_info_set(p_info, "player_on_ground", "macro", "player", "player", "src/player/player.4dm", 188, 194, "Integer", "&A:p_player",
                               "Integer player_on_ground(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 366) test_info_set(p_info, "player_in_water", "macro", "player", "player", "src/player/player.4dm", 196, 202, "Integer", "&A:p_player",
+  if (p_id == 370) test_info_set(p_info, "player_in_water", "macro", "player", "player", "src/player/player.4dm", 196, 202, "Integer", "&A:p_player",
                               "Integer player_in_water(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 367) test_info_set(p_info, "player_eye_in_water", "macro", "player", "player", "src/player/player.4dm", 204, 210, "Integer", "&A:p_player",
+  if (p_id == 371) test_info_set(p_info, "player_eye_in_water", "macro", "player", "player", "src/player/player.4dm", 204, 210, "Integer", "&A:p_player",
                               "Integer player_eye_in_water(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 368) test_info_set(p_info, "player_hurt_time", "macro", "player", "player", "src/player/player.4dm", 212, 218, "Real", "&A:p_player",
+  if (p_id == 372) test_info_set(p_info, "player_hurt_time", "macro", "player", "player", "src/player/player.4dm", 212, 218, "Real", "&A:p_player",
                               "Real player_hurt_time(Attributes &p_player)", 0, "", "record_real");
-  if (p_id == 369) test_info_set(p_info, "player_swing_time", "macro", "player", "player", "src/player/player.4dm", 220, 226, "Real", "&A:p_player",
+  if (p_id == 373) test_info_set(p_info, "player_swing_time", "macro", "player", "player", "src/player/player.4dm", 220, 226, "Real", "&A:p_player",
                               "Real player_swing_time(Attributes &p_player)", 0, "", "record_real");
-  if (p_id == 370) test_info_set(p_info, "player_bob", "macro", "player", "player", "src/player/player.4dm", 228, 234, "Real", "&A:p_player",
+  if (p_id == 374) test_info_set(p_info, "player_bob", "macro", "player", "player", "src/player/player.4dm", 228, 234, "Real", "&A:p_player",
                               "Real player_bob(Attributes &p_player)", 0, "", "record_real");
-  if (p_id == 371) test_info_set(p_info, "player_fall_peak", "macro", "player", "player", "src/player/player.4dm", 236, 242, "Real", "&A:p_player",
+  if (p_id == 375) test_info_set(p_info, "player_fall_peak", "macro", "player", "player", "src/player/player.4dm", 236, 242, "Real", "&A:p_player",
                               "Real player_fall_peak(Attributes &p_player)", 0, "", "record_real");
-  if (p_id == 372) test_info_set(p_info, "player_set_fall_peak", "macro", "player", "player", "src/player/player.4dm", 244, 250, "void", "&A:p_player R:p_peak",
+  if (p_id == 376) test_info_set(p_info, "player_set_fall_peak", "macro", "player", "player", "src/player/player.4dm", 244, 250, "void", "&A:p_player R:p_peak",
                               "void player_set_fall_peak(Attributes &p_player, Real p_peak)", 0, "", "record_set_real");
-  if (p_id == 373) test_info_set(p_info, "player_selected", "macro", "player", "player", "src/player/player.4dm", 252, 258, "Integer", "&A:p_player",
+  if (p_id == 377) test_info_set(p_info, "player_selected", "macro", "player", "player", "src/player/player.4dm", 252, 258, "Integer", "&A:p_player",
                               "Integer player_selected(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 374) test_info_set(p_info, "player_set_selected", "macro", "player", "player", "src/player/player.4dm", 260, 266, "void", "&A:p_player I:p_slot",
+  if (p_id == 378) test_info_set(p_info, "player_set_selected", "macro", "player", "player", "src/player/player.4dm", 260, 266, "void", "&A:p_player I:p_slot",
                               "void player_set_selected(Attributes &p_player, Integer p_slot)", 0, "", "clamp_integer, record_set_integer");
-  if (p_id == 375) test_info_set(p_info, "player_auto_walk", "macro", "player", "player", "src/player/player.4dm", 268, 274, "Integer", "&A:p_player",
+  if (p_id == 379) test_info_set(p_info, "player_auto_walk", "macro", "player", "player", "src/player/player.4dm", 268, 274, "Integer", "&A:p_player",
                               "Integer player_auto_walk(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 376) test_info_set(p_info, "player_set_auto_walk", "macro", "player", "player", "src/player/player.4dm", 276, 282, "void", "&A:p_player I:p_on",
+  if (p_id == 380) test_info_set(p_info, "player_set_auto_walk", "macro", "player", "player", "src/player/player.4dm", 276, 282, "void", "&A:p_player I:p_on",
                               "void player_set_auto_walk(Attributes &p_player, Integer p_on)", 0, "", "record_set_integer");
-  if (p_id == 377) test_info_set(p_info, "player_held_item", "macro", "player", "player", "src/player/player.4dm", 284, 290, "Integer", "&A:p_player &A:p_inventory",
+  if (p_id == 381) test_info_set(p_info, "player_held_item", "macro", "player", "player", "src/player/player.4dm", 284, 290, "Integer", "&A:p_player &A:p_inventory",
                               "Integer player_held_item(Attributes &p_player, Attributes &p_inventory)", 0, "", "player_selected, slot_item");
-  if (p_id == 378) test_info_set(p_info, "player_target_kind", "macro", "player", "player", "src/player/player.4dm", 292, 298, "Integer", "&A:p_player",
+  if (p_id == 382) test_info_set(p_info, "player_target_kind", "macro", "player", "player", "src/player/player.4dm", 292, 298, "Integer", "&A:p_player",
                               "Integer player_target_kind(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 379) test_info_set(p_info, "player_target_cell", "macro", "player", "player", "src/player/player.4dm", 300, 308, "void", "&A:p_player &I:p_x &I:p_y &I:p_z",
+  if (p_id == 383) test_info_set(p_info, "player_target_cell", "macro", "player", "player", "src/player/player.4dm", 300, 308, "void", "&A:p_player &I:p_x &I:p_y &I:p_z",
                               "void player_target_cell(Attributes &p_player, Integer &p_x, Integer &p_y, Integer &p_z)", 0, "", "record_integer");
-  if (p_id == 380) test_info_set(p_info, "player_target_normal", "macro", "player", "player", "src/player/player.4dm", 310, 318, "void", "&A:p_player &I:p_x &I:p_y &I:p_z",
+  if (p_id == 384) test_info_set(p_info, "player_target_normal", "macro", "player", "player", "src/player/player.4dm", 310, 318, "void", "&A:p_player &I:p_x &I:p_y &I:p_z",
                               "void player_target_normal(Attributes &p_player, Integer &p_x, Integer &p_y, Integer &p_z)", 0, "", "record_integer");
-  if (p_id == 381) test_info_set(p_info, "player_target_cow", "macro", "player", "player", "src/player/player.4dm", 320, 326, "Integer", "&A:p_player",
+  if (p_id == 385) test_info_set(p_info, "player_target_cow", "macro", "player", "player", "src/player/player.4dm", 320, 326, "Integer", "&A:p_player",
                               "Integer player_target_cow(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 382) test_info_set(p_info, "player_break_stage", "macro", "player", "player", "src/player/player.4dm", 328, 342, "Integer", "&A:p_player R:p_now",
+  if (p_id == 386) test_info_set(p_info, "player_break_stage", "macro", "player", "player", "src/player/player.4dm", 328, 342, "Integer", "&A:p_player R:p_now",
                               "Integer player_break_stage(Attributes &p_player, Real p_now)", 0, "", "clamp_integer, floor_integer, record_integer, record_real");
-  if (p_id == 383) test_info_set(p_info, "player_turn", "macro", "player", "player", "src/player/player.4dm", 346, 356, "void", "&A:p_player R:p_yaw_change R:p_pitch_change",
+  if (p_id == 387) test_info_set(p_info, "player_turn", "macro", "player", "player", "src/player/player.4dm", 346, 356, "void", "&A:p_player R:p_yaw_change R:p_pitch_change",
                               "void player_turn(Attributes &p_player, Real p_yaw_change, Real p_pitch_change)", 0, "", "clamp_real, player_look, player_set_look, wrap_angle");
-  if (p_id == 384) test_info_set(p_info, "player_on_event", "macro", "player", "player", "src/player/player.4dm", 358, 374, "void", "&A:p_event &A:p_player &A:p_events",
+  if (p_id == 388) test_info_set(p_info, "player_on_event", "macro", "player", "player", "src/player/player.4dm", 358, 374, "void", "&A:p_event &A:p_player &A:p_events",
                               "void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_events)", 0, "", "event_integer, event_real, event_type, player_damage, player_is_dead, player_set_velocity, player_velocity");
-  if (p_id == 385) test_info_set(p_info, "player_flying", "macro", "player", "player", "src/player/player.4dm", 376, 384, "Integer", "&A:p_player",
+  if (p_id == 389) test_info_set(p_info, "player_camera", "macro", "player", "player", "src/player/player.4dm", 376, 383, "Integer", "&A:p_player",
+                              "Integer player_camera(Attributes &p_player)", 0, "", "record_integer");
+  if (p_id == 390) test_info_set(p_info, "player_next_camera", "macro", "player", "player", "src/player/player.4dm", 385, 391, "void", "&A:p_player",
+                              "void player_next_camera(Attributes &p_player)", 0, "", "player_camera, positive_mod, record_set_integer");
+  if (p_id == 391) test_info_set(p_info, "player_flying", "macro", "player", "player", "src/player/player.4dm", 393, 401, "Integer", "&A:p_player",
                               "Integer player_flying(Attributes &p_player)", 0, "", "player_spectator, record_integer");
-  if (p_id == 386) test_info_set(p_info, "player_set_flying", "macro", "player", "player", "src/player/player.4dm", 386, 398, "void", "&A:p_player I:p_flying",
+  if (p_id == 392) test_info_set(p_info, "player_set_flying", "macro", "player", "player", "src/player/player.4dm", 403, 415, "void", "&A:p_player I:p_flying",
                               "void player_set_flying(Attributes &p_player, Integer p_flying)", 0, "", "player_position, player_set_fall_peak, record_set_integer");
-  if (p_id == 387) test_info_set(p_info, "player_game_mode", "macro", "player", "player", "src/player/player.4dm", 400, 409, "Integer", "&A:p_player",
+  if (p_id == 393) test_info_set(p_info, "player_game_mode", "macro", "player", "player", "src/player/player.4dm", 417, 426, "Integer", "&A:p_player",
                               "Integer player_game_mode(Attributes &p_player)", 0, "", "record_integer");
-  if (p_id == 388) test_info_set(p_info, "player_set_game_mode", "macro", "player", "player", "src/player/player.4dm", 411, 432, "void", "&A:p_player I:p_mode",
+  if (p_id == 394) test_info_set(p_info, "player_set_game_mode", "macro", "player", "player", "src/player/player.4dm", 428, 449, "void", "&A:p_player I:p_mode",
                               "void player_set_game_mode(Attributes &p_player, Integer p_mode)", 0, "", "player_game_mode, player_set_flying, player_set_health, record_set_integer");
-  if (p_id == 389) test_info_set(p_info, "player_creative", "macro", "player", "player", "src/player/player.4dm", 434, 441, "Integer", "&A:p_player",
+  if (p_id == 395) test_info_set(p_info, "player_creative", "macro", "player", "player", "src/player/player.4dm", 451, 458, "Integer", "&A:p_player",
                               "Integer player_creative(Attributes &p_player)", 0, "", "player_game_mode");
-  if (p_id == 390) test_info_set(p_info, "player_spectator", "macro", "player", "player", "src/player/player.4dm", 443, 450, "Integer", "&A:p_player",
+  if (p_id == 396) test_info_set(p_info, "player_spectator", "macro", "player", "player", "src/player/player.4dm", 460, 467, "Integer", "&A:p_player",
                               "Integer player_spectator(Attributes &p_player)", 0, "", "player_game_mode");
-  if (p_id == 391) test_info_set(p_info, "player_survival", "macro", "player", "player", "src/player/player.4dm", 452, 458, "Integer", "&A:p_player",
+  if (p_id == 397) test_info_set(p_info, "player_survival", "macro", "player", "player", "src/player/player.4dm", 469, 475, "Integer", "&A:p_player",
                               "Integer player_survival(Attributes &p_player)", 0, "", "player_game_mode");
-  if (p_id == 392) test_info_set(p_info, "player_game_mode_name", "macro", "player", "player", "src/player/player.4dm", 460, 468, "Text", "I:p_mode",
+  if (p_id == 398) test_info_set(p_info, "player_game_mode_name", "macro", "player", "player", "src/player/player.4dm", 477, 485, "Text", "I:p_mode",
                               "Text player_game_mode_name(Integer p_mode)", 0, "", "");
-  if (p_id == 393) test_info_set(p_info, "player_pick_block", "macro", "player", "player", "src/player/player.4dm", 470, 512, "Integer", "&A:p_player &A:p_inventory &T:p_report",
+  if (p_id == 399) test_info_set(p_info, "player_pick_block", "macro", "player", "player", "src/player/player.4dm", 487, 529, "Integer", "&A:p_player &A:p_inventory &T:p_report",
                               "Integer player_pick_block(Attributes &p_player, Attributes &p_inventory, Text &p_report)", 0, "", "block_pick_item, item_max_stack, item_name, player_creative, player_selected, player_set_selected, player_target_cell, player_target_kind, slot_item, slot_set, slot_swap, world_get_block");
-  if (p_id == 394) test_info_set(p_info, "player_key_pressed", "macro", "player", "player", "src/player/player.4dm", 514, 570, "void", "&A:p_player T:p_key R:p_now",
+  if (p_id == 400) test_info_set(p_info, "player_key_pressed", "macro", "player", "player", "src/player/player.4dm", 531, 587, "void", "&A:p_player T:p_key R:p_now",
                               "void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)", 0, "", "max_real, player_creative, player_flying, player_set_auto_walk, player_set_flying, record_integer, record_real, record_set_integer, record_set_real, record_set_text, record_text");
-  if (p_id == 395) test_info_set(p_info, "player_shift_pressed", "macro", "player", "player", "src/player/player.4dm", 572, 584, "void", "&A:p_player R:p_now",
-                              "void player_shift_pressed(Attributes &p_player, Real p_now)", 0, "", "player_flying, record_set_real");
-  if (p_id == 396) test_info_set(p_info, "player_key_active", "macro", "player", "player", "src/player/player.4dm", 586, 593, "Integer", "&A:p_player T:p_key R:p_now",
-                              "Integer player_key_active(Attributes &p_player, Text p_key, Real p_now)", 0, "", "record_real, record_text");
-  if (p_id == 397) test_info_set(p_info, "player_damage", "macro", "player", "player", "src/player/player.4dm", 595, 614, "void", "&A:p_player &A:p_events I:p_amount",
-                              "void player_damage(Attributes &p_player, Attributes &p_events, Integer p_amount)", 0, "", "emit_item_event, emit_simple_event, player_health, player_is_dead, player_set_health, player_survival, record_set_integer, record_set_real");
-  if (p_id == 398) test_info_set(p_info, "player_update", "macro", "player", "player", "src/player/player.4dm", 616, 854, "void", "&A:p_player &A:p_cows &A:p_events I:p_auto_jump R:p_dt R:p_now",
-                              "void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_auto_jump, Real p_dt, Real p_now)", 0, "", "clamp_real, floor_integer, max_real, min_real, physics_box_collides, physics_box_in_water, physics_move_box, player_auto_walk, player_bob, player_damage, player_fall_peak, player_flying, player_health, player_hurt_time, player_in_water, player_is_dead, player_key_active, player_look, player_on_ground, player_position, player_set_fall_peak, player_set_health, player_set_position, player_set_velocity, player_spectator, player_swing_time, player_update_target, player_velocity, record_integer, record_real, record_set_integer, record_set_real, world_get_block");
-  if (p_id == 399) test_info_set(p_info, "player_update_target", "macro", "player", "player", "src/player/player.4dm", 856, 906, "void", "&A:p_player &A:p_cows",
-                              "void player_update_target(Attributes &p_player, Attributes &p_cows)", 0, "", "cows_ray_hit, physics_raycast_blocks, player_eye_y, player_look_direction, player_spectator, record_real, record_set_integer");
-  if (p_id == 400) test_info_set(p_info, "player_overlaps_cell", "macro", "player", "player", "src/player/player.4dm", 908, 922, "Integer", "&A:p_player I:p_x I:p_y I:p_z",
-                              "Integer player_overlaps_cell(Attributes &p_player, Integer p_x, Integer p_y, Integer p_z)", 0, "", "player_position");
 }
 
 void test_registry_call_10(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -3544,7 +3561,29 @@ void test_registry_call_10(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 361) {   // player_look_direction
+  if (p_id == 361) {   // player_look
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    player_look(g_player, l_r1, l_r2);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R1, l_r1);
+    record_set_real(p_out, ATTR_TEST_R2, l_r2);
+  } else if (p_id == 362) {   // player_set_look
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    player_set_look(g_player, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 363) {   // player_eye_y
+    Get_time(l_start);
+    l_ret_r = player_eye_y(g_player);
+    Get_time(l_end);
+  } else if (p_id == 364) {   // player_crouching
+    Get_time(l_start);
+    l_ret_i = player_crouching(g_player);
+    Get_time(l_end);
+  } else if (p_id == 365) {   // player_look_direction
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -3554,79 +3593,79 @@ void test_registry_call_10(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 362) {   // player_health
+  } else if (p_id == 366) {   // player_health
     Get_time(l_start);
     l_ret_i = player_health(g_player);
     Get_time(l_end);
-  } else if (p_id == 363) {   // player_set_health
+  } else if (p_id == 367) {   // player_set_health
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     player_set_health(g_player, l_i1);
     Get_time(l_end);
-  } else if (p_id == 364) {   // player_is_dead
+  } else if (p_id == 368) {   // player_is_dead
     Get_time(l_start);
     l_ret_i = player_is_dead(g_player);
     Get_time(l_end);
-  } else if (p_id == 365) {   // player_on_ground
+  } else if (p_id == 369) {   // player_on_ground
     Get_time(l_start);
     l_ret_i = player_on_ground(g_player);
     Get_time(l_end);
-  } else if (p_id == 366) {   // player_in_water
+  } else if (p_id == 370) {   // player_in_water
     Get_time(l_start);
     l_ret_i = player_in_water(g_player);
     Get_time(l_end);
-  } else if (p_id == 367) {   // player_eye_in_water
+  } else if (p_id == 371) {   // player_eye_in_water
     Get_time(l_start);
     l_ret_i = player_eye_in_water(g_player);
     Get_time(l_end);
-  } else if (p_id == 368) {   // player_hurt_time
+  } else if (p_id == 372) {   // player_hurt_time
     Get_time(l_start);
     l_ret_r = player_hurt_time(g_player);
     Get_time(l_end);
-  } else if (p_id == 369) {   // player_swing_time
+  } else if (p_id == 373) {   // player_swing_time
     Get_time(l_start);
     l_ret_r = player_swing_time(g_player);
     Get_time(l_end);
-  } else if (p_id == 370) {   // player_bob
+  } else if (p_id == 374) {   // player_bob
     Get_time(l_start);
     l_ret_r = player_bob(g_player);
     Get_time(l_end);
-  } else if (p_id == 371) {   // player_fall_peak
+  } else if (p_id == 375) {   // player_fall_peak
     Get_time(l_start);
     l_ret_r = player_fall_peak(g_player);
     Get_time(l_end);
-  } else if (p_id == 372) {   // player_set_fall_peak
+  } else if (p_id == 376) {   // player_set_fall_peak
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     player_set_fall_peak(g_player, l_r1);
     Get_time(l_end);
-  } else if (p_id == 373) {   // player_selected
+  } else if (p_id == 377) {   // player_selected
     Get_time(l_start);
     l_ret_i = player_selected(g_player);
     Get_time(l_end);
-  } else if (p_id == 374) {   // player_set_selected
+  } else if (p_id == 378) {   // player_set_selected
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     player_set_selected(g_player, l_i1);
     Get_time(l_end);
-  } else if (p_id == 375) {   // player_auto_walk
+  } else if (p_id == 379) {   // player_auto_walk
     Get_time(l_start);
     l_ret_i = player_auto_walk(g_player);
     Get_time(l_end);
-  } else if (p_id == 376) {   // player_set_auto_walk
+  } else if (p_id == 380) {   // player_set_auto_walk
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     player_set_auto_walk(g_player, l_i1);
     Get_time(l_end);
-  } else if (p_id == 377) {   // player_held_item
+  } else if (p_id == 381) {   // player_held_item
     Get_time(l_start);
     l_ret_i = player_held_item(g_player, g_inventory);
     Get_time(l_end);
-  } else if (p_id == 378) {   // player_target_kind
+  } else if (p_id == 382) {   // player_target_kind
     Get_time(l_start);
     l_ret_i = player_target_kind(g_player);
     Get_time(l_end);
-  } else if (p_id == 379) {   // player_target_cell
+  } else if (p_id == 383) {   // player_target_cell
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -3636,7 +3675,7 @@ void test_registry_call_10(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
     record_set_integer(p_out, ATTR_TEST_I2, l_i2);
     record_set_integer(p_out, ATTR_TEST_I3, l_i3);
-  } else if (p_id == 380) {   // player_target_normal
+  } else if (p_id == 384) {   // player_target_normal
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -3646,105 +3685,79 @@ void test_registry_call_10(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
     record_set_integer(p_out, ATTR_TEST_I2, l_i2);
     record_set_integer(p_out, ATTR_TEST_I3, l_i3);
-  } else if (p_id == 381) {   // player_target_cow
+  } else if (p_id == 385) {   // player_target_cow
     Get_time(l_start);
     l_ret_i = player_target_cow(g_player);
     Get_time(l_end);
-  } else if (p_id == 382) {   // player_break_stage
+  } else if (p_id == 386) {   // player_break_stage
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = player_break_stage(g_player, l_r1);
     Get_time(l_end);
-  } else if (p_id == 383) {   // player_turn
+  } else if (p_id == 387) {   // player_turn
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     player_turn(g_player, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 384) {   // player_on_event
+  } else if (p_id == 388) {   // player_on_event
     Get_time(l_start);
     player_on_event(g_event, g_player, g_events);
     Get_time(l_end);
-  } else if (p_id == 385) {   // player_flying
+  } else if (p_id == 389) {   // player_camera
+    Get_time(l_start);
+    l_ret_i = player_camera(g_player);
+    Get_time(l_end);
+  } else if (p_id == 390) {   // player_next_camera
+    Get_time(l_start);
+    player_next_camera(g_player);
+    Get_time(l_end);
+  } else if (p_id == 391) {   // player_flying
     Get_time(l_start);
     l_ret_i = player_flying(g_player);
     Get_time(l_end);
-  } else if (p_id == 386) {   // player_set_flying
+  } else if (p_id == 392) {   // player_set_flying
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     player_set_flying(g_player, l_i1);
     Get_time(l_end);
-  } else if (p_id == 387) {   // player_game_mode
+  } else if (p_id == 393) {   // player_game_mode
     Get_time(l_start);
     l_ret_i = player_game_mode(g_player);
     Get_time(l_end);
-  } else if (p_id == 388) {   // player_set_game_mode
+  } else if (p_id == 394) {   // player_set_game_mode
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     player_set_game_mode(g_player, l_i1);
     Get_time(l_end);
-  } else if (p_id == 389) {   // player_creative
+  } else if (p_id == 395) {   // player_creative
     Get_time(l_start);
     l_ret_i = player_creative(g_player);
     Get_time(l_end);
-  } else if (p_id == 390) {   // player_spectator
+  } else if (p_id == 396) {   // player_spectator
     Get_time(l_start);
     l_ret_i = player_spectator(g_player);
     Get_time(l_end);
-  } else if (p_id == 391) {   // player_survival
+  } else if (p_id == 397) {   // player_survival
     Get_time(l_start);
     l_ret_i = player_survival(g_player);
     Get_time(l_end);
-  } else if (p_id == 392) {   // player_game_mode_name
+  } else if (p_id == 398) {   // player_game_mode_name
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = player_game_mode_name(l_i1);
     Get_time(l_end);
-  } else if (p_id == 393) {   // player_pick_block
+  } else if (p_id == 399) {   // player_pick_block
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = player_pick_block(g_player, g_inventory, l_t1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T1, l_t1);
-  } else if (p_id == 394) {   // player_key_pressed
+  } else if (p_id == 400) {   // player_key_pressed
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     player_key_pressed(g_player, l_t1, l_r1);
-    Get_time(l_end);
-  } else if (p_id == 395) {   // player_shift_pressed
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    Get_time(l_start);
-    player_shift_pressed(g_player, l_r1);
-    Get_time(l_end);
-  } else if (p_id == 396) {   // player_key_active
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    Get_time(l_start);
-    l_ret_i = player_key_active(g_player, l_t1, l_r1);
-    Get_time(l_end);
-  } else if (p_id == 397) {   // player_damage
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    player_damage(g_player, g_events, l_i1);
-    Get_time(l_end);
-  } else if (p_id == 398) {   // player_update
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    player_update(g_player, g_cows, g_events, l_i1, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 399) {   // player_update_target
-    Get_time(l_start);
-    player_update_target(g_player, g_cows);
-    Get_time(l_end);
-  } else if (p_id == 400) {   // player_overlaps_cell
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    l_ret_i = player_overlaps_cell(g_player, l_i1, l_i2, l_i3);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -3758,86 +3771,86 @@ void test_registry_info_11(Integer p_id, Attributes &p_info)
 // What functions 401 to 440 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 401) test_info_set(p_info, "player_wear_tool", "macro", "player", "player", "src/player/player.4dm", 924, 935, "void", "&A:p_player &A:p_inventory &A:p_events",
+  if (p_id == 401) test_info_set(p_info, "player_shift_pressed", "macro", "player", "player", "src/player/player.4dm", 589, 601, "void", "&A:p_player R:p_now",
+                              "void player_shift_pressed(Attributes &p_player, Real p_now)", 0, "", "player_flying, record_set_real");
+  if (p_id == 402) test_info_set(p_info, "player_key_active", "macro", "player", "player", "src/player/player.4dm", 603, 610, "Integer", "&A:p_player T:p_key R:p_now",
+                              "Integer player_key_active(Attributes &p_player, Text p_key, Real p_now)", 0, "", "record_real, record_text");
+  if (p_id == 403) test_info_set(p_info, "player_damage", "macro", "player", "player", "src/player/player.4dm", 612, 631, "void", "&A:p_player &A:p_events I:p_amount",
+                              "void player_damage(Attributes &p_player, Attributes &p_events, Integer p_amount)", 0, "", "emit_item_event, emit_simple_event, player_health, player_is_dead, player_set_health, player_survival, record_set_integer, record_set_real");
+  if (p_id == 404) test_info_set(p_info, "player_update", "macro", "player", "player", "src/player/player.4dm", 633, 876, "void", "&A:p_player &A:p_cows &A:p_events I:p_auto_jump R:p_dt R:p_now",
+                              "void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_auto_jump, Real p_dt, Real p_now)", 0, "", "clamp_real, floor_integer, max_real, min_real, physics_box_collides, physics_box_in_water, physics_move_box, player_auto_walk, player_bob, player_damage, player_fall_peak, player_flying, player_health, player_hurt_time, player_in_water, player_is_dead, player_key_active, player_look, player_on_ground, player_position, player_set_fall_peak, player_set_flying, player_set_health, player_set_position, player_set_velocity, player_spectator, player_swing_time, player_update_target, player_velocity, record_integer, record_real, record_set_integer, record_set_real, world_get_block");
+  if (p_id == 405) test_info_set(p_info, "player_update_target", "macro", "player", "player", "src/player/player.4dm", 878, 928, "void", "&A:p_player &A:p_cows",
+                              "void player_update_target(Attributes &p_player, Attributes &p_cows)", 0, "", "cows_ray_hit, physics_raycast_blocks, player_eye_y, player_look_direction, player_spectator, record_real, record_set_integer");
+  if (p_id == 406) test_info_set(p_info, "player_overlaps_cell", "macro", "player", "player", "src/player/player.4dm", 930, 944, "Integer", "&A:p_player I:p_x I:p_y I:p_z",
+                              "Integer player_overlaps_cell(Attributes &p_player, Integer p_x, Integer p_y, Integer p_z)", 0, "", "player_position");
+  if (p_id == 407) test_info_set(p_info, "player_wear_tool", "macro", "player", "player", "src/player/player.4dm", 946, 957, "void", "&A:p_player &A:p_inventory &A:p_events",
                               "void player_wear_tool(Attributes &p_player, Attributes &p_inventory, Attributes &p_events)", 0, "", "emit_toast, item_name, player_selected, slot_item, slot_wear");
-  if (p_id == 402) test_info_set(p_info, "player_primary_action", "macro", "player", "player", "src/player/player.4dm", 937, 1001, "void", "&A:p_player &A:p_inventory &A:p_cows &A:p_events &A:p_random R:p_now",
+  if (p_id == 408) test_info_set(p_info, "player_primary_action", "macro", "player", "player", "src/player/player.4dm", 959, 1023, "void", "&A:p_player &A:p_inventory &A:p_cows &A:p_events &A:p_random R:p_now",
                               "void player_primary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Attributes &p_random, Real p_now)", 0, "", "block_hits_with, block_needs_tool, block_tool_kind, cow_damage, emit_toast, item_attack_damage, item_tool_kind, player_held_item, player_is_dead, player_look, player_spectator, player_target_cell, player_target_cow, player_target_kind, player_update_target, player_wear_tool, record_integer, record_real, record_set_integer, record_set_real, world_break_block, world_get_block");
-  if (p_id == 403) test_info_set(p_info, "player_look_facing", "macro", "player", "player", "src/player/player.4dm", 1003, 1022, "Integer", "&A:p_player",
+  if (p_id == 409) test_info_set(p_info, "player_look_facing", "macro", "player", "player", "src/player/player.4dm", 1025, 1044, "Integer", "&A:p_player",
                               "Integer player_look_facing(Attributes &p_player)", 0, "", "player_look");
-  if (p_id == 404) test_info_set(p_info, "player_cell_free", "macro", "player", "player", "src/player/player.4dm", 1024, 1038, "Integer", "&A:p_player &A:p_cows I:p_x I:p_y I:p_z",
+  if (p_id == 410) test_info_set(p_info, "player_cell_free", "macro", "player", "player", "src/player/player.4dm", 1046, 1060, "Integer", "&A:p_player &A:p_cows I:p_x I:p_y I:p_z",
                               "Integer player_cell_free(Attributes &p_player, Attributes &p_cows, Integer p_x, Integer p_y, Integer p_z)", 0, "", "block_is_plant, cows_box_overlaps, player_overlaps_cell, world_get_block, world_in_bounds");
-  if (p_id == 405) test_info_set(p_info, "player_place_double", "macro", "player", "player", "src/player/player.4dm", 1040, 1075, "Integer", "&A:p_player &A:p_cows &A:p_events I:p_item I:p_x I:p_y I:p_z",
+  if (p_id == 411) test_info_set(p_info, "player_place_double", "macro", "player", "player", "src/player/player.4dm", 1062, 1097, "Integer", "&A:p_player &A:p_cows &A:p_events I:p_item I:p_x I:p_y I:p_z",
                               "Integer player_place_double(Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_item, Integer p_x, Integer p_y, Integer p_z)", 0, "", "block_bed, block_door, block_facing_step, emit_toast, player_cell_free, player_look_facing, world_is_solid, world_place_block");
-  if (p_id == 406) test_info_set(p_info, "player_toggle_door", "macro", "player", "player", "src/player/player.4dm", 1077, 1094, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_block",
+  if (p_id == 412) test_info_set(p_info, "player_toggle_door", "macro", "player", "player", "src/player/player.4dm", 1099, 1116, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_block",
                               "void player_toggle_door(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "block_door, block_door_facing, block_door_open, block_door_top, block_is_door, block_partner, world_get_block, world_place_block");
-  if (p_id == 407) test_info_set(p_info, "player_furnace_facing", "macro", "player", "player", "src/player/player.4dm", 1096, 1110, "Integer", "R:p_player_x R:p_player_z I:p_cell_x I:p_cell_z",
+  if (p_id == 413) test_info_set(p_info, "player_furnace_facing", "macro", "player", "player", "src/player/player.4dm", 1118, 1132, "Integer", "R:p_player_x R:p_player_z I:p_cell_x I:p_cell_z",
                               "Integer player_furnace_facing(Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z)", 0, "", "");
-  if (p_id == 408) test_info_set(p_info, "player_secondary_action", "macro", "player", "player", "src/player/player.4dm", 1112, 1237, "void", "&A:p_player &A:p_inventory &A:p_cows &A:p_events R:p_now",
+  if (p_id == 414) test_info_set(p_info, "player_secondary_action", "macro", "player", "player", "src/player/player.4dm", 1134, 1259, "void", "&A:p_player &A:p_inventory &A:p_cows &A:p_events R:p_now",
                               "void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Real p_now)", 0, "", "block_is_bed, block_is_door, block_is_furnace, block_is_plant, cows_box_overlaps, emit_event, emit_item_event, emit_toast, item_food_value, item_places_block, player_furnace_facing, player_health, player_held_item, player_is_dead, player_overlaps_cell, player_place_double, player_position, player_selected, player_set_health, player_spectator, player_target_cell, player_target_kind, player_target_normal, player_toggle_door, player_update_target, record_set_real, slot_take_one, world_get_block, world_in_bounds, world_is_solid, world_place_block");
-  if (p_id == 409) test_info_set(p_info, "command_word", "macro", "program", "commands", "src/program/commands.4dm", 13, 22, "Text", "&D:p_words I:p_position",
+  if (p_id == 415) test_info_set(p_info, "command_word", "macro", "program", "commands", "src/program/commands.4dm", 13, 22, "Text", "&D:p_words I:p_position",
                               "Text command_word(Dynamic_Text &p_words, Integer p_position)", 0, "", "");
-  if (p_id == 410) test_info_set(p_info, "command_item_key", "macro", "program", "commands", "src/program/commands.4dm", 24, 44, "Text", "T:p_name",
+  if (p_id == 416) test_info_set(p_info, "command_item_key", "macro", "program", "commands", "src/program/commands.4dm", 24, 44, "Text", "T:p_name",
                               "Text command_item_key(Text p_name)", 0, "", "");
-  if (p_id == 411) test_info_set(p_info, "command_find_item", "macro", "program", "commands", "src/program/commands.4dm", 46, 64, "Integer", "T:p_name",
+  if (p_id == 417) test_info_set(p_info, "command_find_item", "macro", "program", "commands", "src/program/commands.4dm", 46, 64, "Integer", "T:p_name",
                               "Integer command_find_item(Text p_name)", 0, "", "command_item_key, item_name");
-  if (p_id == 412) test_info_set(p_info, "command_time_value", "macro", "program", "commands", "src/program/commands.4dm", 66, 86, "Integer", "T:p_word &I:p_ticks",
+  if (p_id == 418) test_info_set(p_info, "command_time_value", "macro", "program", "commands", "src/program/commands.4dm", 66, 86, "Integer", "T:p_word &I:p_ticks",
                               "Integer command_time_value(Text p_word, Integer &p_ticks)", 0, "", "");
-  if (p_id == 413) test_info_set(p_info, "command_time", "macro", "program", "commands", "src/program/commands.4dm", 88, 113, "Text", "&D:p_words I:p_count &A:p_info",
+  if (p_id == 419) test_info_set(p_info, "command_time", "macro", "program", "commands", "src/program/commands.4dm", 88, 113, "Text", "&D:p_words I:p_count &A:p_info",
                               "Text command_time(Dynamic_Text &p_words, Integer p_count, Attributes &p_info)", 0, "", "command_time_value, command_word, floor_integer, record_integer, world_clock_text, world_set_time_of_day, world_time_of_day");
-  if (p_id == 414) test_info_set(p_info, "command_gamerule", "macro", "program", "commands", "src/program/commands.4dm", 115, 141, "Text", "&D:p_words I:p_count &A:p_info",
+  if (p_id == 420) test_info_set(p_info, "command_gamerule", "macro", "program", "commands", "src/program/commands.4dm", 115, 141, "Text", "&D:p_words I:p_count &A:p_info",
                               "Text command_gamerule(Dynamic_Text &p_words, Integer p_count, Attributes &p_info)", 0, "", "command_word, world_daylight_cycle, world_set_daylight_cycle");
-  if (p_id == 415) test_info_set(p_info, "command_give", "macro", "program", "commands", "src/program/commands.4dm", 143, 167, "Text", "&D:p_words I:p_count &A:p_inventory",
+  if (p_id == 421) test_info_set(p_info, "command_give", "macro", "program", "commands", "src/program/commands.4dm", 143, 167, "Text", "&D:p_words I:p_count &A:p_inventory",
                               "Text command_give(Dynamic_Text &p_words, Integer p_count, Attributes &p_inventory)", 0, "", "command_find_item, command_word, inventory_add, item_name");
-  if (p_id == 416) test_info_set(p_info, "command_gamemode", "macro", "program", "commands", "src/program/commands.4dm", 169, 189, "Text", "&D:p_words &A:p_player",
+  if (p_id == 422) test_info_set(p_info, "command_gamemode", "macro", "program", "commands", "src/program/commands.4dm", 169, 189, "Text", "&D:p_words &A:p_player",
                               "Text command_gamemode(Dynamic_Text &p_words, Attributes &p_player)", 0, "", "command_word, player_game_mode, player_game_mode_name, player_set_game_mode");
-  if (p_id == 417) test_info_set(p_info, "command_run", "macro", "program", "commands", "src/program/commands.4dm", 191, 211, "Text", "T:p_line &A:p_info &A:p_player &A:p_inventory",
+  if (p_id == 423) test_info_set(p_info, "command_run", "macro", "program", "commands", "src/program/commands.4dm", 191, 211, "Text", "T:p_line &A:p_info &A:p_player &A:p_inventory",
                               "Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory)", 0, "", "command_gamemode, command_gamerule, command_give, command_time, command_word");
-  if (p_id == 418) test_info_set(p_info, "game_init_once", "macro", "program", "game", "src/program/game.4dm", 31, 51, "void", "&A:p_game &A:p_book &A:p_settings &A:p_random I:p_time_seed",
+  if (p_id == 424) test_info_set(p_info, "game_init_once", "macro", "program", "game", "src/program/game.4dm", 31, 51, "void", "&A:p_game &A:p_book &A:p_settings &A:p_random I:p_time_seed",
                               "void game_init_once(Attributes &p_game, Attributes &p_book, Attributes &p_settings, Attributes &p_random, Integer p_time_seed)", 0, "", "crafting_init_book, game_load_textures, random_seed, record_clear, record_integer, record_set_integer, record_set_text, render_init, save_settings_path, settings_load");
-  if (p_id == 419) test_info_set(p_info, "game_load_textures", "macro", "program", "game", "src/program/game.4dm", 53, 68, "Integer", "&A:p_settings &T:p_report",
-                              "Integer game_load_textures(Attributes &p_settings, Text &p_report)", 0, "", "pack_apply, settings_resource_pack, textures_finish_all, textures_generate");
-  if (p_id == 420) test_info_set(p_info, "game_reset_state", "macro", "program", "game", "src/program/game.4dm", 70, 89, "void", "&A:p_game &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui",
+  if (p_id == 425) test_info_set(p_info, "game_load_textures", "macro", "program", "game", "src/program/game.4dm", 53, 75, "Integer", "&A:p_settings &T:p_report",
+                              "Integer game_load_textures(Attributes &p_settings, Text &p_report)", 0, "", "pack_apply, pack_apply_skin, settings_resource_pack, settings_skin, textures_finish_all, textures_generate");
+  if (p_id == 426) test_info_set(p_info, "game_reset_state", "macro", "program", "game", "src/program/game.4dm", 77, 96, "void", "&A:p_game &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui",
                               "void game_reset_state(Attributes &p_game, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui)", 0, "", "cows_clear, drops_clear, events_clear, furnaces_clear, grid_clear, hud_clear, inventory_clear, player_reset, player_set_game_mode, record_set_real, save_clear_edits, ui_clear");
-  if (p_id == 421) test_info_set(p_info, "game_world_name", "macro", "program", "game", "src/program/game.4dm", 91, 97, "Text", "&A:p_game",
+  if (p_id == 427) test_info_set(p_info, "game_world_name", "macro", "program", "game", "src/program/game.4dm", 98, 104, "Text", "&A:p_game",
                               "Text game_world_name(Attributes &p_game)", 0, "", "record_text");
-  if (p_id == 422) test_info_set(p_info, "game_new_world", "macro", "program", "game", "src/program/game.4dm", 99, 133, "Integer", "T:p_name I:p_seed &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui",
+  if (p_id == 428) test_info_set(p_info, "game_new_world", "macro", "program", "game", "src/program/game.4dm", 106, 140, "Integer", "T:p_name I:p_seed &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui",
                               "Integer game_new_world(Text p_name, Integer p_seed, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui)", 1, "", "cows_spawn_random, events_clear, game_reset_state, game_save_world, mesh_reset, mobs_spawn_random, player_reset, player_set_look, random_seed, record_set_text, world_generate, world_info_spawn");
-  if (p_id == 423) test_info_set(p_info, "game_load_world", "macro", "program", "game", "src/program/game.4dm", 135, 150, "Integer", "T:p_name &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui &T:p_problem",
+  if (p_id == 429) test_info_set(p_info, "game_load_world", "macro", "program", "game", "src/program/game.4dm", 142, 157, "Integer", "T:p_name &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui &T:p_problem",
                               "Integer game_load_world(Text p_name, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui, Text &p_problem)", 0, "", "events_clear, game_reset_state, load_world, player_set_flying, player_survival, record_set_text");
-  if (p_id == 424) test_info_set(p_info, "game_host", "macro", "program", "game", "src/program/game.4dm", 152, 178, "Integer", "&A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_net &A:p_peers &A:p_inbox T:p_folder T:p_session T:p_id T:p_name R:p_now &T:p_problem",
+  if (p_id == 430) test_info_set(p_info, "game_host", "macro", "program", "game", "src/program/game.4dm", 159, 185, "Integer", "&A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_net &A:p_peers &A:p_inbox T:p_folder T:p_session T:p_id T:p_name R:p_now &T:p_problem",
                               "Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_folder, Text p_session, Text p_id, Text p_name, Real p_now, Text &p_problem)", 1, "", "events_clear, game_world_name, net_ensure_folder, net_snapshot_path, net_start, net_write_session, save_world_to, world_info_seed");
-  if (p_id == 425) test_info_set(p_info, "game_join", "macro", "program", "game", "src/program/game.4dm", 180, 219, "Integer", "T:p_folder &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui &A:p_net &A:p_peers &A:p_inbox T:p_id T:p_name R:p_now &T:p_problem",
+  if (p_id == 431) test_info_set(p_info, "game_join", "macro", "program", "game", "src/program/game.4dm", 187, 226, "Integer", "T:p_folder &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_hud &A:p_ui &A:p_net &A:p_peers &A:p_inbox T:p_id T:p_name R:p_now &T:p_problem",
                               "Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_id, Text p_name, Real p_now, Text &p_problem)", 1, "", "drops_clear, events_clear, furnaces_clear, game_reset_state, inventory_clear, load_world_from, net_read_session, net_snapshot_path, net_start, player_reset, player_set_game_mode, record_set_text, world_info_spawn");
-  if (p_id == 426) test_info_set(p_info, "game_save_world", "macro", "program", "game", "src/program/game.4dm", 221, 228, "Integer", "&A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events",
+  if (p_id == 432) test_info_set(p_info, "game_save_world", "macro", "program", "game", "src/program/game.4dm", 228, 235, "Integer", "&A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events",
                               "Integer game_save_world(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)", 1, "", "game_world_name, save_world");
-  if (p_id == 427) test_info_set(p_info, "game_build_nearby", "macro", "program", "game", "src/program/game.4dm", 230, 259, "void", "&A:p_player I:p_range",
+  if (p_id == 433) test_info_set(p_info, "game_build_nearby", "macro", "program", "game", "src/program/game.4dm", 237, 266, "void", "&A:p_player I:p_range",
                               "void game_build_nearby(Attributes &p_player, Integer p_range)", 0, "", "clamp_integer, floor_integer, mesh_ensure_section, player_position");
-  if (p_id == 428) test_info_set(p_info, "game_respawn", "macro", "program", "game", "src/program/game.4dm", 261, 274, "void", "&A:p_info &A:p_player &A:p_events",
+  if (p_id == 434) test_info_set(p_info, "game_respawn", "macro", "program", "game", "src/program/game.4dm", 268, 281, "void", "&A:p_info &A:p_player &A:p_events",
                               "void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_events)", 0, "", "emit_simple_event, player_reset, player_set_look, world_info_spawn");
-  if (p_id == 429) test_info_set(p_info, "game_dispatch_events", "macro", "program", "game", "src/program/game.4dm", 276, 306, "void", "&A:p_events &A:p_event &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_drops &A:p_random &A:p_hud &A:p_ui &A:p_net R:p_now",
+  if (p_id == 435) test_info_set(p_info, "game_dispatch_events", "macro", "program", "game", "src/program/game.4dm", 283, 313, "void", "&A:p_events &A:p_event &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_drops &A:p_random &A:p_hud &A:p_ui &A:p_net R:p_now",
                               "void game_dispatch_events(Attributes &p_events, Attributes &p_event, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_drops, Attributes &p_random, Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Real p_now)", 0, "", "chest_on_event, drops_on_event, furnace_on_event, hud_on_event, mesh_on_event, net_on_event, next_event, player_on_event, player_position, save_on_event, ui_on_event, world_on_event");
-  if (p_id == 430) test_info_set(p_info, "game_update", "macro", "program", "game", "src/program/game.4dm", 308, 349, "void", "R:p_dt R:p_real_dt R:p_now I:p_running &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_event &A:p_random &A:p_settings &A:p_hud &A:p_ui &A:p_net &A:p_peers &A:p_inbox",
+  if (p_id == 436) test_info_set(p_info, "game_update", "macro", "program", "game", "src/program/game.4dm", 315, 356, "void", "R:p_dt R:p_real_dt R:p_now I:p_running &A:p_game &A:p_info &A:p_player &A:p_inventory &A:p_grid &A:p_furnaces &A:p_cows &A:p_drops &A:p_events &A:p_event &A:p_random &A:p_settings &A:p_hud &A:p_ui &A:p_net &A:p_peers &A:p_inbox",
                               "void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events, Attributes &p_event, Attributes &p_random, Attributes &p_settings, Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox)", 1, "", "cows_update, drops_update, furnaces_update, game_dispatch_events, game_save_world, net_apply, net_send_state, player_is_dead, player_position, player_spectator, player_survival, player_update, record_real, record_set_real, settings_flag, world_advance_time, world_daylight_cycle, world_is_night, world_time_of_day");
-  if (p_id == 431) test_info_set(p_info, "game_select_slot", "macro", "program", "game", "src/program/game.4dm", 351, 358, "void", "&A:p_player &A:p_hud I:p_slot R:p_now",
+  if (p_id == 437) test_info_set(p_info, "game_select_slot", "macro", "program", "game", "src/program/game.4dm", 358, 365, "void", "&A:p_player &A:p_hud I:p_slot R:p_now",
                               "void game_select_slot(Attributes &p_player, Attributes &p_hud, Integer p_slot, Real p_now)", 0, "", "hud_show_name, player_set_selected");
-  if (p_id == 432) test_info_set(p_info, "save_clear_edits", "macro", "program", "save", "src/program/save.4dm", 22, 29, "void", "",
+  if (p_id == 438) test_info_set(p_info, "save_clear_edits", "macro", "program", "save", "src/program/save.4dm", 22, 29, "void", "",
                               "void save_clear_edits()", 0, "", "");
-  if (p_id == 433) test_info_set(p_info, "save_record_edit", "macro", "program", "save", "src/program/save.4dm", 31, 53, "void", "I:p_index I:p_block",
+  if (p_id == 439) test_info_set(p_info, "save_record_edit", "macro", "program", "save", "src/program/save.4dm", 31, 53, "void", "I:p_index I:p_block",
                               "void save_record_edit(Integer p_index, Integer p_block)", 0, "", "");
-  if (p_id == 434) test_info_set(p_info, "save_on_event", "macro", "program", "save", "src/program/save.4dm", 55, 72, "void", "&A:p_event",
+  if (p_id == 440) test_info_set(p_info, "save_on_event", "macro", "program", "save", "src/program/save.4dm", 55, 72, "void", "&A:p_event",
                               "void save_on_event(Attributes &p_event)", 0, "", "event_integer, event_type, save_record_edit, world_in_bounds, world_index");
-  if (p_id == 435) test_info_set(p_info, "save_world_path", "macro", "program", "save", "src/program/save.4dm", 74, 83, "Text", "T:p_name",
-                              "Text save_world_path(Text p_name)", 0, "", "");
-  if (p_id == 436) test_info_set(p_info, "save_settings_path", "macro", "program", "save", "src/program/save.4dm", 85, 94, "Text", "",
-                              "Text save_settings_path()", 0, "", "");
-  if (p_id == 437) test_info_set(p_info, "save_ensure_folder", "macro", "program", "save", "src/program/save.4dm", 96, 102, "void", "",
-                              "void save_ensure_folder()", 1, "", "");
-  if (p_id == 438) test_info_set(p_info, "save_file_is_deleted", "macro", "program", "save", "src/program/save.4dm", 104, 121, "Integer", "T:p_path",
-                              "Integer save_file_is_deleted(Text p_path)", 0, "", "");
-  if (p_id == 439) test_info_set(p_info, "save_world_exists", "macro", "program", "save", "src/program/save.4dm", 123, 133, "Integer", "T:p_name",
-                              "Integer save_world_exists(Text p_name)", 0, "", "save_file_is_deleted, save_world_path");
-  if (p_id == 440) test_info_set(p_info, "save_list_worlds", "macro", "program", "save", "src/program/save.4dm", 135, 163, "Integer", "&D:p_names",
-                              "Integer save_list_worlds(Dynamic_Text &p_names)", 1, "", "file_title_from_path, save_ensure_folder, save_world_exists");
 }
 
 void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -3882,27 +3895,61 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 401) {   // player_wear_tool
+  if (p_id == 401) {   // player_shift_pressed
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    Get_time(l_start);
+    player_shift_pressed(g_player, l_r1);
+    Get_time(l_end);
+  } else if (p_id == 402) {   // player_key_active
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    Get_time(l_start);
+    l_ret_i = player_key_active(g_player, l_t1, l_r1);
+    Get_time(l_end);
+  } else if (p_id == 403) {   // player_damage
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    player_damage(g_player, g_events, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 404) {   // player_update
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    player_update(g_player, g_cows, g_events, l_i1, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 405) {   // player_update_target
+    Get_time(l_start);
+    player_update_target(g_player, g_cows);
+    Get_time(l_end);
+  } else if (p_id == 406) {   // player_overlaps_cell
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    l_ret_i = player_overlaps_cell(g_player, l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 407) {   // player_wear_tool
     Get_time(l_start);
     player_wear_tool(g_player, g_inventory, g_events);
     Get_time(l_end);
-  } else if (p_id == 402) {   // player_primary_action
+  } else if (p_id == 408) {   // player_primary_action
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     player_primary_action(g_player, g_inventory, g_cows, g_events, g_random, l_r1);
     Get_time(l_end);
-  } else if (p_id == 403) {   // player_look_facing
+  } else if (p_id == 409) {   // player_look_facing
     Get_time(l_start);
     l_ret_i = player_look_facing(g_player);
     Get_time(l_end);
-  } else if (p_id == 404) {   // player_cell_free
+  } else if (p_id == 410) {   // player_cell_free
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = player_cell_free(g_player, g_cows, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 405) {   // player_place_double
+  } else if (p_id == 411) {   // player_place_double
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -3910,7 +3957,7 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = player_place_double(g_player, g_cows, g_events, l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 406) {   // player_toggle_door
+  } else if (p_id == 412) {   // player_toggle_door
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -3918,7 +3965,7 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     player_toggle_door(g_events, l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 407) {   // player_furnace_facing
+  } else if (p_id == 413) {   // player_furnace_facing
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
@@ -3926,100 +3973,100 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = player_furnace_facing(l_r1, l_r2, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 408) {   // player_secondary_action
+  } else if (p_id == 414) {   // player_secondary_action
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     player_secondary_action(g_player, g_inventory, g_cows, g_events, l_r1);
     Get_time(l_end);
-  } else if (p_id == 409) {   // command_word
+  } else if (p_id == 415) {   // command_word
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = command_word(g_test_words, l_i1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 410) {   // command_item_key
+  } else if (p_id == 416) {   // command_item_key
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = command_item_key(l_t1);
     Get_time(l_end);
-  } else if (p_id == 411) {   // command_find_item
+  } else if (p_id == 417) {   // command_find_item
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = command_find_item(l_t1);
     Get_time(l_end);
-  } else if (p_id == 412) {   // command_time_value
+  } else if (p_id == 418) {   // command_time_value
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = command_time_value(l_t1, l_i1);
     Get_time(l_end);
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
-  } else if (p_id == 413) {   // command_time
+  } else if (p_id == 419) {   // command_time
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = command_time(g_test_words, l_i1, g_info);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 414) {   // command_gamerule
+  } else if (p_id == 420) {   // command_gamerule
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = command_gamerule(g_test_words, l_i1, g_info);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 415) {   // command_give
+  } else if (p_id == 421) {   // command_give
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = command_give(g_test_words, l_i1, g_inventory);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 416) {   // command_gamemode
+  } else if (p_id == 422) {   // command_gamemode
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     Get_time(l_start);
     l_ret_t = command_gamemode(g_test_words, g_player);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 417) {   // command_run
+  } else if (p_id == 423) {   // command_run
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = command_run(l_t1, g_info, g_player, g_inventory);
     Get_time(l_end);
-  } else if (p_id == 418) {   // game_init_once
+  } else if (p_id == 424) {   // game_init_once
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     game_init_once(g_game, g_book, g_settings, g_random, l_i1);
     Get_time(l_end);
-  } else if (p_id == 419) {   // game_load_textures
+  } else if (p_id == 425) {   // game_load_textures
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = game_load_textures(g_settings, l_t1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T1, l_t1);
-  } else if (p_id == 420) {   // game_reset_state
+  } else if (p_id == 426) {   // game_reset_state
     Get_time(l_start);
     game_reset_state(g_game, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events, g_hud, g_ui);
     Get_time(l_end);
-  } else if (p_id == 421) {   // game_world_name
+  } else if (p_id == 427) {   // game_world_name
     Get_time(l_start);
     l_ret_t = game_world_name(g_game);
     Get_time(l_end);
-  } else if (p_id == 422) {   // game_new_world
+  } else if (p_id == 428) {   // game_new_world
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = game_new_world(l_t1, l_i1, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events, g_hud, g_ui);
     Get_time(l_end);
-  } else if (p_id == 423) {   // game_load_world
+  } else if (p_id == 429) {   // game_load_world
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = game_load_world(l_t1, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events, g_hud, g_ui, l_t2);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T2, l_t2);
-  } else if (p_id == 424) {   // game_host
+  } else if (p_id == 430) {   // game_host
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     l_t3 = record_text(p_in, ATTR_TEST_T3);
@@ -4030,7 +4077,7 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_ret_i = game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events, g_net, g_peers, g_net_inbox, l_t1, l_t2, l_t3, l_t4, l_r1, l_t5);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T5, l_t5);
-  } else if (p_id == 425) {   // game_join
+  } else if (p_id == 431) {   // game_join
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     l_t3 = record_text(p_in, ATTR_TEST_T3);
@@ -4040,25 +4087,25 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_ret_i = game_join(l_t1, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events, g_hud, g_ui, g_net, g_peers, g_net_inbox, l_t2, l_t3, l_r1, l_t4);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T4, l_t4);
-  } else if (p_id == 426) {   // game_save_world
+  } else if (p_id == 432) {   // game_save_world
     Get_time(l_start);
     l_ret_i = game_save_world(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events);
     Get_time(l_end);
-  } else if (p_id == 427) {   // game_build_nearby
+  } else if (p_id == 433) {   // game_build_nearby
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     game_build_nearby(g_player, l_i1);
     Get_time(l_end);
-  } else if (p_id == 428) {   // game_respawn
+  } else if (p_id == 434) {   // game_respawn
     Get_time(l_start);
     game_respawn(g_info, g_player, g_events);
     Get_time(l_end);
-  } else if (p_id == 429) {   // game_dispatch_events
+  } else if (p_id == 435) {   // game_dispatch_events
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     game_dispatch_events(g_events, g_event, g_info, g_player, g_inventory, g_grid, g_furnaces, g_drops, g_random, g_hud, g_ui, g_net, l_r1);
     Get_time(l_end);
-  } else if (p_id == 430) {   // game_update
+  } else if (p_id == 436) {   // game_update
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4066,55 +4113,26 @@ void test_registry_call_11(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     game_update(l_r1, l_r2, l_r3, l_i1, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
     Get_time(l_end);
-  } else if (p_id == 431) {   // game_select_slot
+  } else if (p_id == 437) {   // game_select_slot
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     game_select_slot(g_player, g_hud, l_i1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 432) {   // save_clear_edits
+  } else if (p_id == 438) {   // save_clear_edits
     Get_time(l_start);
     save_clear_edits();
     Get_time(l_end);
-  } else if (p_id == 433) {   // save_record_edit
+  } else if (p_id == 439) {   // save_record_edit
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     save_record_edit(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 434) {   // save_on_event
+  } else if (p_id == 440) {   // save_on_event
     Get_time(l_start);
     save_on_event(g_event);
     Get_time(l_end);
-  } else if (p_id == 435) {   // save_world_path
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_t = save_world_path(l_t1);
-    Get_time(l_end);
-  } else if (p_id == 436) {   // save_settings_path
-    Get_time(l_start);
-    l_ret_t = save_settings_path();
-    Get_time(l_end);
-  } else if (p_id == 437) {   // save_ensure_folder
-    Get_time(l_start);
-    save_ensure_folder();
-    Get_time(l_end);
-  } else if (p_id == 438) {   // save_file_is_deleted
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_i = save_file_is_deleted(l_t1);
-    Get_time(l_end);
-  } else if (p_id == 439) {   // save_world_exists
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_i = save_world_exists(l_t1);
-    Get_time(l_end);
-  } else if (p_id == 440) {   // save_list_worlds
-    test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
-    Get_time(l_start);
-    l_ret_i = save_list_worlds(g_test_words);
-    Get_time(l_end);
-    record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
   record_set_real   (p_out, ATTR_TEST_RET_R,   l_ret_r);
@@ -4127,86 +4145,86 @@ void test_registry_info_12(Integer p_id, Attributes &p_info)
 // What functions 441 to 480 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 441) test_info_set(p_info, "save_delete_world", "macro", "program", "save", "src/program/save.4dm", 165, 180, "Integer", "T:p_name",
+  if (p_id == 441) test_info_set(p_info, "save_world_path", "macro", "program", "save", "src/program/save.4dm", 74, 83, "Text", "T:p_name",
+                              "Text save_world_path(Text p_name)", 0, "", "");
+  if (p_id == 442) test_info_set(p_info, "save_settings_path", "macro", "program", "save", "src/program/save.4dm", 85, 94, "Text", "",
+                              "Text save_settings_path()", 0, "", "");
+  if (p_id == 443) test_info_set(p_info, "save_ensure_folder", "macro", "program", "save", "src/program/save.4dm", 96, 102, "void", "",
+                              "void save_ensure_folder()", 1, "", "");
+  if (p_id == 444) test_info_set(p_info, "save_file_is_deleted", "macro", "program", "save", "src/program/save.4dm", 104, 121, "Integer", "T:p_path",
+                              "Integer save_file_is_deleted(Text p_path)", 0, "", "");
+  if (p_id == 445) test_info_set(p_info, "save_world_exists", "macro", "program", "save", "src/program/save.4dm", 123, 133, "Integer", "T:p_name",
+                              "Integer save_world_exists(Text p_name)", 0, "", "save_file_is_deleted, save_world_path");
+  if (p_id == 446) test_info_set(p_info, "save_list_worlds", "macro", "program", "save", "src/program/save.4dm", 135, 163, "Integer", "&D:p_names",
+                              "Integer save_list_worlds(Dynamic_Text &p_names)", 1, "", "file_title_from_path, save_ensure_folder, save_world_exists");
+  if (p_id == 447) test_info_set(p_info, "save_delete_world", "macro", "program", "save", "src/program/save.4dm", 165, 180, "Integer", "T:p_name",
                               "Integer save_delete_world(Text p_name)", 1, "", "save_world_exists, save_world_path");
-  if (p_id == 442) test_info_set(p_info, "text_escape", "macro", "program", "save", "src/program/save.4dm", 186, 210, "Text", "T:p_value",
+  if (p_id == 448) test_info_set(p_info, "text_escape", "macro", "program", "save", "src/program/save.4dm", 186, 210, "Text", "T:p_value",
                               "Text text_escape(Text p_value)", 0, "", "");
-  if (p_id == 443) test_info_set(p_info, "text_unescape", "macro", "program", "save", "src/program/save.4dm", 212, 236, "Text", "T:p_value",
+  if (p_id == 449) test_info_set(p_info, "text_unescape", "macro", "program", "save", "src/program/save.4dm", 212, 236, "Text", "T:p_value",
                               "Text text_unescape(Text p_value)", 0, "", "");
-  if (p_id == 444) test_info_set(p_info, "save_write_record", "macro", "program", "save", "src/program/save.4dm", 238, 265, "void", "&?:p_file T:p_name &A:p_record",
+  if (p_id == 450) test_info_set(p_info, "save_write_record", "macro", "program", "save", "src/program/save.4dm", 238, 265, "void", "&?:p_file T:p_name &A:p_record",
                               "void save_write_record(File &p_file, Text p_name, Attributes &p_record)", 0, "takes an open File", "text_escape");
-  if (p_id == 445) test_info_set(p_info, "save_read_field", "macro", "program", "save", "src/program/save.4dm", 267, 293, "Integer", "&D:p_words I:p_count &A:p_record",
+  if (p_id == 451) test_info_set(p_info, "save_read_field", "macro", "program", "save", "src/program/save.4dm", 267, 293, "Integer", "&D:p_words I:p_count &A:p_record",
                               "Integer save_read_field(Dynamic_Text &p_words, Integer p_count, Attributes &p_record)", 0, "", "record_set_integer, record_set_real, record_set_text, save_word_integer, save_word_real, text_unescape");
-  if (p_id == 446) test_info_set(p_info, "save_world", "macro", "program", "save", "src/program/save.4dm", 297, 307, "Integer", "T:p_name &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events",
+  if (p_id == 452) test_info_set(p_info, "save_world", "macro", "program", "save", "src/program/save.4dm", 297, 307, "Integer", "T:p_name &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events",
                               "Integer save_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)", 1, "", "save_ensure_folder, save_world_path, save_world_to");
-  if (p_id == 447) test_info_set(p_info, "save_world_to", "macro", "program", "save", "src/program/save.4dm", 309, 353, "Integer", "T:p_path T:p_name &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events",
+  if (p_id == 453) test_info_set(p_info, "save_world_to", "macro", "program", "save", "src/program/save.4dm", 309, 353, "Integer", "T:p_path T:p_name &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &A:p_events",
                               "Integer save_world_to(Text p_path, Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)", 1, "", "emit_event, save_write_record, world_info_seed");
-  if (p_id == 448) test_info_set(p_info, "save_word_integer", "macro", "program", "save", "src/program/save.4dm", 355, 370, "Integer", "&D:p_words I:p_position",
+  if (p_id == 454) test_info_set(p_info, "save_word_integer", "macro", "program", "save", "src/program/save.4dm", 355, 370, "Integer", "&D:p_words I:p_position",
                               "Integer save_word_integer(Dynamic_Text &p_words, Integer p_position)", 0, "", "");
-  if (p_id == 449) test_info_set(p_info, "save_word_real", "macro", "program", "save", "src/program/save.4dm", 372, 383, "Real", "&D:p_words I:p_position",
+  if (p_id == 455) test_info_set(p_info, "save_word_real", "macro", "program", "save", "src/program/save.4dm", 372, 383, "Real", "&D:p_words I:p_position",
                               "Real save_word_real(Dynamic_Text &p_words, Integer p_position)", 0, "", "");
-  if (p_id == 450) test_info_set(p_info, "load_world", "macro", "program", "save", "src/program/save.4dm", 385, 397, "Integer", "T:p_name &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &T:p_problem",
+  if (p_id == 456) test_info_set(p_info, "load_world", "macro", "program", "save", "src/program/save.4dm", 385, 397, "Integer", "T:p_name &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &T:p_problem",
                               "Integer load_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem)", 0, "", "load_world_from, save_world_exists, save_world_path");
-  if (p_id == 451) test_info_set(p_info, "load_world_from", "macro", "program", "save", "src/program/save.4dm", 399, 525, "Integer", "T:p_path &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &T:p_problem",
+  if (p_id == 457) test_info_set(p_info, "load_world_from", "macro", "program", "save", "src/program/save.4dm", 399, 525, "Integer", "T:p_path &A:p_info &A:p_player &A:p_inventory &A:p_furnaces &A:p_cows &A:p_drops &T:p_problem",
                               "Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem)", 0, "", "block_is_furnace, block_light_emission, cows_clear, drops_clear, drops_rebuild_index, furnace_cell, furnace_set_used, furnace_used, furnaces_clear, furnaces_rebuild_index, inventory_clear, mesh_mark_dirty, mesh_reset, mobs_rebuild_index, player_reset, save_clear_edits, save_read_field, save_record_edit, save_word_integer, world_cell_of_index, world_finish_maps, world_generate, world_get_block, world_light_update, world_set_block");
-  if (p_id == 452) test_info_set(p_info, "settings_defaults", "macro", "program", "settings", "src/program/settings.4dm", 11, 31, "void", "&A:p_settings",
+  if (p_id == 458) test_info_set(p_info, "settings_defaults", "macro", "program", "settings", "src/program/settings.4dm", 11, 32, "void", "&A:p_settings",
                               "void settings_defaults(Attributes &p_settings)", 0, "", "record_clear, record_set_integer, record_set_text");
-  if (p_id == 453) test_info_set(p_info, "settings_mp_folder", "macro", "program", "settings", "src/program/settings.4dm", 33, 43, "Text", "&A:p_settings",
+  if (p_id == 459) test_info_set(p_info, "settings_skin", "macro", "program", "settings", "src/program/settings.4dm", 34, 40, "Text", "&A:p_settings",
+                              "Text settings_skin(Attributes &p_settings)", 0, "", "record_text");
+  if (p_id == 460) test_info_set(p_info, "settings_mp_folder", "macro", "program", "settings", "src/program/settings.4dm", 42, 52, "Text", "&A:p_settings",
                               "Text settings_mp_folder(Attributes &p_settings)", 0, "", "record_text");
-  if (p_id == 454) test_info_set(p_info, "settings_player_name", "macro", "program", "settings", "src/program/settings.4dm", 45, 51, "Text", "&A:p_settings",
+  if (p_id == 461) test_info_set(p_info, "settings_player_name", "macro", "program", "settings", "src/program/settings.4dm", 54, 60, "Text", "&A:p_settings",
                               "Text settings_player_name(Attributes &p_settings)", 0, "", "record_text");
-  if (p_id == 455) test_info_set(p_info, "settings_set_text", "macro", "program", "settings", "src/program/settings.4dm", 53, 59, "void", "&A:p_settings T:p_field T:p_value",
+  if (p_id == 462) test_info_set(p_info, "settings_set_text", "macro", "program", "settings", "src/program/settings.4dm", 62, 68, "void", "&A:p_settings T:p_field T:p_value",
                               "void settings_set_text(Attributes &p_settings, Text p_field, Text p_value)", 0, "", "record_set_text");
-  if (p_id == 456) test_info_set(p_info, "settings_line_text", "macro", "program", "settings", "src/program/settings.4dm", 61, 74, "Integer", "T:p_line T:p_name &T:p_value",
+  if (p_id == 463) test_info_set(p_info, "settings_line_text", "macro", "program", "settings", "src/program/settings.4dm", 70, 83, "Integer", "T:p_line T:p_name &T:p_value",
                               "Integer settings_line_text(Text p_line, Text p_name, Text &p_value)", 0, "", "");
-  if (p_id == 457) test_info_set(p_info, "settings_font_file", "macro", "program", "settings", "src/program/settings.4dm", 76, 83, "Text", "&A:p_settings",
+  if (p_id == 464) test_info_set(p_info, "settings_font_file", "macro", "program", "settings", "src/program/settings.4dm", 85, 92, "Text", "&A:p_settings",
                               "Text settings_font_file(Attributes &p_settings)", 0, "", "record_text");
-  if (p_id == 458) test_info_set(p_info, "settings_set_font_file", "macro", "program", "settings", "src/program/settings.4dm", 85, 91, "void", "&A:p_settings T:p_path",
+  if (p_id == 465) test_info_set(p_info, "settings_set_font_file", "macro", "program", "settings", "src/program/settings.4dm", 94, 100, "void", "&A:p_settings T:p_path",
                               "void settings_set_font_file(Attributes &p_settings, Text p_path)", 0, "", "record_set_text");
-  if (p_id == 459) test_info_set(p_info, "settings_font", "macro", "program", "settings", "src/program/settings.4dm", 93, 99, "Text", "&A:p_settings",
+  if (p_id == 466) test_info_set(p_info, "settings_font", "macro", "program", "settings", "src/program/settings.4dm", 102, 108, "Text", "&A:p_settings",
                               "Text settings_font(Attributes &p_settings)", 0, "", "record_text");
-  if (p_id == 460) test_info_set(p_info, "settings_set_font", "macro", "program", "settings", "src/program/settings.4dm", 101, 107, "void", "&A:p_settings T:p_font",
+  if (p_id == 467) test_info_set(p_info, "settings_set_font", "macro", "program", "settings", "src/program/settings.4dm", 110, 116, "void", "&A:p_settings T:p_font",
                               "void settings_set_font(Attributes &p_settings, Text p_font)", 0, "", "record_set_text");
-  if (p_id == 461) test_info_set(p_info, "settings_resource_pack", "macro", "program", "settings", "src/program/settings.4dm", 109, 115, "Text", "&A:p_settings",
+  if (p_id == 468) test_info_set(p_info, "settings_resource_pack", "macro", "program", "settings", "src/program/settings.4dm", 118, 124, "Text", "&A:p_settings",
                               "Text settings_resource_pack(Attributes &p_settings)", 0, "", "record_text");
-  if (p_id == 462) test_info_set(p_info, "settings_set_resource_pack", "macro", "program", "settings", "src/program/settings.4dm", 117, 123, "void", "&A:p_settings T:p_path",
+  if (p_id == 469) test_info_set(p_info, "settings_set_resource_pack", "macro", "program", "settings", "src/program/settings.4dm", 126, 132, "void", "&A:p_settings T:p_path",
                               "void settings_set_resource_pack(Attributes &p_settings, Text p_path)", 0, "", "record_set_text");
-  if (p_id == 463) test_info_set(p_info, "settings_render_distance", "macro", "program", "settings", "src/program/settings.4dm", 125, 131, "Integer", "&A:p_settings",
+  if (p_id == 470) test_info_set(p_info, "settings_render_distance", "macro", "program", "settings", "src/program/settings.4dm", 134, 140, "Integer", "&A:p_settings",
                               "Integer settings_render_distance(Attributes &p_settings)", 0, "", "clamp_integer, record_integer");
-  if (p_id == 464) test_info_set(p_info, "settings_detail", "macro", "program", "settings", "src/program/settings.4dm", 133, 139, "Integer", "&A:p_settings",
+  if (p_id == 471) test_info_set(p_info, "settings_detail", "macro", "program", "settings", "src/program/settings.4dm", 142, 148, "Integer", "&A:p_settings",
                               "Integer settings_detail(Attributes &p_settings)", 0, "", "clamp_integer, record_integer");
-  if (p_id == 465) test_info_set(p_info, "settings_flag", "macro", "program", "settings", "src/program/settings.4dm", 141, 147, "Integer", "&A:p_settings T:p_field",
+  if (p_id == 472) test_info_set(p_info, "settings_flag", "macro", "program", "settings", "src/program/settings.4dm", 150, 156, "Integer", "&A:p_settings T:p_field",
                               "Integer settings_flag(Attributes &p_settings, Text p_field)", 0, "", "record_integer");
-  if (p_id == 466) test_info_set(p_info, "settings_fov_degrees", "macro", "program", "settings", "src/program/settings.4dm", 149, 155, "Integer", "&A:p_settings",
+  if (p_id == 473) test_info_set(p_info, "settings_fov_degrees", "macro", "program", "settings", "src/program/settings.4dm", 158, 164, "Integer", "&A:p_settings",
                               "Integer settings_fov_degrees(Attributes &p_settings)", 0, "", "clamp_integer, record_integer");
-  if (p_id == 467) test_info_set(p_info, "settings_fov_radians", "macro", "program", "settings", "src/program/settings.4dm", 157, 163, "Real", "&A:p_settings",
+  if (p_id == 474) test_info_set(p_info, "settings_fov_radians", "macro", "program", "settings", "src/program/settings.4dm", 166, 172, "Real", "&A:p_settings",
                               "Real settings_fov_radians(Attributes &p_settings)", 0, "", "settings_fov_degrees");
-  if (p_id == 468) test_info_set(p_info, "settings_mouse_scale", "macro", "program", "settings", "src/program/settings.4dm", 165, 171, "Real", "&A:p_settings",
+  if (p_id == 475) test_info_set(p_info, "settings_mouse_scale", "macro", "program", "settings", "src/program/settings.4dm", 174, 180, "Real", "&A:p_settings",
                               "Real settings_mouse_scale(Attributes &p_settings)", 0, "", "clamp_integer, record_integer");
-  if (p_id == 469) test_info_set(p_info, "settings_change", "macro", "program", "settings", "src/program/settings.4dm", 173, 193, "void", "&A:p_settings T:p_field I:p_direction",
+  if (p_id == 476) test_info_set(p_info, "settings_change", "macro", "program", "settings", "src/program/settings.4dm", 182, 202, "void", "&A:p_settings T:p_field I:p_direction",
                               "void settings_change(Attributes &p_settings, Text p_field, Integer p_direction)", 0, "", "clamp_integer, record_integer, record_set_integer");
-  if (p_id == 470) test_info_set(p_info, "settings_toggle", "macro", "program", "settings", "src/program/settings.4dm", 195, 201, "void", "&A:p_settings T:p_field",
+  if (p_id == 477) test_info_set(p_info, "settings_toggle", "macro", "program", "settings", "src/program/settings.4dm", 204, 210, "void", "&A:p_settings T:p_field",
                               "void settings_toggle(Attributes &p_settings, Text p_field)", 0, "", "record_integer, record_set_integer");
-  if (p_id == 471) test_info_set(p_info, "settings_describe", "macro", "program", "settings", "src/program/settings.4dm", 203, 237, "Text", "&A:p_settings T:p_field",
-                              "Text settings_describe(Attributes &p_settings, Text p_field)", 0, "", "record_integer, settings_font, settings_fov_degrees, settings_render_distance, settings_resource_pack");
-  if (p_id == 472) test_info_set(p_info, "settings_line", "macro", "program", "settings", "src/program/settings.4dm", 239, 245, "Text", "T:p_name I:p_value",
+  if (p_id == 478) test_info_set(p_info, "settings_describe", "macro", "program", "settings", "src/program/settings.4dm", 212, 250, "Text", "&A:p_settings T:p_field",
+                              "Text settings_describe(Attributes &p_settings, Text p_field)", 0, "", "record_integer, settings_font, settings_fov_degrees, settings_render_distance, settings_resource_pack, settings_skin");
+  if (p_id == 479) test_info_set(p_info, "settings_line", "macro", "program", "settings", "src/program/settings.4dm", 252, 258, "Text", "T:p_name I:p_value",
                               "Text settings_line(Text p_name, Integer p_value)", 0, "", "");
-  if (p_id == 473) test_info_set(p_info, "settings_save", "macro", "program", "settings", "src/program/settings.4dm", 247, 281, "Integer", "&A:p_settings T:p_path",
-                              "Integer settings_save(Attributes &p_settings, Text p_path)", 1, "", "record_integer, settings_detail, settings_flag, settings_font, settings_font_file, settings_fov_degrees, settings_line, settings_mp_folder, settings_player_name, settings_render_distance, settings_resource_pack");
-  if (p_id == 474) test_info_set(p_info, "settings_load", "macro", "program", "settings", "src/program/settings.4dm", 283, 356, "Integer", "&A:p_settings T:p_path",
-                              "Integer settings_load(Attributes &p_settings, Text p_path)", 0, "", "record_set_integer, settings_defaults, settings_line_text, settings_set_font, settings_set_font_file, settings_set_resource_pack, settings_set_text");
-  if (p_id == 475) test_info_set(p_info, "hud_clear", "macro", "render", "render_hud", "src/render/render_hud.4dm", 20, 45, "void", "&A:p_hud",
-                              "void hud_clear(Attributes &p_hud)", 0, "", "hud_set_chat_input, record_clear, record_set_integer, record_set_real, record_set_real_at, record_set_text, record_set_text_at");
-  if (p_id == 476) test_info_set(p_info, "hud_note_frame", "macro", "render", "render_hud", "src/render/render_hud.4dm", 47, 80, "void", "&A:p_hud R:p_frame_ms R:p_now",
-                              "void hud_note_frame(Attributes &p_hud, Real p_frame_ms, Real p_now)", 0, "", "record_integer, record_real, record_set_integer, record_set_real, record_set_text");
-  if (p_id == 477) test_info_set(p_info, "hud_frame_stats", "macro", "render", "render_hud", "src/render/render_hud.4dm", 82, 88, "Text", "&A:p_hud",
-                              "Text hud_frame_stats(Attributes &p_hud)", 0, "", "record_text");
-  if (p_id == 478) test_info_set(p_info, "hud_toast", "macro", "render", "render_hud", "src/render/render_hud.4dm", 90, 103, "void", "&A:p_hud T:p_text R:p_now",
-                              "void hud_toast(Attributes &p_hud, Text p_text, Real p_now)", 0, "", "record_real_at, record_set_real_at, record_set_text_at, record_text_at");
-  if (p_id == 479) test_info_set(p_info, "hud_chat", "macro", "render", "render_hud", "src/render/render_hud.4dm", 105, 118, "void", "&A:p_hud T:p_text R:p_now",
-                              "void hud_chat(Attributes &p_hud, Text p_text, Real p_now)", 0, "", "record_real_at, record_set_real_at, record_set_text_at, record_text_at");
-  if (p_id == 480) test_info_set(p_info, "hud_set_chat_input", "macro", "render", "render_hud", "src/render/render_hud.4dm", 120, 127, "void", "&A:p_hud I:p_open T:p_text",
-                              "void hud_set_chat_input(Attributes &p_hud, Integer p_open, Text p_text)", 0, "", "record_set_integer, record_set_text");
+  if (p_id == 480) test_info_set(p_info, "settings_save", "macro", "program", "settings", "src/program/settings.4dm", 260, 296, "Integer", "&A:p_settings T:p_path",
+                              "Integer settings_save(Attributes &p_settings, Text p_path)", 1, "", "record_integer, settings_detail, settings_flag, settings_font, settings_font_file, settings_fov_degrees, settings_line, settings_mp_folder, settings_player_name, settings_render_distance, settings_resource_pack, settings_skin");
 }
 
 void test_registry_call_12(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -4251,86 +4269,119 @@ void test_registry_call_12(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 441) {   // save_delete_world
+  if (p_id == 441) {   // save_world_path
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_t = save_world_path(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 442) {   // save_settings_path
+    Get_time(l_start);
+    l_ret_t = save_settings_path();
+    Get_time(l_end);
+  } else if (p_id == 443) {   // save_ensure_folder
+    Get_time(l_start);
+    save_ensure_folder();
+    Get_time(l_end);
+  } else if (p_id == 444) {   // save_file_is_deleted
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_i = save_file_is_deleted(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 445) {   // save_world_exists
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_i = save_world_exists(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 446) {   // save_list_worlds
+    test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
+    Get_time(l_start);
+    l_ret_i = save_list_worlds(g_test_words);
+    Get_time(l_end);
+    record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
+  } else if (p_id == 447) {   // save_delete_world
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = save_delete_world(l_t1);
     Get_time(l_end);
-  } else if (p_id == 442) {   // text_escape
+  } else if (p_id == 448) {   // text_escape
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = text_escape(l_t1);
     Get_time(l_end);
-  } else if (p_id == 443) {   // text_unescape
+  } else if (p_id == 449) {   // text_unescape
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = text_unescape(l_t1);
     Get_time(l_end);
-  } else if (p_id == 445) {   // save_read_field
+  } else if (p_id == 451) {   // save_read_field
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = save_read_field(g_test_words, l_i1, g_test_record);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 446) {   // save_world
+  } else if (p_id == 452) {   // save_world
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = save_world(l_t1, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events);
     Get_time(l_end);
-  } else if (p_id == 447) {   // save_world_to
+  } else if (p_id == 453) {   // save_world_to
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = save_world_to(l_t1, l_t2, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events);
     Get_time(l_end);
-  } else if (p_id == 448) {   // save_word_integer
+  } else if (p_id == 454) {   // save_word_integer
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = save_word_integer(g_test_words, l_i1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 449) {   // save_word_real
+  } else if (p_id == 455) {   // save_word_real
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_r = save_word_real(g_test_words, l_i1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 450) {   // load_world
+  } else if (p_id == 456) {   // load_world
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = load_world(l_t1, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, l_t2);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T2, l_t2);
-  } else if (p_id == 451) {   // load_world_from
+  } else if (p_id == 457) {   // load_world_from
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = load_world_from(l_t1, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, l_t2);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T2, l_t2);
-  } else if (p_id == 452) {   // settings_defaults
+  } else if (p_id == 458) {   // settings_defaults
     Get_time(l_start);
     settings_defaults(g_settings);
     Get_time(l_end);
-  } else if (p_id == 453) {   // settings_mp_folder
+  } else if (p_id == 459) {   // settings_skin
+    Get_time(l_start);
+    l_ret_t = settings_skin(g_settings);
+    Get_time(l_end);
+  } else if (p_id == 460) {   // settings_mp_folder
     Get_time(l_start);
     l_ret_t = settings_mp_folder(g_settings);
     Get_time(l_end);
-  } else if (p_id == 454) {   // settings_player_name
+  } else if (p_id == 461) {   // settings_player_name
     Get_time(l_start);
     l_ret_t = settings_player_name(g_settings);
     Get_time(l_end);
-  } else if (p_id == 455) {   // settings_set_text
+  } else if (p_id == 462) {   // settings_set_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     settings_set_text(g_settings, l_t1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 456) {   // settings_line_text
+  } else if (p_id == 463) {   // settings_line_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     l_t3 = record_text(p_in, ATTR_TEST_T3);
@@ -4338,121 +4389,84 @@ void test_registry_call_12(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_ret_i = settings_line_text(l_t1, l_t2, l_t3);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T3, l_t3);
-  } else if (p_id == 457) {   // settings_font_file
+  } else if (p_id == 464) {   // settings_font_file
     Get_time(l_start);
     l_ret_t = settings_font_file(g_settings);
     Get_time(l_end);
-  } else if (p_id == 458) {   // settings_set_font_file
+  } else if (p_id == 465) {   // settings_set_font_file
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     settings_set_font_file(g_settings, l_t1);
     Get_time(l_end);
-  } else if (p_id == 459) {   // settings_font
+  } else if (p_id == 466) {   // settings_font
     Get_time(l_start);
     l_ret_t = settings_font(g_settings);
     Get_time(l_end);
-  } else if (p_id == 460) {   // settings_set_font
+  } else if (p_id == 467) {   // settings_set_font
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     settings_set_font(g_settings, l_t1);
     Get_time(l_end);
-  } else if (p_id == 461) {   // settings_resource_pack
+  } else if (p_id == 468) {   // settings_resource_pack
     Get_time(l_start);
     l_ret_t = settings_resource_pack(g_settings);
     Get_time(l_end);
-  } else if (p_id == 462) {   // settings_set_resource_pack
+  } else if (p_id == 469) {   // settings_set_resource_pack
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     settings_set_resource_pack(g_settings, l_t1);
     Get_time(l_end);
-  } else if (p_id == 463) {   // settings_render_distance
+  } else if (p_id == 470) {   // settings_render_distance
     Get_time(l_start);
     l_ret_i = settings_render_distance(g_settings);
     Get_time(l_end);
-  } else if (p_id == 464) {   // settings_detail
+  } else if (p_id == 471) {   // settings_detail
     Get_time(l_start);
     l_ret_i = settings_detail(g_settings);
     Get_time(l_end);
-  } else if (p_id == 465) {   // settings_flag
+  } else if (p_id == 472) {   // settings_flag
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = settings_flag(g_settings, l_t1);
     Get_time(l_end);
-  } else if (p_id == 466) {   // settings_fov_degrees
+  } else if (p_id == 473) {   // settings_fov_degrees
     Get_time(l_start);
     l_ret_i = settings_fov_degrees(g_settings);
     Get_time(l_end);
-  } else if (p_id == 467) {   // settings_fov_radians
+  } else if (p_id == 474) {   // settings_fov_radians
     Get_time(l_start);
     l_ret_r = settings_fov_radians(g_settings);
     Get_time(l_end);
-  } else if (p_id == 468) {   // settings_mouse_scale
+  } else if (p_id == 475) {   // settings_mouse_scale
     Get_time(l_start);
     l_ret_r = settings_mouse_scale(g_settings);
     Get_time(l_end);
-  } else if (p_id == 469) {   // settings_change
+  } else if (p_id == 476) {   // settings_change
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     settings_change(g_settings, l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 470) {   // settings_toggle
+  } else if (p_id == 477) {   // settings_toggle
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     settings_toggle(g_settings, l_t1);
     Get_time(l_end);
-  } else if (p_id == 471) {   // settings_describe
+  } else if (p_id == 478) {   // settings_describe
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = settings_describe(g_settings, l_t1);
     Get_time(l_end);
-  } else if (p_id == 472) {   // settings_line
+  } else if (p_id == 479) {   // settings_line
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = settings_line(l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 473) {   // settings_save
+  } else if (p_id == 480) {   // settings_save
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = settings_save(g_settings, l_t1);
-    Get_time(l_end);
-  } else if (p_id == 474) {   // settings_load
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_i = settings_load(g_settings, l_t1);
-    Get_time(l_end);
-  } else if (p_id == 475) {   // hud_clear
-    Get_time(l_start);
-    hud_clear(g_hud);
-    Get_time(l_end);
-  } else if (p_id == 476) {   // hud_note_frame
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    hud_note_frame(g_hud, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 477) {   // hud_frame_stats
-    Get_time(l_start);
-    l_ret_t = hud_frame_stats(g_hud);
-    Get_time(l_end);
-  } else if (p_id == 478) {   // hud_toast
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    Get_time(l_start);
-    hud_toast(g_hud, l_t1, l_r1);
-    Get_time(l_end);
-  } else if (p_id == 479) {   // hud_chat
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    Get_time(l_start);
-    hud_chat(g_hud, l_t1, l_r1);
-    Get_time(l_end);
-  } else if (p_id == 480) {   // hud_set_chat_input
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    hud_set_chat_input(g_hud, l_i1, l_t1);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -4466,86 +4480,86 @@ void test_registry_info_13(Integer p_id, Attributes &p_info)
 // What functions 481 to 520 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 481) test_info_set(p_info, "hud_chat_open", "macro", "render", "render_hud", "src/render/render_hud.4dm", 129, 135, "Integer", "&A:p_hud",
+  if (p_id == 481) test_info_set(p_info, "settings_load", "macro", "program", "settings", "src/program/settings.4dm", 298, 375, "Integer", "&A:p_settings T:p_path",
+                              "Integer settings_load(Attributes &p_settings, Text p_path)", 0, "", "record_set_integer, settings_defaults, settings_line_text, settings_set_font, settings_set_font_file, settings_set_resource_pack, settings_set_text");
+  if (p_id == 482) test_info_set(p_info, "hud_clear", "macro", "render", "render_hud", "src/render/render_hud.4dm", 20, 48, "void", "&A:p_hud",
+                              "void hud_clear(Attributes &p_hud)", 0, "", "hud_set_chat_input, record_clear, record_set_integer, record_set_real, record_set_real_at, record_set_text, record_set_text_at");
+  if (p_id == 483) test_info_set(p_info, "hud_note_frame", "macro", "render", "render_hud", "src/render/render_hud.4dm", 50, 83, "void", "&A:p_hud R:p_frame_ms R:p_now",
+                              "void hud_note_frame(Attributes &p_hud, Real p_frame_ms, Real p_now)", 0, "", "record_integer, record_real, record_set_integer, record_set_real, record_set_text");
+  if (p_id == 484) test_info_set(p_info, "hud_frame_stats", "macro", "render", "render_hud", "src/render/render_hud.4dm", 85, 91, "Text", "&A:p_hud",
+                              "Text hud_frame_stats(Attributes &p_hud)", 0, "", "record_text");
+  if (p_id == 485) test_info_set(p_info, "hud_toast", "macro", "render", "render_hud", "src/render/render_hud.4dm", 93, 106, "void", "&A:p_hud T:p_text R:p_now",
+                              "void hud_toast(Attributes &p_hud, Text p_text, Real p_now)", 0, "", "record_real_at, record_set_real_at, record_set_text_at, record_text_at");
+  if (p_id == 486) test_info_set(p_info, "hud_chat", "macro", "render", "render_hud", "src/render/render_hud.4dm", 108, 121, "void", "&A:p_hud T:p_text R:p_now",
+                              "void hud_chat(Attributes &p_hud, Text p_text, Real p_now)", 0, "", "record_real_at, record_set_real_at, record_set_text_at, record_text_at");
+  if (p_id == 487) test_info_set(p_info, "hud_set_chat_input", "macro", "render", "render_hud", "src/render/render_hud.4dm", 123, 130, "void", "&A:p_hud I:p_open T:p_text",
+                              "void hud_set_chat_input(Attributes &p_hud, Integer p_open, Text p_text)", 0, "", "record_set_integer, record_set_text");
+  if (p_id == 488) test_info_set(p_info, "hud_chat_open", "macro", "render", "render_hud", "src/render/render_hud.4dm", 132, 138, "Integer", "&A:p_hud",
                               "Integer hud_chat_open(Attributes &p_hud)", 0, "", "record_integer");
-  if (p_id == 482) test_info_set(p_info, "hud_show_name", "macro", "render", "render_hud", "src/render/render_hud.4dm", 137, 143, "void", "&A:p_hud R:p_now",
+  if (p_id == 489) test_info_set(p_info, "hud_show_name", "macro", "render", "render_hud", "src/render/render_hud.4dm", 140, 146, "void", "&A:p_hud R:p_now",
                               "void hud_show_name(Attributes &p_hud, Real p_now)", 0, "", "record_set_real");
-  if (p_id == 483) test_info_set(p_info, "hud_help_shown", "macro", "render", "render_hud", "src/render/render_hud.4dm", 145, 151, "Integer", "&A:p_hud",
+  if (p_id == 490) test_info_set(p_info, "hud_help_shown", "macro", "render", "render_hud", "src/render/render_hud.4dm", 148, 154, "Integer", "&A:p_hud",
                               "Integer hud_help_shown(Attributes &p_hud)", 0, "", "record_integer");
-  if (p_id == 484) test_info_set(p_info, "hud_set_help", "macro", "render", "render_hud", "src/render/render_hud.4dm", 153, 159, "void", "&A:p_hud I:p_shown",
+  if (p_id == 491) test_info_set(p_info, "hud_set_help", "macro", "render", "render_hud", "src/render/render_hud.4dm", 156, 163, "void", "&A:p_hud I:p_shown",
                               "void hud_set_help(Attributes &p_hud, Integer p_shown)", 0, "", "record_set_integer");
-  if (p_id == 485) test_info_set(p_info, "hud_on_event", "macro", "render", "render_hud", "src/render/render_hud.4dm", 161, 181, "void", "&A:p_event &A:p_hud R:p_now",
+  if (p_id == 492) test_info_set(p_info, "hud_set_menu_help", "macro", "render", "render_hud", "src/render/render_hud.4dm", 165, 172, "void", "&A:p_hud I:p_from_menu",
+                              "void hud_set_menu_help(Attributes &p_hud, Integer p_from_menu)", 0, "", "record_set_integer");
+  if (p_id == 493) test_info_set(p_info, "hud_menu_help", "macro", "render", "render_hud", "src/render/render_hud.4dm", 174, 180, "Integer", "&A:p_hud",
+                              "Integer hud_menu_help(Attributes &p_hud)", 0, "", "record_integer");
+  if (p_id == 494) test_info_set(p_info, "hud_set_mouse", "macro", "render", "render_hud", "src/render/render_hud.4dm", 182, 189, "void", "&A:p_hud R:p_x R:p_y",
+                              "void hud_set_mouse(Attributes &p_hud, Real p_x, Real p_y)", 0, "", "record_set_real");
+  if (p_id == 495) test_info_set(p_info, "hud_on_event", "macro", "render", "render_hud", "src/render/render_hud.4dm", 191, 211, "void", "&A:p_event &A:p_hud R:p_now",
                               "void hud_on_event(Attributes &p_event, Attributes &p_hud, Real p_now)", 0, "", "event_integer, event_text, event_type, hud_toast, item_name");
-  if (p_id == 486) test_info_set(p_info, "hud_text", "macro", "render", "render_hud", "src/render/render_hud.4dm", 185, 194, "void", "B:p_box R:p_x R:p_y R:p_size I:p_align I:p_red I:p_green I:p_blue T:p_text",
+  if (p_id == 496) test_info_set(p_info, "hud_text", "macro", "render", "render_hud", "src/render/render_hud.4dm", 215, 224, "void", "B:p_box R:p_x R:p_y R:p_size I:p_align I:p_red I:p_green I:p_blue T:p_text",
                               "void hud_text(Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_align, Integer p_red, Integer p_green, Integer p_blue, Text p_text)", 0, "", "");
-  if (p_id == 487) test_info_set(p_info, "hud_shadow_text", "macro", "render", "render_hud", "src/render/render_hud.4dm", 196, 203, "void", "B:p_box R:p_x R:p_y R:p_size I:p_align I:p_red I:p_green I:p_blue T:p_text",
+  if (p_id == 497) test_info_set(p_info, "hud_shadow_text", "macro", "render", "render_hud", "src/render/render_hud.4dm", 226, 233, "void", "B:p_box R:p_x R:p_y R:p_size I:p_align I:p_red I:p_green I:p_blue T:p_text",
                               "void hud_shadow_text(Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_align, Integer p_red, Integer p_green, Integer p_blue, Text p_text)", 0, "", "hud_text");
-  if (p_id == 488) test_info_set(p_info, "hud_frame", "macro", "render", "render_hud", "src/render/render_hud.4dm", 205, 214, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1",
+  if (p_id == 498) test_info_set(p_info, "hud_frame", "macro", "render", "render_hud", "src/render/render_hud.4dm", 235, 244, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1",
                               "void hud_frame(Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1)", 0, "", "render_line");
-  if (p_id == 489) test_info_set(p_info, "hud_texture_face", "macro", "render", "render_hud", "src/render/render_hud.4dm", 216, 288, "void", "B:p_box I:p_tex R:p_shade I:p_quick R:p_origin_x R:p_origin_y R:p_u_x R:p_u_y R:p_v_x R:p_v_y",
+  if (p_id == 499) test_info_set(p_info, "hud_texture_face", "macro", "render", "render_hud", "src/render/render_hud.4dm", 246, 318, "void", "B:p_box I:p_tex R:p_shade I:p_quick R:p_origin_x R:p_origin_y R:p_u_x R:p_u_y R:p_v_x R:p_v_y",
                               "void hud_texture_face(Draw_Box p_box, Integer p_tex, Real p_shade, Integer p_quick, Real p_origin_x, Real p_origin_y, Real p_u_x, Real p_u_y, Real p_v_x, Real p_v_y)", 0, "", "render_set_colour, texture_palette_index");
-  if (p_id == 490) test_info_set(p_info, "hud_draw_item_icon", "macro", "render", "render_hud", "src/render/render_hud.4dm", 290, 319, "void", "B:p_box I:p_item R:p_centre_x R:p_centre_y R:p_size I:p_detail",
+  if (p_id == 500) test_info_set(p_info, "hud_draw_item_icon", "macro", "render", "render_hud", "src/render/render_hud.4dm", 320, 349, "void", "B:p_box I:p_item R:p_centre_x R:p_centre_y R:p_size I:p_detail",
                               "void hud_draw_item_icon(Draw_Box p_box, Integer p_item, Real p_centre_x, Real p_centre_y, Real p_size, Integer p_detail)", 0, "", "hud_texture_face, item_is_block, item_side_texture, item_sprite_texture, item_top_texture");
-  if (p_id == 491) test_info_set(p_info, "hud_draw_slot", "macro", "render", "render_hud", "src/render/render_hud.4dm", 321, 327, "void", "B:p_box R:p_x0 R:p_y0 R:p_size I:p_item I:p_count I:p_damage I:p_highlight",
+  if (p_id == 501) test_info_set(p_info, "hud_draw_slot", "macro", "render", "render_hud", "src/render/render_hud.4dm", 351, 357, "void", "B:p_box R:p_x0 R:p_y0 R:p_size I:p_item I:p_count I:p_damage I:p_highlight",
                               "void hud_draw_slot(Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Integer p_item, Integer p_count, Integer p_damage, Integer p_highlight)", 0, "", "hud_draw_slot_style");
-  if (p_id == 492) test_info_set(p_info, "hud_draw_slot_style", "macro", "render", "render_hud", "src/render/render_hud.4dm", 329, 379, "void", "B:p_box R:p_x0 R:p_y0 R:p_size I:p_item I:p_count I:p_damage I:p_highlight I:p_style",
+  if (p_id == 502) test_info_set(p_info, "hud_draw_slot_style", "macro", "render", "render_hud", "src/render/render_hud.4dm", 359, 409, "void", "B:p_box R:p_x0 R:p_y0 R:p_size I:p_item I:p_count I:p_damage I:p_highlight I:p_style",
                               "void hud_draw_slot_style(Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Integer p_item, Integer p_count, Integer p_damage, Integer p_highlight, Integer p_style)", 0, "", "clamp_real, hud_draw_item_icon, hud_frame, hud_shadow_text, item_max_uses, render_fill_rect, render_set_colour");
-  if (p_id == 493) test_info_set(p_info, "hud_banner", "macro", "render", "render_hud", "src/render/render_hud.4dm", 383, 396, "void", "B:p_box R:p_centre_x R:p_centre_y R:p_half_w R:p_half_h T:p_title T:p_line I:p_red I:p_green I:p_blue",
+  if (p_id == 503) test_info_set(p_info, "hud_banner", "macro", "render", "render_hud", "src/render/render_hud.4dm", 413, 426, "void", "B:p_box R:p_centre_x R:p_centre_y R:p_half_w R:p_half_h T:p_title T:p_line I:p_red I:p_green I:p_blue",
                               "void hud_banner(Draw_Box p_box, Real p_centre_x, Real p_centre_y, Real p_half_w, Real p_half_h, Text p_title, Text p_line, Integer p_red, Integer p_green, Integer p_blue)", 0, "", "hud_frame, hud_text, render_fill_rect, render_set_colour");
-  if (p_id == 494) test_info_set(p_info, "hud_help_line", "macro", "render", "render_hud", "src/render/render_hud.4dm", 398, 406, "void", "B:p_box R:p_x &R:p_y T:p_key T:p_what",
+  if (p_id == 504) test_info_set(p_info, "hud_pause_button_rect", "macro", "render", "render_hud", "src/render/render_hud.4dm", 428, 452, "void", "R:p_w R:p_h I:p_button &R:p_x0 &R:p_y0 &R:p_x1 &R:p_y1",
+                              "void hud_pause_button_rect(Real p_w, Real p_h, Integer p_button, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1)", 0, "", "min_real");
+  if (p_id == 505) test_info_set(p_info, "hud_pause_button_at", "macro", "render", "render_hud", "src/render/render_hud.4dm", 454, 470, "Integer", "R:p_w R:p_h R:p_x R:p_y",
+                              "Integer hud_pause_button_at(Real p_w, Real p_h, Real p_x, Real p_y)", 0, "", "hud_pause_button_rect");
+  if (p_id == 506) test_info_set(p_info, "hud_draw_button", "macro", "render", "render_hud", "src/render/render_hud.4dm", 472, 506, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1 T:p_text I:p_hover",
+                              "void hud_draw_button(Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1, Text p_text, Integer p_hover)", 0, "", "hud_text, render_fill_rect, render_set_colour");
+  if (p_id == 507) test_info_set(p_info, "hud_draw_pause_menu", "macro", "render", "render_hud", "src/render/render_hud.4dm", 508, 535, "void", "B:p_box R:p_w R:p_h R:p_mouse_x R:p_mouse_y T:p_mode_name",
+                              "void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Text p_mode_name)", 0, "", "hud_draw_button, hud_pause_button_at, hud_pause_button_rect, hud_shadow_text");
+  if (p_id == 508) test_info_set(p_info, "hud_help_line", "macro", "render", "render_hud", "src/render/render_hud.4dm", 537, 545, "void", "B:p_box R:p_x &R:p_y T:p_key T:p_what",
                               "void hud_help_line(Draw_Box p_box, Real p_x, Real &p_y, Text p_key, Text p_what)", 0, "", "hud_text");
-  if (p_id == 495) test_info_set(p_info, "hud_help_heading", "macro", "render", "render_hud", "src/render/render_hud.4dm", 408, 416, "void", "B:p_box R:p_x &R:p_y T:p_text",
+  if (p_id == 509) test_info_set(p_info, "hud_help_heading", "macro", "render", "render_hud", "src/render/render_hud.4dm", 547, 555, "void", "B:p_box R:p_x &R:p_y T:p_text",
                               "void hud_help_heading(Draw_Box p_box, Real p_x, Real &p_y, Text p_text)", 0, "", "hud_text");
-  if (p_id == 496) test_info_set(p_info, "hud_draw_help", "macro", "render", "render_hud", "src/render/render_hud.4dm", 418, 464, "void", "B:p_box R:p_w R:p_h",
-                              "void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)", 0, "", "hud_frame, hud_help_heading, hud_help_line, hud_text, min_real, render_fill_rect, render_set_colour");
-  if (p_id == 497) test_info_set(p_info, "hud_facing_name", "macro", "render", "render_hud", "src/render/render_hud.4dm", 466, 477, "Text", "R:p_yaw",
+  if (p_id == 510) test_info_set(p_info, "hud_draw_help", "macro", "render", "render_hud", "src/render/render_hud.4dm", 557, 607, "void", "B:p_box R:p_w R:p_h I:p_from_menu",
+                              "void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h, Integer p_from_menu)", 0, "", "hud_frame, hud_help_heading, hud_help_line, hud_text, min_real, render_fill_rect, render_set_colour");
+  if (p_id == 511) test_info_set(p_info, "hud_facing_name", "macro", "render", "render_hud", "src/render/render_hud.4dm", 609, 620, "Text", "R:p_yaw",
                               "Text hud_facing_name(Real p_yaw)", 0, "", "floor_integer, positive_mod");
-  if (p_id == 498) test_info_set(p_info, "hud_draw_hand", "macro", "render", "render_hud", "src/render/render_hud.4dm", 479, 514, "void", "B:p_box R:p_w R:p_view_bottom R:p_h I:p_item R:p_bob R:p_swing_time",
+  if (p_id == 512) test_info_set(p_info, "hud_draw_hand", "macro", "render", "render_hud", "src/render/render_hud.4dm", 622, 657, "void", "B:p_box R:p_w R:p_view_bottom R:p_h I:p_item R:p_bob R:p_swing_time",
                               "void hud_draw_hand(Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integer p_item, Real p_bob, Real p_swing_time)", 0, "", "hud_draw_item_icon, render_set_colour");
-  if (p_id == 499) test_info_set(p_info, "hud_draw_health", "macro", "render", "render_hud", "src/render/render_hud.4dm", 516, 541, "void", "B:p_box R:p_x0 R:p_y0 R:p_width I:p_health R:p_now",
+  if (p_id == 513) test_info_set(p_info, "hud_draw_health", "macro", "render", "render_hud", "src/render/render_hud.4dm", 659, 684, "void", "B:p_box R:p_x0 R:p_y0 R:p_width I:p_health R:p_now",
                               "void hud_draw_health(Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_health, Real p_now)", 0, "", "hud_texture_face");
-  if (p_id == 500) test_info_set(p_info, "hud_draw", "macro", "render", "render_hud", "src/render/render_hud.4dm", 543, 668, "void", "B:p_box R:p_w R:p_h I:p_captured I:p_screen_open &A:p_hud &A:p_player &A:p_inventory &A:p_settings I:p_seed R:p_time_of_day R:p_frame_ms T:p_render_stats R:p_now",
-                              "void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_screen_open, Attributes &p_hud, Attributes &p_player, Attributes &p_inventory, Attributes &p_settings, Integer p_seed, Real p_time_of_day, Real p_frame_ms, Text p_render_stats, Real p_now)", 0, "", "clamp_real, hud_banner, hud_chat_open, hud_draw_hand, hud_draw_health, hud_draw_help, hud_draw_slot, hud_facing_name, hud_frame_stats, hud_help_shown, hud_shadow_text, hud_text, item_name, player_auto_walk, player_bob, player_creative, player_crouching, player_flying, player_health, player_held_item, player_hurt_time, player_is_dead, player_look, player_position, player_selected, player_spectator, player_survival, player_swing_time, record_real, record_real_at, record_text, record_text_at, render_fill_rect, render_line, render_set_colour, settings_flag, settings_render_distance, slot_count, slot_damage, slot_item, world_clock_text, world_is_night");
-  if (p_id == 501) test_info_set(p_info, "ui_clear", "macro", "render", "render_ui", "src/render/render_ui.4dm", 20, 35, "void", "&A:p_ui",
+  if (p_id == 514) test_info_set(p_info, "hud_draw", "macro", "render", "render_hud", "src/render/render_hud.4dm", 686, 819, "void", "B:p_box R:p_w R:p_h I:p_captured I:p_screen_open &A:p_hud &A:p_player &A:p_inventory &A:p_settings I:p_seed R:p_time_of_day R:p_frame_ms T:p_render_stats R:p_now",
+                              "void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_screen_open, Attributes &p_hud, Attributes &p_player, Attributes &p_inventory, Attributes &p_settings, Integer p_seed, Real p_time_of_day, Real p_frame_ms, Text p_render_stats, Real p_now)", 0, "", "clamp_real, hud_banner, hud_chat_open, hud_draw_hand, hud_draw_health, hud_draw_help, hud_draw_pause_menu, hud_draw_slot, hud_facing_name, hud_frame_stats, hud_help_shown, hud_menu_help, hud_shadow_text, hud_text, item_name, player_auto_walk, player_bob, player_camera, player_creative, player_crouching, player_flying, player_game_mode, player_game_mode_name, player_health, player_held_item, player_hurt_time, player_is_dead, player_look, player_position, player_selected, player_spectator, player_survival, player_swing_time, record_real, record_real_at, record_text, record_text_at, render_fill_rect, render_line, render_set_colour, settings_flag, settings_render_distance, slot_count, slot_damage, slot_item, world_clock_text, world_is_night");
+  if (p_id == 515) test_info_set(p_info, "ui_clear", "macro", "render", "render_ui", "src/render/render_ui.4dm", 20, 35, "void", "&A:p_ui",
                               "void ui_clear(Attributes &p_ui)", 0, "", "record_clear, record_set_integer, ui_set_mouse, ui_set_search");
-  if (p_id == 502) test_info_set(p_info, "ui_screen", "macro", "render", "render_ui", "src/render/render_ui.4dm", 37, 43, "Integer", "&A:p_ui",
+  if (p_id == 516) test_info_set(p_info, "ui_screen", "macro", "render", "render_ui", "src/render/render_ui.4dm", 37, 43, "Integer", "&A:p_ui",
                               "Integer ui_screen(Attributes &p_ui)", 0, "", "record_integer");
-  if (p_id == 503) test_info_set(p_info, "ui_furnace", "macro", "render", "render_ui", "src/render/render_ui.4dm", 45, 51, "Integer", "&A:p_ui",
+  if (p_id == 517) test_info_set(p_info, "ui_furnace", "macro", "render", "render_ui", "src/render/render_ui.4dm", 45, 51, "Integer", "&A:p_ui",
                               "Integer ui_furnace(Attributes &p_ui)", 0, "", "record_integer");
-  if (p_id == 504) test_info_set(p_info, "ui_mouse", "macro", "render", "render_ui", "src/render/render_ui.4dm", 53, 60, "void", "&A:p_ui &R:p_x &R:p_y",
+  if (p_id == 518) test_info_set(p_info, "ui_mouse", "macro", "render", "render_ui", "src/render/render_ui.4dm", 53, 60, "void", "&A:p_ui &R:p_x &R:p_y",
                               "void ui_mouse(Attributes &p_ui, Real &p_x, Real &p_y)", 0, "", "record_real");
-  if (p_id == 505) test_info_set(p_info, "ui_set_mouse", "macro", "render", "render_ui", "src/render/render_ui.4dm", 62, 70, "void", "&A:p_ui R:p_x R:p_y",
+  if (p_id == 519) test_info_set(p_info, "ui_set_mouse", "macro", "render", "render_ui", "src/render/render_ui.4dm", 62, 70, "void", "&A:p_ui R:p_x R:p_y",
                               "void ui_set_mouse(Attributes &p_ui, Real p_x, Real p_y)", 0, "", "record_set_real");
-  if (p_id == 506) test_info_set(p_info, "ui_set_tabs", "macro", "render", "render_ui", "src/render/render_ui.4dm", 74, 81, "void", "&A:p_ui I:p_creative",
+  if (p_id == 520) test_info_set(p_info, "ui_set_tabs", "macro", "render", "render_ui", "src/render/render_ui.4dm", 74, 81, "void", "&A:p_ui I:p_creative",
                               "void ui_set_tabs(Attributes &p_ui, Integer p_creative)", 0, "", "record_set_integer");
-  if (p_id == 507) test_info_set(p_info, "ui_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 83, 89, "Text", "&A:p_ui",
-                              "Text ui_search(Attributes &p_ui)", 0, "", "record_text");
-  if (p_id == 508) test_info_set(p_info, "ui_set_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 91, 114, "void", "&A:p_ui T:p_search",
-                              "void ui_set_search(Attributes &p_ui, Text p_search)", 0, "", "item_name, record_set_integer, record_set_integer_at, record_set_text");
-  if (p_id == 509) test_info_set(p_info, "ui_type_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 116, 130, "void", "&A:p_ui T:p_key",
-                              "void ui_type_search(Attributes &p_ui, Text p_key)", 0, "", "ui_search, ui_set_search");
-  if (p_id == 510) test_info_set(p_info, "ui_creative_count", "macro", "render", "render_ui", "src/render/render_ui.4dm", 132, 138, "Integer", "&A:p_ui",
-                              "Integer ui_creative_count(Attributes &p_ui)", 0, "", "record_integer");
-  if (p_id == 511) test_info_set(p_info, "ui_creative_rows", "macro", "render", "render_ui", "src/render/render_ui.4dm", 140, 146, "Integer", "&A:p_ui",
-                              "Integer ui_creative_rows(Attributes &p_ui)", 0, "", "floor_divide, ui_creative_count");
-  if (p_id == 512) test_info_set(p_info, "ui_creative_item", "macro", "render", "render_ui", "src/render/render_ui.4dm", 148, 159, "Integer", "&A:p_ui I:p_slot",
-                              "Integer ui_creative_item(Attributes &p_ui, Integer p_slot)", 0, "", "record_integer, record_integer_at, ui_creative_count");
-  if (p_id == 513) test_info_set(p_info, "ui_creative_click", "macro", "render", "render_ui", "src/render/render_ui.4dm", 161, 184, "void", "&A:p_ui &A:p_inventory I:p_slot I:p_right_button",
-                              "void ui_creative_click(Attributes &p_ui, Attributes &p_inventory, Integer p_slot, Integer p_right_button)", 0, "", "item_max_stack, slot_clear, slot_count, slot_item, slot_set, ui_creative_item");
-  if (p_id == 514) test_info_set(p_info, "ui_open", "macro", "render", "render_ui", "src/render/render_ui.4dm", 188, 225, "void", "&A:p_ui &A:p_grid &A:p_furnaces &A:p_events I:p_screen I:p_x I:p_y I:p_z",
-                              "void ui_open(Attributes &p_ui, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_events, Integer p_screen, Integer p_x, Integer p_y, Integer p_z)", 0, "", "chest_get_or_create, emit_toast, furnace_get_or_create, grid_clear, record_set_integer, ui_set_search");
-  if (p_id == 515) test_info_set(p_info, "ui_close", "macro", "render", "render_ui", "src/render/render_ui.4dm", 227, 239, "void", "&A:p_ui &A:p_inventory &A:p_grid &A:p_events R:p_drop_x R:p_drop_y R:p_drop_z",
-                              "void ui_close(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_events, Real p_drop_x, Real p_drop_y, Real p_drop_z)", 0, "", "grid_return_items, inventory_return_cursor, record_set_integer");
-  if (p_id == 516) test_info_set(p_info, "ui_on_event", "macro", "render", "render_ui", "src/render/render_ui.4dm", 241, 262, "void", "&A:p_event &A:p_ui &A:p_inventory &A:p_grid &A:p_furnaces &A:p_events R:p_drop_x R:p_drop_y R:p_drop_z",
-                              "void ui_on_event(Attributes &p_event, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_events, Real p_drop_x, Real p_drop_y, Real p_drop_z)", 0, "", "event_integer, event_type, record_integer, ui_close, ui_open, ui_screen");
-  if (p_id == 517) test_info_set(p_info, "ui_layout", "macro", "render", "render_ui", "src/render/render_ui.4dm", 266, 292, "void", "I:p_screen R:p_w R:p_h &R:p_slot_size &R:p_x0 &R:p_y0 &R:p_x1 &R:p_y1 &R:p_inv_x &R:p_inv_y &R:p_top_y",
-                              "void ui_layout(Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1, Real &p_inv_x, Real &p_inv_y, Real &p_top_y)", 0, "", "clamp_real, max_real, min_real");
-  if (p_id == 518) test_info_set(p_info, "ui_slot_rect", "macro", "render", "render_ui", "src/render/render_ui.4dm", 294, 410, "Integer", "I:p_screen I:p_grid_width I:p_slot R:p_w R:p_h &R:p_x &R:p_y &R:p_size",
-                              "Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Real p_w, Real p_h, Real &p_x, Real &p_y, Real &p_size)", 0, "", "floor_divide, positive_mod, ui_layout");
-  if (p_id == 519) test_info_set(p_info, "ui_slot_at", "macro", "render", "render_ui", "src/render/render_ui.4dm", 412, 427, "Integer", "I:p_screen I:p_grid_width R:p_px R:p_py R:p_w R:p_h",
-                              "Integer ui_slot_at(Integer p_screen, Integer p_grid_width, Real p_px, Real p_py, Real p_w, Real p_h)", 0, "", "ui_slot_rect");
-  if (p_id == 520) test_info_set(p_info, "ui_click", "macro", "render", "render_ui", "src/render/render_ui.4dm", 431, 523, "void", "&A:p_ui &A:p_inventory &A:p_grid &A:p_furnaces &A:p_book &A:p_events R:p_x R:p_y I:p_right_button R:p_w R:p_h",
-                              "void ui_click(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_book, Attributes &p_events, Real p_x, Real p_y, Integer p_right_button, Real p_w, Real p_h)", 0, "", "chest_slot, crafting_take_output, emit_event, emit_simple_event, emit_toast, furnace_slot, grid_width, item_fuel_seconds, max_integer, min_integer, record_integer, record_set_integer, slot_click_left, slot_click_right, slot_item, ui_creative_click, ui_creative_rows, ui_furnace, ui_screen, ui_slot_at");
 }
 
 void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -4590,30 +4604,82 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 481) {   // hud_chat_open
+  if (p_id == 481) {   // settings_load
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_i = settings_load(g_settings, l_t1);
+    Get_time(l_end);
+  } else if (p_id == 482) {   // hud_clear
+    Get_time(l_start);
+    hud_clear(g_hud);
+    Get_time(l_end);
+  } else if (p_id == 483) {   // hud_note_frame
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    hud_note_frame(g_hud, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 484) {   // hud_frame_stats
+    Get_time(l_start);
+    l_ret_t = hud_frame_stats(g_hud);
+    Get_time(l_end);
+  } else if (p_id == 485) {   // hud_toast
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    Get_time(l_start);
+    hud_toast(g_hud, l_t1, l_r1);
+    Get_time(l_end);
+  } else if (p_id == 486) {   // hud_chat
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    Get_time(l_start);
+    hud_chat(g_hud, l_t1, l_r1);
+    Get_time(l_end);
+  } else if (p_id == 487) {   // hud_set_chat_input
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    hud_set_chat_input(g_hud, l_i1, l_t1);
+    Get_time(l_end);
+  } else if (p_id == 488) {   // hud_chat_open
     Get_time(l_start);
     l_ret_i = hud_chat_open(g_hud);
     Get_time(l_end);
-  } else if (p_id == 482) {   // hud_show_name
+  } else if (p_id == 489) {   // hud_show_name
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     hud_show_name(g_hud, l_r1);
     Get_time(l_end);
-  } else if (p_id == 483) {   // hud_help_shown
+  } else if (p_id == 490) {   // hud_help_shown
     Get_time(l_start);
     l_ret_i = hud_help_shown(g_hud);
     Get_time(l_end);
-  } else if (p_id == 484) {   // hud_set_help
+  } else if (p_id == 491) {   // hud_set_help
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     hud_set_help(g_hud, l_i1);
     Get_time(l_end);
-  } else if (p_id == 485) {   // hud_on_event
+  } else if (p_id == 492) {   // hud_set_menu_help
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    hud_set_menu_help(g_hud, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 493) {   // hud_menu_help
+    Get_time(l_start);
+    l_ret_i = hud_menu_help(g_hud);
+    Get_time(l_end);
+  } else if (p_id == 494) {   // hud_set_mouse
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    hud_set_mouse(g_hud, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 495) {   // hud_on_event
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     hud_on_event(g_event, g_hud, l_r1);
     Get_time(l_end);
-  } else if (p_id == 486) {   // hud_text
+  } else if (p_id == 496) {   // hud_text
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4625,7 +4691,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_text(g_test_box, l_r1, l_r2, l_r3, l_i1, l_i2, l_i3, l_i4, l_t1);
     Get_time(l_end);
-  } else if (p_id == 487) {   // hud_shadow_text
+  } else if (p_id == 497) {   // hud_shadow_text
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4637,7 +4703,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_shadow_text(g_test_box, l_r1, l_r2, l_r3, l_i1, l_i2, l_i3, l_i4, l_t1);
     Get_time(l_end);
-  } else if (p_id == 488) {   // hud_frame
+  } else if (p_id == 498) {   // hud_frame
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4645,7 +4711,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_frame(g_test_box, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 489) {   // hud_texture_face
+  } else if (p_id == 499) {   // hud_texture_face
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
@@ -4658,7 +4724,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_texture_face(g_test_box, l_i1, l_r1, l_i2, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
     Get_time(l_end);
-  } else if (p_id == 490) {   // hud_draw_item_icon
+  } else if (p_id == 500) {   // hud_draw_item_icon
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -4667,7 +4733,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_draw_item_icon(g_test_box, l_i1, l_r1, l_r2, l_r3, l_i2);
     Get_time(l_end);
-  } else if (p_id == 491) {   // hud_draw_slot
+  } else if (p_id == 501) {   // hud_draw_slot
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4678,7 +4744,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_draw_slot(g_test_box, l_r1, l_r2, l_r3, l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 492) {   // hud_draw_slot_style
+  } else if (p_id == 502) {   // hud_draw_slot_style
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4690,7 +4756,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_draw_slot_style(g_test_box, l_r1, l_r2, l_r3, l_i1, l_i2, l_i3, l_i4, l_i5);
     Get_time(l_end);
-  } else if (p_id == 493) {   // hud_banner
+  } else if (p_id == 503) {   // hud_banner
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4703,7 +4769,49 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_banner(g_test_box, l_r1, l_r2, l_r3, l_r4, l_t1, l_t2, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 494) {   // hud_help_line
+  } else if (p_id == 504) {   // hud_pause_button_rect
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    Get_time(l_start);
+    hud_pause_button_rect(l_r1, l_r2, l_i1, l_r3, l_r4, l_r5, l_r6);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R3, l_r3);
+    record_set_real(p_out, ATTR_TEST_R4, l_r4);
+    record_set_real(p_out, ATTR_TEST_R5, l_r5);
+    record_set_real(p_out, ATTR_TEST_R6, l_r6);
+  } else if (p_id == 505) {   // hud_pause_button_at
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    Get_time(l_start);
+    l_ret_i = hud_pause_button_at(l_r1, l_r2, l_r3, l_r4);
+    Get_time(l_end);
+  } else if (p_id == 506) {   // hud_draw_button
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    hud_draw_button(g_test_box, l_r1, l_r2, l_r3, l_r4, l_t1, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 507) {   // hud_draw_pause_menu
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    hud_draw_pause_menu(g_test_box, l_r1, l_r2, l_r3, l_r4, l_t1);
+    Get_time(l_end);
+  } else if (p_id == 508) {   // hud_help_line
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_t1 = record_text(p_in, ATTR_TEST_T1);
@@ -4712,7 +4820,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     hud_help_line(g_test_box, l_r1, l_r2, l_t1, l_t2);
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
-  } else if (p_id == 495) {   // hud_help_heading
+  } else if (p_id == 509) {   // hud_help_heading
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_t1 = record_text(p_in, ATTR_TEST_T1);
@@ -4720,18 +4828,19 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     hud_help_heading(g_test_box, l_r1, l_r2, l_t1);
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
-  } else if (p_id == 496) {   // hud_draw_help
+  } else if (p_id == 510) {   // hud_draw_help
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
-    hud_draw_help(g_test_box, l_r1, l_r2);
+    hud_draw_help(g_test_box, l_r1, l_r2, l_i1);
     Get_time(l_end);
-  } else if (p_id == 497) {   // hud_facing_name
+  } else if (p_id == 511) {   // hud_facing_name
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_t = hud_facing_name(l_r1);
     Get_time(l_end);
-  } else if (p_id == 498) {   // hud_draw_hand
+  } else if (p_id == 512) {   // hud_draw_hand
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4741,7 +4850,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_draw_hand(g_test_box, l_r1, l_r2, l_r3, l_i1, l_r4, l_r5);
     Get_time(l_end);
-  } else if (p_id == 499) {   // hud_draw_health
+  } else if (p_id == 513) {   // hud_draw_health
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -4750,7 +4859,7 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_draw_health(g_test_box, l_r1, l_r2, l_r3, l_i1, l_r4);
     Get_time(l_end);
-  } else if (p_id == 500) {   // hud_draw
+  } else if (p_id == 514) {   // hud_draw
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
@@ -4763,19 +4872,19 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     hud_draw(g_test_box, l_r1, l_r2, l_i1, l_i2, g_hud, g_player, g_inventory, g_settings, l_i3, l_r3, l_r4, l_t1, l_r5);
     Get_time(l_end);
-  } else if (p_id == 501) {   // ui_clear
+  } else if (p_id == 515) {   // ui_clear
     Get_time(l_start);
     ui_clear(g_ui);
     Get_time(l_end);
-  } else if (p_id == 502) {   // ui_screen
+  } else if (p_id == 516) {   // ui_screen
     Get_time(l_start);
     l_ret_i = ui_screen(g_ui);
     Get_time(l_end);
-  } else if (p_id == 503) {   // ui_furnace
+  } else if (p_id == 517) {   // ui_furnace
     Get_time(l_start);
     l_ret_i = ui_furnace(g_ui);
     Get_time(l_end);
-  } else if (p_id == 504) {   // ui_mouse
+  } else if (p_id == 518) {   // ui_mouse
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
@@ -4783,128 +4892,16 @@ void test_registry_call_13(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
-  } else if (p_id == 505) {   // ui_set_mouse
+  } else if (p_id == 519) {   // ui_set_mouse
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     ui_set_mouse(g_ui, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 506) {   // ui_set_tabs
+  } else if (p_id == 520) {   // ui_set_tabs
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     ui_set_tabs(g_ui, l_i1);
-    Get_time(l_end);
-  } else if (p_id == 507) {   // ui_search
-    Get_time(l_start);
-    l_ret_t = ui_search(g_ui);
-    Get_time(l_end);
-  } else if (p_id == 508) {   // ui_set_search
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    ui_set_search(g_ui, l_t1);
-    Get_time(l_end);
-  } else if (p_id == 509) {   // ui_type_search
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    ui_type_search(g_ui, l_t1);
-    Get_time(l_end);
-  } else if (p_id == 510) {   // ui_creative_count
-    Get_time(l_start);
-    l_ret_i = ui_creative_count(g_ui);
-    Get_time(l_end);
-  } else if (p_id == 511) {   // ui_creative_rows
-    Get_time(l_start);
-    l_ret_i = ui_creative_rows(g_ui);
-    Get_time(l_end);
-  } else if (p_id == 512) {   // ui_creative_item
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    l_ret_i = ui_creative_item(g_ui, l_i1);
-    Get_time(l_end);
-  } else if (p_id == 513) {   // ui_creative_click
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    ui_creative_click(g_ui, g_inventory, l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 514) {   // ui_open
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    ui_open(g_ui, g_grid, g_furnaces, g_events, l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 515) {   // ui_close
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    Get_time(l_start);
-    ui_close(g_ui, g_inventory, g_grid, g_events, l_r1, l_r2, l_r3);
-    Get_time(l_end);
-  } else if (p_id == 516) {   // ui_on_event
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    Get_time(l_start);
-    ui_on_event(g_event, g_ui, g_inventory, g_grid, g_furnaces, g_events, l_r1, l_r2, l_r3);
-    Get_time(l_end);
-  } else if (p_id == 517) {   // ui_layout
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    l_r8 = record_real(p_in, ATTR_TEST_R8);
-    l_r9 = record_real(p_in, ATTR_TEST_R9);
-    l_r10 = record_real(p_in, ATTR_TEST_R10);
-    Get_time(l_start);
-    ui_layout(l_i1, l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_r9, l_r10);
-    Get_time(l_end);
-    record_set_real(p_out, ATTR_TEST_R3, l_r3);
-    record_set_real(p_out, ATTR_TEST_R4, l_r4);
-    record_set_real(p_out, ATTR_TEST_R5, l_r5);
-    record_set_real(p_out, ATTR_TEST_R6, l_r6);
-    record_set_real(p_out, ATTR_TEST_R7, l_r7);
-    record_set_real(p_out, ATTR_TEST_R8, l_r8);
-    record_set_real(p_out, ATTR_TEST_R9, l_r9);
-    record_set_real(p_out, ATTR_TEST_R10, l_r10);
-  } else if (p_id == 518) {   // ui_slot_rect
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    Get_time(l_start);
-    l_ret_i = ui_slot_rect(l_i1, l_i2, l_i3, l_r1, l_r2, l_r3, l_r4, l_r5);
-    Get_time(l_end);
-    record_set_real(p_out, ATTR_TEST_R3, l_r3);
-    record_set_real(p_out, ATTR_TEST_R4, l_r4);
-    record_set_real(p_out, ATTR_TEST_R5, l_r5);
-  } else if (p_id == 519) {   // ui_slot_at
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    Get_time(l_start);
-    l_ret_i = ui_slot_at(l_i1, l_i2, l_r1, l_r2, l_r3, l_r4);
-    Get_time(l_end);
-  } else if (p_id == 520) {   // ui_click
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    Get_time(l_start);
-    ui_click(g_ui, g_inventory, g_grid, g_furnaces, g_book, g_events, l_r1, l_r2, l_i1, l_r3, l_r4);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -4918,86 +4915,86 @@ void test_registry_info_14(Integer p_id, Attributes &p_info)
 // What functions 521 to 560 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 521) test_info_set(p_info, "ui_draw_arrow", "macro", "render", "render_ui", "src/render/render_ui.4dm", 527, 543, "void", "B:p_box R:p_x R:p_y R:p_length R:p_size R:p_progress",
+  if (p_id == 521) test_info_set(p_info, "ui_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 83, 89, "Text", "&A:p_ui",
+                              "Text ui_search(Attributes &p_ui)", 0, "", "record_text");
+  if (p_id == 522) test_info_set(p_info, "ui_set_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 91, 114, "void", "&A:p_ui T:p_search",
+                              "void ui_set_search(Attributes &p_ui, Text p_search)", 0, "", "item_name, record_set_integer, record_set_integer_at, record_set_text");
+  if (p_id == 523) test_info_set(p_info, "ui_type_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 116, 130, "void", "&A:p_ui T:p_key",
+                              "void ui_type_search(Attributes &p_ui, Text p_key)", 0, "", "ui_search, ui_set_search");
+  if (p_id == 524) test_info_set(p_info, "ui_creative_count", "macro", "render", "render_ui", "src/render/render_ui.4dm", 132, 138, "Integer", "&A:p_ui",
+                              "Integer ui_creative_count(Attributes &p_ui)", 0, "", "record_integer");
+  if (p_id == 525) test_info_set(p_info, "ui_creative_rows", "macro", "render", "render_ui", "src/render/render_ui.4dm", 140, 146, "Integer", "&A:p_ui",
+                              "Integer ui_creative_rows(Attributes &p_ui)", 0, "", "floor_divide, ui_creative_count");
+  if (p_id == 526) test_info_set(p_info, "ui_creative_item", "macro", "render", "render_ui", "src/render/render_ui.4dm", 148, 159, "Integer", "&A:p_ui I:p_slot",
+                              "Integer ui_creative_item(Attributes &p_ui, Integer p_slot)", 0, "", "record_integer, record_integer_at, ui_creative_count");
+  if (p_id == 527) test_info_set(p_info, "ui_creative_click", "macro", "render", "render_ui", "src/render/render_ui.4dm", 161, 184, "void", "&A:p_ui &A:p_inventory I:p_slot I:p_right_button",
+                              "void ui_creative_click(Attributes &p_ui, Attributes &p_inventory, Integer p_slot, Integer p_right_button)", 0, "", "item_max_stack, slot_clear, slot_count, slot_item, slot_set, ui_creative_item");
+  if (p_id == 528) test_info_set(p_info, "ui_open", "macro", "render", "render_ui", "src/render/render_ui.4dm", 188, 225, "void", "&A:p_ui &A:p_grid &A:p_furnaces &A:p_events I:p_screen I:p_x I:p_y I:p_z",
+                              "void ui_open(Attributes &p_ui, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_events, Integer p_screen, Integer p_x, Integer p_y, Integer p_z)", 0, "", "chest_get_or_create, emit_toast, furnace_get_or_create, grid_clear, record_set_integer, ui_set_search");
+  if (p_id == 529) test_info_set(p_info, "ui_close", "macro", "render", "render_ui", "src/render/render_ui.4dm", 227, 239, "void", "&A:p_ui &A:p_inventory &A:p_grid &A:p_events R:p_drop_x R:p_drop_y R:p_drop_z",
+                              "void ui_close(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_events, Real p_drop_x, Real p_drop_y, Real p_drop_z)", 0, "", "grid_return_items, inventory_return_cursor, record_set_integer");
+  if (p_id == 530) test_info_set(p_info, "ui_on_event", "macro", "render", "render_ui", "src/render/render_ui.4dm", 241, 262, "void", "&A:p_event &A:p_ui &A:p_inventory &A:p_grid &A:p_furnaces &A:p_events R:p_drop_x R:p_drop_y R:p_drop_z",
+                              "void ui_on_event(Attributes &p_event, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_events, Real p_drop_x, Real p_drop_y, Real p_drop_z)", 0, "", "event_integer, event_type, record_integer, ui_close, ui_open, ui_screen");
+  if (p_id == 531) test_info_set(p_info, "ui_layout", "macro", "render", "render_ui", "src/render/render_ui.4dm", 266, 292, "void", "I:p_screen R:p_w R:p_h &R:p_slot_size &R:p_x0 &R:p_y0 &R:p_x1 &R:p_y1 &R:p_inv_x &R:p_inv_y &R:p_top_y",
+                              "void ui_layout(Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1, Real &p_inv_x, Real &p_inv_y, Real &p_top_y)", 0, "", "clamp_real, max_real, min_real");
+  if (p_id == 532) test_info_set(p_info, "ui_slot_rect", "macro", "render", "render_ui", "src/render/render_ui.4dm", 294, 410, "Integer", "I:p_screen I:p_grid_width I:p_slot R:p_w R:p_h &R:p_x &R:p_y &R:p_size",
+                              "Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Real p_w, Real p_h, Real &p_x, Real &p_y, Real &p_size)", 0, "", "floor_divide, positive_mod, ui_layout");
+  if (p_id == 533) test_info_set(p_info, "ui_slot_at", "macro", "render", "render_ui", "src/render/render_ui.4dm", 412, 427, "Integer", "I:p_screen I:p_grid_width R:p_px R:p_py R:p_w R:p_h",
+                              "Integer ui_slot_at(Integer p_screen, Integer p_grid_width, Real p_px, Real p_py, Real p_w, Real p_h)", 0, "", "ui_slot_rect");
+  if (p_id == 534) test_info_set(p_info, "ui_click", "macro", "render", "render_ui", "src/render/render_ui.4dm", 431, 523, "void", "&A:p_ui &A:p_inventory &A:p_grid &A:p_furnaces &A:p_book &A:p_events R:p_x R:p_y I:p_right_button R:p_w R:p_h",
+                              "void ui_click(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_book, Attributes &p_events, Real p_x, Real p_y, Integer p_right_button, Real p_w, Real p_h)", 0, "", "chest_slot, crafting_take_output, emit_event, emit_simple_event, emit_toast, furnace_slot, grid_width, item_fuel_seconds, max_integer, min_integer, record_integer, record_set_integer, slot_click_left, slot_click_right, slot_item, ui_creative_click, ui_creative_rows, ui_furnace, ui_screen, ui_slot_at");
+  if (p_id == 535) test_info_set(p_info, "ui_draw_arrow", "macro", "render", "render_ui", "src/render/render_ui.4dm", 527, 543, "void", "B:p_box R:p_x R:p_y R:p_length R:p_size R:p_progress",
                               "void ui_draw_arrow(Draw_Box p_box, Real p_x, Real p_y, Real p_length, Real p_size, Real p_progress)", 0, "", "min_real, render_fill_rect, render_set_colour");
-  if (p_id == 522) test_info_set(p_info, "ui_draw_furnace", "macro", "render", "render_ui", "src/render/render_ui.4dm", 545, 586, "void", "B:p_box &A:p_furnaces I:p_furnace R:p_w R:p_h",
+  if (p_id == 536) test_info_set(p_info, "ui_draw_furnace", "macro", "render", "render_ui", "src/render/render_ui.4dm", 545, 586, "void", "B:p_box &A:p_furnaces I:p_furnace R:p_w R:p_h",
                               "void ui_draw_furnace(Draw_Box p_box, Attributes &p_furnaces, Integer p_furnace, Real p_w, Real p_h)", 0, "", "clamp_real, furnace_burn_left, furnace_burn_total, furnace_progress, render_fill_rect, render_set_colour, ui_draw_arrow, ui_layout");
-  if (p_id == 523) test_info_set(p_info, "ui_draw_tab", "macro", "render", "render_ui", "src/render/render_ui.4dm", 588, 609, "void", "B:p_box R:p_x R:p_y R:p_size I:p_slot I:p_screen I:p_hovered",
+  if (p_id == 537) test_info_set(p_info, "ui_draw_tab", "macro", "render", "render_ui", "src/render/render_ui.4dm", 588, 609, "void", "B:p_box R:p_x R:p_y R:p_size I:p_slot I:p_screen I:p_hovered",
                               "void ui_draw_tab(Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_slot, Integer p_screen, Integer p_hovered)", 0, "", "hud_draw_item_icon, hud_frame, render_fill_rect, render_set_colour");
-  if (p_id == 524) test_info_set(p_info, "ui_draw_scroll", "macro", "render", "render_ui", "src/render/render_ui.4dm", 611, 632, "void", "B:p_box R:p_x R:p_y R:p_size I:p_up I:p_hovered",
+  if (p_id == 538) test_info_set(p_info, "ui_draw_scroll", "macro", "render", "render_ui", "src/render/render_ui.4dm", 611, 632, "void", "B:p_box R:p_x R:p_y R:p_size I:p_up I:p_hovered",
                               "void ui_draw_scroll(Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_up, Integer p_hovered)", 0, "", "hud_draw_slot_style, render_set_colour");
-  if (p_id == 525) test_info_set(p_info, "ui_draw_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 634, 655, "void", "B:p_box &A:p_ui R:p_x R:p_y R:p_width R:p_size",
+  if (p_id == 539) test_info_set(p_info, "ui_draw_search", "macro", "render", "render_ui", "src/render/render_ui.4dm", 634, 655, "void", "B:p_box &A:p_ui R:p_x R:p_y R:p_width R:p_size",
                               "void ui_draw_search(Draw_Box p_box, Attributes &p_ui, Real p_x, Real p_y, Real p_width, Real p_size)", 0, "", "hud_text, render_fill_rect, render_line, render_set_colour, ui_search");
-  if (p_id == 526) test_info_set(p_info, "ui_draw", "macro", "render", "render_ui", "src/render/render_ui.4dm", 657, 776, "void", "B:p_box R:p_w R:p_h &A:p_ui &A:p_inventory &A:p_grid &A:p_furnaces &A:p_book",
+  if (p_id == 540) test_info_set(p_info, "ui_draw", "macro", "render", "render_ui", "src/render/render_ui.4dm", 657, 773, "void", "B:p_box R:p_w R:p_h &A:p_ui &A:p_inventory &A:p_grid &A:p_furnaces &A:p_book",
                               "void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_book)", 0, "", "chest_slot, crafting_match, crafting_recipe_output, furnace_slot, grid_width, hud_draw_item_icon, hud_draw_slot_style, hud_frame, hud_shadow_text, item_name, record_integer, record_integer_at, render_fill_rect, render_set_colour, slot_count, slot_damage, slot_item, ui_creative_item, ui_creative_rows, ui_draw_arrow, ui_draw_furnace, ui_draw_scroll, ui_draw_search, ui_draw_tab, ui_furnace, ui_layout, ui_mouse, ui_screen, ui_slot_at, ui_slot_rect");
-  if (p_id == 527) test_info_set(p_info, "render_init", "macro", "render", "render_world", "src/render/render_world.4dm", 23, 45, "void", "",
+  if (p_id == 541) test_info_set(p_info, "render_init", "macro", "render", "render_world", "src/render/render_world.4dm", 23, 45, "void", "",
                               "void render_init()", 0, "", "hash_real, render_set_detail");
-  if (p_id == 528) test_info_set(p_info, "render_set_detail", "macro", "render", "render_world", "src/render/render_world.4dm", 47, 67, "void", "I:p_level",
+  if (p_id == 542) test_info_set(p_info, "render_set_detail", "macro", "render", "render_world", "src/render/render_world.4dm", 47, 67, "void", "I:p_level",
                               "void render_set_detail(Integer p_level)", 0, "", "");
-  if (p_id == 529) test_info_set(p_info, "render_view_from", "macro", "render", "render_world", "src/render/render_world.4dm", 69, 92, "void", "&A:p_player &A:p_settings R:p_time_of_day R:p_now",
+  if (p_id == 543) test_info_set(p_info, "render_view_from", "macro", "render", "render_world", "src/render/render_world.4dm", 69, 92, "void", "&A:p_player &A:p_settings R:p_time_of_day R:p_now",
                               "void render_view_from(Attributes &p_player, Attributes &p_settings, Real p_time_of_day, Real p_now)", 0, "", "player_break_stage, player_eye_in_water, player_target_cell, player_target_kind, record_integer, render_set_detail, settings_detail, settings_flag, settings_render_distance, world_daylight");
-  if (p_id == 530) test_info_set(p_info, "render_stats_text", "macro", "render", "render_world", "src/render/render_world.4dm", 94, 100, "Text", "",
+  if (p_id == 544) test_info_set(p_info, "render_stats_text", "macro", "render", "render_world", "src/render/render_world.4dm", 94, 100, "Text", "",
                               "Text render_stats_text()", 0, "", "");
-  if (p_id == 531) test_info_set(p_info, "render_set_colour", "macro", "render", "render_world", "src/render/render_world.4dm", 104, 116, "void", "B:p_box R:p_red R:p_green R:p_blue",
+  if (p_id == 545) test_info_set(p_info, "render_set_colour", "macro", "render", "render_world", "src/render/render_world.4dm", 104, 116, "void", "B:p_box R:p_red R:p_green R:p_blue",
                               "void render_set_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blue)", 0, "", "to_byte");
-  if (p_id == 532) test_info_set(p_info, "render_set_face_colour", "macro", "render", "render_world", "src/render/render_world.4dm", 118, 131, "void", "B:p_box R:p_red R:p_green R:p_blue",
+  if (p_id == 546) test_info_set(p_info, "render_set_shade", "macro", "render", "render_world", "src/render/render_world.4dm", 118, 125, "void", "R:p_shade",
+                              "void render_set_shade(Real p_shade)", 0, "", "clamp_real");
+  if (p_id == 547) test_info_set(p_info, "render_set_face_colour", "macro", "render", "render_world", "src/render/render_world.4dm", 127, 140, "void", "B:p_box R:p_red R:p_green R:p_blue",
                               "void render_set_face_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blue)", 0, "", "");
-  if (p_id == 533) test_info_set(p_info, "render_fill_rect", "macro", "render", "render_world", "src/render/render_world.4dm", 133, 147, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1",
+  if (p_id == 548) test_info_set(p_info, "render_fill_rect", "macro", "render", "render_world", "src/render/render_world.4dm", 142, 156, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1",
                               "void render_fill_rect(Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1)", 0, "", "");
-  if (p_id == 534) test_info_set(p_info, "render_line", "macro", "render", "render_world", "src/render/render_world.4dm", 149, 156, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1",
+  if (p_id == 549) test_info_set(p_info, "render_line", "macro", "render", "render_world", "src/render/render_world.4dm", 158, 165, "void", "B:p_box R:p_x0 R:p_y0 R:p_x1 R:p_y1",
                               "void render_line(Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1)", 0, "", "");
-  if (p_id == 535) test_info_set(p_info, "render_setup_camera", "macro", "render", "render_world", "src/render/render_world.4dm", 160, 215, "void", "R:p_w R:p_h R:p_view_bottom R:p_eye_x R:p_eye_y R:p_eye_z R:p_yaw R:p_pitch R:p_field_of_view",
+  if (p_id == 550) test_info_set(p_info, "render_setup_camera", "macro", "render", "render_world", "src/render/render_world.4dm", 169, 224, "void", "R:p_w R:p_h R:p_view_bottom R:p_eye_x R:p_eye_y R:p_eye_z R:p_yaw R:p_pitch R:p_field_of_view",
                               "void render_setup_camera(Real p_w, Real p_h, Real p_view_bottom, Real p_eye_x, Real p_eye_y, Real p_eye_z, Real p_yaw, Real p_pitch, Real p_field_of_view)", 0, "", "min_real, render_sky_colours");
-  if (p_id == 536) test_info_set(p_info, "render_to_camera", "macro", "render", "render_world", "src/render/render_world.4dm", 217, 226, "void", "R:p_rel_x R:p_rel_y R:p_rel_z",
+  if (p_id == 551) test_info_set(p_info, "render_to_camera", "macro", "render", "render_world", "src/render/render_world.4dm", 226, 235, "void", "R:p_rel_x R:p_rel_y R:p_rel_z",
                               "void render_to_camera(Real p_rel_x, Real p_rel_y, Real p_rel_z)", 0, "", "");
-  if (p_id == 537) test_info_set(p_info, "render_sphere_visible", "macro", "render", "render_world", "src/render/render_world.4dm", 228, 242, "Integer", "R:p_rel_x R:p_rel_y R:p_rel_z R:p_radius",
+  if (p_id == 552) test_info_set(p_info, "render_sphere_visible", "macro", "render", "render_world", "src/render/render_world.4dm", 237, 251, "Integer", "R:p_rel_x R:p_rel_y R:p_rel_z R:p_radius",
                               "Integer render_sphere_visible(Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_radius)", 0, "", "render_to_camera");
-  if (p_id == 538) test_info_set(p_info, "render_add_face", "macro", "render", "render_world", "src/render/render_world.4dm", 246, 307, "void", "R:p_c0x R:p_c0y R:p_c0z R:p_e1x R:p_e1y R:p_e1z R:p_e2x R:p_e2y R:p_e2z I:p_tex R:p_shade R:p_distance_squared R:p_size R:p_tint I:p_crack",
+  if (p_id == 553) test_info_set(p_info, "render_add_face", "macro", "render", "render_world", "src/render/render_world.4dm", 255, 316, "void", "R:p_c0x R:p_c0y R:p_c0z R:p_e1x R:p_e1y R:p_e1z R:p_e2x R:p_e2y R:p_e2z I:p_tex R:p_shade R:p_distance_squared R:p_size R:p_tint I:p_crack",
                               "void render_add_face(Real p_c0x, Real p_c0y, Real p_c0z, Real p_e1x, Real p_e1y, Real p_e1z, Real p_e2x, Real p_e2y, Real p_e2z, Integer p_tex, Real p_shade, Real p_distance_squared, Real p_size, Real p_tint, Integer p_crack)", 0, "", "clamp_real, max_real");
-  if (p_id == 539) test_info_set(p_info, "render_add_block_face", "macro", "render", "render_world", "src/render/render_world.4dm", 309, 390, "void", "I:p_x I:p_y I:p_z I:p_direction I:p_block R:p_distance_squared I:p_crack R:p_light R:p_wet",
+  if (p_id == 554) test_info_set(p_info, "render_add_block_face", "macro", "render", "render_world", "src/render/render_world.4dm", 318, 399, "void", "I:p_x I:p_y I:p_z I:p_direction I:p_block R:p_distance_squared I:p_crack R:p_light R:p_wet",
                               "void render_add_block_face(Integer p_x, Integer p_y, Integer p_z, Integer p_direction, Integer p_block, Real p_distance_squared, Integer p_crack, Real p_light, Real p_wet)", 0, "", "block_face_shade, block_face_texture, block_hides_faces, render_add_face");
-  if (p_id == 540) test_info_set(p_info, "render_add_sprite", "macro", "render", "render_world", "src/render/render_world.4dm", 392, 407, "void", "R:p_rel_x R:p_rel_y R:p_rel_z R:p_half_width R:p_height I:p_tex R:p_shade R:p_distance_squared",
+  if (p_id == 555) test_info_set(p_info, "render_add_sprite", "macro", "render", "render_world", "src/render/render_world.4dm", 401, 416, "void", "R:p_rel_x R:p_rel_y R:p_rel_z R:p_half_width R:p_height I:p_tex R:p_shade R:p_distance_squared",
                               "void render_add_sprite(Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_half_width, Real p_height, Integer p_tex, Real p_shade, Real p_distance_squared)", 0, "", "render_add_face, render_to_camera");
-  if (p_id == 541) test_info_set(p_info, "render_add_shaped", "macro", "render", "render_world", "src/render/render_world.4dm", 409, 465, "void", "I:p_x I:p_y I:p_z I:p_block R:p_light",
+  if (p_id == 556) test_info_set(p_info, "render_add_shaped", "macro", "render", "render_world", "src/render/render_world.4dm", 418, 474, "void", "I:p_x I:p_y I:p_z I:p_block R:p_light",
                               "void render_add_shaped(Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_light)", 0, "", "block_bed_facing, block_bed_head, block_box, block_door_top, block_is_door, render_add_box");
-  if (p_id == 542) test_info_set(p_info, "render_add_plant", "macro", "render", "render_world", "src/render/render_world.4dm", 467, 562, "void", "I:p_x I:p_y I:p_z I:p_tex R:p_light",
+  if (p_id == 557) test_info_set(p_info, "render_add_plant", "macro", "render", "render_world", "src/render/render_world.4dm", 476, 571, "void", "I:p_x I:p_y I:p_z I:p_tex R:p_light",
                               "void render_add_plant(Integer p_x, Integer p_y, Integer p_z, Integer p_tex, Real p_light)", 0, "", "render_add_face, render_to_camera");
-  if (p_id == 543) test_info_set(p_info, "render_layer_count", "macro", "render", "render_world", "src/render/render_world.4dm", 564, 575, "Integer", "R:p_limit",
+  if (p_id == 558) test_info_set(p_info, "render_layer_count", "macro", "render", "render_world", "src/render/render_world.4dm", 573, 584, "Integer", "R:p_limit",
                               "Integer render_layer_count(Real p_limit)", 0, "", "floor_integer");
-  if (p_id == 544) test_info_set(p_info, "render_collect_blocks", "macro", "render", "render_world", "src/render/render_world.4dm", 577, 782, "void", "",
+  if (p_id == 559) test_info_set(p_info, "render_collect_blocks", "macro", "render", "render_world", "src/render/render_world.4dm", 586, 791, "void", "",
                               "void render_collect_blocks()", 0, "", "block_is_shaped, block_plant_texture, clamp_integer, floor_integer, max_real, mesh_ensure_section, min_integer, render_add_block_face, render_add_plant, render_add_shaped, render_layer_count, render_sphere_visible");
-  if (p_id == 545) test_info_set(p_info, "render_side_shade", "macro", "render", "render_world", "src/render/render_world.4dm", 784, 791, "Real", "R:p_normal_x R:p_normal_z",
+  if (p_id == 560) test_info_set(p_info, "render_side_shade", "macro", "render", "render_world", "src/render/render_world.4dm", 793, 800, "Real", "R:p_normal_x R:p_normal_z",
                               "Real render_side_shade(Real p_normal_x, Real p_normal_z)", 0, "", "");
-  if (p_id == 546) test_info_set(p_info, "render_add_box", "macro", "render", "render_world", "src/render/render_world.4dm", 793, 894, "void", "R:p_centre_x R:p_centre_y R:p_centre_z R:p_yaw R:p_pitch R:p_half_f R:p_half_y R:p_half_s I:p_tex_side I:p_tex_top I:p_tex_front I:p_tex_back R:p_tint R:p_sort_dist_sq",
-                              "void render_add_box(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_yaw, Real p_pitch, Real p_half_f, Real p_half_y, Real p_half_s, Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back, Real p_tint, Real p_sort_dist_sq)", 0, "", "max_real, render_add_face, render_side_shade, render_sphere_visible, render_to_camera");
-  if (p_id == 547) test_info_set(p_info, "render_light_at", "macro", "render", "render_world", "src/render/render_world.4dm", 896, 905, "Real", "R:p_x R:p_y R:p_z",
-                              "Real render_light_at(Real p_x, Real p_y, Real p_z)", 0, "", "floor_integer, max_real, world_get_light");
-  if (p_id == 548) test_info_set(p_info, "render_mob_begin", "macro", "render", "render_world", "src/render/render_world.4dm", 907, 919, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_tint",
-                              "void render_mob_begin(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_tint)", 0, "", "");
-  if (p_id == 549) test_info_set(p_info, "render_mob_part", "macro", "render", "render_world", "src/render/render_world.4dm", 921, 956, "void", "R:p_along R:p_up R:p_across R:p_half_f R:p_half_y R:p_half_s R:p_turn R:p_pitch I:p_hip I:p_tex_side I:p_tex_top I:p_tex_front I:p_tex_back",
-                              "void render_mob_part(Real p_along, Real p_up, Real p_across, Real p_half_f, Real p_half_y, Real p_half_s, Real p_turn, Real p_pitch, Integer p_hip, Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back)", 0, "", "");
-  if (p_id == 550) test_info_set(p_info, "render_mob_part_nearer", "macro", "render", "render_world", "src/render/render_world.4dm", 958, 981, "Integer", "I:p_a I:p_b R:p_eye_along R:p_eye_up R:p_eye_across",
-                              "Integer render_mob_part_nearer(Integer p_a, Integer p_b, Real p_eye_along, Real p_eye_up, Real p_eye_across)", 0, "", "");
-  if (p_id == 551) test_info_set(p_info, "render_mob_end", "macro", "render", "render_world", "src/render/render_world.4dm", 983, 1026, "void", "",
-                              "void render_mob_end()", 0, "", "render_add_box, render_mob_part_nearer");
-  if (p_id == 552) test_info_set(p_info, "render_mob_head_look", "macro", "render", "render_world", "src/render/render_world.4dm", 1028, 1049, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_head_up R:p_idle &R:p_turn &R:p_pitch",
-                              "void render_mob_head_look(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_up, Real p_idle, Real &p_turn, Real &p_pitch)", 0, "", "angle_of, clamp_real, wrap_angle");
-  if (p_id == 553) test_info_set(p_info, "render_zombie", "macro", "render", "render_world", "src/render/render_world.4dm", 1051, 1070, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_swing R:p_tint R:p_idle",
-                              "void render_zombie(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle)", 0, "", "render_mob_begin, render_mob_end, render_mob_head_look, render_mob_part");
-  if (p_id == 554) test_info_set(p_info, "render_cow", "macro", "render", "render_world", "src/render/render_world.4dm", 1072, 1099, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_swing R:p_tint R:p_idle",
-                              "void render_cow(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle)", 0, "", "render_mob_begin, render_mob_end, render_mob_head_look, render_mob_part");
-  if (p_id == 555) test_info_set(p_info, "render_pig", "macro", "render", "render_world", "src/render/render_world.4dm", 1101, 1124, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_swing R:p_tint R:p_idle",
-                              "void render_pig(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle)", 0, "", "render_mob_begin, render_mob_end, render_mob_head_look, render_mob_part");
-  if (p_id == 556) test_info_set(p_info, "render_person", "macro", "render", "render_world", "src/render/render_world.4dm", 1126, 1141, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_pitch R:p_swing",
-                              "void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing)", 0, "", "render_mob_begin, render_mob_end, render_mob_part");
-  if (p_id == 557) test_info_set(p_info, "render_collect_peers", "macro", "render", "render_world", "src/render/render_world.4dm", 1143, 1160, "void", "&A:p_peers",
-                              "void render_collect_peers(Attributes &p_peers)", 0, "", "peer_here, peer_pitch, peer_position, peer_step, peer_yaw, peers_count, render_light_at, render_person");
-  if (p_id == 558) test_info_set(p_info, "render_peer_names", "macro", "render", "render_world", "src/render/render_world.4dm", 1162, 1191, "void", "B:p_box &A:p_peers",
-                              "void render_peer_names(Draw_Box p_box, Attributes &p_peers)", 0, "", "hud_text, peer_here, peer_name, peer_position, peers_count, render_fill_rect, render_set_colour, render_to_camera");
-  if (p_id == 559) test_info_set(p_info, "render_collect_cows", "macro", "render", "render_world", "src/render/render_world.4dm", 1193, 1230, "void", "&A:p_cows",
-                              "void render_collect_cows(Attributes &p_cows)", 0, "", "cow_flash, cow_position, cow_step, cow_yaw, mob_kind, render_cow, render_light_at, render_pig, render_zombie, slots_at, slots_count");
-  if (p_id == 560) test_info_set(p_info, "render_collect_drops", "macro", "render", "render_world", "src/render/render_world.4dm", 1232, 1266, "void", "&A:p_drops",
-                              "void render_collect_drops(Attributes &p_drops)", 0, "", "drop_age, drop_item, drop_position, item_is_block, item_side_texture, item_sprite_texture, item_top_texture, render_add_box, render_add_sprite, render_light_at, render_sphere_visible, slots_at, slots_count");
 }
 
 void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -5042,7 +5039,119 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 521) {   // ui_draw_arrow
+  if (p_id == 521) {   // ui_search
+    Get_time(l_start);
+    l_ret_t = ui_search(g_ui);
+    Get_time(l_end);
+  } else if (p_id == 522) {   // ui_set_search
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    ui_set_search(g_ui, l_t1);
+    Get_time(l_end);
+  } else if (p_id == 523) {   // ui_type_search
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    ui_type_search(g_ui, l_t1);
+    Get_time(l_end);
+  } else if (p_id == 524) {   // ui_creative_count
+    Get_time(l_start);
+    l_ret_i = ui_creative_count(g_ui);
+    Get_time(l_end);
+  } else if (p_id == 525) {   // ui_creative_rows
+    Get_time(l_start);
+    l_ret_i = ui_creative_rows(g_ui);
+    Get_time(l_end);
+  } else if (p_id == 526) {   // ui_creative_item
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    l_ret_i = ui_creative_item(g_ui, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 527) {   // ui_creative_click
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    ui_creative_click(g_ui, g_inventory, l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 528) {   // ui_open
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    ui_open(g_ui, g_grid, g_furnaces, g_events, l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 529) {   // ui_close
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    Get_time(l_start);
+    ui_close(g_ui, g_inventory, g_grid, g_events, l_r1, l_r2, l_r3);
+    Get_time(l_end);
+  } else if (p_id == 530) {   // ui_on_event
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    Get_time(l_start);
+    ui_on_event(g_event, g_ui, g_inventory, g_grid, g_furnaces, g_events, l_r1, l_r2, l_r3);
+    Get_time(l_end);
+  } else if (p_id == 531) {   // ui_layout
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    l_r8 = record_real(p_in, ATTR_TEST_R8);
+    l_r9 = record_real(p_in, ATTR_TEST_R9);
+    l_r10 = record_real(p_in, ATTR_TEST_R10);
+    Get_time(l_start);
+    ui_layout(l_i1, l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_r9, l_r10);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R3, l_r3);
+    record_set_real(p_out, ATTR_TEST_R4, l_r4);
+    record_set_real(p_out, ATTR_TEST_R5, l_r5);
+    record_set_real(p_out, ATTR_TEST_R6, l_r6);
+    record_set_real(p_out, ATTR_TEST_R7, l_r7);
+    record_set_real(p_out, ATTR_TEST_R8, l_r8);
+    record_set_real(p_out, ATTR_TEST_R9, l_r9);
+    record_set_real(p_out, ATTR_TEST_R10, l_r10);
+  } else if (p_id == 532) {   // ui_slot_rect
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    Get_time(l_start);
+    l_ret_i = ui_slot_rect(l_i1, l_i2, l_i3, l_r1, l_r2, l_r3, l_r4, l_r5);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R3, l_r3);
+    record_set_real(p_out, ATTR_TEST_R4, l_r4);
+    record_set_real(p_out, ATTR_TEST_R5, l_r5);
+  } else if (p_id == 533) {   // ui_slot_at
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    Get_time(l_start);
+    l_ret_i = ui_slot_at(l_i1, l_i2, l_r1, l_r2, l_r3, l_r4);
+    Get_time(l_end);
+  } else if (p_id == 534) {   // ui_click
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    Get_time(l_start);
+    ui_click(g_ui, g_inventory, g_grid, g_furnaces, g_book, g_events, l_r1, l_r2, l_i1, l_r3, l_r4);
+    Get_time(l_end);
+  } else if (p_id == 535) {   // ui_draw_arrow
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5051,14 +5160,14 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     ui_draw_arrow(g_test_box, l_r1, l_r2, l_r3, l_r4, l_r5);
     Get_time(l_end);
-  } else if (p_id == 522) {   // ui_draw_furnace
+  } else if (p_id == 536) {   // ui_draw_furnace
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     ui_draw_furnace(g_test_box, g_furnaces, l_i1, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 523) {   // ui_draw_tab
+  } else if (p_id == 537) {   // ui_draw_tab
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5068,7 +5177,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     ui_draw_tab(g_test_box, l_r1, l_r2, l_r3, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 524) {   // ui_draw_scroll
+  } else if (p_id == 538) {   // ui_draw_scroll
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5077,7 +5186,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     ui_draw_scroll(g_test_box, l_r1, l_r2, l_r3, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 525) {   // ui_draw_search
+  } else if (p_id == 539) {   // ui_draw_search
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5085,46 +5194,51 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     ui_draw_search(g_test_box, g_ui, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 526) {   // ui_draw
+  } else if (p_id == 540) {   // ui_draw
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     ui_draw(g_test_box, l_r1, l_r2, g_ui, g_inventory, g_grid, g_furnaces, g_book);
     Get_time(l_end);
-  } else if (p_id == 527) {   // render_init
+  } else if (p_id == 541) {   // render_init
     Get_time(l_start);
     render_init();
     Get_time(l_end);
-  } else if (p_id == 528) {   // render_set_detail
+  } else if (p_id == 542) {   // render_set_detail
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     render_set_detail(l_i1);
     Get_time(l_end);
-  } else if (p_id == 529) {   // render_view_from
+  } else if (p_id == 543) {   // render_view_from
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     render_view_from(g_player, g_settings, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 530) {   // render_stats_text
+  } else if (p_id == 544) {   // render_stats_text
     Get_time(l_start);
     l_ret_t = render_stats_text();
     Get_time(l_end);
-  } else if (p_id == 531) {   // render_set_colour
+  } else if (p_id == 545) {   // render_set_colour
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     render_set_colour(g_test_box, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 532) {   // render_set_face_colour
+  } else if (p_id == 546) {   // render_set_shade
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    Get_time(l_start);
+    render_set_shade(l_r1);
+    Get_time(l_end);
+  } else if (p_id == 547) {   // render_set_face_colour
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     render_set_face_colour(g_test_box, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 533) {   // render_fill_rect
+  } else if (p_id == 548) {   // render_fill_rect
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5132,7 +5246,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_fill_rect(g_test_box, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 534) {   // render_line
+  } else if (p_id == 549) {   // render_line
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5140,7 +5254,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_line(g_test_box, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 535) {   // render_setup_camera
+  } else if (p_id == 550) {   // render_setup_camera
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5153,14 +5267,14 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_setup_camera(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_r9);
     Get_time(l_end);
-  } else if (p_id == 536) {   // render_to_camera
+  } else if (p_id == 551) {   // render_to_camera
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     render_to_camera(l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 537) {   // render_sphere_visible
+  } else if (p_id == 552) {   // render_sphere_visible
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5168,7 +5282,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = render_sphere_visible(l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 538) {   // render_add_face
+  } else if (p_id == 553) {   // render_add_face
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5187,7 +5301,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_add_face(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_r9, l_i1, l_r10, l_r11, l_r12, l_r13, l_i2);
     Get_time(l_end);
-  } else if (p_id == 539) {   // render_add_block_face
+  } else if (p_id == 554) {   // render_add_block_face
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5200,7 +5314,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_add_block_face(l_i1, l_i2, l_i3, l_i4, l_i5, l_r1, l_i6, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 540) {   // render_add_sprite
+  } else if (p_id == 555) {   // render_add_sprite
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5212,7 +5326,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_add_sprite(l_r1, l_r2, l_r3, l_r4, l_r5, l_i1, l_r6, l_r7);
     Get_time(l_end);
-  } else if (p_id == 541) {   // render_add_shaped
+  } else if (p_id == 556) {   // render_add_shaped
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5221,7 +5335,7 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_add_shaped(l_i1, l_i2, l_i3, l_i4, l_r1);
     Get_time(l_end);
-  } else if (p_id == 542) {   // render_add_plant
+  } else if (p_id == 557) {   // render_add_plant
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5230,157 +5344,20 @@ void test_registry_call_14(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_add_plant(l_i1, l_i2, l_i3, l_i4, l_r1);
     Get_time(l_end);
-  } else if (p_id == 543) {   // render_layer_count
+  } else if (p_id == 558) {   // render_layer_count
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = render_layer_count(l_r1);
     Get_time(l_end);
-  } else if (p_id == 544) {   // render_collect_blocks
+  } else if (p_id == 559) {   // render_collect_blocks
     Get_time(l_start);
     render_collect_blocks();
     Get_time(l_end);
-  } else if (p_id == 545) {   // render_side_shade
+  } else if (p_id == 560) {   // render_side_shade
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_r = render_side_shade(l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 546) {   // render_add_box
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    l_r8 = record_real(p_in, ATTR_TEST_R8);
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    l_r9 = record_real(p_in, ATTR_TEST_R9);
-    l_r10 = record_real(p_in, ATTR_TEST_R10);
-    Get_time(l_start);
-    render_add_box(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_i1, l_i2, l_i3, l_i4, l_r9, l_r10);
-    Get_time(l_end);
-  } else if (p_id == 547) {   // render_light_at
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    Get_time(l_start);
-    l_ret_r = render_light_at(l_r1, l_r2, l_r3);
-    Get_time(l_end);
-  } else if (p_id == 548) {   // render_mob_begin
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    Get_time(l_start);
-    render_mob_begin(l_r1, l_r2, l_r3, l_r4, l_r5);
-    Get_time(l_end);
-  } else if (p_id == 549) {   // render_mob_part
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    l_r8 = record_real(p_in, ATTR_TEST_R8);
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    l_i5 = record_integer(p_in, ATTR_TEST_I5);
-    Get_time(l_start);
-    render_mob_part(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_i1, l_i2, l_i3, l_i4, l_i5);
-    Get_time(l_end);
-  } else if (p_id == 550) {   // render_mob_part_nearer
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    Get_time(l_start);
-    l_ret_i = render_mob_part_nearer(l_i1, l_i2, l_r1, l_r2, l_r3);
-    Get_time(l_end);
-  } else if (p_id == 551) {   // render_mob_end
-    Get_time(l_start);
-    render_mob_end();
-    Get_time(l_end);
-  } else if (p_id == 552) {   // render_mob_head_look
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    l_r8 = record_real(p_in, ATTR_TEST_R8);
-    Get_time(l_start);
-    render_mob_head_look(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8);
-    Get_time(l_end);
-    record_set_real(p_out, ATTR_TEST_R7, l_r7);
-    record_set_real(p_out, ATTR_TEST_R8, l_r8);
-  } else if (p_id == 553) {   // render_zombie
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    Get_time(l_start);
-    render_zombie(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
-    Get_time(l_end);
-  } else if (p_id == 554) {   // render_cow
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    Get_time(l_start);
-    render_cow(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
-    Get_time(l_end);
-  } else if (p_id == 555) {   // render_pig
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    l_r7 = record_real(p_in, ATTR_TEST_R7);
-    Get_time(l_start);
-    render_pig(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
-    Get_time(l_end);
-  } else if (p_id == 556) {   // render_person
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    l_r5 = record_real(p_in, ATTR_TEST_R5);
-    l_r6 = record_real(p_in, ATTR_TEST_R6);
-    Get_time(l_start);
-    render_person(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6);
-    Get_time(l_end);
-  } else if (p_id == 557) {   // render_collect_peers
-    Get_time(l_start);
-    render_collect_peers(g_peers);
-    Get_time(l_end);
-  } else if (p_id == 558) {   // render_peer_names
-    Get_time(l_start);
-    render_peer_names(g_test_box, g_peers);
-    Get_time(l_end);
-  } else if (p_id == 559) {   // render_collect_cows
-    Get_time(l_start);
-    render_collect_cows(g_cows);
-    Get_time(l_end);
-  } else if (p_id == 560) {   // render_collect_drops
-    Get_time(l_start);
-    render_collect_drops(g_drops);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -5394,86 +5371,86 @@ void test_registry_info_15(Integer p_id, Attributes &p_info)
 // What functions 561 to 600 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 561) test_info_set(p_info, "render_clip_screen_edge", "macro", "render", "render_world", "src/render/render_world.4dm", 1270, 1321, "void", "I:p_axis R:p_limit I:p_keep_above",
+  if (p_id == 561) test_info_set(p_info, "render_add_box", "macro", "render", "render_world", "src/render/render_world.4dm", 802, 903, "void", "R:p_centre_x R:p_centre_y R:p_centre_z R:p_yaw R:p_pitch R:p_half_f R:p_half_y R:p_half_s I:p_tex_side I:p_tex_top I:p_tex_front I:p_tex_back R:p_tint R:p_sort_dist_sq",
+                              "void render_add_box(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_yaw, Real p_pitch, Real p_half_f, Real p_half_y, Real p_half_s, Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back, Real p_tint, Real p_sort_dist_sq)", 0, "", "max_real, render_add_face, render_side_shade, render_sphere_visible, render_to_camera");
+  if (p_id == 562) test_info_set(p_info, "render_light_at", "macro", "render", "render_world", "src/render/render_world.4dm", 905, 914, "Real", "R:p_x R:p_y R:p_z",
+                              "Real render_light_at(Real p_x, Real p_y, Real p_z)", 0, "", "floor_integer, max_real, world_get_light");
+  if (p_id == 563) test_info_set(p_info, "render_mob_begin", "macro", "render", "render_world", "src/render/render_world.4dm", 916, 928, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_tint",
+                              "void render_mob_begin(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_tint)", 0, "", "");
+  if (p_id == 564) test_info_set(p_info, "render_mob_part", "macro", "render", "render_world", "src/render/render_world.4dm", 930, 965, "void", "R:p_along R:p_up R:p_across R:p_half_f R:p_half_y R:p_half_s R:p_turn R:p_pitch I:p_hip I:p_tex_side I:p_tex_top I:p_tex_front I:p_tex_back",
+                              "void render_mob_part(Real p_along, Real p_up, Real p_across, Real p_half_f, Real p_half_y, Real p_half_s, Real p_turn, Real p_pitch, Integer p_hip, Integer p_tex_side, Integer p_tex_top, Integer p_tex_front, Integer p_tex_back)", 0, "", "");
+  if (p_id == 565) test_info_set(p_info, "render_mob_part_nearer", "macro", "render", "render_world", "src/render/render_world.4dm", 967, 990, "Integer", "I:p_a I:p_b R:p_eye_along R:p_eye_up R:p_eye_across",
+                              "Integer render_mob_part_nearer(Integer p_a, Integer p_b, Real p_eye_along, Real p_eye_up, Real p_eye_across)", 0, "", "");
+  if (p_id == 566) test_info_set(p_info, "render_mob_end", "macro", "render", "render_world", "src/render/render_world.4dm", 992, 1035, "void", "",
+                              "void render_mob_end()", 0, "", "render_add_box, render_mob_part_nearer");
+  if (p_id == 567) test_info_set(p_info, "render_mob_head_look", "macro", "render", "render_world", "src/render/render_world.4dm", 1037, 1058, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_head_up R:p_idle &R:p_turn &R:p_pitch",
+                              "void render_mob_head_look(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_up, Real p_idle, Real &p_turn, Real &p_pitch)", 0, "", "angle_of, clamp_real, wrap_angle");
+  if (p_id == 568) test_info_set(p_info, "render_zombie", "macro", "render", "render_world", "src/render/render_world.4dm", 1060, 1079, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_swing R:p_tint R:p_idle",
+                              "void render_zombie(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle)", 0, "", "render_mob_begin, render_mob_end, render_mob_head_look, render_mob_part");
+  if (p_id == 569) test_info_set(p_info, "render_cow", "macro", "render", "render_world", "src/render/render_world.4dm", 1081, 1108, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_swing R:p_tint R:p_idle",
+                              "void render_cow(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle)", 0, "", "render_mob_begin, render_mob_end, render_mob_head_look, render_mob_part");
+  if (p_id == 570) test_info_set(p_info, "render_pig", "macro", "render", "render_world", "src/render/render_world.4dm", 1110, 1133, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_swing R:p_tint R:p_idle",
+                              "void render_pig(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_tint, Real p_idle)", 0, "", "render_mob_begin, render_mob_end, render_mob_head_look, render_mob_part");
+  if (p_id == 571) test_info_set(p_info, "render_person", "macro", "render", "render_world", "src/render/render_world.4dm", 1135, 1153, "void", "R:p_x R:p_y R:p_z R:p_yaw R:p_pitch R:p_swing",
+                              "void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing)", 0, "", "render_mob_begin, render_mob_end, render_mob_part");
+  if (p_id == 572) test_info_set(p_info, "render_camera_place", "macro", "render", "render_world", "src/render/render_world.4dm", 1155, 1206, "void", "&A:p_player &R:p_x &R:p_y &R:p_z &R:p_yaw &R:p_pitch",
+                              "void render_camera_place(Attributes &p_player, Real &p_x, Real &p_y, Real &p_z, Real &p_yaw, Real &p_pitch)", 0, "", "block_is_solid, floor_integer, max_real, min_real, player_camera, player_eye_y, player_look, player_position, world_get_block, wrap_angle");
+  if (p_id == 573) test_info_set(p_info, "render_collect_self", "macro", "render", "render_world", "src/render/render_world.4dm", 1208, 1226, "void", "&A:p_player",
+                              "void render_collect_self(Attributes &p_player)", 0, "", "player_bob, player_camera, player_look, player_position, player_spectator, render_light_at, render_person");
+  if (p_id == 574) test_info_set(p_info, "render_collect_peers", "macro", "render", "render_world", "src/render/render_world.4dm", 1228, 1245, "void", "&A:p_peers",
+                              "void render_collect_peers(Attributes &p_peers)", 0, "", "peer_here, peer_pitch, peer_position, peer_step, peer_yaw, peers_count, render_light_at, render_person");
+  if (p_id == 575) test_info_set(p_info, "render_peer_names", "macro", "render", "render_world", "src/render/render_world.4dm", 1247, 1276, "void", "B:p_box &A:p_peers",
+                              "void render_peer_names(Draw_Box p_box, Attributes &p_peers)", 0, "", "hud_text, peer_here, peer_name, peer_position, peers_count, render_fill_rect, render_set_colour, render_to_camera");
+  if (p_id == 576) test_info_set(p_info, "render_collect_cows", "macro", "render", "render_world", "src/render/render_world.4dm", 1278, 1315, "void", "&A:p_cows",
+                              "void render_collect_cows(Attributes &p_cows)", 0, "", "cow_flash, cow_position, cow_step, cow_yaw, mob_kind, render_cow, render_light_at, render_pig, render_zombie, slots_at, slots_count");
+  if (p_id == 577) test_info_set(p_info, "render_collect_drops", "macro", "render", "render_world", "src/render/render_world.4dm", 1317, 1351, "void", "&A:p_drops",
+                              "void render_collect_drops(Attributes &p_drops)", 0, "", "drop_age, drop_item, drop_position, item_is_block, item_side_texture, item_sprite_texture, item_top_texture, render_add_box, render_add_sprite, render_light_at, render_sphere_visible, slots_at, slots_count");
+  if (p_id == 578) test_info_set(p_info, "render_clip_screen_edge", "macro", "render", "render_world", "src/render/render_world.4dm", 1355, 1406, "void", "I:p_axis R:p_limit I:p_keep_above",
                               "void render_clip_screen_edge(Integer p_axis, Real p_limit, Integer p_keep_above)", 0, "", "");
-  if (p_id == 562) test_info_set(p_info, "render_clip_and_draw", "macro", "render", "render_world", "src/render/render_world.4dm", 1323, 1388, "Integer", "B:p_box",
+  if (p_id == 579) test_info_set(p_info, "render_clip_and_draw", "macro", "render", "render_world", "src/render/render_world.4dm", 1408, 1473, "Integer", "B:p_box",
                               "Integer render_clip_and_draw(Draw_Box p_box)", 0, "", "render_clip_screen_edge");
-  if (p_id == 563) test_info_set(p_info, "render_quad", "macro", "render", "render_world", "src/render/render_world.4dm", 1390, 1449, "void", "B:p_box R:p_u0 R:p_v0 R:p_u1 R:p_v1",
+  if (p_id == 580) test_info_set(p_info, "render_quad", "macro", "render", "render_world", "src/render/render_world.4dm", 1475, 1534, "void", "B:p_box R:p_u0 R:p_v0 R:p_u1 R:p_v1",
                               "void render_quad(Draw_Box p_box, Real p_u0, Real p_v0, Real p_u1, Real p_v1)", 0, "", "render_clip_and_draw");
-  if (p_id == 564) test_info_set(p_info, "render_face_line", "macro", "render", "render_world", "src/render/render_world.4dm", 1451, 1480, "void", "B:p_box R:p_u0 R:p_v0 R:p_u1 R:p_v1",
+  if (p_id == 581) test_info_set(p_info, "render_face_line", "macro", "render", "render_world", "src/render/render_world.4dm", 1536, 1565, "void", "B:p_box R:p_u0 R:p_v0 R:p_u1 R:p_v1",
                               "void render_face_line(Draw_Box p_box, Real p_u0, Real p_v0, Real p_u1, Real p_v1)", 0, "", "render_line");
-  if (p_id == 565) test_info_set(p_info, "render_palette_colour", "macro", "render", "render_world", "src/render/render_world.4dm", 1482, 1493, "void", "B:p_box I:p_tex I:p_index",
+  if (p_id == 582) test_info_set(p_info, "render_palette_colour", "macro", "render", "render_world", "src/render/render_world.4dm", 1567, 1578, "void", "B:p_box I:p_tex I:p_index",
                               "void render_palette_colour(Draw_Box p_box, Integer p_tex, Integer p_index)", 0, "", "render_set_face_colour, texture_palette_index");
-  if (p_id == 566) test_info_set(p_info, "render_draw_crack", "macro", "render", "render_world", "src/render/render_world.4dm", 1495, 1524, "void", "B:p_box I:p_tex",
+  if (p_id == 583) test_info_set(p_info, "render_draw_crack", "macro", "render", "render_world", "src/render/render_world.4dm", 1580, 1609, "void", "B:p_box I:p_tex",
                               "void render_draw_crack(Draw_Box p_box, Integer p_tex)", 0, "", "render_quad, render_set_face_colour, texture_palette_index");
-  if (p_id == 567) test_info_set(p_info, "render_draw_face", "macro", "render", "render_world", "src/render/render_world.4dm", 1526, 1661, "void", "B:p_box I:p_face",
+  if (p_id == 584) test_info_set(p_info, "render_draw_face", "macro", "render", "render_world", "src/render/render_world.4dm", 1611, 1746, "void", "B:p_box I:p_face",
                               "void render_draw_face(Draw_Box p_box, Integer p_face)", 0, "", "render_draw_crack, render_palette_colour, render_quad, render_set_colour, render_set_face_colour");
-  if (p_id == 568) test_info_set(p_info, "render_cover_reset", "macro", "render", "render_world", "src/render/render_world.4dm", 1663, 1682, "void", "",
+  if (p_id == 585) test_info_set(p_info, "render_cover_reset", "macro", "render", "render_world", "src/render/render_world.4dm", 1748, 1767, "void", "",
                               "void render_cover_reset()", 0, "", "");
-  if (p_id == 569) test_info_set(p_info, "render_cover_add", "macro", "render", "render_world", "src/render/render_world.4dm", 1684, 1735, "void", "I:p_line R:p_low R:p_high",
+  if (p_id == 586) test_info_set(p_info, "render_cover_add", "macro", "render", "render_world", "src/render/render_world.4dm", 1769, 1820, "void", "I:p_line R:p_low R:p_high",
                               "void render_cover_add(Integer p_line, Real p_low, Real p_high)", 0, "", "");
-  if (p_id == 570) test_info_set(p_info, "render_cover_corners", "macro", "render", "render_world", "src/render/render_world.4dm", 1737, 1765, "void", "I:p_face",
+  if (p_id == 587) test_info_set(p_info, "render_cover_corners", "macro", "render", "render_world", "src/render/render_world.4dm", 1822, 1850, "void", "I:p_face",
                               "void render_cover_corners(Integer p_face)", 0, "", "");
-  if (p_id == 571) test_info_set(p_info, "render_cover_face", "macro", "render", "render_world", "src/render/render_world.4dm", 1767, 1866, "void", "I:p_face",
+  if (p_id == 588) test_info_set(p_info, "render_cover_face", "macro", "render", "render_world", "src/render/render_world.4dm", 1852, 1951, "void", "I:p_face",
                               "void render_cover_face(Integer p_face)", 0, "", "clamp_integer, render_cover_add, render_cover_corners");
-  if (p_id == 572) test_info_set(p_info, "render_hide_covered", "macro", "render", "render_world", "src/render/render_world.4dm", 1868, 1891, "void", "",
+  if (p_id == 589) test_info_set(p_info, "render_hide_covered", "macro", "render", "render_world", "src/render/render_world.4dm", 1953, 1976, "void", "",
                               "void render_hide_covered()", 0, "", "render_cover_face, render_cover_reset");
-  if (p_id == 573) test_info_set(p_info, "render_draw_faces", "macro", "render", "render_world", "src/render/render_world.4dm", 1893, 1912, "void", "B:p_box",
+  if (p_id == 590) test_info_set(p_info, "render_draw_faces", "macro", "render", "render_world", "src/render/render_world.4dm", 1978, 1997, "void", "B:p_box",
                               "void render_draw_faces(Draw_Box p_box)", 0, "", "render_draw_face");
-  if (p_id == 574) test_info_set(p_info, "render_sky_colours", "macro", "render", "render_world", "src/render/render_world.4dm", 1916, 1937, "void", "R:p_time_of_day",
+  if (p_id == 591) test_info_set(p_info, "render_sky_colours", "macro", "render", "render_world", "src/render/render_world.4dm", 2001, 2022, "void", "R:p_time_of_day",
                               "void render_sky_colours(Real p_time_of_day)", 0, "", "clamp_real, lerp_real, world_sun_height");
-  if (p_id == 575) test_info_set(p_info, "render_sky_disc", "macro", "render", "render_world", "src/render/render_world.4dm", 1939, 1965, "void", "B:p_box R:p_dir_x R:p_dir_y R:p_dir_z R:p_size I:p_moon",
+  if (p_id == 592) test_info_set(p_info, "render_sky_disc", "macro", "render", "render_world", "src/render/render_world.4dm", 2024, 2050, "void", "B:p_box R:p_dir_x R:p_dir_y R:p_dir_z R:p_size I:p_moon",
                               "void render_sky_disc(Draw_Box p_box, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_size, Integer p_moon)", 0, "", "render_fill_rect, render_set_colour, render_to_camera");
-  if (p_id == 576) test_info_set(p_info, "render_stars", "macro", "render", "render_world", "src/render/render_world.4dm", 1967, 1987, "void", "B:p_box R:p_brightness",
+  if (p_id == 593) test_info_set(p_info, "render_stars", "macro", "render", "render_world", "src/render/render_world.4dm", 2052, 2072, "void", "B:p_box R:p_brightness",
                               "void render_stars(Draw_Box p_box, Real p_brightness)", 0, "", "lerp_real, render_fill_rect, render_set_colour, render_to_camera");
-  if (p_id == 577) test_info_set(p_info, "render_sky", "macro", "render", "render_world", "src/render/render_world.4dm", 1989, 2035, "void", "B:p_box",
+  if (p_id == 594) test_info_set(p_info, "render_sky", "macro", "render", "render_world", "src/render/render_world.4dm", 2074, 2120, "void", "B:p_box",
                               "void render_sky(Draw_Box p_box)", 0, "", "clamp_real, lerp_real, render_fill_rect, render_set_colour, render_sky_disc, render_stars");
-  if (p_id == 578) test_info_set(p_info, "render_point_visible", "macro", "render", "render_world", "src/render/render_world.4dm", 2037, 2107, "Integer", "R:p_x R:p_y R:p_z I:p_skip_x I:p_skip_y I:p_skip_z",
+  if (p_id == 595) test_info_set(p_info, "render_point_visible", "macro", "render", "render_world", "src/render/render_world.4dm", 2122, 2192, "Integer", "R:p_x R:p_y R:p_z I:p_skip_x I:p_skip_y I:p_skip_z",
                               "Integer render_point_visible(Real p_x, Real p_y, Real p_z, Integer p_skip_x, Integer p_skip_y, Integer p_skip_z)", 0, "", "block_hides_faces, world_get_block");
-  if (p_id == 579) test_info_set(p_info, "render_world_line", "macro", "render", "render_world", "src/render/render_world.4dm", 2109, 2147, "void", "B:p_box R:p_x0 R:p_y0 R:p_z0 R:p_x1 R:p_y1 R:p_z1",
+  if (p_id == 596) test_info_set(p_info, "render_world_line", "macro", "render", "render_world", "src/render/render_world.4dm", 2194, 2232, "void", "B:p_box R:p_x0 R:p_y0 R:p_z0 R:p_x1 R:p_y1 R:p_z1",
                               "void render_world_line(Draw_Box p_box, Real p_x0, Real p_y0, Real p_z0, Real p_x1, Real p_y1, Real p_z1)", 0, "", "render_line, render_to_camera");
-  if (p_id == 580) test_info_set(p_info, "render_target_outline", "macro", "render", "render_world", "src/render/render_world.4dm", 2149, 2278, "void", "B:p_box",
+  if (p_id == 597) test_info_set(p_info, "render_target_outline", "macro", "render", "render_world", "src/render/render_world.4dm", 2234, 2363, "void", "B:p_box",
                               "void render_target_outline(Draw_Box p_box)", 0, "", "block_box, render_point_visible, render_set_colour, render_world_line, world_get_block");
-  if (p_id == 581) test_info_set(p_info, "render_world", "macro", "render", "render_world", "src/render/render_world.4dm", 2280, 2319, "void", "B:p_box R:p_w R:p_h R:p_view_bottom &A:p_player &A:p_cows &A:p_drops &A:p_peers &A:p_settings R:p_time_of_day R:p_now",
-                              "void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows, Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now)", 0, "", "mesh_build_nearby, min_integer, player_eye_y, player_look, player_position, render_collect_blocks, render_collect_cows, render_collect_drops, render_collect_peers, render_draw_faces, render_hide_covered, render_peer_names, render_setup_camera, render_sky, render_target_outline, render_view_from, settings_fov_radians");
-  if (p_id == 582) test_info_set(p_info, "font_choice", "macro", "ui", "font", "src/ui/font.4dm", 8, 25, "Text", "I:p_index",
+  if (p_id == 598) test_info_set(p_info, "render_world", "macro", "render", "render_world", "src/render/render_world.4dm", 2365, 2404, "void", "B:p_box R:p_w R:p_h R:p_view_bottom &A:p_player &A:p_cows &A:p_drops &A:p_peers &A:p_settings R:p_time_of_day R:p_now",
+                              "void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows, Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now)", 0, "", "mesh_build_nearby, min_integer, render_camera_place, render_collect_blocks, render_collect_cows, render_collect_drops, render_collect_peers, render_collect_self, render_draw_faces, render_hide_covered, render_peer_names, render_setup_camera, render_sky, render_target_outline, render_view_from, settings_fov_radians");
+  if (p_id == 599) test_info_set(p_info, "font_choice", "macro", "ui", "font", "src/ui/font.4dm", 8, 25, "Text", "I:p_index",
                               "Text font_choice(Integer p_index)", 0, "", "");
-  if (p_id == 583) test_info_set(p_info, "font_choice_index", "macro", "ui", "font", "src/ui/font.4dm", 27, 38, "Integer", "T:p_font",
+  if (p_id == 600) test_info_set(p_info, "font_choice_index", "macro", "ui", "font", "src/ui/font.4dm", 27, 38, "Integer", "T:p_font",
                               "Integer font_choice_index(Text p_font)", 0, "", "font_choice");
-  if (p_id == 584) test_info_set(p_info, "font_next_choice", "macro", "ui", "font", "src/ui/font.4dm", 40, 50, "Text", "T:p_font",
-                              "Text font_next_choice(Text p_font)", 0, "", "font_choice, font_choice_index");
-  if (p_id == 585) test_info_set(p_info, "font_read_u16", "macro", "ui", "font", "src/ui/font.4dm", 52, 66, "Integer", "&?:p_file I:p_position",
-                              "Integer font_read_u16(File &p_file, Integer p_position)", 0, "takes an open File", "");
-  if (p_id == 586) test_info_set(p_info, "font_read_u32_high", "macro", "ui", "font", "src/ui/font.4dm", 68, 75, "Integer", "&?:p_file I:p_position",
-                              "Integer font_read_u32_high(File &p_file, Integer p_position)", 0, "takes an open File", "font_read_u16");
-  if (p_id == 587) test_info_set(p_info, "font_family_from_file", "macro", "ui", "font", "src/ui/font.4dm", 77, 203, "Integer", "T:p_path &T:p_family &T:p_report",
-                              "Integer font_family_from_file(Text p_path, Text &p_family, Text &p_report)", 0, "", "font_read_u16, font_read_u32_high");
-  if (p_id == 588) test_info_set(p_info, "font_apply", "macro", "ui", "font", "src/ui/font.4dm", 205, 212, "void", "B:p_box T:p_font",
-                              "void font_apply(Draw_Box p_box, Text p_font)", 0, "", "");
-  if (p_id == 589) test_info_set(p_info, "game_panel_split_xy", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 48, 60, "Integer", "T:p_msg &R:p_x &R:p_y",
-                              "Integer game_panel_split_xy(Text p_msg, Real &p_x, Real &p_y)", 0, "", "");
-  if (p_id == 590) test_info_set(p_info, "game_panel_calibrate", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 62, 91, "Integer", "B:p_box R:p_box_x R:p_box_y I:p_width I:p_height &I:p_origin_x &I:p_origin_y",
-                              "Integer game_panel_calibrate(Draw_Box p_box, Real p_box_x, Real p_box_y, Integer p_width, Integer p_height, Integer &p_origin_x, Integer &p_origin_y)", 0, "", "");
-  if (p_id == 591) test_info_set(p_info, "game_panel_notice", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 93, 114, "void", "B:p_box T:p_title T:p_line",
-                              "void game_panel_notice(Draw_Box p_box, Text p_title, Text p_line)", 0, "", "font_apply, hud_text, render_fill_rect, render_set_colour, settings_font");
-  if (p_id == 592) test_info_set(p_info, "game_panel_dispatch", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 116, 122, "void", "R:p_now",
-                              "void game_panel_dispatch(Real p_now)", 0, "", "game_dispatch_events");
-  if (p_id == 593) test_info_set(p_info, "game_panel_save", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 124, 130, "Integer", "",
-                              "Integer game_panel_save()", 1, "", "game_save_world");
-  if (p_id == 594) test_info_set(p_info, "game_panel_close_screen", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 132, 143, "void", "",
-                              "void game_panel_close_screen()", 0, "", "player_position, ui_close, ui_screen");
-  if (p_id == 595) test_info_set(p_info, "game_panel_render", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 145, 176, "void", "B:p_box I:p_captured R:p_frame_ms R:p_now",
-                              "void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real p_now)", 0, "", "font_apply, hud_draw, hud_text, net_mode, net_players_text, render_stats_text, render_world, settings_font, ui_draw, ui_screen, world_info_seed, world_time_of_day");
-  if (p_id == 596) test_info_set(p_info, "game_panel_run", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 178, 774, "Integer", "T:p_world_name I:p_mode I:p_seed",
-                              "Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)", 1, "opens a panel and waits for events", "command_run, emit_event, game_build_nearby, game_host, game_join, game_load_world, game_new_world, game_panel_calibrate, game_panel_close_screen, game_panel_dispatch, game_panel_notice, game_panel_render, game_panel_save, game_panel_split_xy, game_respawn, game_select_slot, game_update, game_world_name, hud_chat, hud_help_shown, hud_note_frame, hud_set_chat_input, hud_set_help, hud_show_name, hud_toast, net_clean_name, net_clear, net_flush, net_leave, net_mode, net_poll, net_say, player_auto_walk, player_creative, player_flying, player_is_dead, player_key_pressed, player_pick_block, player_primary_action, player_secondary_action, player_set_auto_walk, player_shift_pressed, player_spectator, player_turn, random_range, save_settings_path, settings_change, settings_describe, settings_mouse_scale, settings_mp_folder, settings_panel_run, settings_player_name, settings_render_distance, settings_save, settings_toggle, ui_click, ui_screen, ui_set_mouse, ui_set_tabs, ui_type_search");
-  if (p_id == 597) test_info_set(p_info, "menu_refresh_worlds", "macro", "ui", "menu_panel", "src/ui/menu_panel.4dm", 11, 33, "Integer", "?:p_world_list",
-                              "Integer menu_refresh_worlds(List_Box p_world_list)", 1, "takes a list widget (it would empty the test list)", "save_list_worlds");
-  if (p_id == 598) test_info_set(p_info, "menu_panel_run", "macro", "ui", "menu_panel", "src/ui/menu_panel.4dm", 35, 181, "Integer", "&A:p_game &A:p_random &A:p_settings",
-                              "Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_settings)", 1, "opens a panel and waits for events", "menu_refresh_worlds, random_range, record_set_integer, record_set_text, record_text, save_delete_world, save_world_exists, settings_panel_run, text_is_safe_name, text_to_seed");
-  if (p_id == 599) test_info_set(p_info, "settings_panel_show", "macro", "ui", "settings_panel", "src/ui/settings_panel.4dm", 20, 39, "void", "&A:p_settings M:p_render_row M:p_detail_row M:p_fov_row M:p_mouse_row M:p_plants_row M:p_shading_row M:p_jump_row M:p_hud_row M:p_debug_row M:p_pack_row M:p_font_row",
-                              "void settings_panel_show(Attributes &p_settings, Colour_Message_Box p_render_row, Colour_Message_Box p_detail_row, Colour_Message_Box p_fov_row, Colour_Message_Box p_mouse_row, Colour_Message_Box p_plants_row, Colour_Message_Box p_shading_row, Colour_Message_Box p_jump_row, Colour_Message_Box p_hud_row, Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row)", 0, "", "settings_describe");
-  if (p_id == 600) test_info_set(p_info, "settings_panel_run", "macro", "ui", "settings_panel", "src/ui/settings_panel.4dm", 41, 292, "Integer", "&A:p_settings",
-                              "Integer settings_panel_run(Attributes &p_settings)", 1, "opens a panel and waits for events", "font_family_from_file, font_next_choice, game_load_textures, record_set_integer, save_ensure_folder, save_settings_path, settings_change, settings_defaults, settings_font, settings_font_file, settings_mp_folder, settings_panel_show, settings_player_name, settings_resource_pack, settings_save, settings_set_font, settings_set_font_file, settings_set_resource_pack, settings_set_text, settings_toggle");
 }
 
 void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -5518,18 +5495,173 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 561) {   // render_clip_screen_edge
+  if (p_id == 561) {   // render_add_box
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    l_r8 = record_real(p_in, ATTR_TEST_R8);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    l_r9 = record_real(p_in, ATTR_TEST_R9);
+    l_r10 = record_real(p_in, ATTR_TEST_R10);
+    Get_time(l_start);
+    render_add_box(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_i1, l_i2, l_i3, l_i4, l_r9, l_r10);
+    Get_time(l_end);
+  } else if (p_id == 562) {   // render_light_at
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    Get_time(l_start);
+    l_ret_r = render_light_at(l_r1, l_r2, l_r3);
+    Get_time(l_end);
+  } else if (p_id == 563) {   // render_mob_begin
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    Get_time(l_start);
+    render_mob_begin(l_r1, l_r2, l_r3, l_r4, l_r5);
+    Get_time(l_end);
+  } else if (p_id == 564) {   // render_mob_part
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    l_r8 = record_real(p_in, ATTR_TEST_R8);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    l_i5 = record_integer(p_in, ATTR_TEST_I5);
+    Get_time(l_start);
+    render_mob_part(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_i1, l_i2, l_i3, l_i4, l_i5);
+    Get_time(l_end);
+  } else if (p_id == 565) {   // render_mob_part_nearer
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    Get_time(l_start);
+    l_ret_i = render_mob_part_nearer(l_i1, l_i2, l_r1, l_r2, l_r3);
+    Get_time(l_end);
+  } else if (p_id == 566) {   // render_mob_end
+    Get_time(l_start);
+    render_mob_end();
+    Get_time(l_end);
+  } else if (p_id == 567) {   // render_mob_head_look
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    l_r8 = record_real(p_in, ATTR_TEST_R8);
+    Get_time(l_start);
+    render_mob_head_look(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R7, l_r7);
+    record_set_real(p_out, ATTR_TEST_R8, l_r8);
+  } else if (p_id == 568) {   // render_zombie
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    Get_time(l_start);
+    render_zombie(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
+    Get_time(l_end);
+  } else if (p_id == 569) {   // render_cow
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    Get_time(l_start);
+    render_cow(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
+    Get_time(l_end);
+  } else if (p_id == 570) {   // render_pig
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    l_r7 = record_real(p_in, ATTR_TEST_R7);
+    Get_time(l_start);
+    render_pig(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7);
+    Get_time(l_end);
+  } else if (p_id == 571) {   // render_person
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    l_r6 = record_real(p_in, ATTR_TEST_R6);
+    Get_time(l_start);
+    render_person(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6);
+    Get_time(l_end);
+  } else if (p_id == 572) {   // render_camera_place
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    l_r5 = record_real(p_in, ATTR_TEST_R5);
+    Get_time(l_start);
+    render_camera_place(g_player, l_r1, l_r2, l_r3, l_r4, l_r5);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R1, l_r1);
+    record_set_real(p_out, ATTR_TEST_R2, l_r2);
+    record_set_real(p_out, ATTR_TEST_R3, l_r3);
+    record_set_real(p_out, ATTR_TEST_R4, l_r4);
+    record_set_real(p_out, ATTR_TEST_R5, l_r5);
+  } else if (p_id == 573) {   // render_collect_self
+    Get_time(l_start);
+    render_collect_self(g_player);
+    Get_time(l_end);
+  } else if (p_id == 574) {   // render_collect_peers
+    Get_time(l_start);
+    render_collect_peers(g_peers);
+    Get_time(l_end);
+  } else if (p_id == 575) {   // render_peer_names
+    Get_time(l_start);
+    render_peer_names(g_test_box, g_peers);
+    Get_time(l_end);
+  } else if (p_id == 576) {   // render_collect_cows
+    Get_time(l_start);
+    render_collect_cows(g_cows);
+    Get_time(l_end);
+  } else if (p_id == 577) {   // render_collect_drops
+    Get_time(l_start);
+    render_collect_drops(g_drops);
+    Get_time(l_end);
+  } else if (p_id == 578) {   // render_clip_screen_edge
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     render_clip_screen_edge(l_i1, l_r1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 562) {   // render_clip_and_draw
+  } else if (p_id == 579) {   // render_clip_and_draw
     Get_time(l_start);
     l_ret_i = render_clip_and_draw(g_test_box);
     Get_time(l_end);
-  } else if (p_id == 563) {   // render_quad
+  } else if (p_id == 580) {   // render_quad
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5537,7 +5669,7 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_quad(g_test_box, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 564) {   // render_face_line
+  } else if (p_id == 581) {   // render_face_line
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5545,57 +5677,57 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_face_line(g_test_box, l_r1, l_r2, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 565) {   // render_palette_colour
+  } else if (p_id == 582) {   // render_palette_colour
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     render_palette_colour(g_test_box, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 566) {   // render_draw_crack
+  } else if (p_id == 583) {   // render_draw_crack
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     render_draw_crack(g_test_box, l_i1);
     Get_time(l_end);
-  } else if (p_id == 567) {   // render_draw_face
+  } else if (p_id == 584) {   // render_draw_face
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     render_draw_face(g_test_box, l_i1);
     Get_time(l_end);
-  } else if (p_id == 568) {   // render_cover_reset
+  } else if (p_id == 585) {   // render_cover_reset
     Get_time(l_start);
     render_cover_reset();
     Get_time(l_end);
-  } else if (p_id == 569) {   // render_cover_add
+  } else if (p_id == 586) {   // render_cover_add
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     render_cover_add(l_i1, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 570) {   // render_cover_corners
+  } else if (p_id == 587) {   // render_cover_corners
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     render_cover_corners(l_i1);
     Get_time(l_end);
-  } else if (p_id == 571) {   // render_cover_face
+  } else if (p_id == 588) {   // render_cover_face
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     render_cover_face(l_i1);
     Get_time(l_end);
-  } else if (p_id == 572) {   // render_hide_covered
+  } else if (p_id == 589) {   // render_hide_covered
     Get_time(l_start);
     render_hide_covered();
     Get_time(l_end);
-  } else if (p_id == 573) {   // render_draw_faces
+  } else if (p_id == 590) {   // render_draw_faces
     Get_time(l_start);
     render_draw_faces(g_test_box);
     Get_time(l_end);
-  } else if (p_id == 574) {   // render_sky_colours
+  } else if (p_id == 591) {   // render_sky_colours
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     render_sky_colours(l_r1);
     Get_time(l_end);
-  } else if (p_id == 575) {   // render_sky_disc
+  } else if (p_id == 592) {   // render_sky_disc
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5604,16 +5736,16 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_sky_disc(g_test_box, l_r1, l_r2, l_r3, l_r4, l_i1);
     Get_time(l_end);
-  } else if (p_id == 576) {   // render_stars
+  } else if (p_id == 593) {   // render_stars
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     render_stars(g_test_box, l_r1);
     Get_time(l_end);
-  } else if (p_id == 577) {   // render_sky
+  } else if (p_id == 594) {   // render_sky
     Get_time(l_start);
     render_sky(g_test_box);
     Get_time(l_end);
-  } else if (p_id == 578) {   // render_point_visible
+  } else if (p_id == 595) {   // render_point_visible
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5623,7 +5755,7 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = render_point_visible(l_r1, l_r2, l_r3, l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 579) {   // render_world_line
+  } else if (p_id == 596) {   // render_world_line
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5633,11 +5765,11 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_world_line(g_test_box, l_r1, l_r2, l_r3, l_r4, l_r5, l_r6);
     Get_time(l_end);
-  } else if (p_id == 580) {   // render_target_outline
+  } else if (p_id == 597) {   // render_target_outline
     Get_time(l_start);
     render_target_outline(g_test_box);
     Get_time(l_end);
-  } else if (p_id == 581) {   // render_world
+  } else if (p_id == 598) {   // render_world
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5646,85 +5778,15 @@ void test_registry_call_15(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     render_world(g_test_box, l_r1, l_r2, l_r3, g_player, g_cows, g_drops, g_peers, g_settings, l_r4, l_r5);
     Get_time(l_end);
-  } else if (p_id == 582) {   // font_choice
+  } else if (p_id == 599) {   // font_choice
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = font_choice(l_i1);
     Get_time(l_end);
-  } else if (p_id == 583) {   // font_choice_index
+  } else if (p_id == 600) {   // font_choice_index
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = font_choice_index(l_t1);
-    Get_time(l_end);
-  } else if (p_id == 584) {   // font_next_choice
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    l_ret_t = font_next_choice(l_t1);
-    Get_time(l_end);
-  } else if (p_id == 587) {   // font_family_from_file
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    l_t2 = record_text(p_in, ATTR_TEST_T2);
-    l_t3 = record_text(p_in, ATTR_TEST_T3);
-    Get_time(l_start);
-    l_ret_i = font_family_from_file(l_t1, l_t2, l_t3);
-    Get_time(l_end);
-    record_set_text(p_out, ATTR_TEST_T2, l_t2);
-    record_set_text(p_out, ATTR_TEST_T3, l_t3);
-  } else if (p_id == 588) {   // font_apply
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    Get_time(l_start);
-    font_apply(g_test_box, l_t1);
-    Get_time(l_end);
-  } else if (p_id == 589) {   // game_panel_split_xy
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    l_ret_i = game_panel_split_xy(l_t1, l_r1, l_r2);
-    Get_time(l_end);
-    record_set_real(p_out, ATTR_TEST_R1, l_r1);
-    record_set_real(p_out, ATTR_TEST_R2, l_r2);
-  } else if (p_id == 590) {   // game_panel_calibrate
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    l_ret_i = game_panel_calibrate(g_test_box, l_r1, l_r2, l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-    record_set_integer(p_out, ATTR_TEST_I3, l_i3);
-    record_set_integer(p_out, ATTR_TEST_I4, l_i4);
-  } else if (p_id == 591) {   // game_panel_notice
-    l_t1 = record_text(p_in, ATTR_TEST_T1);
-    l_t2 = record_text(p_in, ATTR_TEST_T2);
-    Get_time(l_start);
-    game_panel_notice(g_test_box, l_t1, l_t2);
-    Get_time(l_end);
-  } else if (p_id == 592) {   // game_panel_dispatch
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    Get_time(l_start);
-    game_panel_dispatch(l_r1);
-    Get_time(l_end);
-  } else if (p_id == 593) {   // game_panel_save
-    Get_time(l_start);
-    l_ret_i = game_panel_save();
-    Get_time(l_end);
-  } else if (p_id == 594) {   // game_panel_close_screen
-    Get_time(l_start);
-    game_panel_close_screen();
-    Get_time(l_end);
-  } else if (p_id == 595) {   // game_panel_render
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    game_panel_render(g_test_box, l_i1, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 599) {   // settings_panel_show
-    Get_time(l_start);
-    settings_panel_show(g_settings, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -5738,86 +5800,86 @@ void test_registry_info_16(Integer p_id, Attributes &p_info)
 // What functions 601 to 640 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 601) test_info_set(p_info, "mesh_section_index", "macro", "world", "mesh", "src/world/mesh.4dm", 13, 19, "Integer", "I:p_sx I:p_sy I:p_sz",
+  if (p_id == 601) test_info_set(p_info, "font_next_choice", "macro", "ui", "font", "src/ui/font.4dm", 40, 50, "Text", "T:p_font",
+                              "Text font_next_choice(Text p_font)", 0, "", "font_choice, font_choice_index");
+  if (p_id == 602) test_info_set(p_info, "font_read_u16", "macro", "ui", "font", "src/ui/font.4dm", 52, 66, "Integer", "&?:p_file I:p_position",
+                              "Integer font_read_u16(File &p_file, Integer p_position)", 0, "takes an open File", "");
+  if (p_id == 603) test_info_set(p_info, "font_read_u32_high", "macro", "ui", "font", "src/ui/font.4dm", 68, 75, "Integer", "&?:p_file I:p_position",
+                              "Integer font_read_u32_high(File &p_file, Integer p_position)", 0, "takes an open File", "font_read_u16");
+  if (p_id == 604) test_info_set(p_info, "font_family_from_file", "macro", "ui", "font", "src/ui/font.4dm", 77, 203, "Integer", "T:p_path &T:p_family &T:p_report",
+                              "Integer font_family_from_file(Text p_path, Text &p_family, Text &p_report)", 0, "", "font_read_u16, font_read_u32_high");
+  if (p_id == 605) test_info_set(p_info, "font_apply", "macro", "ui", "font", "src/ui/font.4dm", 205, 212, "void", "B:p_box T:p_font",
+                              "void font_apply(Draw_Box p_box, Text p_font)", 0, "", "");
+  if (p_id == 606) test_info_set(p_info, "game_panel_split_xy", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 48, 60, "Integer", "T:p_msg &R:p_x &R:p_y",
+                              "Integer game_panel_split_xy(Text p_msg, Real &p_x, Real &p_y)", 0, "", "");
+  if (p_id == 607) test_info_set(p_info, "game_panel_calibrate", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 62, 91, "Integer", "B:p_box R:p_box_x R:p_box_y I:p_width I:p_height &I:p_origin_x &I:p_origin_y",
+                              "Integer game_panel_calibrate(Draw_Box p_box, Real p_box_x, Real p_box_y, Integer p_width, Integer p_height, Integer &p_origin_x, Integer &p_origin_y)", 0, "", "");
+  if (p_id == 608) test_info_set(p_info, "game_panel_notice", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 93, 114, "void", "B:p_box T:p_title T:p_line",
+                              "void game_panel_notice(Draw_Box p_box, Text p_title, Text p_line)", 0, "", "font_apply, hud_text, render_fill_rect, render_set_colour, settings_font");
+  if (p_id == 609) test_info_set(p_info, "game_panel_dispatch", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 116, 122, "void", "R:p_now",
+                              "void game_panel_dispatch(Real p_now)", 0, "", "game_dispatch_events");
+  if (p_id == 610) test_info_set(p_info, "game_panel_save", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 124, 130, "Integer", "",
+                              "Integer game_panel_save()", 1, "", "game_save_world");
+  if (p_id == 611) test_info_set(p_info, "game_panel_close_screen", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 132, 143, "void", "",
+                              "void game_panel_close_screen()", 0, "", "player_position, ui_close, ui_screen");
+  if (p_id == 612) test_info_set(p_info, "game_panel_render", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 145, 188, "void", "B:p_box I:p_captured R:p_frame_ms R:p_now",
+                              "void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real p_now)", 0, "", "font_apply, hud_draw, hud_text, net_mode, net_players_text, render_set_shade, render_stats_text, render_world, settings_font, ui_draw, ui_screen, world_info_seed, world_time_of_day");
+  if (p_id == 613) test_info_set(p_info, "game_panel_run", "macro", "ui", "game_panel", "src/ui/game_panel.4dm", 190, 836, "Integer", "T:p_world_name I:p_mode I:p_seed",
+                              "Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)", 1, "opens a panel and waits for events", "command_run, emit_event, game_build_nearby, game_host, game_join, game_load_world, game_new_world, game_panel_calibrate, game_panel_close_screen, game_panel_dispatch, game_panel_notice, game_panel_render, game_panel_save, game_panel_split_xy, game_respawn, game_select_slot, game_update, game_world_name, hud_chat, hud_help_shown, hud_menu_help, hud_note_frame, hud_pause_button_at, hud_set_chat_input, hud_set_help, hud_set_menu_help, hud_set_mouse, hud_show_name, hud_toast, net_clean_name, net_clear, net_flush, net_leave, net_mode, net_poll, net_say, player_auto_walk, player_creative, player_flying, player_game_mode_name, player_is_dead, player_key_pressed, player_next_camera, player_pick_block, player_primary_action, player_secondary_action, player_set_auto_walk, player_set_game_mode, player_shift_pressed, player_spectator, player_survival, player_turn, random_range, save_settings_path, settings_change, settings_describe, settings_mouse_scale, settings_mp_folder, settings_panel_run, settings_player_name, settings_render_distance, settings_save, settings_toggle, ui_click, ui_screen, ui_set_mouse, ui_set_tabs, ui_type_search");
+  if (p_id == 614) test_info_set(p_info, "menu_refresh_worlds", "macro", "ui", "menu_panel", "src/ui/menu_panel.4dm", 11, 33, "Integer", "?:p_world_list",
+                              "Integer menu_refresh_worlds(List_Box p_world_list)", 1, "takes a list widget (it would empty the test list)", "save_list_worlds");
+  if (p_id == 615) test_info_set(p_info, "menu_panel_run", "macro", "ui", "menu_panel", "src/ui/menu_panel.4dm", 35, 181, "Integer", "&A:p_game &A:p_random &A:p_settings",
+                              "Integer menu_panel_run(Attributes &p_game, Attributes &p_random, Attributes &p_settings)", 1, "opens a panel and waits for events", "menu_refresh_worlds, random_range, record_set_integer, record_set_text, record_text, save_delete_world, save_world_exists, settings_panel_run, text_is_safe_name, text_to_seed");
+  if (p_id == 616) test_info_set(p_info, "settings_panel_show", "macro", "ui", "settings_panel", "src/ui/settings_panel.4dm", 20, 41, "void", "&A:p_settings M:p_render_row M:p_detail_row M:p_fov_row M:p_mouse_row M:p_plants_row M:p_shading_row M:p_jump_row M:p_hud_row M:p_debug_row M:p_pack_row M:p_font_row M:p_skin_row",
+                              "void settings_panel_show(Attributes &p_settings, Colour_Message_Box p_render_row, Colour_Message_Box p_detail_row, Colour_Message_Box p_fov_row, Colour_Message_Box p_mouse_row, Colour_Message_Box p_plants_row, Colour_Message_Box p_shading_row, Colour_Message_Box p_jump_row, Colour_Message_Box p_hud_row, Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row, Colour_Message_Box p_skin_row)", 0, "", "settings_describe");
+  if (p_id == 617) test_info_set(p_info, "settings_panel_run", "macro", "ui", "settings_panel", "src/ui/settings_panel.4dm", 43, 325, "Integer", "&A:p_settings",
+                              "Integer settings_panel_run(Attributes &p_settings)", 1, "opens a panel and waits for events", "font_family_from_file, font_next_choice, game_load_textures, record_set_integer, save_ensure_folder, save_settings_path, settings_change, settings_defaults, settings_font, settings_font_file, settings_mp_folder, settings_panel_show, settings_player_name, settings_resource_pack, settings_save, settings_set_font, settings_set_font_file, settings_set_resource_pack, settings_set_text, settings_skin, settings_toggle");
+  if (p_id == 618) test_info_set(p_info, "mesh_section_index", "macro", "world", "mesh", "src/world/mesh.4dm", 13, 19, "Integer", "I:p_sx I:p_sy I:p_sz",
                               "Integer mesh_section_index(Integer p_sx, Integer p_sy, Integer p_sz)", 0, "", "");
-  if (p_id == 602) test_info_set(p_info, "mesh_reset", "macro", "world", "mesh", "src/world/mesh.4dm", 21, 35, "void", "",
+  if (p_id == 619) test_info_set(p_info, "mesh_reset", "macro", "world", "mesh", "src/world/mesh.4dm", 21, 35, "void", "",
                               "void mesh_reset()", 0, "", "mesh_fill_cell_tables");
-  if (p_id == 603) test_info_set(p_info, "mesh_fill_cell_tables", "macro", "world", "mesh", "src/world/mesh.4dm", 37, 67, "void", "",
+  if (p_id == 620) test_info_set(p_info, "mesh_fill_cell_tables", "macro", "world", "mesh", "src/world/mesh.4dm", 37, 67, "void", "",
                               "void mesh_fill_cell_tables()", 0, "", "block_is_plant, block_is_see_through, block_is_shaped, block_is_solid, world_cell_block, world_cell_light");
-  if (p_id == 604) test_info_set(p_info, "mesh_section_buried", "macro", "world", "mesh", "src/world/mesh.4dm", 69, 92, "Integer", "I:p_sx I:p_sy I:p_sz",
+  if (p_id == 621) test_info_set(p_info, "mesh_section_buried", "macro", "world", "mesh", "src/world/mesh.4dm", 69, 92, "Integer", "I:p_sx I:p_sy I:p_sz",
                               "Integer mesh_section_buried(Integer p_sx, Integer p_sy, Integer p_sz)", 0, "", "world_solid_below");
-  if (p_id == 605) test_info_set(p_info, "mesh_add_face", "macro", "world", "mesh", "src/world/mesh.4dm", 94, 110, "Integer", "I:p_entry I:p_x I:p_y I:p_z I:p_direction I:p_flag I:p_block",
+  if (p_id == 622) test_info_set(p_info, "mesh_add_face", "macro", "world", "mesh", "src/world/mesh.4dm", 94, 110, "Integer", "I:p_entry I:p_x I:p_y I:p_z I:p_direction I:p_flag I:p_block",
                               "Integer mesh_add_face(Integer p_entry, Integer p_x, Integer p_y, Integer p_z, Integer p_direction, Integer p_flag, Integer p_block)", 0, "", "mesh_face_light");
-  if (p_id == 606) test_info_set(p_info, "mesh_build_section", "macro", "world", "mesh", "src/world/mesh.4dm", 112, 217, "void", "I:p_sx I:p_sy I:p_sz",
+  if (p_id == 623) test_info_set(p_info, "mesh_build_section", "macro", "world", "mesh", "src/world/mesh.4dm", 112, 217, "void", "I:p_sx I:p_sy I:p_sz",
                               "void mesh_build_section(Integer p_sx, Integer p_sy, Integer p_sz)", 0, "", "mesh_add_face, mesh_group_faces, mesh_section_buried, mesh_section_index, world_index");
-  if (p_id == 607) test_info_set(p_info, "mesh_face_light", "macro", "world", "mesh", "src/world/mesh.4dm", 219, 314, "Integer", "I:p_x I:p_y I:p_z I:p_direction",
+  if (p_id == 624) test_info_set(p_info, "mesh_face_light", "macro", "world", "mesh", "src/world/mesh.4dm", 219, 314, "Integer", "I:p_x I:p_y I:p_z I:p_direction",
                               "Integer mesh_face_light(Integer p_x, Integer p_y, Integer p_z, Integer p_direction)", 0, "", "floor_divide, world_get_light, world_is_solid, world_sky_top");
-  if (p_id == 608) test_info_set(p_info, "mesh_layer_key", "macro", "world", "mesh", "src/world/mesh.4dm", 316, 332, "Integer", "I:p_direction I:p_local_x I:p_local_y I:p_local_z",
+  if (p_id == 625) test_info_set(p_info, "mesh_layer_key", "macro", "world", "mesh", "src/world/mesh.4dm", 316, 332, "Integer", "I:p_direction I:p_local_x I:p_local_y I:p_local_z",
                               "Integer mesh_layer_key(Integer p_direction, Integer p_local_x, Integer p_local_y, Integer p_local_z)", 0, "", "");
-  if (p_id == 609) test_info_set(p_info, "mesh_group_faces", "macro", "world", "mesh", "src/world/mesh.4dm", 334, 388, "void", "I:p_section I:p_x0 I:p_y0 I:p_z0",
+  if (p_id == 626) test_info_set(p_info, "mesh_group_faces", "macro", "world", "mesh", "src/world/mesh.4dm", 334, 388, "void", "I:p_section I:p_x0 I:p_y0 I:p_z0",
                               "void mesh_group_faces(Integer p_section, Integer p_x0, Integer p_y0, Integer p_z0)", 0, "", "mesh_layer_key");
-  if (p_id == 610) test_info_set(p_info, "mesh_build_nearby", "macro", "world", "mesh", "src/world/mesh.4dm", 390, 445, "void", "R:p_eye_x R:p_eye_y R:p_eye_z I:p_range I:p_budget",
+  if (p_id == 627) test_info_set(p_info, "mesh_build_nearby", "macro", "world", "mesh", "src/world/mesh.4dm", 390, 445, "void", "R:p_eye_x R:p_eye_y R:p_eye_z I:p_range I:p_budget",
                               "void mesh_build_nearby(Real p_eye_x, Real p_eye_y, Real p_eye_z, Integer p_range, Integer p_budget)", 0, "", "clamp_integer, floor_integer, mesh_build_section, mesh_section_index");
-  if (p_id == 611) test_info_set(p_info, "mesh_ensure_section", "macro", "world", "mesh", "src/world/mesh.4dm", 447, 457, "Integer", "I:p_sx I:p_sy I:p_sz",
+  if (p_id == 628) test_info_set(p_info, "mesh_ensure_section", "macro", "world", "mesh", "src/world/mesh.4dm", 447, 457, "Integer", "I:p_sx I:p_sy I:p_sz",
                               "Integer mesh_ensure_section(Integer p_sx, Integer p_sy, Integer p_sz)", 0, "", "mesh_build_section, mesh_section_index");
-  if (p_id == 612) test_info_set(p_info, "mesh_mark_dirty", "macro", "world", "mesh", "src/world/mesh.4dm", 459, 494, "void", "I:p_x I:p_y I:p_z",
+  if (p_id == 629) test_info_set(p_info, "mesh_mark_dirty", "macro", "world", "mesh", "src/world/mesh.4dm", 459, 494, "void", "I:p_x I:p_y I:p_z",
                               "void mesh_mark_dirty(Integer p_x, Integer p_y, Integer p_z)", 0, "", "floor_divide, mesh_section_index, world_in_bounds");
-  if (p_id == 613) test_info_set(p_info, "mesh_mark_box_dirty", "macro", "world", "mesh", "src/world/mesh.4dm", 496, 521, "void", "I:p_x I:p_y I:p_z I:p_radius",
+  if (p_id == 630) test_info_set(p_info, "mesh_mark_box_dirty", "macro", "world", "mesh", "src/world/mesh.4dm", 496, 521, "void", "I:p_x I:p_y I:p_z I:p_radius",
                               "void mesh_mark_box_dirty(Integer p_x, Integer p_y, Integer p_z, Integer p_radius)", 0, "", "clamp_integer, floor_divide, mesh_section_index");
-  if (p_id == 614) test_info_set(p_info, "mesh_on_event", "macro", "world", "mesh", "src/world/mesh.4dm", 523, 536, "void", "&A:p_event",
+  if (p_id == 631) test_info_set(p_info, "mesh_on_event", "macro", "world", "mesh", "src/world/mesh.4dm", 523, 536, "void", "&A:p_event",
                               "void mesh_on_event(Attributes &p_event)", 0, "", "event_integer, event_type, mesh_mark_box_dirty, mesh_mark_dirty");
-  if (p_id == 615) test_info_set(p_info, "physics_cell_box", "macro", "world", "physics", "src/world/physics.4dm", 11, 46, "Integer", "I:p_x I:p_y I:p_z &R:p_min_x &R:p_min_y &R:p_min_z &R:p_max_x &R:p_max_y &R:p_max_z",
+  if (p_id == 632) test_info_set(p_info, "physics_cell_box", "macro", "world", "physics", "src/world/physics.4dm", 11, 46, "Integer", "I:p_x I:p_y I:p_z &R:p_min_x &R:p_min_y &R:p_min_z &R:p_max_x &R:p_max_y &R:p_max_z",
                               "Integer physics_cell_box(Integer p_x, Integer p_y, Integer p_z, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z)", 0, "", "block_box, world_get_block, world_in_bounds, world_is_solid");
-  if (p_id == 616) test_info_set(p_info, "physics_box_limit", "macro", "world", "physics", "src/world/physics.4dm", 48, 102, "Real", "R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z I:p_axis I:p_direction",
+  if (p_id == 633) test_info_set(p_info, "physics_box_limit", "macro", "world", "physics", "src/world/physics.4dm", 48, 102, "Real", "R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z I:p_axis I:p_direction",
                               "Real physics_box_limit(Real p_min_x, Real p_min_y, Real p_min_z, Real p_max_x, Real p_max_y, Real p_max_z, Integer p_axis, Integer p_direction)", 0, "", "physics_cell_box");
-  if (p_id == 617) test_info_set(p_info, "physics_box_collides", "macro", "world", "physics", "src/world/physics.4dm", 104, 111, "Integer", "R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z",
+  if (p_id == 634) test_info_set(p_info, "physics_box_collides", "macro", "world", "physics", "src/world/physics.4dm", 104, 111, "Integer", "R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z",
                               "Integer physics_box_collides(Real p_min_x, Real p_min_y, Real p_min_z, Real p_max_x, Real p_max_y, Real p_max_z)", 0, "", "physics_box_limit");
-  if (p_id == 618) test_info_set(p_info, "physics_move_box", "macro", "world", "physics", "src/world/physics.4dm", 113, 181, "void", "&R:p_x &R:p_y &R:p_z R:p_half_width R:p_height R:p_dx R:p_dy R:p_dz &I:p_hit_x &I:p_hit_z &I:p_hit_down &I:p_hit_up",
+  if (p_id == 635) test_info_set(p_info, "physics_move_box", "macro", "world", "physics", "src/world/physics.4dm", 113, 181, "void", "&R:p_x &R:p_y &R:p_z R:p_half_width R:p_height R:p_dx R:p_dy R:p_dz &I:p_hit_x &I:p_hit_z &I:p_hit_down &I:p_hit_up",
                               "void physics_move_box(Real &p_x, Real &p_y, Real &p_z, Real p_half_width, Real p_height, Real p_dx, Real p_dy, Real p_dz, Integer &p_hit_x, Integer &p_hit_z, Integer &p_hit_down, Integer &p_hit_up)", 0, "", "physics_box_collides, physics_box_limit");
-  if (p_id == 619) test_info_set(p_info, "physics_box_in_water", "macro", "world", "physics", "src/world/physics.4dm", 183, 194, "Integer", "R:p_x R:p_y R:p_z R:p_half_width R:p_height",
+  if (p_id == 636) test_info_set(p_info, "physics_box_in_water", "macro", "world", "physics", "src/world/physics.4dm", 183, 194, "Integer", "R:p_x R:p_y R:p_z R:p_half_width R:p_height",
                               "Integer physics_box_in_water(Real p_x, Real p_y, Real p_z, Real p_half_width, Real p_height)", 0, "", "world_get_block");
-  if (p_id == 620) test_info_set(p_info, "physics_raycast_blocks", "macro", "world", "physics", "src/world/physics.4dm", 196, 303, "Integer", "R:p_origin_x R:p_origin_y R:p_origin_z R:p_dir_x R:p_dir_y R:p_dir_z R:p_max_distance &I:p_hit_x &I:p_hit_y &I:p_hit_z &I:p_normal_x &I:p_normal_y &I:p_normal_z &R:p_distance",
+  if (p_id == 637) test_info_set(p_info, "physics_raycast_blocks", "macro", "world", "physics", "src/world/physics.4dm", 196, 303, "Integer", "R:p_origin_x R:p_origin_y R:p_origin_z R:p_dir_x R:p_dir_y R:p_dir_z R:p_max_distance &I:p_hit_x &I:p_hit_y &I:p_hit_z &I:p_normal_x &I:p_normal_y &I:p_normal_z &R:p_distance",
                               "Integer physics_raycast_blocks(Real p_origin_x, Real p_origin_y, Real p_origin_z, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_max_distance, Integer &p_hit_x, Integer &p_hit_y, Integer &p_hit_z, Integer &p_normal_x, Integer &p_normal_y, Integer &p_normal_z, Real &p_distance)", 0, "", "block_box, physics_ray_box, world_get_block, world_in_bounds");
-  if (p_id == 621) test_info_set(p_info, "physics_ray_box", "macro", "world", "physics", "src/world/physics.4dm", 305, 363, "Real", "R:p_origin_x R:p_origin_y R:p_origin_z R:p_dir_x R:p_dir_y R:p_dir_z R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z",
+  if (p_id == 638) test_info_set(p_info, "physics_ray_box", "macro", "world", "physics", "src/world/physics.4dm", 305, 363, "Real", "R:p_origin_x R:p_origin_y R:p_origin_z R:p_dir_x R:p_dir_y R:p_dir_z R:p_min_x R:p_min_y R:p_min_z R:p_max_x R:p_max_y R:p_max_z",
                               "Real physics_ray_box(Real p_origin_x, Real p_origin_y, Real p_origin_z, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_min_x, Real p_min_y, Real p_min_z, Real p_max_x, Real p_max_y, Real p_max_z)", 0, "", "max_real, min_real");
-  if (p_id == 622) test_info_set(p_info, "world_index", "macro", "world", "world", "src/world/world.4dm", 15, 21, "Integer", "I:p_x I:p_y I:p_z",
+  if (p_id == 639) test_info_set(p_info, "world_index", "macro", "world", "world", "src/world/world.4dm", 15, 21, "Integer", "I:p_x I:p_y I:p_z",
                               "Integer world_index(Integer p_x, Integer p_y, Integer p_z)", 0, "", "");
-  if (p_id == 623) test_info_set(p_info, "world_cell_of_index", "macro", "world", "world", "src/world/world.4dm", 23, 35, "void", "I:p_index &I:p_x &I:p_y &I:p_z",
+  if (p_id == 640) test_info_set(p_info, "world_cell_of_index", "macro", "world", "world", "src/world/world.4dm", 23, 35, "void", "I:p_index &I:p_x &I:p_y &I:p_z",
                               "void world_cell_of_index(Integer p_index, Integer &p_x, Integer &p_y, Integer &p_z)", 0, "", "floor_divide, positive_mod");
-  if (p_id == 624) test_info_set(p_info, "world_column", "macro", "world", "world", "src/world/world.4dm", 37, 43, "Integer", "I:p_x I:p_z",
-                              "Integer world_column(Integer p_x, Integer p_z)", 0, "", "");
-  if (p_id == 625) test_info_set(p_info, "world_in_bounds", "macro", "world", "world", "src/world/world.4dm", 45, 53, "Integer", "I:p_x I:p_y I:p_z",
-                              "Integer world_in_bounds(Integer p_x, Integer p_y, Integer p_z)", 0, "", "");
-  if (p_id == 626) test_info_set(p_info, "world_get_block", "macro", "world", "world", "src/world/world.4dm", 55, 67, "Integer", "I:p_x I:p_y I:p_z",
-                              "Integer world_get_block(Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_cell_block, world_in_bounds, world_index");
-  if (p_id == 627) test_info_set(p_info, "world_cell_block", "macro", "world", "world", "src/world/world.4dm", 69, 78, "Integer", "I:p_cell",
-                              "Integer world_cell_block(Integer p_cell)", 0, "", "");
-  if (p_id == 628) test_info_set(p_info, "world_cell_light", "macro", "world", "world", "src/world/world.4dm", 80, 89, "Integer", "I:p_cell",
-                              "Integer world_cell_light(Integer p_cell)", 0, "", "");
-  if (p_id == 629) test_info_set(p_info, "world_get_light", "macro", "world", "world", "src/world/world.4dm", 91, 98, "Integer", "I:p_x I:p_y I:p_z",
-                              "Integer world_get_light(Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_cell_light, world_in_bounds, world_index");
-  if (p_id == 630) test_info_set(p_info, "world_set_block", "macro", "world", "world", "src/world/world.4dm", 100, 112, "void", "I:p_x I:p_y I:p_z I:p_block",
-                              "void world_set_block(Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "world_cell_light, world_in_bounds, world_index");
-  if (p_id == 631) test_info_set(p_info, "world_is_solid", "macro", "world", "world", "src/world/world.4dm", 114, 124, "Integer", "I:p_x I:p_y I:p_z",
-                              "Integer world_is_solid(Integer p_x, Integer p_y, Integer p_z)", 0, "", "block_is_solid, world_cell_block, world_index");
-  if (p_id == 632) test_info_set(p_info, "world_top_solid_y", "macro", "world", "world", "src/world/world.4dm", 126, 142, "Integer", "I:p_x I:p_z",
-                              "Integer world_top_solid_y(Integer p_x, Integer p_z)", 0, "", "block_is_solid, world_cell_block, world_in_bounds, world_index");
-  if (p_id == 633) test_info_set(p_info, "world_top_opaque_y", "macro", "world", "world", "src/world/world.4dm", 144, 161, "Integer", "I:p_x I:p_z",
-                              "Integer world_top_opaque_y(Integer p_x, Integer p_z)", 0, "", "block_hides_faces, world_cell_block, world_in_bounds, world_index");
-  if (p_id == 634) test_info_set(p_info, "world_sky_top", "macro", "world", "world", "src/world/world.4dm", 163, 171, "Integer", "I:p_x I:p_z",
-                              "Integer world_sky_top(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds");
-  if (p_id == 635) test_info_set(p_info, "world_solid_below", "macro", "world", "world", "src/world/world.4dm", 173, 181, "Integer", "I:p_x I:p_z",
-                              "Integer world_solid_below(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds");
-  if (p_id == 636) test_info_set(p_info, "world_biome", "macro", "world", "world", "src/world/world.4dm", 183, 190, "Integer", "I:p_x I:p_z",
-                              "Integer world_biome(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds");
-  if (p_id == 637) test_info_set(p_info, "world_update_column_top", "macro", "world", "world", "src/world/world.4dm", 192, 199, "void", "I:p_x I:p_z",
-                              "void world_update_column_top(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds, world_top_opaque_y");
-  if (p_id == 638) test_info_set(p_info, "world_break_block", "macro", "world", "world", "src/world/world.4dm", 201, 242, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_tool_item",
-                              "void world_break_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_tool_item)", 0, "", "block_door_top, block_is_door, block_is_plant, block_is_shaped, block_partner, emit_cell_event, emit_event, world_get_block, world_in_bounds, world_light_update, world_set_block, world_update_column_top");
-  if (p_id == 639) test_info_set(p_info, "world_place_block", "macro", "world", "world", "src/world/world.4dm", 244, 256, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_block",
-                              "void world_place_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "emit_cell_event, world_in_bounds, world_light_update, world_set_block, world_update_column_top");
-  if (p_id == 640) test_info_set(p_info, "world_apply_remote_block", "macro", "world", "world", "src/world/world.4dm", 258, 277, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_block",
-                              "void world_apply_remote_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "emit_cell_event, emit_event, world_get_block, world_in_bounds, world_light_update, world_set_block, world_update_column_top");
 }
 
 void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -5862,29 +5924,99 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 601) {   // mesh_section_index
+  if (p_id == 601) {   // font_next_choice
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    l_ret_t = font_next_choice(l_t1);
+    Get_time(l_end);
+  } else if (p_id == 604) {   // font_family_from_file
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_t2 = record_text(p_in, ATTR_TEST_T2);
+    l_t3 = record_text(p_in, ATTR_TEST_T3);
+    Get_time(l_start);
+    l_ret_i = font_family_from_file(l_t1, l_t2, l_t3);
+    Get_time(l_end);
+    record_set_text(p_out, ATTR_TEST_T2, l_t2);
+    record_set_text(p_out, ATTR_TEST_T3, l_t3);
+  } else if (p_id == 605) {   // font_apply
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    Get_time(l_start);
+    font_apply(g_test_box, l_t1);
+    Get_time(l_end);
+  } else if (p_id == 606) {   // game_panel_split_xy
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    l_ret_i = game_panel_split_xy(l_t1, l_r1, l_r2);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R1, l_r1);
+    record_set_real(p_out, ATTR_TEST_R2, l_r2);
+  } else if (p_id == 607) {   // game_panel_calibrate
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    l_ret_i = game_panel_calibrate(g_test_box, l_r1, l_r2, l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+    record_set_integer(p_out, ATTR_TEST_I3, l_i3);
+    record_set_integer(p_out, ATTR_TEST_I4, l_i4);
+  } else if (p_id == 608) {   // game_panel_notice
+    l_t1 = record_text(p_in, ATTR_TEST_T1);
+    l_t2 = record_text(p_in, ATTR_TEST_T2);
+    Get_time(l_start);
+    game_panel_notice(g_test_box, l_t1, l_t2);
+    Get_time(l_end);
+  } else if (p_id == 609) {   // game_panel_dispatch
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    Get_time(l_start);
+    game_panel_dispatch(l_r1);
+    Get_time(l_end);
+  } else if (p_id == 610) {   // game_panel_save
+    Get_time(l_start);
+    l_ret_i = game_panel_save();
+    Get_time(l_end);
+  } else if (p_id == 611) {   // game_panel_close_screen
+    Get_time(l_start);
+    game_panel_close_screen();
+    Get_time(l_end);
+  } else if (p_id == 612) {   // game_panel_render
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    game_panel_render(g_test_box, l_i1, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 616) {   // settings_panel_show
+    Get_time(l_start);
+    settings_panel_show(g_settings, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message, g_test_message);
+    Get_time(l_end);
+  } else if (p_id == 618) {   // mesh_section_index
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = mesh_section_index(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 602) {   // mesh_reset
+  } else if (p_id == 619) {   // mesh_reset
     Get_time(l_start);
     mesh_reset();
     Get_time(l_end);
-  } else if (p_id == 603) {   // mesh_fill_cell_tables
+  } else if (p_id == 620) {   // mesh_fill_cell_tables
     Get_time(l_start);
     mesh_fill_cell_tables();
     Get_time(l_end);
-  } else if (p_id == 604) {   // mesh_section_buried
+  } else if (p_id == 621) {   // mesh_section_buried
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = mesh_section_buried(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 605) {   // mesh_add_face
+  } else if (p_id == 622) {   // mesh_add_face
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5895,14 +6027,14 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = mesh_add_face(l_i1, l_i2, l_i3, l_i4, l_i5, l_i6, l_i7);
     Get_time(l_end);
-  } else if (p_id == 606) {   // mesh_build_section
+  } else if (p_id == 623) {   // mesh_build_section
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     mesh_build_section(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 607) {   // mesh_face_light
+  } else if (p_id == 624) {   // mesh_face_light
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5910,7 +6042,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = mesh_face_light(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 608) {   // mesh_layer_key
+  } else if (p_id == 625) {   // mesh_layer_key
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5918,7 +6050,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = mesh_layer_key(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 609) {   // mesh_group_faces
+  } else if (p_id == 626) {   // mesh_group_faces
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5926,7 +6058,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     mesh_group_faces(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 610) {   // mesh_build_nearby
+  } else if (p_id == 627) {   // mesh_build_nearby
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5935,21 +6067,21 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     mesh_build_nearby(l_r1, l_r2, l_r3, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 611) {   // mesh_ensure_section
+  } else if (p_id == 628) {   // mesh_ensure_section
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = mesh_ensure_section(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 612) {   // mesh_mark_dirty
+  } else if (p_id == 629) {   // mesh_mark_dirty
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     mesh_mark_dirty(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 613) {   // mesh_mark_box_dirty
+  } else if (p_id == 630) {   // mesh_mark_box_dirty
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5957,11 +6089,11 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     mesh_mark_box_dirty(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 614) {   // mesh_on_event
+  } else if (p_id == 631) {   // mesh_on_event
     Get_time(l_start);
     mesh_on_event(g_event);
     Get_time(l_end);
-  } else if (p_id == 615) {   // physics_cell_box
+  } else if (p_id == 632) {   // physics_cell_box
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -5980,7 +6112,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R4, l_r4);
     record_set_real(p_out, ATTR_TEST_R5, l_r5);
     record_set_real(p_out, ATTR_TEST_R6, l_r6);
-  } else if (p_id == 616) {   // physics_box_limit
+  } else if (p_id == 633) {   // physics_box_limit
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -5992,7 +6124,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_r = physics_box_limit(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 617) {   // physics_box_collides
+  } else if (p_id == 634) {   // physics_box_collides
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -6002,7 +6134,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = physics_box_collides(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6);
     Get_time(l_end);
-  } else if (p_id == 618) {   // physics_move_box
+  } else if (p_id == 635) {   // physics_move_box
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -6025,7 +6157,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I2, l_i2);
     record_set_integer(p_out, ATTR_TEST_I3, l_i3);
     record_set_integer(p_out, ATTR_TEST_I4, l_i4);
-  } else if (p_id == 619) {   // physics_box_in_water
+  } else if (p_id == 636) {   // physics_box_in_water
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -6034,7 +6166,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = physics_box_in_water(l_r1, l_r2, l_r3, l_r4, l_r5);
     Get_time(l_end);
-  } else if (p_id == 620) {   // physics_raycast_blocks
+  } else if (p_id == 637) {   // physics_raycast_blocks
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -6059,7 +6191,7 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I5, l_i5);
     record_set_integer(p_out, ATTR_TEST_I6, l_i6);
     record_set_real(p_out, ATTR_TEST_R8, l_r8);
-  } else if (p_id == 621) {   // physics_ray_box
+  } else if (p_id == 638) {   // physics_ray_box
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -6075,14 +6207,14 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_r = physics_ray_box(l_r1, l_r2, l_r3, l_r4, l_r5, l_r6, l_r7, l_r8, l_r9, l_r10, l_r11, l_r12);
     Get_time(l_end);
-  } else if (p_id == 622) {   // world_index
+  } else if (p_id == 639) {   // world_index
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = world_index(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 623) {   // world_cell_of_index
+  } else if (p_id == 640) {   // world_cell_of_index
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -6093,118 +6225,6 @@ void test_registry_call_16(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_integer(p_out, ATTR_TEST_I2, l_i2);
     record_set_integer(p_out, ATTR_TEST_I3, l_i3);
     record_set_integer(p_out, ATTR_TEST_I4, l_i4);
-  } else if (p_id == 624) {   // world_column
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = world_column(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 625) {   // world_in_bounds
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    l_ret_i = world_in_bounds(l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 626) {   // world_get_block
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    l_ret_i = world_get_block(l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 627) {   // world_cell_block
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    l_ret_i = world_cell_block(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 628) {   // world_cell_light
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    l_ret_i = world_cell_light(l_i1);
-    Get_time(l_end);
-  } else if (p_id == 629) {   // world_get_light
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    l_ret_i = world_get_light(l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 630) {   // world_set_block
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    world_set_block(l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 631) {   // world_is_solid
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    l_ret_i = world_is_solid(l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 632) {   // world_top_solid_y
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = world_top_solid_y(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 633) {   // world_top_opaque_y
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = world_top_opaque_y(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 634) {   // world_sky_top
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = world_sky_top(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 635) {   // world_solid_below
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = world_solid_below(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 636) {   // world_biome
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    l_ret_i = world_biome(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 637) {   // world_update_column_top
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    world_update_column_top(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 638) {   // world_break_block
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    world_break_block(g_events, l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 639) {   // world_place_block
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    world_place_block(g_events, l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 640) {   // world_apply_remote_block
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    world_apply_remote_block(g_events, l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
   record_set_real   (p_out, ATTR_TEST_RET_R,   l_ret_r);
@@ -6217,86 +6237,86 @@ void test_registry_info_17(Integer p_id, Attributes &p_info)
 // What functions 641 to 680 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 641) test_info_set(p_info, "world_time_of_day", "macro", "world", "world", "src/world/world.4dm", 281, 287, "Real", "&A:p_info",
+  if (p_id == 641) test_info_set(p_info, "world_column", "macro", "world", "world", "src/world/world.4dm", 37, 43, "Integer", "I:p_x I:p_z",
+                              "Integer world_column(Integer p_x, Integer p_z)", 0, "", "");
+  if (p_id == 642) test_info_set(p_info, "world_in_bounds", "macro", "world", "world", "src/world/world.4dm", 45, 53, "Integer", "I:p_x I:p_y I:p_z",
+                              "Integer world_in_bounds(Integer p_x, Integer p_y, Integer p_z)", 0, "", "");
+  if (p_id == 643) test_info_set(p_info, "world_get_block", "macro", "world", "world", "src/world/world.4dm", 55, 67, "Integer", "I:p_x I:p_y I:p_z",
+                              "Integer world_get_block(Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_cell_block, world_in_bounds, world_index");
+  if (p_id == 644) test_info_set(p_info, "world_cell_block", "macro", "world", "world", "src/world/world.4dm", 69, 78, "Integer", "I:p_cell",
+                              "Integer world_cell_block(Integer p_cell)", 0, "", "");
+  if (p_id == 645) test_info_set(p_info, "world_cell_light", "macro", "world", "world", "src/world/world.4dm", 80, 89, "Integer", "I:p_cell",
+                              "Integer world_cell_light(Integer p_cell)", 0, "", "");
+  if (p_id == 646) test_info_set(p_info, "world_get_light", "macro", "world", "world", "src/world/world.4dm", 91, 98, "Integer", "I:p_x I:p_y I:p_z",
+                              "Integer world_get_light(Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_cell_light, world_in_bounds, world_index");
+  if (p_id == 647) test_info_set(p_info, "world_set_block", "macro", "world", "world", "src/world/world.4dm", 100, 112, "void", "I:p_x I:p_y I:p_z I:p_block",
+                              "void world_set_block(Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "world_cell_light, world_in_bounds, world_index");
+  if (p_id == 648) test_info_set(p_info, "world_is_solid", "macro", "world", "world", "src/world/world.4dm", 114, 124, "Integer", "I:p_x I:p_y I:p_z",
+                              "Integer world_is_solid(Integer p_x, Integer p_y, Integer p_z)", 0, "", "block_is_solid, world_cell_block, world_index");
+  if (p_id == 649) test_info_set(p_info, "world_top_solid_y", "macro", "world", "world", "src/world/world.4dm", 126, 142, "Integer", "I:p_x I:p_z",
+                              "Integer world_top_solid_y(Integer p_x, Integer p_z)", 0, "", "block_is_solid, world_cell_block, world_in_bounds, world_index");
+  if (p_id == 650) test_info_set(p_info, "world_top_opaque_y", "macro", "world", "world", "src/world/world.4dm", 144, 161, "Integer", "I:p_x I:p_z",
+                              "Integer world_top_opaque_y(Integer p_x, Integer p_z)", 0, "", "block_hides_faces, world_cell_block, world_in_bounds, world_index");
+  if (p_id == 651) test_info_set(p_info, "world_sky_top", "macro", "world", "world", "src/world/world.4dm", 163, 171, "Integer", "I:p_x I:p_z",
+                              "Integer world_sky_top(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds");
+  if (p_id == 652) test_info_set(p_info, "world_solid_below", "macro", "world", "world", "src/world/world.4dm", 173, 181, "Integer", "I:p_x I:p_z",
+                              "Integer world_solid_below(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds");
+  if (p_id == 653) test_info_set(p_info, "world_biome", "macro", "world", "world", "src/world/world.4dm", 183, 190, "Integer", "I:p_x I:p_z",
+                              "Integer world_biome(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds");
+  if (p_id == 654) test_info_set(p_info, "world_update_column_top", "macro", "world", "world", "src/world/world.4dm", 192, 199, "void", "I:p_x I:p_z",
+                              "void world_update_column_top(Integer p_x, Integer p_z)", 0, "", "world_column, world_in_bounds, world_top_opaque_y");
+  if (p_id == 655) test_info_set(p_info, "world_break_block", "macro", "world", "world", "src/world/world.4dm", 201, 242, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_tool_item",
+                              "void world_break_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_tool_item)", 0, "", "block_door_top, block_is_door, block_is_plant, block_is_shaped, block_partner, emit_cell_event, emit_event, world_get_block, world_in_bounds, world_light_update, world_set_block, world_update_column_top");
+  if (p_id == 656) test_info_set(p_info, "world_place_block", "macro", "world", "world", "src/world/world.4dm", 244, 256, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_block",
+                              "void world_place_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "emit_cell_event, world_in_bounds, world_light_update, world_set_block, world_update_column_top");
+  if (p_id == 657) test_info_set(p_info, "world_apply_remote_block", "macro", "world", "world", "src/world/world.4dm", 258, 277, "void", "&A:p_events I:p_x I:p_y I:p_z I:p_block",
+                              "void world_apply_remote_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)", 0, "", "emit_cell_event, emit_event, world_get_block, world_in_bounds, world_light_update, world_set_block, world_update_column_top");
+  if (p_id == 658) test_info_set(p_info, "world_time_of_day", "macro", "world", "world", "src/world/world.4dm", 281, 287, "Real", "&A:p_info",
                               "Real world_time_of_day(Attributes &p_info)", 0, "", "record_real");
-  if (p_id == 642) test_info_set(p_info, "world_set_time_of_day", "macro", "world", "world", "src/world/world.4dm", 289, 295, "void", "&A:p_info R:p_time",
+  if (p_id == 659) test_info_set(p_info, "world_set_time_of_day", "macro", "world", "world", "src/world/world.4dm", 289, 295, "void", "&A:p_info R:p_time",
                               "void world_set_time_of_day(Attributes &p_info, Real p_time)", 0, "", "record_set_real");
-  if (p_id == 643) test_info_set(p_info, "world_daylight_cycle", "macro", "world", "world", "src/world/world.4dm", 297, 304, "Integer", "&A:p_info",
+  if (p_id == 660) test_info_set(p_info, "world_daylight_cycle", "macro", "world", "world", "src/world/world.4dm", 297, 304, "Integer", "&A:p_info",
                               "Integer world_daylight_cycle(Attributes &p_info)", 0, "", "record_integer");
-  if (p_id == 644) test_info_set(p_info, "world_set_daylight_cycle", "macro", "world", "world", "src/world/world.4dm", 306, 312, "void", "&A:p_info I:p_on",
+  if (p_id == 661) test_info_set(p_info, "world_set_daylight_cycle", "macro", "world", "world", "src/world/world.4dm", 306, 312, "void", "&A:p_info I:p_on",
                               "void world_set_daylight_cycle(Attributes &p_info, Integer p_on)", 0, "", "record_set_integer");
-  if (p_id == 645) test_info_set(p_info, "world_advance_time", "macro", "world", "world", "src/world/world.4dm", 314, 323, "void", "&A:p_info R:p_dt",
+  if (p_id == 662) test_info_set(p_info, "world_advance_time", "macro", "world", "world", "src/world/world.4dm", 314, 323, "void", "&A:p_info R:p_dt",
                               "void world_advance_time(Attributes &p_info, Real p_dt)", 0, "", "record_integer, record_set_integer, world_set_time_of_day, world_time_of_day");
-  if (p_id == 646) test_info_set(p_info, "world_sun_height", "macro", "world", "world", "src/world/world.4dm", 325, 331, "Real", "R:p_time_of_day",
+  if (p_id == 663) test_info_set(p_info, "world_sun_height", "macro", "world", "world", "src/world/world.4dm", 325, 331, "Real", "R:p_time_of_day",
                               "Real world_sun_height(Real p_time_of_day)", 0, "", "");
-  if (p_id == 647) test_info_set(p_info, "world_daylight", "macro", "world", "world", "src/world/world.4dm", 333, 342, "Real", "R:p_time_of_day",
+  if (p_id == 664) test_info_set(p_info, "world_daylight", "macro", "world", "world", "src/world/world.4dm", 333, 342, "Real", "R:p_time_of_day",
                               "Real world_daylight(Real p_time_of_day)", 0, "", "clamp_real, smooth_curve, world_sun_height");
-  if (p_id == 648) test_info_set(p_info, "world_is_night", "macro", "world", "world", "src/world/world.4dm", 344, 351, "Integer", "R:p_time_of_day",
+  if (p_id == 665) test_info_set(p_info, "world_is_night", "macro", "world", "world", "src/world/world.4dm", 344, 351, "Integer", "R:p_time_of_day",
                               "Integer world_is_night(Real p_time_of_day)", 0, "", "world_daylight");
-  if (p_id == 649) test_info_set(p_info, "world_clock_text", "macro", "world", "world", "src/world/world.4dm", 353, 365, "Text", "R:p_time_of_day",
+  if (p_id == 666) test_info_set(p_info, "world_clock_text", "macro", "world", "world", "src/world/world.4dm", 353, 365, "Text", "R:p_time_of_day",
                               "Text world_clock_text(Real p_time_of_day)", 0, "", "two_digits");
-  if (p_id == 650) test_info_set(p_info, "world_on_event", "macro", "world", "world", "src/world/world.4dm", 367, 398, "void", "&A:p_event &A:p_info &A:p_events",
+  if (p_id == 667) test_info_set(p_info, "world_on_event", "macro", "world", "world", "src/world/world.4dm", 367, 398, "void", "&A:p_event &A:p_info &A:p_events",
                               "void world_on_event(Attributes &p_event, Attributes &p_info, Attributes &p_events)", 0, "", "block_furnace_lit_as, block_is_furnace, emit_cell_event, emit_toast, event_integer, event_type, record_integer, record_set_integer, world_get_block, world_info_set_spawn, world_is_night, world_light_update, world_set_block, world_set_time_of_day, world_time_of_day");
-  if (p_id == 651) test_info_set(p_info, "world_set_light_index", "macro", "world", "world", "src/world/world.4dm", 402, 408, "void", "I:p_index I:p_light",
+  if (p_id == 668) test_info_set(p_info, "world_set_light_index", "macro", "world", "world", "src/world/world.4dm", 402, 408, "void", "I:p_index I:p_light",
                               "void world_set_light_index(Integer p_index, Integer p_light)", 0, "", "world_cell_block");
-  if (p_id == 652) test_info_set(p_info, "world_light_push", "macro", "world", "world", "src/world/world.4dm", 410, 420, "Integer", "I:p_tail I:p_x I:p_y I:p_z",
+  if (p_id == 669) test_info_set(p_info, "world_light_push", "macro", "world", "world", "src/world/world.4dm", 410, 420, "Integer", "I:p_tail I:p_x I:p_y I:p_z",
                               "Integer world_light_push(Integer p_tail, Integer p_x, Integer p_y, Integer p_z)", 0, "", "");
-  if (p_id == 653) test_info_set(p_info, "world_light_seed_outside", "macro", "world", "world", "src/world/world.4dm", 422, 431, "Integer", "I:p_tail I:p_x I:p_y I:p_z",
+  if (p_id == 670) test_info_set(p_info, "world_light_seed_outside", "macro", "world", "world", "src/world/world.4dm", 422, 431, "Integer", "I:p_tail I:p_x I:p_y I:p_z",
                               "Integer world_light_seed_outside(Integer p_tail, Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_get_light, world_in_bounds, world_light_push");
-  if (p_id == 654) test_info_set(p_info, "world_light_update", "macro", "world", "world", "src/world/world.4dm", 433, 537, "Integer", "I:p_x I:p_y I:p_z",
+  if (p_id == 671) test_info_set(p_info, "world_light_update", "macro", "world", "world", "src/world/world.4dm", 433, 537, "Integer", "I:p_x I:p_y I:p_z",
                               "Integer world_light_update(Integer p_x, Integer p_y, Integer p_z)", 0, "", "block_hides_faces, block_light_emission, max_integer, min_integer, world_cell_block, world_cell_light, world_get_block, world_get_light, world_in_bounds, world_index, world_light_push, world_light_seed_outside, world_set_light_index");
-  if (p_id == 655) test_info_set(p_info, "world_info_clear", "macro", "world", "world", "src/world/world.4dm", 541, 558, "void", "&A:p_info I:p_seed",
+  if (p_id == 672) test_info_set(p_info, "world_info_clear", "macro", "world", "world", "src/world/world.4dm", 541, 558, "void", "&A:p_info I:p_seed",
                               "void world_info_clear(Attributes &p_info, Integer p_seed)", 0, "", "record_clear, record_set_integer, record_set_real, world_info_set_spawn, world_seed_shifts");
-  if (p_id == 656) test_info_set(p_info, "world_info_seed", "macro", "world", "world", "src/world/world.4dm", 560, 566, "Integer", "&A:p_info",
+  if (p_id == 673) test_info_set(p_info, "world_info_seed", "macro", "world", "world", "src/world/world.4dm", 560, 566, "Integer", "&A:p_info",
                               "Integer world_info_seed(Attributes &p_info)", 0, "", "record_integer");
-  if (p_id == 657) test_info_set(p_info, "world_info_spawn", "macro", "world", "world", "src/world/world.4dm", 568, 576, "void", "&A:p_info &R:p_x &R:p_y &R:p_z",
+  if (p_id == 674) test_info_set(p_info, "world_info_spawn", "macro", "world", "world", "src/world/world.4dm", 568, 576, "void", "&A:p_info &R:p_x &R:p_y &R:p_z",
                               "void world_info_spawn(Attributes &p_info, Real &p_x, Real &p_y, Real &p_z)", 0, "", "record_real");
-  if (p_id == 658) test_info_set(p_info, "world_info_set_spawn", "macro", "world", "world", "src/world/world.4dm", 578, 586, "void", "&A:p_info R:p_x R:p_y R:p_z",
+  if (p_id == 675) test_info_set(p_info, "world_info_set_spawn", "macro", "world", "world", "src/world/world.4dm", 578, 586, "void", "&A:p_info R:p_x R:p_y R:p_z",
                               "void world_info_set_spawn(Attributes &p_info, Real p_x, Real p_y, Real p_z)", 0, "", "record_set_real");
-  if (p_id == 659) test_info_set(p_info, "world_seed_shifts", "macro", "world", "world", "src/world/world.4dm", 590, 601, "void", "I:p_seed &R:p_shift_a &R:p_shift_b",
+  if (p_id == 676) test_info_set(p_info, "world_seed_shifts", "macro", "world", "world", "src/world/world.4dm", 590, 601, "void", "I:p_seed &R:p_shift_a &R:p_shift_b",
                               "void world_seed_shifts(Integer p_seed, Real &p_shift_a, Real &p_shift_b)", 0, "", "floor_divide, positive_mod");
-  if (p_id == 660) test_info_set(p_info, "world_value_noise", "macro", "world", "world", "src/world/world.4dm", 603, 620, "Real", "R:p_x R:p_z I:p_layer R:p_shift_a R:p_shift_b",
+  if (p_id == 677) test_info_set(p_info, "world_value_noise", "macro", "world", "world", "src/world/world.4dm", 603, 620, "Real", "R:p_x R:p_z I:p_layer R:p_shift_a R:p_shift_b",
                               "Real world_value_noise(Real p_x, Real p_z, Integer p_layer, Real p_shift_a, Real p_shift_b)", 0, "", "hash_real, lerp_real, smooth_curve");
-  if (p_id == 661) test_info_set(p_info, "world_desert_weight", "macro", "world", "world", "src/world/world.4dm", 622, 631, "Real", "I:p_x I:p_z R:p_shift_a R:p_shift_b",
+  if (p_id == 678) test_info_set(p_info, "world_desert_weight", "macro", "world", "world", "src/world/world.4dm", 622, 631, "Real", "I:p_x I:p_z R:p_shift_a R:p_shift_b",
                               "Real world_desert_weight(Integer p_x, Integer p_z, Real p_shift_a, Real p_shift_b)", 0, "", "clamp_real, smooth_curve, world_value_noise");
-  if (p_id == 662) test_info_set(p_info, "world_column_biome", "macro", "world", "world", "src/world/world.4dm", 633, 642, "Integer", "I:p_x I:p_z R:p_shift_a R:p_shift_b",
+  if (p_id == 679) test_info_set(p_info, "world_column_biome", "macro", "world", "world", "src/world/world.4dm", 633, 642, "Integer", "I:p_x I:p_z R:p_shift_a R:p_shift_b",
                               "Integer world_column_biome(Integer p_x, Integer p_z, Real p_shift_a, Real p_shift_b)", 0, "", "world_desert_weight, world_value_noise");
-  if (p_id == 663) test_info_set(p_info, "world_terrain_height", "macro", "world", "world", "src/world/world.4dm", 644, 676, "Integer", "I:p_x I:p_z R:p_shift_a R:p_shift_b",
+  if (p_id == 680) test_info_set(p_info, "world_terrain_height", "macro", "world", "world", "src/world/world.4dm", 644, 676, "Integer", "I:p_x I:p_z R:p_shift_a R:p_shift_b",
                               "Integer world_terrain_height(Integer p_x, Integer p_z, Real p_shift_a, Real p_shift_b)", 0, "", "clamp_integer, world_desert_weight, world_value_noise");
-  if (p_id == 664) test_info_set(p_info, "world_fill_columns", "macro", "world", "world", "src/world/world.4dm", 680, 755, "void", "R:p_shift_a R:p_shift_b",
-                              "void world_fill_columns(Real p_shift_a, Real p_shift_b)", 0, "", "hash_real, world_column, world_column_biome, world_index, world_terrain_height");
-  if (p_id == 665) test_info_set(p_info, "world_mark_carved", "macro", "world", "world", "src/world/world.4dm", 757, 768, "void", "I:p_x I:p_y I:p_z",
-                              "void world_mark_carved(Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_column, world_in_bounds");
-  if (p_id == 666) test_info_set(p_info, "world_carve_sphere", "macro", "world", "world", "src/world/world.4dm", 770, 818, "void", "R:p_centre_x R:p_centre_y R:p_centre_z R:p_radius",
-                              "void world_carve_sphere(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_radius)", 0, "", "world_get_block, world_in_bounds, world_mark_carved, world_set_block");
-  if (p_id == 667) test_info_set(p_info, "world_carve_caves", "macro", "world", "world", "src/world/world.4dm", 820, 862, "void", "&A:p_random",
-                              "void world_carve_caves(Attributes &p_random)", 0, "", "clamp_real, floor_integer, max_real, random_between, random_range, world_carve_sphere, world_column");
-  if (p_id == 668) test_info_set(p_info, "world_place_veins", "macro", "world", "world", "src/world/world.4dm", 864, 893, "void", "&A:p_random I:p_block I:p_count I:p_length I:p_max_y",
-                              "void world_place_veins(Attributes &p_random, Integer p_block, Integer p_count, Integer p_length, Integer p_max_y)", 0, "", "random_range, world_get_block, world_set_block");
-  if (p_id == 669) test_info_set(p_info, "world_plant_tree", "macro", "world", "world", "src/world/world.4dm", 895, 928, "void", "I:p_x I:p_ground_y I:p_z R:p_shift_a R:p_shift_b",
-                              "void world_plant_tree(Integer p_x, Integer p_ground_y, Integer p_z, Real p_shift_a, Real p_shift_b)", 0, "", "block_is_plant, hash_real, world_get_block, world_set_block");
-  if (p_id == 670) test_info_set(p_info, "world_plant_trees", "macro", "world", "world", "src/world/world.4dm", 930, 966, "void", "R:p_shift_a R:p_shift_b",
-                              "void world_plant_trees(Real p_shift_a, Real p_shift_b)", 0, "", "floor_divide, hash_real, world_biome, world_column, world_get_block, world_plant_tree, world_value_noise");
-  if (p_id == 671) test_info_set(p_info, "world_plant_cactus", "macro", "world", "world", "src/world/world.4dm", 968, 981, "void", "I:p_x I:p_ground_y I:p_z I:p_tall",
-                              "void world_plant_cactus(Integer p_x, Integer p_ground_y, Integer p_z, Integer p_tall)", 0, "", "world_get_block, world_set_block");
-  if (p_id == 672) test_info_set(p_info, "world_add_plants", "macro", "world", "world", "src/world/world.4dm", 983, 1025, "void", "&A:p_random R:p_shift_a R:p_shift_b",
-                              "void world_add_plants(Attributes &p_random, Real p_shift_a, Real p_shift_b)", 0, "", "random_next, random_range, world_biome, world_column, world_get_block, world_plant_cactus, world_set_block, world_value_noise");
-  if (p_id == 673) test_info_set(p_info, "world_area_is_flat", "macro", "world", "world", "src/world/world.4dm", 1027, 1055, "Integer", "I:p_x0 I:p_z0 I:p_x1 I:p_z1 &I:p_ground_y",
-                              "Integer world_area_is_flat(Integer p_x0, Integer p_z0, Integer p_x1, Integer p_z1, Integer &p_ground_y)", 0, "", "world_column, world_get_block, world_in_bounds");
-  if (p_id == 674) test_info_set(p_info, "world_dig_pond", "macro", "world", "world", "src/world/world.4dm", 1057, 1085, "void", "I:p_centre_x I:p_centre_z",
-                              "void world_dig_pond(Integer p_centre_x, Integer p_centre_z)", 0, "", "world_area_is_flat, world_mark_carved, world_set_block");
-  if (p_id == 675) test_info_set(p_info, "world_add_ponds", "macro", "world", "world", "src/world/world.4dm", 1087, 1105, "void", "&A:p_random",
-                              "void world_add_ponds(Attributes &p_random)", 0, "", "random_next, random_range, world_biome, world_dig_pond");
-  if (p_id == 676) test_info_set(p_info, "world_build_house", "macro", "world", "world", "src/world/world.4dm", 1107, 1186, "void", "&A:p_info I:p_origin_x I:p_ground_y I:p_origin_z",
-                              "void world_build_house(Attributes &p_info, Integer p_origin_x, Integer p_ground_y, Integer p_origin_z)", 0, "", "block_bed, block_door, block_is_solid, record_set_integer, world_get_block, world_info_set_spawn, world_set_block");
-  if (p_id == 677) test_info_set(p_info, "world_place_house_near", "macro", "world", "world", "src/world/world.4dm", 1188, 1220, "void", "&A:p_info R:p_spawn_x R:p_spawn_z",
-                              "void world_place_house_near(Attributes &p_info, Real p_spawn_x, Real p_spawn_z)", 0, "", "clamp_integer, floor_integer, world_area_is_flat, world_build_house, world_column");
-  if (p_id == 678) test_info_set(p_info, "world_find_spawn", "macro", "world", "world", "src/world/world.4dm", 1222, 1256, "void", "&R:p_spawn_x &R:p_spawn_y &R:p_spawn_z",
-                              "void world_find_spawn(Real &p_spawn_x, Real &p_spawn_y, Real &p_spawn_z)", 0, "", "floor_divide, world_get_block, world_top_solid_y");
-  if (p_id == 679) test_info_set(p_info, "world_finish_maps", "macro", "world", "world", "src/world/world.4dm", 1258, 1272, "void", "",
-                              "void world_finish_maps()", 0, "", "world_column, world_top_opaque_y");
-  if (p_id == 680) test_info_set(p_info, "world_generate", "macro", "world", "world", "src/world/world.4dm", 1274, 1310, "void", "&A:p_info I:p_seed",
-                              "void world_generate(Attributes &p_info, Integer p_seed)", 0, "", "random_seed, record_integer, world_add_plants, world_add_ponds, world_carve_caves, world_fill_columns, world_find_spawn, world_finish_maps, world_info_clear, world_info_set_spawn, world_light_update, world_place_house_near, world_place_veins, world_plant_trees, world_seed_shifts");
 }
 
 void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -6341,60 +6361,172 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 641) {   // world_time_of_day
+  if (p_id == 641) {   // world_column
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = world_column(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 642) {   // world_in_bounds
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    l_ret_i = world_in_bounds(l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 643) {   // world_get_block
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    l_ret_i = world_get_block(l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 644) {   // world_cell_block
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    l_ret_i = world_cell_block(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 645) {   // world_cell_light
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    l_ret_i = world_cell_light(l_i1);
+    Get_time(l_end);
+  } else if (p_id == 646) {   // world_get_light
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    l_ret_i = world_get_light(l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 647) {   // world_set_block
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    world_set_block(l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 648) {   // world_is_solid
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    l_ret_i = world_is_solid(l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 649) {   // world_top_solid_y
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = world_top_solid_y(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 650) {   // world_top_opaque_y
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = world_top_opaque_y(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 651) {   // world_sky_top
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = world_sky_top(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 652) {   // world_solid_below
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = world_solid_below(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 653) {   // world_biome
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    l_ret_i = world_biome(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 654) {   // world_update_column_top
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    world_update_column_top(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 655) {   // world_break_block
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    world_break_block(g_events, l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 656) {   // world_place_block
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    world_place_block(g_events, l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 657) {   // world_apply_remote_block
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    world_apply_remote_block(g_events, l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 658) {   // world_time_of_day
     Get_time(l_start);
     l_ret_r = world_time_of_day(g_info);
     Get_time(l_end);
-  } else if (p_id == 642) {   // world_set_time_of_day
+  } else if (p_id == 659) {   // world_set_time_of_day
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     world_set_time_of_day(g_info, l_r1);
     Get_time(l_end);
-  } else if (p_id == 643) {   // world_daylight_cycle
+  } else if (p_id == 660) {   // world_daylight_cycle
     Get_time(l_start);
     l_ret_i = world_daylight_cycle(g_info);
     Get_time(l_end);
-  } else if (p_id == 644) {   // world_set_daylight_cycle
+  } else if (p_id == 661) {   // world_set_daylight_cycle
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     world_set_daylight_cycle(g_info, l_i1);
     Get_time(l_end);
-  } else if (p_id == 645) {   // world_advance_time
+  } else if (p_id == 662) {   // world_advance_time
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     world_advance_time(g_info, l_r1);
     Get_time(l_end);
-  } else if (p_id == 646) {   // world_sun_height
+  } else if (p_id == 663) {   // world_sun_height
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = world_sun_height(l_r1);
     Get_time(l_end);
-  } else if (p_id == 647) {   // world_daylight
+  } else if (p_id == 664) {   // world_daylight
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = world_daylight(l_r1);
     Get_time(l_end);
-  } else if (p_id == 648) {   // world_is_night
+  } else if (p_id == 665) {   // world_is_night
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = world_is_night(l_r1);
     Get_time(l_end);
-  } else if (p_id == 649) {   // world_clock_text
+  } else if (p_id == 666) {   // world_clock_text
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_t = world_clock_text(l_r1);
     Get_time(l_end);
-  } else if (p_id == 650) {   // world_on_event
+  } else if (p_id == 667) {   // world_on_event
     Get_time(l_start);
     world_on_event(g_event, g_info, g_events);
     Get_time(l_end);
-  } else if (p_id == 651) {   // world_set_light_index
+  } else if (p_id == 668) {   // world_set_light_index
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     world_set_light_index(l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 652) {   // world_light_push
+  } else if (p_id == 669) {   // world_light_push
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -6402,7 +6534,7 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = world_light_push(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 653) {   // world_light_seed_outside
+  } else if (p_id == 670) {   // world_light_seed_outside
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
@@ -6410,23 +6542,23 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = world_light_seed_outside(l_i1, l_i2, l_i3, l_i4);
     Get_time(l_end);
-  } else if (p_id == 654) {   // world_light_update
+  } else if (p_id == 671) {   // world_light_update
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_i3 = record_integer(p_in, ATTR_TEST_I3);
     Get_time(l_start);
     l_ret_i = world_light_update(l_i1, l_i2, l_i3);
     Get_time(l_end);
-  } else if (p_id == 655) {   // world_info_clear
+  } else if (p_id == 672) {   // world_info_clear
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     world_info_clear(g_info, l_i1);
     Get_time(l_end);
-  } else if (p_id == 656) {   // world_info_seed
+  } else if (p_id == 673) {   // world_info_seed
     Get_time(l_start);
     l_ret_i = world_info_seed(g_info);
     Get_time(l_end);
-  } else if (p_id == 657) {   // world_info_spawn
+  } else if (p_id == 674) {   // world_info_spawn
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
@@ -6436,14 +6568,14 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
     record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 658) {   // world_info_set_spawn
+  } else if (p_id == 675) {   // world_info_set_spawn
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_r3 = record_real(p_in, ATTR_TEST_R3);
     Get_time(l_start);
     world_info_set_spawn(g_info, l_r1, l_r2, l_r3);
     Get_time(l_end);
-  } else if (p_id == 659) {   // world_seed_shifts
+  } else if (p_id == 676) {   // world_seed_shifts
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
@@ -6452,7 +6584,7 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
     record_set_real(p_out, ATTR_TEST_R2, l_r2);
-  } else if (p_id == 660) {   // world_value_noise
+  } else if (p_id == 677) {   // world_value_noise
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
@@ -6461,7 +6593,7 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_r = world_value_noise(l_r1, l_r2, l_i1, l_r3, l_r4);
     Get_time(l_end);
-  } else if (p_id == 661) {   // world_desert_weight
+  } else if (p_id == 678) {   // world_desert_weight
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
@@ -6469,7 +6601,7 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_r = world_desert_weight(l_i1, l_i2, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 662) {   // world_column_biome
+  } else if (p_id == 679) {   // world_column_biome
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
@@ -6477,127 +6609,13 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
     Get_time(l_start);
     l_ret_i = world_column_biome(l_i1, l_i2, l_r1, l_r2);
     Get_time(l_end);
-  } else if (p_id == 663) {   // world_terrain_height
+  } else if (p_id == 680) {   // world_terrain_height
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_r2 = record_real(p_in, ATTR_TEST_R2);
     Get_time(l_start);
     l_ret_i = world_terrain_height(l_i1, l_i2, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 664) {   // world_fill_columns
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    world_fill_columns(l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 665) {   // world_mark_carved
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    world_mark_carved(l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 666) {   // world_carve_sphere
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    l_r4 = record_real(p_in, ATTR_TEST_R4);
-    Get_time(l_start);
-    world_carve_sphere(l_r1, l_r2, l_r3, l_r4);
-    Get_time(l_end);
-  } else if (p_id == 667) {   // world_carve_caves
-    Get_time(l_start);
-    world_carve_caves(g_random);
-    Get_time(l_end);
-  } else if (p_id == 668) {   // world_place_veins
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    world_place_veins(g_random, l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 669) {   // world_plant_tree
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    world_plant_tree(l_i1, l_i2, l_i3, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 670) {   // world_plant_trees
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    world_plant_trees(l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 671) {   // world_plant_cactus
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    Get_time(l_start);
-    world_plant_cactus(l_i1, l_i2, l_i3, l_i4);
-    Get_time(l_end);
-  } else if (p_id == 672) {   // world_add_plants
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    world_add_plants(g_random, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 673) {   // world_area_is_flat
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    l_i4 = record_integer(p_in, ATTR_TEST_I4);
-    l_i5 = record_integer(p_in, ATTR_TEST_I5);
-    Get_time(l_start);
-    l_ret_i = world_area_is_flat(l_i1, l_i2, l_i3, l_i4, l_i5);
-    Get_time(l_end);
-    record_set_integer(p_out, ATTR_TEST_I5, l_i5);
-  } else if (p_id == 674) {   // world_dig_pond
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    Get_time(l_start);
-    world_dig_pond(l_i1, l_i2);
-    Get_time(l_end);
-  } else if (p_id == 675) {   // world_add_ponds
-    Get_time(l_start);
-    world_add_ponds(g_random);
-    Get_time(l_end);
-  } else if (p_id == 676) {   // world_build_house
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    l_i2 = record_integer(p_in, ATTR_TEST_I2);
-    l_i3 = record_integer(p_in, ATTR_TEST_I3);
-    Get_time(l_start);
-    world_build_house(g_info, l_i1, l_i2, l_i3);
-    Get_time(l_end);
-  } else if (p_id == 677) {   // world_place_house_near
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    Get_time(l_start);
-    world_place_house_near(g_info, l_r1, l_r2);
-    Get_time(l_end);
-  } else if (p_id == 678) {   // world_find_spawn
-    l_r1 = record_real(p_in, ATTR_TEST_R1);
-    l_r2 = record_real(p_in, ATTR_TEST_R2);
-    l_r3 = record_real(p_in, ATTR_TEST_R3);
-    Get_time(l_start);
-    world_find_spawn(l_r1, l_r2, l_r3);
-    Get_time(l_end);
-    record_set_real(p_out, ATTR_TEST_R1, l_r1);
-    record_set_real(p_out, ATTR_TEST_R2, l_r2);
-    record_set_real(p_out, ATTR_TEST_R3, l_r3);
-  } else if (p_id == 679) {   // world_finish_maps
-    Get_time(l_start);
-    world_finish_maps();
-    Get_time(l_end);
-  } else if (p_id == 680) {   // world_generate
-    l_i1 = record_integer(p_in, ATTR_TEST_I1);
-    Get_time(l_start);
-    world_generate(g_info, l_i1);
     Get_time(l_end);
   }
   record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
@@ -6608,78 +6626,94 @@ void test_registry_call_17(Integer p_id, Attributes &p_in, Attributes &p_out)
 
 void test_registry_info_18(Integer p_id, Attributes &p_info)
 // ----------------------------------------------------------------
-// What functions 681 to 712 are
+// What functions 681 to 720 are
 // ----------------------------------------------------------------
 {
-  if (p_id == 681) test_info_set(p_info, "Absolute", "library", "library", "library", "", 0, 0, "Real", "R:p_value",
+  if (p_id == 681) test_info_set(p_info, "world_fill_columns", "macro", "world", "world", "src/world/world.4dm", 680, 755, "void", "R:p_shift_a R:p_shift_b",
+                              "void world_fill_columns(Real p_shift_a, Real p_shift_b)", 0, "", "hash_real, world_column, world_column_biome, world_index, world_terrain_height");
+  if (p_id == 682) test_info_set(p_info, "world_mark_carved", "macro", "world", "world", "src/world/world.4dm", 757, 768, "void", "I:p_x I:p_y I:p_z",
+                              "void world_mark_carved(Integer p_x, Integer p_y, Integer p_z)", 0, "", "world_column, world_in_bounds");
+  if (p_id == 683) test_info_set(p_info, "world_carve_sphere", "macro", "world", "world", "src/world/world.4dm", 770, 818, "void", "R:p_centre_x R:p_centre_y R:p_centre_z R:p_radius",
+                              "void world_carve_sphere(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_radius)", 0, "", "world_get_block, world_in_bounds, world_mark_carved, world_set_block");
+  if (p_id == 684) test_info_set(p_info, "world_carve_caves", "macro", "world", "world", "src/world/world.4dm", 820, 862, "void", "&A:p_random",
+                              "void world_carve_caves(Attributes &p_random)", 0, "", "clamp_real, floor_integer, max_real, random_between, random_range, world_carve_sphere, world_column");
+  if (p_id == 685) test_info_set(p_info, "world_place_veins", "macro", "world", "world", "src/world/world.4dm", 864, 893, "void", "&A:p_random I:p_block I:p_count I:p_length I:p_max_y",
+                              "void world_place_veins(Attributes &p_random, Integer p_block, Integer p_count, Integer p_length, Integer p_max_y)", 0, "", "random_range, world_get_block, world_set_block");
+  if (p_id == 686) test_info_set(p_info, "world_plant_tree", "macro", "world", "world", "src/world/world.4dm", 895, 928, "void", "I:p_x I:p_ground_y I:p_z R:p_shift_a R:p_shift_b",
+                              "void world_plant_tree(Integer p_x, Integer p_ground_y, Integer p_z, Real p_shift_a, Real p_shift_b)", 0, "", "block_is_plant, hash_real, world_get_block, world_set_block");
+  if (p_id == 687) test_info_set(p_info, "world_plant_trees", "macro", "world", "world", "src/world/world.4dm", 930, 966, "void", "R:p_shift_a R:p_shift_b",
+                              "void world_plant_trees(Real p_shift_a, Real p_shift_b)", 0, "", "floor_divide, hash_real, world_biome, world_column, world_get_block, world_plant_tree, world_value_noise");
+  if (p_id == 688) test_info_set(p_info, "world_plant_cactus", "macro", "world", "world", "src/world/world.4dm", 968, 981, "void", "I:p_x I:p_ground_y I:p_z I:p_tall",
+                              "void world_plant_cactus(Integer p_x, Integer p_ground_y, Integer p_z, Integer p_tall)", 0, "", "world_get_block, world_set_block");
+  if (p_id == 689) test_info_set(p_info, "world_add_plants", "macro", "world", "world", "src/world/world.4dm", 983, 1025, "void", "&A:p_random R:p_shift_a R:p_shift_b",
+                              "void world_add_plants(Attributes &p_random, Real p_shift_a, Real p_shift_b)", 0, "", "random_next, random_range, world_biome, world_column, world_get_block, world_plant_cactus, world_set_block, world_value_noise");
+  if (p_id == 690) test_info_set(p_info, "world_area_is_flat", "macro", "world", "world", "src/world/world.4dm", 1027, 1055, "Integer", "I:p_x0 I:p_z0 I:p_x1 I:p_z1 &I:p_ground_y",
+                              "Integer world_area_is_flat(Integer p_x0, Integer p_z0, Integer p_x1, Integer p_z1, Integer &p_ground_y)", 0, "", "world_column, world_get_block, world_in_bounds");
+  if (p_id == 691) test_info_set(p_info, "world_dig_pond", "macro", "world", "world", "src/world/world.4dm", 1057, 1085, "void", "I:p_centre_x I:p_centre_z",
+                              "void world_dig_pond(Integer p_centre_x, Integer p_centre_z)", 0, "", "world_area_is_flat, world_mark_carved, world_set_block");
+  if (p_id == 692) test_info_set(p_info, "world_add_ponds", "macro", "world", "world", "src/world/world.4dm", 1087, 1105, "void", "&A:p_random",
+                              "void world_add_ponds(Attributes &p_random)", 0, "", "random_next, random_range, world_biome, world_dig_pond");
+  if (p_id == 693) test_info_set(p_info, "world_build_house", "macro", "world", "world", "src/world/world.4dm", 1107, 1186, "void", "&A:p_info I:p_origin_x I:p_ground_y I:p_origin_z",
+                              "void world_build_house(Attributes &p_info, Integer p_origin_x, Integer p_ground_y, Integer p_origin_z)", 0, "", "block_bed, block_door, block_is_solid, record_set_integer, world_get_block, world_info_set_spawn, world_set_block");
+  if (p_id == 694) test_info_set(p_info, "world_place_house_near", "macro", "world", "world", "src/world/world.4dm", 1188, 1220, "void", "&A:p_info R:p_spawn_x R:p_spawn_z",
+                              "void world_place_house_near(Attributes &p_info, Real p_spawn_x, Real p_spawn_z)", 0, "", "clamp_integer, floor_integer, world_area_is_flat, world_build_house, world_column");
+  if (p_id == 695) test_info_set(p_info, "world_find_spawn", "macro", "world", "world", "src/world/world.4dm", 1222, 1256, "void", "&R:p_spawn_x &R:p_spawn_y &R:p_spawn_z",
+                              "void world_find_spawn(Real &p_spawn_x, Real &p_spawn_y, Real &p_spawn_z)", 0, "", "floor_divide, world_get_block, world_top_solid_y");
+  if (p_id == 696) test_info_set(p_info, "world_finish_maps", "macro", "world", "world", "src/world/world.4dm", 1258, 1272, "void", "",
+                              "void world_finish_maps()", 0, "", "world_column, world_top_opaque_y");
+  if (p_id == 697) test_info_set(p_info, "world_generate", "macro", "world", "world", "src/world/world.4dm", 1274, 1310, "void", "&A:p_info I:p_seed",
+                              "void world_generate(Attributes &p_info, Integer p_seed)", 0, "", "random_seed, record_integer, world_add_plants, world_add_ponds, world_carve_caves, world_fill_columns, world_find_spawn, world_finish_maps, world_info_clear, world_info_set_spawn, world_light_update, world_place_house_near, world_place_veins, world_plant_trees, world_seed_shifts");
+  if (p_id == 698) test_info_set(p_info, "Absolute", "library", "library", "library", "", 0, 0, "Real", "R:p_value",
                               "Real Absolute(Real p_value)", 0, "", "");
-  if (p_id == 682) test_info_set(p_info, "Absolute", "library", "library", "library", "", 0, 0, "Integer", "I:p_value",
+  if (p_id == 699) test_info_set(p_info, "Absolute", "library", "library", "library", "", 0, 0, "Integer", "I:p_value",
                               "Integer Absolute(Integer p_value)", 0, "", "");
-  if (p_id == 683) test_info_set(p_info, "Floor", "library", "library", "library", "", 0, 0, "Real", "R:p_value",
+  if (p_id == 700) test_info_set(p_info, "Floor", "library", "library", "library", "", 0, 0, "Real", "R:p_value",
                               "Real Floor(Real p_value)", 0, "", "");
-  if (p_id == 684) test_info_set(p_info, "Sqrt", "library", "library", "library", "", 0, 0, "Real", "R:p_positive",
+  if (p_id == 701) test_info_set(p_info, "Sqrt", "library", "library", "library", "", 0, 0, "Real", "R:p_positive",
                               "Real Sqrt(Real p_positive)", 0, "", "");
-  if (p_id == 685) test_info_set(p_info, "Sin", "library", "library", "library", "", 0, 0, "Real", "R:p_angle",
+  if (p_id == 702) test_info_set(p_info, "Sin", "library", "library", "library", "", 0, 0, "Real", "R:p_angle",
                               "Real Sin(Real p_angle)", 0, "", "");
-  if (p_id == 686) test_info_set(p_info, "Cos", "library", "library", "library", "", 0, 0, "Real", "R:p_angle",
+  if (p_id == 703) test_info_set(p_info, "Cos", "library", "library", "library", "", 0, 0, "Real", "R:p_angle",
                               "Real Cos(Real p_angle)", 0, "", "");
-  if (p_id == 687) test_info_set(p_info, "To_text", "library", "library", "library", "", 0, 0, "Text", "I:p_value",
+  if (p_id == 704) test_info_set(p_info, "To_text", "library", "library", "library", "", 0, 0, "Text", "I:p_value",
                               "Text To_text(Integer p_value)", 0, "", "");
-  if (p_id == 688) test_info_set(p_info, "To_text", "library", "library", "library", "", 0, 0, "Text", "R:p_value I:p_decimals",
+  if (p_id == 705) test_info_set(p_info, "To_text", "library", "library", "library", "", 0, 0, "Text", "R:p_value I:p_decimals",
                               "Text To_text(Real p_value, Integer p_decimals)", 0, "", "");
-  if (p_id == 689) test_info_set(p_info, "Text_length", "library", "library", "library", "", 0, 0, "Integer", "T:p_text",
+  if (p_id == 706) test_info_set(p_info, "Text_length", "library", "library", "library", "", 0, 0, "Integer", "T:p_text",
                               "Integer Text_length(Text p_text)", 0, "", "");
-  if (p_id == 690) test_info_set(p_info, "Get_subtext", "library", "library", "library", "", 0, 0, "Text", "T:p_text I:p_start I:p_end",
+  if (p_id == 707) test_info_set(p_info, "Get_subtext", "library", "library", "library", "", 0, 0, "Text", "T:p_text I:p_start I:p_end",
                               "Text Get_subtext(Text p_text, Integer p_start, Integer p_end)", 0, "", "");
-  if (p_id == 691) test_info_set(p_info, "Find_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_text T:p_find",
+  if (p_id == 708) test_info_set(p_info, "Find_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_text T:p_find",
                               "Integer Find_text(Text p_text, Text p_find)", 0, "", "");
-  if (p_id == 692) test_info_set(p_info, "Text_lower", "library", "library", "library", "", 0, 0, "Text", "T:p_text",
+  if (p_id == 709) test_info_set(p_info, "Text_lower", "library", "library", "library", "", 0, 0, "Text", "T:p_text",
                               "Text Text_lower(Text p_text)", 0, "", "");
-  if (p_id == 693) test_info_set(p_info, "Text_justify", "library", "library", "library", "", 0, 0, "Text", "T:p_text",
+  if (p_id == 710) test_info_set(p_info, "Text_justify", "library", "library", "library", "", 0, 0, "Text", "T:p_text",
                               "Text Text_justify(Text p_text)", 0, "", "");
-  if (p_id == 694) test_info_set(p_info, "From_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_number &I:p_value",
+  if (p_id == 711) test_info_set(p_info, "From_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_number &I:p_value",
                               "Integer From_text(Text p_number, Integer &p_value)", 0, "", "");
-  if (p_id == 695) test_info_set(p_info, "From_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_number &R:p_value",
+  if (p_id == 712) test_info_set(p_info, "From_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_number &R:p_value",
                               "Integer From_text(Text p_number, Real &p_value)", 0, "", "");
-  if (p_id == 696) test_info_set(p_info, "From_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_text &D:p_words",
+  if (p_id == 713) test_info_set(p_info, "From_text", "library", "library", "library", "", 0, 0, "Integer", "T:p_text &D:p_words",
                               "Integer From_text(Text p_text, Dynamic_Text &p_words)", 0, "", "");
-  if (p_id == 697) test_info_set(p_info, "Set_char", "library", "library", "library", "", 0, 0, "Integer", "&T:p_text I:p_position I:p_char",
+  if (p_id == 714) test_info_set(p_info, "Set_char", "library", "library", "library", "", 0, 0, "Integer", "&T:p_text I:p_position I:p_char",
                               "Integer Set_char(Text &p_text, Integer p_position, Integer p_char)", 0, "", "");
-  if (p_id == 698) test_info_set(p_info, "Get_time", "library", "library", "library", "", 0, 0, "Integer", "&R:p_time",
+  if (p_id == 715) test_info_set(p_info, "Get_time", "library", "library", "library", "", 0, 0, "Integer", "&R:p_time",
                               "Integer Get_time(Real &p_time)", 0, "", "");
-  if (p_id == 699) test_info_set(p_info, "Get_time", "library", "library", "library", "", 0, 0, "Integer", "&I:p_time",
+  if (p_id == 716) test_info_set(p_info, "Get_time", "library", "library", "library", "", 0, 0, "Integer", "&I:p_time",
                               "Integer Get_time(Integer &p_time)", 0, "", "");
-  if (p_id == 700) test_info_set(p_info, "Get_user_name", "library", "library", "library", "", 0, 0, "Integer", "&T:p_name",
+  if (p_id == 717) test_info_set(p_info, "Get_user_name", "library", "library", "library", "", 0, 0, "Integer", "&T:p_name",
                               "Integer Get_user_name(Text &p_name)", 0, "", "");
-  if (p_id == 701) test_info_set(p_info, "Get_random_number_closed", "library", "library", "library", "", 0, 0, "Real", "",
+  if (p_id == 718) test_info_set(p_info, "Get_random_number_closed", "library", "library", "library", "", 0, 0, "Real", "",
                               "Real Get_random_number_closed()", 0, "", "");
-  if (p_id == 702) test_info_set(p_info, "File_exists", "library", "library", "library", "", 0, 0, "Integer", "T:p_path",
+  if (p_id == 719) test_info_set(p_info, "File_exists", "library", "library", "library", "", 0, 0, "Integer", "T:p_path",
                               "Integer File_exists(Text p_path)", 0, "", "");
-  if (p_id == 703) test_info_set(p_info, "Directory_exists", "library", "library", "library", "", 0, 0, "Integer", "T:p_folder",
+  if (p_id == 720) test_info_set(p_info, "Directory_exists", "library", "library", "library", "", 0, 0, "Integer", "T:p_folder",
                               "Integer Directory_exists(Text p_folder)", 0, "", "");
-  if (p_id == 704) test_info_set(p_info, "Set_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field I:p_value",
-                              "Integer Set_attribute(Attributes &p_record, Text p_field, Integer p_value)", 0, "", "");
-  if (p_id == 705) test_info_set(p_info, "Set_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field R:p_value",
-                              "Integer Set_attribute(Attributes &p_record, Text p_field, Real p_value)", 0, "", "");
-  if (p_id == 706) test_info_set(p_info, "Set_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field T:p_value",
-                              "Integer Set_attribute(Attributes &p_record, Text p_field, Text p_value)", 0, "", "");
-  if (p_id == 707) test_info_set(p_info, "Get_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field &I:p_value",
-                              "Integer Get_attribute(Attributes &p_record, Text p_field, Integer &p_value)", 0, "", "");
-  if (p_id == 708) test_info_set(p_info, "Get_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field &R:p_value",
-                              "Integer Get_attribute(Attributes &p_record, Text p_field, Real &p_value)", 0, "", "");
-  if (p_id == 709) test_info_set(p_info, "Get_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field &T:p_value",
-                              "Integer Get_attribute(Attributes &p_record, Text p_field, Text &p_value)", 0, "", "");
-  if (p_id == 710) test_info_set(p_info, "Attribute_exists", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field",
-                              "Integer Attribute_exists(Attributes &p_record, Text p_field)", 0, "", "");
-  if (p_id == 711) test_info_set(p_info, "Get_number_of_attributes", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record &I:p_count",
-                              "Integer Get_number_of_attributes(Attributes &p_record, Integer &p_count)", 0, "", "");
-  if (p_id == 712) test_info_set(p_info, "Attribute_delete_all", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record",
-                              "Integer Attribute_delete_all(Attributes &p_record)", 0, "", "");
 }
 
 void test_registry_call_18(Integer p_id, Attributes &p_in, Attributes &p_out)
 // ----------------------------------------------------------------
-// Run one of functions 681 to 712 (see the header)
+// Run one of functions 681 to 720 (see the header)
 // ----------------------------------------------------------------
 {
   Integer l_i1 = 0;
@@ -6719,97 +6753,211 @@ void test_registry_call_18(Integer p_id, Attributes &p_in, Attributes &p_out)
   Real    l_start = 0.0;
   Real    l_end   = 0.0;
 
-  if (p_id == 681) {   // Absolute
+  if (p_id == 681) {   // world_fill_columns
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    world_fill_columns(l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 682) {   // world_mark_carved
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    world_mark_carved(l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 683) {   // world_carve_sphere
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    l_r4 = record_real(p_in, ATTR_TEST_R4);
+    Get_time(l_start);
+    world_carve_sphere(l_r1, l_r2, l_r3, l_r4);
+    Get_time(l_end);
+  } else if (p_id == 684) {   // world_carve_caves
+    Get_time(l_start);
+    world_carve_caves(g_random);
+    Get_time(l_end);
+  } else if (p_id == 685) {   // world_place_veins
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    world_place_veins(g_random, l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 686) {   // world_plant_tree
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    world_plant_tree(l_i1, l_i2, l_i3, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 687) {   // world_plant_trees
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    world_plant_trees(l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 688) {   // world_plant_cactus
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    Get_time(l_start);
+    world_plant_cactus(l_i1, l_i2, l_i3, l_i4);
+    Get_time(l_end);
+  } else if (p_id == 689) {   // world_add_plants
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    world_add_plants(g_random, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 690) {   // world_area_is_flat
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    l_i4 = record_integer(p_in, ATTR_TEST_I4);
+    l_i5 = record_integer(p_in, ATTR_TEST_I5);
+    Get_time(l_start);
+    l_ret_i = world_area_is_flat(l_i1, l_i2, l_i3, l_i4, l_i5);
+    Get_time(l_end);
+    record_set_integer(p_out, ATTR_TEST_I5, l_i5);
+  } else if (p_id == 691) {   // world_dig_pond
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    Get_time(l_start);
+    world_dig_pond(l_i1, l_i2);
+    Get_time(l_end);
+  } else if (p_id == 692) {   // world_add_ponds
+    Get_time(l_start);
+    world_add_ponds(g_random);
+    Get_time(l_end);
+  } else if (p_id == 693) {   // world_build_house
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    l_i2 = record_integer(p_in, ATTR_TEST_I2);
+    l_i3 = record_integer(p_in, ATTR_TEST_I3);
+    Get_time(l_start);
+    world_build_house(g_info, l_i1, l_i2, l_i3);
+    Get_time(l_end);
+  } else if (p_id == 694) {   // world_place_house_near
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    Get_time(l_start);
+    world_place_house_near(g_info, l_r1, l_r2);
+    Get_time(l_end);
+  } else if (p_id == 695) {   // world_find_spawn
+    l_r1 = record_real(p_in, ATTR_TEST_R1);
+    l_r2 = record_real(p_in, ATTR_TEST_R2);
+    l_r3 = record_real(p_in, ATTR_TEST_R3);
+    Get_time(l_start);
+    world_find_spawn(l_r1, l_r2, l_r3);
+    Get_time(l_end);
+    record_set_real(p_out, ATTR_TEST_R1, l_r1);
+    record_set_real(p_out, ATTR_TEST_R2, l_r2);
+    record_set_real(p_out, ATTR_TEST_R3, l_r3);
+  } else if (p_id == 696) {   // world_finish_maps
+    Get_time(l_start);
+    world_finish_maps();
+    Get_time(l_end);
+  } else if (p_id == 697) {   // world_generate
+    l_i1 = record_integer(p_in, ATTR_TEST_I1);
+    Get_time(l_start);
+    world_generate(g_info, l_i1);
+    Get_time(l_end);
+  } else if (p_id == 698) {   // Absolute
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = Absolute(l_r1);
     Get_time(l_end);
-  } else if (p_id == 682) {   // Absolute
+  } else if (p_id == 699) {   // Absolute
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = Absolute(l_i1);
     Get_time(l_end);
-  } else if (p_id == 683) {   // Floor
+  } else if (p_id == 700) {   // Floor
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = Floor(l_r1);
     Get_time(l_end);
-  } else if (p_id == 684) {   // Sqrt
+  } else if (p_id == 701) {   // Sqrt
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = Sqrt(l_r1);
     Get_time(l_end);
-  } else if (p_id == 685) {   // Sin
+  } else if (p_id == 702) {   // Sin
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = Sin(l_r1);
     Get_time(l_end);
-  } else if (p_id == 686) {   // Cos
+  } else if (p_id == 703) {   // Cos
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_r = Cos(l_r1);
     Get_time(l_end);
-  } else if (p_id == 687) {   // To_text
+  } else if (p_id == 704) {   // To_text
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = To_text(l_i1);
     Get_time(l_end);
-  } else if (p_id == 688) {   // To_text
+  } else if (p_id == 705) {   // To_text
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_t = To_text(l_r1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 689) {   // Text_length
+  } else if (p_id == 706) {   // Text_length
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = Text_length(l_t1);
     Get_time(l_end);
-  } else if (p_id == 690) {   // Get_subtext
+  } else if (p_id == 707) {   // Get_subtext
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
     Get_time(l_start);
     l_ret_t = Get_subtext(l_t1, l_i1, l_i2);
     Get_time(l_end);
-  } else if (p_id == 691) {   // Find_text
+  } else if (p_id == 708) {   // Find_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = Find_text(l_t1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 692) {   // Text_lower
+  } else if (p_id == 709) {   // Text_lower
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = Text_lower(l_t1);
     Get_time(l_end);
-  } else if (p_id == 693) {   // Text_justify
+  } else if (p_id == 710) {   // Text_justify
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_t = Text_justify(l_t1);
     Get_time(l_end);
-  } else if (p_id == 694) {   // From_text
+  } else if (p_id == 711) {   // From_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = From_text(l_t1, l_i1);
     Get_time(l_end);
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
-  } else if (p_id == 695) {   // From_text
+  } else if (p_id == 712) {   // From_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = From_text(l_t1, l_r1);
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
-  } else if (p_id == 696) {   // From_text
+  } else if (p_id == 713) {   // From_text
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     test_reset_words(g_test_words, record_text(p_in, ATTR_TEST_WORDS));
     Get_time(l_start);
     l_ret_i = From_text(l_t1, g_test_words);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_WORDS, test_words_text(g_test_words));
-  } else if (p_id == 697) {   // Set_char
+  } else if (p_id == 714) {   // Set_char
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     l_i2 = record_integer(p_in, ATTR_TEST_I2);
@@ -6817,89 +6965,163 @@ void test_registry_call_18(Integer p_id, Attributes &p_in, Attributes &p_out)
     l_ret_i = Set_char(l_t1, l_i1, l_i2);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T1, l_t1);
-  } else if (p_id == 698) {   // Get_time
+  } else if (p_id == 715) {   // Get_time
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = Get_time(l_r1);
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
-  } else if (p_id == 699) {   // Get_time
+  } else if (p_id == 716) {   // Get_time
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = Get_time(l_i1);
     Get_time(l_end);
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
-  } else if (p_id == 700) {   // Get_user_name
+  } else if (p_id == 717) {   // Get_user_name
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = Get_user_name(l_t1);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T1, l_t1);
-  } else if (p_id == 701) {   // Get_random_number_closed
+  } else if (p_id == 718) {   // Get_random_number_closed
     Get_time(l_start);
     l_ret_r = Get_random_number_closed();
     Get_time(l_end);
-  } else if (p_id == 702) {   // File_exists
+  } else if (p_id == 719) {   // File_exists
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = File_exists(l_t1);
     Get_time(l_end);
-  } else if (p_id == 703) {   // Directory_exists
+  } else if (p_id == 720) {   // Directory_exists
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = Directory_exists(l_t1);
     Get_time(l_end);
-  } else if (p_id == 704) {   // Set_attribute
+  }
+  record_set_integer(p_out, ATTR_TEST_RET_I,   l_ret_i);
+  record_set_real   (p_out, ATTR_TEST_RET_R,   l_ret_r);
+  record_set_text   (p_out, ATTR_TEST_RET_T,   l_ret_t);
+  record_set_real   (p_out, ATTR_TEST_SECONDS, l_end - l_start);
+}
+
+void test_registry_info_19(Integer p_id, Attributes &p_info)
+// ----------------------------------------------------------------
+// What functions 721 to 729 are
+// ----------------------------------------------------------------
+{
+  if (p_id == 721) test_info_set(p_info, "Set_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field I:p_value",
+                              "Integer Set_attribute(Attributes &p_record, Text p_field, Integer p_value)", 0, "", "");
+  if (p_id == 722) test_info_set(p_info, "Set_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field R:p_value",
+                              "Integer Set_attribute(Attributes &p_record, Text p_field, Real p_value)", 0, "", "");
+  if (p_id == 723) test_info_set(p_info, "Set_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field T:p_value",
+                              "Integer Set_attribute(Attributes &p_record, Text p_field, Text p_value)", 0, "", "");
+  if (p_id == 724) test_info_set(p_info, "Get_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field &I:p_value",
+                              "Integer Get_attribute(Attributes &p_record, Text p_field, Integer &p_value)", 0, "", "");
+  if (p_id == 725) test_info_set(p_info, "Get_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field &R:p_value",
+                              "Integer Get_attribute(Attributes &p_record, Text p_field, Real &p_value)", 0, "", "");
+  if (p_id == 726) test_info_set(p_info, "Get_attribute", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field &T:p_value",
+                              "Integer Get_attribute(Attributes &p_record, Text p_field, Text &p_value)", 0, "", "");
+  if (p_id == 727) test_info_set(p_info, "Attribute_exists", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record T:p_field",
+                              "Integer Attribute_exists(Attributes &p_record, Text p_field)", 0, "", "");
+  if (p_id == 728) test_info_set(p_info, "Get_number_of_attributes", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record &I:p_count",
+                              "Integer Get_number_of_attributes(Attributes &p_record, Integer &p_count)", 0, "", "");
+  if (p_id == 729) test_info_set(p_info, "Attribute_delete_all", "library", "library", "library", "", 0, 0, "Integer", "&A:p_record",
+                              "Integer Attribute_delete_all(Attributes &p_record)", 0, "", "");
+}
+
+void test_registry_call_19(Integer p_id, Attributes &p_in, Attributes &p_out)
+// ----------------------------------------------------------------
+// Run one of functions 721 to 729 (see the header)
+// ----------------------------------------------------------------
+{
+  Integer l_i1 = 0;
+  Integer l_i2 = 0;
+  Integer l_i3 = 0;
+  Integer l_i4 = 0;
+  Integer l_i5 = 0;
+  Integer l_i6 = 0;
+  Integer l_i7 = 0;
+  Integer l_i8 = 0;
+  Integer l_i9 = 0;
+  Integer l_i10 = 0;
+  Integer l_i11 = 0;
+  Integer l_i12 = 0;
+  Real    l_r1 = 0.0;
+  Real    l_r2 = 0.0;
+  Real    l_r3 = 0.0;
+  Real    l_r4 = 0.0;
+  Real    l_r5 = 0.0;
+  Real    l_r6 = 0.0;
+  Real    l_r7 = 0.0;
+  Real    l_r8 = 0.0;
+  Real    l_r9 = 0.0;
+  Real    l_r10 = 0.0;
+  Real    l_r11 = 0.0;
+  Real    l_r12 = 0.0;
+  Real    l_r13 = 0.0;
+  Text    l_t1 = "";
+  Text    l_t2 = "";
+  Text    l_t3 = "";
+  Text    l_t4 = "";
+  Text    l_t5 = "";
+  Text    l_t6 = "";
+  Integer l_ret_i = 0;
+  Real    l_ret_r = 0.0;
+  Text    l_ret_t = "";
+  Real    l_start = 0.0;
+  Real    l_end   = 0.0;
+
+  if (p_id == 721) {   // Set_attribute
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = Set_attribute(g_test_record, l_t1, l_i1);
     Get_time(l_end);
-  } else if (p_id == 705) {   // Set_attribute
+  } else if (p_id == 722) {   // Set_attribute
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = Set_attribute(g_test_record, l_t1, l_r1);
     Get_time(l_end);
-  } else if (p_id == 706) {   // Set_attribute
+  } else if (p_id == 723) {   // Set_attribute
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = Set_attribute(g_test_record, l_t1, l_t2);
     Get_time(l_end);
-  } else if (p_id == 707) {   // Get_attribute
+  } else if (p_id == 724) {   // Get_attribute
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = Get_attribute(g_test_record, l_t1, l_i1);
     Get_time(l_end);
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
-  } else if (p_id == 708) {   // Get_attribute
+  } else if (p_id == 725) {   // Get_attribute
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_r1 = record_real(p_in, ATTR_TEST_R1);
     Get_time(l_start);
     l_ret_i = Get_attribute(g_test_record, l_t1, l_r1);
     Get_time(l_end);
     record_set_real(p_out, ATTR_TEST_R1, l_r1);
-  } else if (p_id == 709) {   // Get_attribute
+  } else if (p_id == 726) {   // Get_attribute
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     l_t2 = record_text(p_in, ATTR_TEST_T2);
     Get_time(l_start);
     l_ret_i = Get_attribute(g_test_record, l_t1, l_t2);
     Get_time(l_end);
     record_set_text(p_out, ATTR_TEST_T2, l_t2);
-  } else if (p_id == 710) {   // Attribute_exists
+  } else if (p_id == 727) {   // Attribute_exists
     l_t1 = record_text(p_in, ATTR_TEST_T1);
     Get_time(l_start);
     l_ret_i = Attribute_exists(g_test_record, l_t1);
     Get_time(l_end);
-  } else if (p_id == 711) {   // Get_number_of_attributes
+  } else if (p_id == 728) {   // Get_number_of_attributes
     l_i1 = record_integer(p_in, ATTR_TEST_I1);
     Get_time(l_start);
     l_ret_i = Get_number_of_attributes(g_test_record, l_i1);
     Get_time(l_end);
     record_set_integer(p_out, ATTR_TEST_I1, l_i1);
-  } else if (p_id == 712) {   // Attribute_delete_all
+  } else if (p_id == 729) {   // Attribute_delete_all
     Get_time(l_start);
     l_ret_i = Attribute_delete_all(g_test_record);
     Get_time(l_end);
@@ -6932,7 +7154,8 @@ void test_registry_info(Integer p_id, Attributes &p_info)
   if (p_id >= 561 && p_id <= 600) test_registry_info_15(p_id, p_info);
   if (p_id >= 601 && p_id <= 640) test_registry_info_16(p_id, p_info);
   if (p_id >= 641 && p_id <= 680) test_registry_info_17(p_id, p_info);
-  if (p_id >= 681 && p_id <= 712) test_registry_info_18(p_id, p_info);
+  if (p_id >= 681 && p_id <= 720) test_registry_info_18(p_id, p_info);
+  if (p_id >= 721 && p_id <= 729) test_registry_info_19(p_id, p_info);
 }
 
 void test_registry_call(Integer p_id, Attributes &p_in, Attributes &p_out)
@@ -6958,7 +7181,8 @@ void test_registry_call(Integer p_id, Attributes &p_in, Attributes &p_out)
   if (p_id >= 561 && p_id <= 600) test_registry_call_15(p_id, p_in, p_out);
   if (p_id >= 601 && p_id <= 640) test_registry_call_16(p_id, p_in, p_out);
   if (p_id >= 641 && p_id <= 680) test_registry_call_17(p_id, p_in, p_out);
-  if (p_id >= 681 && p_id <= 712) test_registry_call_18(p_id, p_in, p_out);
+  if (p_id >= 681 && p_id <= 720) test_registry_call_18(p_id, p_in, p_out);
+  if (p_id >= 721 && p_id <= 729) test_registry_call_19(p_id, p_in, p_out);
 }
 
 #endif

@@ -113,14 +113,19 @@
 #define TEX_PERSON_SHIRT       101
 #define TEX_PERSON_SHIRT_SIDE  102
 #define TEX_PERSON_ARM         103
-#define TEX_PERSON_PANTS       104
-#define NUM_TEXTURES           104
+#define TEX_PERSON_PANTS       104    // a leg's sides and back
+#define TEX_PERSON_HEAD_BACK   105
+#define TEX_PERSON_SHIRT_BACK  106
+#define TEX_PERSON_ARM_FRONT   107
+#define TEX_PERSON_ARM_TOP     108    // the shoulder
+#define TEX_PERSON_LEG_FRONT   109
+#define NUM_TEXTURES           109
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         26624  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         27904  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       832    // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      416    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       872    // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      436    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

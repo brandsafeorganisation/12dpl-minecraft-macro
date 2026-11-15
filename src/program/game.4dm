@@ -53,16 +53,23 @@ void game_init_once(Attributes &p_game, Attributes &p_book, Attributes &p_settin
 Integer game_load_textures(Attributes &p_settings, Text &p_report)
 // ----------------------------------------------------------------
 // Build the textures: the built-in ones, then the chosen resource
-// pack's images over them. Returns how many textures came from the
-// pack; p_report says how loading it went ("" without a pack).
+// pack's images over them, then the player's skin. Returns how many
+// textures came from the pack; p_report says how loading the pack
+// and the skin went ("" with neither).
 // ----------------------------------------------------------------
 {
   Text    l_path   = settings_resource_pack(p_settings);
+  Text    l_skin   = "";
   Integer l_loaded = 0;
 
   p_report = "";
   textures_generate();
   if (l_path != "") l_loaded = pack_apply(l_path, p_report);
+  if (settings_skin(p_settings) != "") {
+    pack_apply_skin(settings_skin(p_settings), l_skin);
+    if (p_report != "") p_report = p_report + ". ";
+    p_report = p_report + l_skin;
+  }
   textures_finish_all();
   return l_loaded;
 }

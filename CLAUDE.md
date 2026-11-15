@@ -96,7 +96,18 @@ unit tests in `test/src/test_cases.4dm`, and writes an HTML report (README,
 Testing). After adding, removing or changing a function's parameters, run
 `python3 tools/make_test_registry.py` (the harness build checks it). Add
 unit test checks for new behaviour, and a rule in `test/src/test_inputs.4dm`
-when a new parameter name needs its own values.
+when a new parameter name needs its own values (every function also runs
+with the ends of each range, so a range must only hold values the function
+accepts: an index range wider than its table stops the run).
+
+The report page is `test/report/report_page.html` (styles and the script
+that draws it); after editing it run `python3 tools/make_report_page.py`,
+which writes `test/src/test_report_page.4dm` (the harness build checks it
+too). The page must use single quotes only.
+
+The test build defines `SAFE_ALLOW_TEST_REPORTS` (safety.h): .html files
+may be written anywhere and opened with `safe_open_html()`. The game
+build doesn't define it.
 
 ## Testing: `tools/test_harness`
 
