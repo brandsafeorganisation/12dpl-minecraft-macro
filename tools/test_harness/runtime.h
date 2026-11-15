@@ -65,6 +65,7 @@ inline int Get_time(Text&t){ long long s=(long long)g_sim_time; char b[64]; snpr
 #else
 int Get_time(double&t);
 int Get_time(int&t);
+int Get_time(Text&t);
 #endif
 static unsigned long long g_rng=1;
 inline void Set_random_number(int seed,int){ g_rng=(unsigned long long)(unsigned)seed*2654435761ULL+12345; }

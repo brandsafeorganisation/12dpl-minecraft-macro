@@ -35,7 +35,8 @@ writes inside its own folder.
   folder to PATH) or MSYS2's `mingw-w64-x86_64-gcc`.
 
 Then double-click `build_windows.bat`, or run it from a command prompt. The
-result is `build\cubeland.exe`.
+results are `build\cubeland.exe` and `build\cubeland_test.exe` (the test
+build, see `test/README.md`).
 
 **On Linux or macOS (cross-compiling).** Use Zig as the Windows compiler:
 

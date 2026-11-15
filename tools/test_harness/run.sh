@@ -12,6 +12,7 @@
 # the macro reads or writes outside an array.
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
+. "$HERE/find_python.sh"
 KEEP=0
 SCRIPTS=()
 for arg in "$@"; do
@@ -37,5 +38,5 @@ for script in "${SCRIPTS[@]}"; do
   fi
 done
 if ls out/*.ppm >/dev/null 2>&1; then
-  python3 "$HERE/topng.py" out >/dev/null 2>&1 || echo "(install Pillow to get .png snapshots)"
+  "$PYTHON" "$HERE/topng.py" out >/dev/null 2>&1 || echo "(install Pillow to get .png snapshots)"
 fi

@@ -77,6 +77,13 @@ static double now_seconds() {
 }
 int Get_time(double &t) { t = now_seconds(); return 0; }
 int Get_time(int &t) { t = (int)time(nullptr); return 0; }
+int Get_time(Text &t) {
+  time_t s = time(nullptr);
+  char b[64];
+  strftime(b, sizeof b, "%a %b %d %H:%M:%S %Y", localtime(&s));
+  t = b;
+  return 0;
+}
 
 static Node &node(long long id) { return g_nodes[id]; }
 static long long new_node(int kind, const Text &title) {

@@ -33,6 +33,9 @@ is in `release/cubeland.exe`. Double-click it, and
 worlds are saved next to it. See [tools/desktop/README.md](tools/desktop/README.md)
 for how to rebuild it after you change the macro.
 
+`release/cubeland_test.exe` is the test build the same way: double-click
+it to run the tests (see [test/README.md](test/README.md)).
+
 ## Controls
 
 | Input         | Action                                                       |
@@ -398,7 +401,8 @@ Two switches at the top of `src/build.4dm` loosen it, and each prints a
 
 ## Testing
 
-Step-by-step instructions are in [test/README.md](test/README.md).
+The quickest way: double-click `release/cubeland_test.exe` (no 12d or
+compiling needed). Step-by-step instructions are in [test/README.md](test/README.md).
 
 Compile **test/cubeland_test.4dm** (instead of cubeland.4dm) for the test
 build. It's the same game code with a different panel:

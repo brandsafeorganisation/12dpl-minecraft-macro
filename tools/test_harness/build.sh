@@ -5,14 +5,15 @@ set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 MACRO=$(cd "$HERE/../.." && pwd)
 mkdir -p "$HERE/build"
+. "$HERE/find_python.sh"
 
 # 0. The test build's function registry must match the source
-python3 "$MACRO/tools/make_test_registry.py" --check
+"$PYTHON" "$MACRO/tools/make_test_registry.py" --check
 
 build_one() {   # build_one <entry file> <name> [compiler flags]
   local ENTRY=$1 NAME=$2 FLAGS=$3
   # 1. Preprocess and translate; prints any 12dPL lint warnings
-  python3 "$HERE/translate.py" "$MACRO" "$ENTRY" "$HERE/build/$NAME.cpp"
+  "$PYTHON" "$HERE/translate.py" "$MACRO" "$ENTRY" "$HERE/build/$NAME.cpp"
 
   # 2. Append the macro's #defines (the hooks use them), the test hooks
   #    and an entry point

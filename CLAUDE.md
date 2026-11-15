@@ -126,5 +126,5 @@ Things learned the hard way:
 
 The same macro as a Windows program, for trying it without 12d. Build with
 `./build_with_zig.sh` (see `tools/desktop/README.md`; set `ZIG` if Zig isn't
-`python3 -m ziglang`), then copy `tools/desktop/build/cubeland.exe` to
-`release/cubeland.exe` and commit it with the change.
+`python3 -m ziglang`), then copy `tools/desktop/build/cubeland.exe` and `cubeland_test.exe` to
+`release/` and commit them with the change.
