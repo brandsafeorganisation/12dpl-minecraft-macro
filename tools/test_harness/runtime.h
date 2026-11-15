@@ -98,6 +98,9 @@ inline Button Create_finish_button(const Text&t,const Text&r){ return mk<Button>
 extern int g_box_w, g_box_h;
 inline Draw_Box Create_draw_box(int w,int h,int){ Draw_Box d=mk<Draw_Box>("drawbox",7); g_box_w=w; g_box_h=h; return d; }
 template<class A,class B> int Append(const A&,const B&){ return 0; }
+// opening a file in its program: only noted (the test_reports hook reads it)
+extern Text g_opened_file;
+inline int Shell_execute(const Widget&,const Text&,const Text&f,const Text&,const Text&,int){ g_opened_file=f; return 0; }
 inline int Show_widget(const Widget&){ return 0; }
 inline int Hide_widget(const Widget&){ return 0; }
 inline int Set_focus(const Widget&){ return 0; }
@@ -148,6 +151,7 @@ Input_Box Create_input_box(const Text&t,const Message_Box&);
 File_Box Create_file_box(const Text&t,const Message_Box&,int,const Text&);
 List_Box Create_list_box(const Text&t,const Message_Box&,int);
 Button Create_button(const Text&t,const Text&r); Button Create_finish_button(const Text&t,const Text&r);
+int Shell_execute(const Widget&,const Text&op,const Text&file,const Text&params,const Text&dir,int show);
 Draw_Box Create_draw_box(int w,int h,int);
 int Append(const Widget&child,const Widget&parent);
 int Show_widget(const Widget&); int Hide_widget(const Widget&); int Set_focus(const Widget&);
@@ -179,6 +183,7 @@ inline int File_flush(File&f){ return f.f?fflush(f.f):1; }
 inline int Get_user_name(Text&t){ const char*u=getenv("CUBELAND_USER"); if(!u) u=getenv("USERNAME"); if(!u) u=getenv("USER"); t=u?u:"player"; return 0; }
 // Binary reads: little-endian, like 12d on Windows
 inline int File_read(File&f,int&v){ unsigned char b[4]; if(!f.f||fread(b,1,4,f.f)!=4) return 1; v=(int)((unsigned)b[0]|((unsigned)b[1]<<8)|((unsigned)b[2]<<16)|((unsigned)b[3]<<24)); return 0; }
+inline int Get_char(const Text&t,int n,int&c){ if(n<1||n>(int)t.size()) return 1; c=(unsigned char)t[n-1]; return 0; }
 inline int Set_char(Text&t,int n,int c){ if(n<1||n>(int)t.size()) return 1; t[n-1]=(char)c; return 0; }
 inline int File_read_short(File&f,int&v){ unsigned char b[2]; if(!f.f||fread(b,1,2,f.f)!=2) return 1; v=(short)(b[0]|(b[1]<<8)); return 0; }
 inline int File_read(File&f,int n,Text&t){ t.assign(n,' '); if(!f.f||n<0||(int)fread(&t[0],1,n,f.f)!=n) return 1; return 0; }

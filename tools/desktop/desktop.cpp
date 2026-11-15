@@ -26,6 +26,7 @@
 #define NOMINMAX
 #include <windows.h>
 #include <commdlg.h>
+#include <shellapi.h>
 #include <deque>
 #include <chrono>
 #include <ctime>
@@ -83,6 +84,12 @@ int Get_time(Text &t) {
   strftime(b, sizeof b, "%a %b %d %H:%M:%S %Y", localtime(&s));
   t = b;
   return 0;
+}
+
+int Shell_execute(const Widget &, const Text &op, const Text &file, const Text &params, const Text &dir, int show) {
+  HINSTANCE r = ShellExecuteA(NULL, op.c_str(), file.c_str(), params.empty() ? NULL : params.c_str(),
+                              dir.empty() ? NULL : dir.c_str(), show);
+  return (INT_PTR)r > 32 ? 0 : 1;
 }
 
 static Node &node(long long id) { return g_nodes[id]; }

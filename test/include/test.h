@@ -33,6 +33,7 @@
 
 #define TEST_REPORT_FOLDER      "cubeland_worlds\\test_reports"
 #define TEST_PROGRESS_FILE      "cubeland_worlds\\test_reports\\progress.txt"
+#define TEST_LAST_REPORT_FILE   "cubeland_worlds\\test_reports\\last_report.txt"
 #define TEST_WORLD_SEED         12345
 #define TEST_SAMPLES            12        // runs whose inputs and outputs the report lists
 #define TEST_BUCKETS            8         // time histogram: under 1 us, 1-3, 3-10, 10-30, 30-100, 100-300, 300-1000, over 1000 us
@@ -42,6 +43,13 @@
 #define TEST_BOX_WIDTH          320
 #define TEST_BOX_HEIGHT         200
 #define TEST_TYPICAL_WORDS      "give @p stone 3"
+
+// Data sets: each function run is one data set's calls
+#define TEST_SET_TYPICAL        1         // every parameter's typical value
+#define TEST_SET_RANDOM         2         // random values from each range
+#define TEST_SET_EDGES          3         // the ends of each range
+#define TEST_SETS               3
+#define TEST_ALL_CALLS          4         // calls of each data set when running every function
 
 // Kinds of parameter (the letters in the registry's parameter lists)
 #define TEST_KIND_INTEGER       1
@@ -71,7 +79,8 @@
 #define ATTR_TR_ID              ("id")         // registry number of function n
 #define ATTR_TR_RUNS            ("runs")       // runs asked for
 #define ATTR_TR_DONE            ("done")       // runs finished
-#define ATTR_TR_RANDOM          ("random")     // TRUE: random inputs after the first run
+#define ATTR_TR_SET             ("set")        // the data set its inputs came from (TEST_SET_*)
+#define ATTR_TR_FIRST           ("first")      // seconds of the first call (often slower: nothing cached yet)
 #define ATTR_TR_TOTAL           ("total")      // seconds for all the runs, clock to clock
 #define ATTR_TR_SUM             ("sum")        // sum of the timed calls (clock cost taken off)
 #define ATTR_TR_SUM_SQ          ("sum_sq")
@@ -123,7 +132,9 @@ void    test_number_rule        (Text p_function, Integer p_kind, Text p_name, R
 Integer test_text_choices       (Text p_function, Text p_name);
 Text    test_text_choice        (Text p_function, Text p_name, Integer p_pick);
 void    test_params_prepare     (Attributes &p_info, Attributes &p_params);
-void    test_make_inputs        (Attributes &p_info, Attributes &p_params, Integer p_random_inputs, Attributes &p_random, Attributes &p_in);
+Integer test_edge_side          (Integer p_call, Integer p_param);
+Text    test_set_name           (Integer p_set);
+void    test_make_inputs        (Attributes &p_info, Attributes &p_params, Integer p_set, Integer p_call, Attributes &p_random, Attributes &p_in);
 Text    test_inputs_text        (Attributes &p_params, Attributes &p_in);
 Text    test_outputs_text       (Attributes &p_info, Attributes &p_params, Attributes &p_out);
 Text    test_domains_text       (Attributes &p_params);
@@ -136,7 +147,7 @@ Integer test_bucket             (Real p_seconds);
 void    test_progress           (Text p_line);
 Text    test_progress_left      ();
 Integer test_runnable           (Attributes &p_info, Integer p_with_writers);
-Integer test_run_function       (Integer p_id, Integer p_runs, Integer p_random_inputs, Attributes &p_random, Attributes &p_results);
+Integer test_run_function       (Integer p_id, Integer p_runs, Integer p_set, Attributes &p_random, Attributes &p_results);
 void    test_make_world         (Integer p_seed);
 
 // ---------------------------------------------------------------- unit tests
@@ -152,9 +163,16 @@ void    test_cases_run          (Attributes &p_results);
 // ---------------------------------------------------------------- the report
 Text    test_html               (Text p_text);
 Text    test_micro              (Real p_seconds);
-Text    test_report_path        (Text p_started);
-Integer test_write_source       (File &p_file, Text p_source_folder, Attributes &p_info);
-Integer test_write_report       (Attributes &p_results, Text p_source_folder, Text &p_path);
+Text    test_js                 (Text p_text);
+Text    test_js_number          (Real p_value);
+Text    test_report_path        (Text p_folder);
+Text    test_last_report        ();
+Integer test_write_source       (File &p_file, Text p_source_folder, Attributes &p_info, Integer p_id);
+void    test_write_function_info(File &p_file, Attributes &p_info, Integer p_id);
+void    test_write_run          (File &p_file, Attributes &p_results, Integer p_index);
+Integer test_write_report       (Attributes &p_results, Text p_source_folder, Text p_folder, Text &p_path);
+void    test_report_page_start  (File &p_file);
+void    test_report_page_end    (File &p_file);
 
 // ---------------------------------------------------------------- the panel
 void    test_panel_fill_list    (List_Box p_list, Text p_filter, Integer &p_ids_count);

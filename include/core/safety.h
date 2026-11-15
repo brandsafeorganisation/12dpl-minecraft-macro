@@ -39,6 +39,13 @@
 //                            written in any folder named cubeland_mp,
 //                            such as \\other-pc\share\cubeland_mp
 //   SAFETY_OFF               the blocked calls below are not blocked
+//   SAFE_ALLOW_TEST_REPORTS  the test build (test/cubeland_test.4dm):
+//                            .html files may be written in any folder,
+//                            and safe_open_html() may open one in the
+//                            web browser
+#ifdef SAFE_ALLOW_TEST_REPORTS
+#warning Safety: test reports (.html files) may be written in any folder and opened (SAFE_ALLOW_TEST_REPORTS)
+#endif
 #ifdef SAFE_ALLOW_SHARE_FOLDER
 #warning Safety: files may be written in any folder named cubeland_mp (SAFE_ALLOW_SHARE_FOLDER)
 #endif
@@ -51,6 +58,18 @@
 
 
 // ---------------------------------------------------------------- the one way to open a file
+
+Integer safe_is_html(Text p_path)
+// ----------------------------------------------------------------
+// SAFE_YES if p_path names an .html file (any case)
+// ----------------------------------------------------------------
+{
+  Integer l_length = Text_length(p_path);
+
+  if (l_length < 6) return SAFE_NO;
+  if (Text_lower(Get_subtext(p_path, l_length - 4, l_length)) != ".html") return SAFE_NO;
+  return SAFE_YES;
+}
 
 Integer safe_path_is_writable(Text p_path)
 // ----------------------------------------------------------------
@@ -68,6 +87,9 @@ Integer safe_path_is_writable(Text p_path)
   l_length = Text_length(l_prefix);
 
   if (Find_text(p_path, "..") > 0)                       return SAFE_NO;
+#ifdef SAFE_ALLOW_TEST_REPORTS
+  if (safe_is_html(p_path))                              return SAFE_YES;
+#endif
 #ifdef SAFE_ALLOW_SHARE_FOLDER
   l_folder = SAFE_SHARE_FOLDER;
   if (Find_text(p_path, "\\" + l_folder + "\\") > 0)  return SAFE_YES;
@@ -98,6 +120,21 @@ Integer safe_file_open(Text p_path, Text p_mode, File &p_file)
   }
   return File_open(p_path, p_mode, "", p_file);
 }
+
+#ifdef SAFE_ALLOW_TEST_REPORTS
+Integer safe_open_html(Widget p_widget, Text p_path)
+// ----------------------------------------------------------------
+// Open an existing .html file in the web browser (Windows opens it
+// with the program set for .html files). Nothing else can be opened
+// or run. Returns 0 if it was opened.
+// ----------------------------------------------------------------
+{
+  if (!safe_is_html(p_path))  return SAFE_OPEN_REFUSED;
+  if (!File_exists(p_path))   return SAFE_OPEN_REFUSED;
+  if (Find_text(p_path, "|") > 0 || Find_text(p_path, "&") > 0) return SAFE_OPEN_REFUSED;
+  return Shell_execute(p_widget, "open", p_path, "", "", 1);
+}
+#endif
 
 
 #ifndef SAFETY_OFF

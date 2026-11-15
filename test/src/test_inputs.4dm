@@ -83,8 +83,10 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
 {
   Integer l_integer = p_kind == TEST_KIND_INTEGER;
 
+  // (whole numbers start at 1: most of the game's tables are numbered
+  // from 1, so 0 would only find that a table has no entry 0)
   p_rule = "default";
-  p_low = 0.0;  p_high = 10.0;  p_typical = 1.0;
+  p_low = 1.0;  p_high = 10.0;  p_typical = 1.0;
   if (!l_integer) {
     p_low = -10.0;  p_high = 10.0;  p_typical = 1.5;
   }
@@ -101,8 +103,41 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
       p_rule = "a position in the text";  p_low = 0.0;  p_high = 12.0;  p_typical = 3.0;  return;
     }
   }
+  if (Find_text(p_function, "inflate_") == 1 && p_name == "p_table") {
+    p_rule = "a Huffman table";  p_low = 1.0;  p_high = 2.0;  p_typical = 1.0;  return;
+  }
+  if (p_function == "inflate_build" && p_name == "p_first") {
+    p_rule = "the first code length";  p_low = 1.0;  p_high = 30.0;  p_typical = 1.0;  return;
+  }
+  if (p_function == "inflate_build" && p_name == "p_count") {
+    p_rule = "code lengths in the table";  p_low = 1.0;  p_high = 288.0;  p_typical = 30.0;  return;
+  }
+  if (p_name == "p_bit_depth") {
+    p_rule = "8 bits a sample (1, 2 and 4 are packed differently; 16 is read as 8)";  p_low = 8.0;  p_high = 8.0;  p_typical = 8.0;  return;
+  }
+  if (p_function == "png_sample" && p_name == "p_channels") {
+    p_rule = "channels a pixel";  p_low = 1.0;  p_high = 4.0;  p_typical = 3.0;  return;
+  }
+  if (p_function == "png_sample" && p_name == "p_channel") {
+    p_rule = "the first channel";  p_low = 1.0;  p_high = 1.0;  p_typical = 1.0;  return;
+  }
+  if (p_name == "p_row_start") {
+    p_rule = "where a row starts in the image data";  p_low = 1.0;  p_high = 64.0;  p_typical = 1.0;  return;
+  }
+  if (p_function == "pack_distance" && p_name == "p_colour") {
+    p_rule = "a distinct colour";  p_low = 1.0;  p_high = 256.0;  p_typical = 1.0;  return;
+  }
+  if (p_name == "p_cluster") {
+    p_rule = "a palette cluster";  p_low = 1.0;  p_high = PALETTE_SIZE;  p_typical = 1.0;  return;
+  }
+  if (p_function == "render_mob_part_nearer" && (p_name == "p_a" || p_name == "p_b")) {
+    p_rule = "a part of the animal being drawn";  p_low = 1.0;  p_high = MOB_MAX_PARTS;  p_typical = 1.0;  return;
+  }
   if (p_name == "p_positive") {
     p_rule = "zero or more";  p_low = 0.0;  p_high = 10000.0;  p_typical = 2.0;  return;
+  }
+  if ((p_function == "texture_noise" || p_function == "texture_blotch") && p_name == "p_cell") {
+    p_rule = "noise spacing in pixels (divides 16)";  p_low = 1.0;  p_high = 16.0;  p_typical = 4.0;  return;
   }
   if (p_name == "p_cell") {
     p_rule = "a cell value (block + light)";  p_low = 0.0;  p_high = CELL_VALUES - 1;  p_typical = BLOCK_STONE;  return;
@@ -141,7 +176,7 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
     if (p_name == "p_damage") {
       p_rule = "tool wear";  p_low = 0.0;  p_high = 60.0;  p_typical = 0.0;  return;
     }
-    if (p_name == "p_tex" || Find_text(p_name, "p_tex_") == 1) {
+    if (p_name == "p_tex" || Find_text(p_name, "p_tex_") == 1 || test_name_ends(p_name, "tex")) {
       p_rule = "a texture";  p_low = 1.0;  p_high = NUM_TEXTURES;  p_typical = 1.0;  return;
     }
     if (p_name == "p_cow" || p_name == "p_mob") {
@@ -496,10 +531,38 @@ void test_params_prepare(Attributes &p_info, Attributes &p_params)
   record_set_integer(p_params, ATTR_TP_COUNT, l_count);
 }
 
-void test_make_inputs(Attributes &p_info, Attributes &p_params, Integer p_random_inputs, Attributes &p_random, Attributes &p_in)
+Integer test_edge_side(Integer p_call, Integer p_param)
 // ----------------------------------------------------------------
-// Fill the input record for one call: typical values, or random ones
-// from each parameter's range or list
+// Which end of its range parameter p_param takes in call p_call of
+// the edge data set: 1 the low end, 2 the high end. Calls go round
+// all low, all high, then low and high taking turns both ways.
+// ----------------------------------------------------------------
+{
+  Integer l_round = positive_mod(p_call - 1, 4);
+
+  if (l_round == 0) return 1;
+  if (l_round == 1) return 2;
+  if (l_round == 2) return 1 + positive_mod(p_param, 2);
+  return 2 - positive_mod(p_param, 2);
+}
+
+Text test_set_name(Integer p_set)
+// ----------------------------------------------------------------
+// The name of data set p_set (TEST_SET_*)
+// ----------------------------------------------------------------
+{
+  if (p_set == TEST_SET_TYPICAL) return "typical";
+  if (p_set == TEST_SET_RANDOM ) return "random";
+  if (p_set == TEST_SET_EDGES  ) return "edges";
+  return "?";
+}
+
+void test_make_inputs(Attributes &p_info, Attributes &p_params, Integer p_set, Integer p_call, Attributes &p_random, Attributes &p_in)
+// ----------------------------------------------------------------
+// Fill the input record for call p_call of data set p_set:
+//   TEST_SET_TYPICAL  each parameter's typical value
+//   TEST_SET_RANDOM   random values from each parameter's range
+//   TEST_SET_EDGES    the ends of each range (see test_edge_side)
 // ----------------------------------------------------------------
 {
   Integer l_count    = record_integer(p_params, ATTR_TP_COUNT);
@@ -508,8 +571,10 @@ void test_make_inputs(Attributes &p_info, Attributes &p_params, Integer p_random
   Integer l_pick     = 0;
   Integer l_choices  = 0;
   Integer l_value    = 0;
+  Integer l_side     = 0;
   Real    l_low      = 0.0;
   Real    l_high     = 0.0;
+  Real    l_real     = 0.0;
   Text    l_field    = "";
   Text    l_name     = "";
   Text    l_function = record_text(p_info, ATTR_TEST_NAME);
@@ -522,21 +587,26 @@ void test_make_inputs(Attributes &p_info, Attributes &p_params, Integer p_random
     l_name  = record_text_at   (p_params, ATTR_TP_NAME,  l_param);
     l_low   = record_real_at   (p_params, ATTR_TP_LOW,   l_param);
     l_high  = record_real_at   (p_params, ATTR_TP_HIGH,  l_param);
+    l_side  = test_edge_side(p_call, l_param);
     if (l_kind == TEST_KIND_INTEGER) {
       l_value = floor_integer(record_real_at(p_params, ATTR_TP_TYPICAL, l_param));
-      if (p_random_inputs) l_value = random_range(p_random, floor_integer(l_low), floor_integer(l_high));
+      if (p_set == TEST_SET_RANDOM) l_value = random_range(p_random, floor_integer(l_low), floor_integer(l_high));
+      if (p_set == TEST_SET_EDGES && l_side == 1) l_value = floor_integer(l_low);
+      if (p_set == TEST_SET_EDGES && l_side == 2) l_value = floor_integer(l_high);
       record_set_integer(p_in, l_field, l_value);
     } else if (l_kind == TEST_KIND_REAL) {
-      if (p_random_inputs) {
-        record_set_real(p_in, l_field, random_between(p_random, l_low, l_high));
-      } else {
-        record_set_real(p_in, l_field, record_real_at(p_params, ATTR_TP_TYPICAL, l_param));
-      }
+      l_real = record_real_at(p_params, ATTR_TP_TYPICAL, l_param);
+      if (p_set == TEST_SET_RANDOM) l_real = random_between(p_random, l_low, l_high);
+      if (p_set == TEST_SET_EDGES && l_side == 1) l_real = l_low;
+      if (p_set == TEST_SET_EDGES && l_side == 2) l_real = l_high;
+      record_set_real(p_in, l_field, l_real);
     } else if (l_kind == TEST_KIND_TEXT) {
-      l_pick = 0;
-      if (p_random_inputs) {
-        l_choices = floor_integer(l_high);
-        if (l_choices > 0) l_pick = random_range(p_random, 1, l_choices);
+      l_pick    = 0;
+      l_choices = floor_integer(l_high);
+      if (l_choices > 0) {
+        if (p_set == TEST_SET_RANDOM) l_pick = random_range(p_random, 1, l_choices);
+        if (p_set == TEST_SET_EDGES && l_side == 1) l_pick = 1;
+        if (p_set == TEST_SET_EDGES && l_side == 2) l_pick = l_choices;
       }
       record_set_text(p_in, l_field, test_text_choice(l_function, l_name, l_pick));
     }

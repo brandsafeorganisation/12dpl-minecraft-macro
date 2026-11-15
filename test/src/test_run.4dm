@@ -136,10 +136,10 @@ Integer test_runnable(Attributes &p_info, Integer p_with_writers)
   return TRUE;
 }
 
-Integer test_run_function(Integer p_id, Integer p_runs, Integer p_random_inputs, Attributes &p_random, Attributes &p_results)
+Integer test_run_function(Integer p_id, Integer p_runs, Integer p_set, Attributes &p_random, Attributes &p_results)
 // ----------------------------------------------------------------
-// Call function p_id p_runs times (the first with typical inputs,
-// the rest random ones if p_random_inputs) and add its results.
+// Call function p_id p_runs times with inputs from data set p_set
+// (TEST_SET_*) and add its results.
 // Returns the result's number, 0 if the function can't be called.
 // ----------------------------------------------------------------
 {
@@ -176,7 +176,7 @@ Integer test_run_function(Integer p_id, Integer p_runs, Integer p_random_inputs,
   record_set_integer_at(p_results, ATTR_TR_ID,      l_index, p_id);
   record_set_integer_at(p_results, ATTR_TR_RUNS,    l_index, p_runs);
   record_set_integer_at(p_results, ATTR_TR_DONE,    l_index, 0);
-  record_set_integer_at(p_results, ATTR_TR_RANDOM,  l_index, p_random_inputs);
+  record_set_integer_at(p_results, ATTR_TR_SET,     l_index, p_set);
   record_set_text_at   (p_results, ATTR_TR_DOMAINS, l_index, test_domains_text(g_test_params));
 
   // a function that draws draws into the panel's box, in one batch
@@ -188,12 +188,13 @@ Integer test_run_function(Integer p_id, Integer p_runs, Integer p_random_inputs,
   test_progress("started " + record_text(g_test_info, ATTR_TEST_NAME));
   Get_time(l_start);
   for (l_run = 1; l_run <= p_runs; ++l_run) {
-    test_make_inputs(g_test_info, g_test_params, p_random_inputs && l_run > 1, p_random, g_test_in);
+    test_make_inputs(g_test_info, g_test_params, p_set, l_run, p_random, g_test_in);
     test_registry_call(p_id, g_test_in, g_test_out);
 
     l_seconds = max_real(0.0, record_real(g_test_out, ATTR_TEST_SECONDS) - l_clock);
     l_sum     = l_sum + l_seconds;
     l_sum_sq  = l_sum_sq + l_seconds * l_seconds;
+    if (l_run == 1) record_set_real_at(p_results, ATTR_TR_FIRST, l_index, l_seconds);
     if (l_run == 1 || l_seconds < l_min) l_min = l_seconds;
     if (l_run == 1 || l_seconds > l_max) l_max = l_seconds;
     l_bucket = test_bucket(l_seconds);

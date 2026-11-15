@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Cubeland test report</title>
+<style>
+:root{--bg:#f4f5f8;--panel:#fff;--ink:#1b1e24;--soft:#5d6574;--line:#e2e5eb;--accent:#4f6bed;
+--good:#1f9d55;--bad:#d64545;--warn:#d9911a;--s1:#4f6bed;--s2:#e0782f;--s3:#2aa198;--bar:#4f6bed;
+--code:#1d2027;--codeink:#d6dbe5;--hover:#f0f2f7;--chip:#eef0f5}
+@media (prefers-color-scheme:dark){:root{--bg:#121418;--panel:#1b1e24;--ink:#e6e8ee;--soft:#9aa2b1;
+--line:#2c3039;--accent:#7b93ff;--hover:#232730;--chip:#262a33;--code:#0f1115}}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:28px 32px 0}
+h1{margin:0;font-size:26px;letter-spacing:-.3px}
+h2{font-size:17px;margin:0 0 12px}
+h3{font-size:14px;margin:18px 0 8px;color:var(--soft);text-transform:uppercase;letter-spacing:.6px}
+.sub{color:var(--soft);margin-top:4px}
+.wrap{padding:0 32px 48px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card .k{color:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.card .v{font-size:24px;font-weight:650;margin-top:2px;font-variant-numeric:tabular-nums}
+.card .v.good{color:var(--good)}.card .v.bad{color:var(--bad)}
+.card .d{color:var(--soft);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note{background:#fff3d6;color:#5a4300;border:1px solid #ecc76a;border-radius:10px;padding:10px 14px;margin:16px 0}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:8px 0 20px;position:sticky;top:0;background:var(--bg);z-index:5;padding-top:8px}
+nav button{border:0;background:none;color:var(--soft);padding:10px 14px;font:inherit;cursor:pointer;border-bottom:2px solid transparent}
+nav button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+nav .count{background:var(--chip);border-radius:10px;padding:0 7px;margin-left:6px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.panel p.hint{color:var(--soft);margin:-6px 0 10px;font-size:12px}
+svg text{fill:var(--ink);font-size:12px}
+svg .muted{fill:var(--soft)}
+svg .hit{cursor:pointer}
+svg .hit:hover rect.b{opacity:.75}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+input[type=search],select{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+input[type=search]{min-width:240px}
+label.chk{color:var(--soft);display:flex;gap:6px;align-items:center}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;position:sticky;top:44px;background:var(--panel);z-index:2}
+th.sort{cursor:pointer;user-select:none}
+th.sort:hover{color:var(--ink)}
+th.up::after{content:' ▲';font-size:9px}th.down::after{content:' ▼';font-size:9px}
+td.n,th.n{text-align:right;white-space:nowrap}
+tbody tr:hover{background:var(--hover)}
+a.fn{color:var(--accent);text-decoration:none;cursor:pointer;font-weight:550}
+a.fn:hover{text-decoration:underline}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;background:var(--chip);color:var(--soft);margin-left:4px}
+.tag.bad{background:#fde3e3;color:#a32121}.tag.good{background:#dcf3e5;color:#16673a}.tag.warn{background:#fdf0d5;color:#8a5a00}
+.pass{color:var(--good);font-weight:600}.fail{color:var(--bad);font-weight:600}
+.mini{display:inline-block;height:8px;border-radius:4px;background:var(--bar);vertical-align:middle;margin-left:6px;opacity:.8}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.legend{color:var(--soft);font-size:12px;display:flex;gap:14px;margin-bottom:6px}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(980px,96vw);background:var(--bg);border-left:1px solid var(--line);
+box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .2s;overflow:auto;z-index:20;padding:22px 26px 40px}
+#drawer.open{transform:none}
+#drawer .close{position:sticky;top:0;float:right;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.sig{font-family:Consolas,'Cascadia Mono',monospace;background:var(--chip);padding:8px 10px;border-radius:8px;overflow:auto;white-space:pre}
+dl{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:12px 0}
+dt{color:var(--soft)}dd{margin:0;min-width:0;overflow-wrap:anywhere}
+pre.code{background:var(--code);color:var(--codeink);padding:12px 14px;border-radius:10px;overflow:auto;font-size:12px;line-height:1.5}
+.mono{font-family:Consolas,'Cascadia Mono',monospace;font-size:12px;overflow-wrap:anywhere}
+.tabs2 button{border:1px solid var(--line);background:var(--panel);color:var(--soft);border-radius:8px;padding:5px 10px;font:inherit;cursor:pointer;margin-right:6px}
+.tabs2 button.on{color:var(--ink);border-color:var(--accent)}
+.empty{color:var(--soft);padding:20px;text-align:center}
+.hidden{display:none}
+</style></head><body>
+<header><h1>Cubeland test report</h1><div class='sub' id='subtitle'></div></header>
+<div class='wrap'>
+<div id='note'></div>
+<div class='cards' id='cards'></div>
+<nav id='nav'></nav>
+<section id='tab-overview'></section>
+<section id='tab-functions' class='hidden'></section>
+<section id='tab-sets' class='hidden'></section>
+<section id='tab-tests' class='hidden'></section>
+<section id='tab-left' class='hidden'></section>
+</div>
+<div id='drawer'></div>
+<!--DATA-->
+<script>
+'use strict';
+const SETS = ['', 'typical', 'random', 'edges'];
+const SET_COLOUR = ['', 'var(--s1)', 'var(--s2)', 'var(--s3)'];
+const BUCKETS = ['< 1 µs', '1-3 µs', '3-10 µs', '10-30 µs', '30-100 µs', '0.1-0.3 ms', '0.3-1 ms', '> 1 ms'];
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t).replace(/[&<>']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', [String.fromCharCode(39)]: '&#39;'})[c]);
+function us(v) {
+  if (v === null || v === undefined || isNaN(v)) return '-';
+  if (v >= 100000) return (v / 1000000).toFixed(2) + ' s';
+  if (v >= 1000) return (v / 1000).toFixed(2) + ' ms';
+  if (v >= 10) return v.toFixed(1) + ' µs';
+  return v.toFixed(3) + ' µs';
+}
+function num(v) { return (v === null || v === undefined) ? '-' : Number(v).toLocaleString(undefined, {maximumFractionDigits: 4}); }
+function big(v) { return Number(v).toLocaleString(); }
+
+// ---------------------------------------------------------------- the numbers per function
+const fnById = {};
+for (const f of R.fns) fnById[f.id] = f;
+const byFn = new Map();
+for (const r of R.runs) {
+  r.sd = Math.sqrt(Math.max(0, r.sq - r.mean * r.mean));
+  r.fn = fnById[r.f];
+  if (!byFn.has(r.f)) byFn.set(r.f, {f: r.f, fn: r.fn, sets: {}, calls: 0, sum: 0, max: 0, min: Infinity, total: 0});
+  const a = byFn.get(r.f);
+  a.sets[r.s] = r;
+  a.calls += r.n; a.sum += r.mean * r.n; a.total += r.fnms;
+  a.max = Math.max(a.max, r.max); a.min = Math.min(a.min, r.min);
+}
+const rows = [...byFn.values()];
+for (const a of rows) {
+  a.mean = a.calls ? a.sum / a.calls : 0;
+  const means = Object.values(a.sets).map((r) => r.mean).filter((m) => m > 0);
+  // (times under a microsecond are mostly the clock's own steps, so
+  // the ratio counts anything faster as one microsecond)
+  a.ratio = means.length > 1 ? Math.max(1, ...means) / Math.max(1, Math.min(...means)) : 1;
+  a.sd = Math.max(...Object.values(a.sets).map((r) => r.sd));
+  a.jitter = a.mean > 0 ? a.sd / a.mean : 0;
+  a.suspicious = Object.values(a.sets).some((r) => r.hasret && (r.rmin <= -2147483648 || r.rmax >= 2147483647 || !isFinite(r.rmin) || !isFinite(r.rmax) || !isFinite(r.rmean) || Math.abs(r.rmin) > 1e300 || Math.abs(r.rmax) > 1e300));
+  a.differs = (() => {
+    const s = Object.values(a.sets).filter((r) => r.hasret);
+    return s.length > 1 && s.some((r) => r.rmin !== s[0].rmin || r.rmax !== s[0].rmax);
+  })();
+}
+const parts = [...new Set(rows.map((a) => a.fn.part))].sort();
+const failed = R.checks.filter((c) => !c[4]);
+
+// ---------------------------------------------------------------- header
+$('subtitle').textContent = R.title + ' · started ' + R.started + ' · ' + R.seconds.toFixed(3) + ' s';
+if (R.note) $('note').innerHTML = '<div class=note>The previous test run stopped inside <b>' + esc(R.note) +
+  '</b> (a macro error, or 12d was closed). It may not handle the inputs it was given there.</div>';
+const cards = [];
+const totalCalls = rows.reduce((s, a) => s + a.calls, 0);
+const slowest = rows.slice().sort((x, y) => y.mean - x.mean)[0];
+cards.push(['Functions run', big(rows.length), R.skipped.length ? R.skipped.length + ' left out' : 'none left out']);
+cards.push(['Calls made', big(totalCalls), Object.keys(R.runs.reduce((o, r) => (o[r.s] = 1, o), {})).map((s) => SETS[s]).join(', ') || ' ']);
+if (R.checks.length) {
+  cards.push(['Checks passed', (R.checks.length - failed.length) + ' / ' + R.checks.length, failed.length ? failed.length + ' failed' : 'all passed', failed.length ? 'bad' : 'good']);
+}
+if (slowest) cards.push(['Slowest on average', us(slowest.mean), slowest.fn.name]);
+cards.push(['Time in functions', us(rows.reduce((s, a) => s + a.total, 0) * 1000), 'whole run ' + R.seconds.toFixed(2) + ' s']);
+cards.push(['Suspicious results', big(rows.filter((a) => a.suspicious).length), 'returned NaN, infinity, or the largest or smallest number', rows.some((a) => a.suspicious) ? 'bad' : '']);
+$('cards').innerHTML = cards.map((c) => `<div class=card><div class=k>${esc(c[0])}</div><div class='v ${c[3] || ''}'>${esc(c[1])}</div><div class=d title='${esc(c[2])}'>${esc(c[2])}</div></div>`).join('');
+
+// ---------------------------------------------------------------- tabs
+const TABS = [['overview', 'Overview', ''], ['functions', 'Functions', rows.length], ['sets', 'Data sets', ''],
+  ['tests', 'Unit tests', R.checks.length ? (failed.length ? failed.length + ' failed' : R.checks.length) : ''], ['left', 'Left out', R.skipped.length]];
+function showTab(id) {
+  for (const t of TABS) {
+    $('tab-' + t[0]).classList.toggle('hidden', t[0] !== id);
+    $('nb-' + t[0]).classList.toggle('on', t[0] === id);
+  }
+}
+$('nav').innerHTML = TABS.map((t) => `<button id='nb-${t[0]}' data-tab='${t[0]}'>${t[1]}${t[2] !== '' ? `<span class=count>${t[2]}</span>` : ''}</button>`).join('');
+$('nav').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+
+// ---------------------------------------------------------------- charts
+function barChart(items, fmt, opts) {
+  opts = opts || {};
+  if (!items.length) return '<div class=empty>Nothing to show</div>';
+  const w = 560, rowH = 22, left = 210, right = 90;
+  const max = Math.max(...items.map((i) => i.value)) || 1;
+  let s = `<svg viewBox='0 0 ${w} ${items.length * rowH + 4}' width='100%' role='img'>`;
+  items.forEach((it, k) => {
+    const y = k * rowH + 2, bw = Math.max(2, (w - left - right) * it.value / max);
+    const label = it.label.length > 30 ? it.label.slice(0, 29) + '…' : it.label;
+    s += `<g class='${it.id ? 'hit' : ''}' data-fn='${it.id || ''}'><title>${esc(it.label)}: ${esc(fmt(it.value))}${it.tip ? ' · ' + esc(it.tip) : ''}</title>`;
+    s += `<text x='${left - 8}' y='${y + 15}' text-anchor='end'>${esc(label)}</text>`;
+    s += `<rect class=b x='${left}' y='${y + 4}' width='${bw}' height='${rowH - 8}' rx='4' fill='${it.colour || 'var(--bar)'}'></rect>`;
+    s += `<text class=muted x='${left + bw + 6}' y='${y + 15}'>${esc(fmt(it.value))}</text></g>`;
+  });
+  return s + '</svg>';
+}
+function groupedBars(groups, series, fmt) {
+  // groups: [{label, values:[...]}], series: [{name, colour}]
+  const w = 560, h = 190, left = 66, bottom = 42, top = 10;
+  const max = Math.max(1e-9, ...groups.flatMap((g) => g.values.filter((v) => v !== null)));
+  const gw = (w - left - 10) / groups.length, bw = Math.max(3, (gw - 8) / series.length);
+  let s = `<svg viewBox='0 0 ${w} ${h}' width='100%'>`;
+  for (let k = 0; k <= 4; k++) {
+    const y = top + (h - top - bottom) * (1 - k / 4);
+    s += `<line x1='${left}' x2='${w}' y1='${y}' y2='${y}' stroke='var(--line)'></line><text class=muted x='${left - 6}' y='${y + 4}' text-anchor='end'>${esc(fmt(max * k / 4))}</text>`;
+  }
+  groups.forEach((g, i) => {
+    const x0 = left + i * gw + 4;
+    g.values.forEach((v, j) => {
+      if (v === null) return;
+      const bh = (h - top - bottom) * v / max;
+      s += `<rect x='${x0 + j * bw}' y='${h - bottom - bh}' width='${bw - 2}' height='${Math.max(0, bh)}' rx='2' fill='${series[j].colour}'><title>${esc(g.label)} · ${esc(series[j].name)}: ${esc(fmt(v))}</title></rect>`;
+    });
+    s += `<text class=muted x='${x0 + gw / 2 - 4}' y='${h - bottom + 16}' text-anchor='middle'>${esc(g.label)}</text>`;
+  });
+  return s + '</svg>';
+}
+function legend(series) { return '<div class=legend>' + series.map((s) => `<span><span class=sw style='background:${s.colour}'></span>${esc(s.name)}</span>`).join('') + '</div>'; }
+function topN(list, key, n) { return list.slice().sort((x, y) => key(y) - key(x)).slice(0, n || 15); }
+
+// ---------------------------------------------------------------- overview
+(function overview() {
+  const P = [];
+  const panel = (title, hint, body) => P.push(`<div class=panel><h2>${title}</h2>${hint ? `<p class=hint>${hint}</p>` : ''}${body}</div>`);
+  if (rows.length) {
+    panel('Slowest on average', 'Mean time a call, every data set together. Click a bar for the function.',
+      barChart(topN(rows, (a) => a.mean).map((a) => ({label: a.fn.name, value: a.mean, id: a.f, tip: a.fn.part})), us));
+    panel('Slowest single call', 'The worst call each function made.',
+      barChart(topN(rows, (a) => a.max).map((a) => ({label: a.fn.name, value: a.max, id: a.f, colour: 'var(--bad)'})), us));
+    panel('Most time overall', 'Time spent in the function over all its calls.',
+      barChart(topN(rows, (a) => a.total).map((a) => ({label: a.fn.name, value: a.total * 1000, id: a.f, colour: 'var(--s2)'})), us));
+    panel('Least steady', 'Spread of call times divided by the mean, for functions taking a microsecond or more: high means some calls take much longer than others.',
+      barChart(topN(rows.filter((a) => a.calls > 2 && a.mean >= 1), (a) => a.jitter).map((a) => ({label: a.fn.name, value: a.jitter, id: a.f, colour: 'var(--warn)'})), (v) => v.toFixed(2) + ' ×'));
+    const byPart = parts.map((p) => ({label: p, value: rows.filter((a) => a.fn.part === p).reduce((s, a) => s + a.total * 1000, 0)}));
+    panel('Time by part of the game', 'Total time in the functions of each part.', barChart(byPart.sort((x, y) => y.value - x.value), us));
+    const multi = rows.filter((a) => Object.keys(a.sets).length > 1);
+    if (multi.length) {
+      panel('Most affected by the inputs', 'Slowest data set divided by the fastest: these functions cost very different amounts depending on what they are given.',
+        barChart(topN(multi, (a) => a.ratio).map((a) => {
+          const worst = Object.values(a.sets).sort((x, y) => y.mean - x.mean)[0];
+          return {label: a.fn.name, value: a.ratio, id: a.f, colour: SET_COLOUR[worst.s], tip: 'slowest with ' + SETS[worst.s] + ' inputs'};
+        }), (v) => v.toFixed(1) + ' ×'));
+      const sets = [1, 2, 3].filter((s) => R.runs.some((r) => r.s === s));
+      const series = sets.map((s) => ({name: SETS[s], colour: SET_COLOUR[s]}));
+      const groups = parts.map((p) => ({label: p, values: sets.map((s) => {
+        const rs = R.runs.filter((r) => r.s === s && r.fn.part === p);
+        return rs.length ? rs.reduce((t, r) => t + r.mean, 0) / rs.length : null;
+      })}));
+      panel('Data sets by part', 'Mean time a call of the functions in each part, for each data set.', legend(series) + groupedBars(groups, series, us));
+    }
+    const hist = new Array(8).fill(0);
+    for (const r of R.runs) r.b.forEach((c, i) => { hist[i] += c; });
+    panel('How long calls take', 'Every call made, by how long it took.',
+      barChart(BUCKETS.map((b, i) => ({label: b, value: hist[i]})), big));
+  }
+  if (R.checks.length) {
+    const groups = [...new Set(R.checks.map((c) => c[0]))];
+    panel('Unit tests by group', failed.length ? `<span class=fail>${failed.length} failed</span>` : '<span class=pass>All passed</span>',
+      barChart(groups.map((g) => {
+        const all = R.checks.filter((c) => c[0] === g), bad = all.filter((c) => !c[4]).length;
+        return {label: g + (bad ? ' (' + bad + ' failed)' : ''), value: all.length, colour: bad ? 'var(--bad)' : 'var(--good)'};
+      }), big));
+  }
+  $('tab-overview').innerHTML = `<div class=grid>${P.join('')}</div>`;
+})();
+
+// ---------------------------------------------------------------- sortable tables
+function table(host, cols, data, opts) {
+  let key = opts.sort || 0, dir = opts.dir || -1;
+  function draw() {
+    const c = cols[key];
+    const list = data().slice().sort((x, y) => {
+      const a = c.v(x), b = c.v(y);
+      if (typeof a === 'string' || typeof b === 'string') return dir * String(a).localeCompare(String(b));
+      return dir * ((a === null ? -Infinity : a) - (b === null ? -Infinity : b));
+    });
+    const max = {};
+    cols.forEach((col, i) => { if (col.bar) max[i] = Math.max(1e-12, ...list.map((r) => col.v(r) || 0)); });
+    host.innerHTML = list.length ? `<table><thead><tr>${cols.map((col, i) => `<th class='sort ${col.n ? 'n' : ''} ${i === key ? (dir > 0 ? 'up' : 'down') : ''}' data-i='${i}' title='${esc(col.tip || '')}'>${col.t}</th>`).join('')}</tr></thead><tbody>` +
+      list.map((r) => '<tr>' + cols.map((col, i) => `<td class='${col.n ? 'n' : ''}'>${col.h ? col.h(r) : esc(col.v(r))}${col.bar && col.v(r) ? `<span class=mini style='width:${Math.round(60 * col.v(r) / max[i])}px'></span>` : ''}</td>`).join('') + '</tr>').join('') +
+      '</tbody></table>' : '<div class=empty>Nothing matches</div>';
+    if (opts.after) opts.after(list.length);
+  }
+  host.addEventListener('click', (e) => {
+    const th = e.target.closest('th.sort');
+    if (!th) return;
+    const i = Number(th.dataset.i);
+    if (i === key) dir = -dir; else { key = i; dir = cols[i].n ? -1 : 1; }
+    draw();
+  });
+  draw();
+  return draw;
+}
+const fnLink = (a) => `<a class=fn data-fn='${a.f}'>${esc(a.fn.name)}</a>` +
+  (a.suspicious ? `<span class='tag bad' title='returned the largest or smallest number: maybe an overflow or a divide by zero'>suspicious</span>` : '') +
+  (a.fn.writes ? `<span class=tag>writes files</span>` : '');
+
+// ---------------------------------------------------------------- functions tab
+(function functionsTab() {
+  const host = $('tab-functions');
+  host.innerHTML = `<div class=panel><div class=tools><input type=search id=fq placeholder='Find a function, file or part'>
+    <select id=fpart><option value=''>Every part</option>${parts.map((p) => `<option>${esc(p)}</option>`).join('')}</select>
+    <select id=fset><option value='0'>Every data set together</option>${[1, 2, 3].filter((s) => R.runs.some((r) => r.s === s)).map((s) => `<option value=${s}>${SETS[s]} inputs</option>`).join('')}</select>
+    <label class=chk><input type=checkbox id=fsus> only suspicious</label><span class=sub id=fcount></span></div><div id=ftable></div></div>`;
+  const pick = (a) => { const s = Number($('fset').value); return s ? a.sets[s] : null; };
+  const val = (a, k) => { const r = pick(a); if (Number($('fset').value) && !r) return null; return r ? r[k] : a[k]; };
+  const cols = [
+    {t: 'Function', v: (a) => a.fn.name, h: fnLink},
+    {t: 'Part', v: (a) => a.fn.part},
+    {t: 'Calls', n: 1, v: (a) => val(a, a === null ? 'n' : (pick(a) ? 'n' : 'calls')), h: (a) => big(val(a, pick(a) ? 'n' : 'calls') || 0)},
+    {t: 'Mean', n: 1, bar: 1, v: (a) => val(a, 'mean'), h: (a) => us(val(a, 'mean')), tip: 'mean time a call'},
+    {t: 'Fastest', n: 1, v: (a) => val(a, 'min'), h: (a) => us(val(a, 'min'))},
+    {t: 'Slowest', n: 1, v: (a) => val(a, 'max'), h: (a) => us(val(a, 'max'))},
+    {t: 'Spread', n: 1, v: (a) => val(a, 'sd'), h: (a) => us(val(a, 'sd')), tip: 'standard deviation of call times'},
+    {t: 'All calls', n: 1, bar: 1, v: (a) => pick(a) ? pick(a).fnms * 1000 : a.total * 1000, h: (a) => us(pick(a) ? pick(a).fnms * 1000 : a.total * 1000)},
+    {t: 'Calls / s', n: 1, v: (a) => { const m = val(a, 'mean'); return m > 0 ? 1e6 / m : null; }, h: (a) => { const m = val(a, 'mean'); return m > 0 ? big(Math.round(1e6 / m)) : '-'; }},
+    {t: 'Lines', n: 1, v: (a) => a.fn.last ? a.fn.last - a.fn.first + 1 : null, h: (a) => a.fn.last ? a.fn.last - a.fn.first + 1 : '-'}
+  ];
+  const data = () => {
+    const q = $('fq').value.toLowerCase(), p = $('fpart').value;
+    return rows.filter((a) => (!q || (a.fn.name + ' ' + a.fn.file + ' ' + a.fn.part + ' ' + a.fn.module).toLowerCase().includes(q)) &&
+      (!p || a.fn.part === p) && (!$('fsus').checked || a.suspicious));
+  };
+  const draw = table($('ftable'), cols, data, {sort: 3, after: (n) => { $('fcount').textContent = n + ' of ' + rows.length; }});
+  for (const id of ['fq', 'fpart', 'fset', 'fsus']) $(id).addEventListener('input', draw);
+})();
+
+// ---------------------------------------------------------------- data sets tab
+(function setsTab() {
+  const host = $('tab-sets');
+  const sets = [1, 2, 3].filter((s) => R.runs.some((r) => r.s === s));
+  if (sets.length < 2) {
+    host.innerHTML = `<div class=panel><div class=empty>Only one data set was run (${sets.map((s) => SETS[s]).join('')}). Set Data sets to all in the panel to compare them.</div></div>`;
+    return;
+  }
+  host.innerHTML = `<div class=panel><h2>The same functions with different inputs</h2>
+    <p class=hint>typical: every parameter at its usual value · random: random values from each range · edges: the ends of each range. Results differ shows functions whose returned numbers change with the inputs; suspicious ones returned the largest or smallest number.</p>
+    <div class=tools><input type=search id=sq placeholder='Find a function'><label class=chk><input type=checkbox id=sdiff> only where the results differ</label><span class=sub id=scount></span></div><div id=stable></div></div>`;
+  const cols = [{t: 'Function', v: (a) => a.fn.name, h: fnLink}];
+  for (const s of sets) cols.push({t: SETS[s], n: 1, bar: 1, v: (a) => a.sets[s] ? a.sets[s].mean : null, h: (a) => a.sets[s] ? us(a.sets[s].mean) : '-', tip: 'mean time a call with ' + SETS[s] + ' inputs'});
+  cols.push({t: 'Slowest ÷ fastest', n: 1, v: (a) => a.ratio, h: (a) => a.ratio.toFixed(2) + ' ×'});
+  for (const s of sets) cols.push({t: SETS[s] + ' returned', v: (a) => a.sets[s] && a.sets[s].hasret ? a.sets[s].rmin : null,
+    h: (a) => { const r = a.sets[s]; return r && r.hasret ? `<span class=mono>${num(r.rmin)}${r.rmin !== r.rmax ? ' to ' + num(r.rmax) : ''}</span>` : '-'; }});
+  cols.push({t: 'Results', v: (a) => (a.suspicious ? 2 : 0) + (a.differs ? 1 : 0),
+    h: (a) => (a.suspicious ? `<span class='tag bad'>suspicious</span>` : '') + (a.differs ? `<span class='tag warn'>differ</span>` : '<span class=tag>same</span>')});
+  const data = () => {
+    const q = $('sq').value.toLowerCase();
+    return rows.filter((a) => (!q || a.fn.name.toLowerCase().includes(q)) && (!$('sdiff').checked || a.differs || a.suspicious));
+  };
+  const draw = table($('stable'), cols, data, {sort: sets.length + 1, after: (n) => { $('scount').textContent = n + ' of ' + rows.length; }});
+  for (const id of ['sq', 'sdiff']) $(id).addEventListener('input', draw);
+})();
+
+// ---------------------------------------------------------------- unit tests tab
+(function testsTab() {
+  const host = $('tab-tests');
+  if (!R.checks.length) { host.innerHTML = '<div class=panel><div class=empty>No unit tests in this run. Press Unit tests or Everything.</div></div>'; return; }
+  const groups = [...new Set(R.checks.map((c) => c[0]))];
+  host.innerHTML = `<div class=panel><div class=tools><input type=search id=tq placeholder='Find a check'>
+    <select id=tg><option value=''>Every group</option>${groups.map((g) => `<option>${esc(g)}</option>`).join('')}</select>
+    <label class=chk><input type=checkbox id=tf ${failed.length ? 'checked' : ''}> only failed</label><span class=sub id=tcount></span></div><div id=ttable></div></div>`;
+  const cols = [
+    {t: '', v: (c) => c[4] ? 1 : 0, h: (c) => c[4] ? '<span class=pass>pass</span>' : '<span class=fail>fail</span>'},
+    {t: 'Group', v: (c) => c[0]}, {t: 'Check', v: (c) => c[1], h: (c) => `<span class=mono>${esc(c[1])}</span>`},
+    {t: 'Wanted', v: (c) => c[2], h: (c) => `<span class=mono>${esc(c[2])}</span>`},
+    {t: 'Got', v: (c) => c[3], h: (c) => `<span class='mono ${c[4] ? '' : 'fail'}'>${esc(c[3])}</span>`}
+  ];
+  const data = () => {
+    const q = $('tq').value.toLowerCase(), g = $('tg').value;
+    return R.checks.filter((c) => (!q || c[1].toLowerCase().includes(q)) && (!g || c[0] === g) && (!$('tf').checked || !c[4]));
+  };
+  const draw = table($('ttable'), cols, data, {sort: 0, dir: 1, after: (n) => { $('tcount').textContent = n + ' of ' + R.checks.length; }});
+  for (const id of ['tq', 'tg', 'tf']) $(id).addEventListener('input', draw);
+})();
+
+// ---------------------------------------------------------------- left out tab
+(function leftTab() {
+  const host = $('tab-left');
+  if (!R.skipped.length) { host.innerHTML = '<div class=panel><div class=empty>Nothing was left out.</div></div>'; return; }
+  host.innerHTML = '<div class=panel><div id=ltable></div></div>';
+  const list = R.skipped.map((id) => fnById[id]);
+  table($('ltable'), [{t: 'Function', v: (f) => f.name}, {t: 'Part', v: (f) => f.part},
+    {t: 'Why', v: (f) => f.why || 'writes files (set the panel to include them)'}], () => list, {sort: 0, dir: 1});
+})();
+
+// ---------------------------------------------------------------- one function in detail
+function openFn(id) {
+  const a = byFn.get(Number(id));
+  const f = fnById[id];
+  if (!f) return;
+  const sets = a ? Object.values(a.sets).sort((x, y) => x.s - y.s) : [];
+  let h = `<button class=close onclick='closeFn()'>Close</button><h1>${esc(f.name)}</h1>`;
+  h += `<div class=sub>${esc(f.kind === 'library' ? '12d library call' : f.part + ' · ' + f.module)}</div>`;
+  h += `<h3>Signature</h3><div class=sig>${esc(f.sig)}</div><dl>`;
+  if (f.kind !== 'library') h += `<dt>Where</dt><dd>${esc(f.file)}, lines ${f.first} to ${f.last} (${f.last - f.first + 1} lines)</dd>`;
+  if (f.calls) h += `<dt>Calls</dt><dd>${f.calls.split(/[ ,]+/).filter(Boolean).map((c) => { const g = R.fns.find((x) => x.name === c); return g ? `<a class=fn data-fn='${g.id}'>${esc(c)}</a>` : esc(c); }).join(', ')}</dd>`;
+  const callers = R.fns.filter((g) => g.calls && g.calls.split(/[ ,]+/).includes(f.name));
+  if (callers.length) h += `<dt>Called by</dt><dd>${callers.slice(0, 40).map((g) => `<a class=fn data-fn='${g.id}'>${esc(g.name)}</a>`).join(', ')}${callers.length > 40 ? ' …' : ''}</dd>`;
+  if (f.writes) h += '<dt>Note</dt><dd>writes files (inside cubeland_worlds)</dd>';
+  if (f.why) h += `<dt>Not run</dt><dd>it ${esc(f.why)}</dd>`;
+  if (sets.length && sets[0].dom) h += `<dt>Inputs</dt><dd>${esc(sets[0].dom)}</dd>`;
+  h += '</dl>';
+  if (sets.length) {
+    const series = sets.map((r) => ({name: SETS[r.s], colour: SET_COLOUR[r.s]}));
+    h += '<h3>Each data set</h3><div class=panel><table><thead><tr><th>Data set</th><th class=n>Calls</th><th class=n>Mean</th><th class=n>First call</th><th class=n>Fastest</th><th class=n>Slowest</th><th class=n>Spread</th><th class=n>In the function</th><th class=n>With making inputs</th><th>Returned</th></tr></thead><tbody>';
+    for (const r of sets) {
+      h += `<tr><td><span class=sw style='background:${SET_COLOUR[r.s]}'></span>${SETS[r.s]}</td><td class=n>${big(r.n)}</td><td class=n>${us(r.mean)}</td><td class=n>${us(r.first)}</td><td class=n>${us(r.min)}</td><td class=n>${us(r.max)}</td><td class=n>${us(r.sd)}</td><td class=n>${us(r.fnms * 1000)}</td><td class=n>${us(r.ms * 1000)}</td>` +
+        `<td class=mono>${r.hasret ? num(r.rmin) + (r.rmin !== r.rmax ? ' to ' + num(r.rmax) + ', mean ' + num(r.rmean) : '') : '-'}</td></tr>`;
+    }
+    h += '</tbody></table></div><div class=grid style=margin-top:16px>';
+    h += `<div class=panel><h2>Time a call</h2>${legend(series)}${groupedBars([{label: 'fastest', values: sets.map((r) => r.min)}, {label: 'mean', values: sets.map((r) => r.mean)}, {label: 'first', values: sets.map((r) => r.first)}, {label: 'slowest', values: sets.map((r) => r.max)}], series, us)}</div>`;
+    h += `<div class=panel><h2>How long its calls took</h2>${legend(series)}${groupedBars(BUCKETS.map((b, i) => ({label: b.replace(' µs', '').replace(' ms', 'ms'), values: sets.map((r) => r.n ? 100 * r.b[i] / r.n : 0)})), series, (v) => v.toFixed(0) + '%')}</div></div>`;
+    h += `<h3>Sample calls</h3><div class=tabs2>${sets.map((r, i) => `<button data-sample='${r.s}' class='${i ? '' : 'on'}'>${SETS[r.s]}</button>`).join('')}</div>`;
+    for (const r of sets) {
+      h += `<div class='panel sample ${r === sets[0] ? '' : 'hidden'}' data-set='${r.s}' style=margin-top:8px><table><thead><tr><th class=n>#</th><th>Inputs</th><th>Outputs</th><th class=n>Time</th></tr></thead><tbody>` +
+        r.smp.map((x, i) => `<tr><td class=n>${i + 1}</td><td class=mono>${esc(x[0])}</td><td class=mono>${esc(x[1])}</td><td class=n>${us(x[2])}</td></tr>`).join('') + '</tbody></table></div>';
+    }
+  }
+  const code = document.getElementById('code' + id);
+  if (code) h += `<h3>Code</h3><pre class=code>${code.innerHTML}</pre>`;
+  else if (f.kind !== 'library') h += '<h3>Code</h3><div class=sub>Not in this report: set Source folder in the panel to the folder that holds src.</div>';
+  const d = $('drawer');
+  d.innerHTML = h;
+  d.classList.add('open');
+  d.scrollTop = 0;
+}
+function closeFn() { $('drawer').classList.remove('open'); }
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-fn]');
+  if (t && t.dataset.fn) { openFn(t.dataset.fn); return; }
+  const b = e.target.closest('[data-sample]');
+  if (b) {
+    for (const x of document.querySelectorAll('[data-sample]')) x.classList.toggle('on', x === b);
+    for (const p of document.querySelectorAll('.sample')) p.classList.toggle('hidden', p.dataset.set !== b.dataset.sample);
+  }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFn(); });
+showTab(failed.length ? 'tests' : 'overview');
+</script>
+</body></html>

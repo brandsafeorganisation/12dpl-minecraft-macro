@@ -6,18 +6,25 @@
 #include "../../include/core/util.h"
 #include "../include/test.h"
 #include "../include/test_registry.h"
+#include "test_report_page.4dm"
 
 // ----------------------------------------------------------------
-// The HTML report: a summary, failed checks, every unit test check,
-// a table of the functions run (times per call), then each function
-// in detail: signature, where it is, what it calls, where its inputs
-// came from, its times with a histogram, the numbers it returned,
-// sample calls with their inputs and outputs, and its code (read
-// from the source folder, when the panel is told where that is).
+// The HTML report. The page itself (styles, tabs, sortable tables,
+// charts, the panel that shows one function) is fixed: it is in
+// test_report_page.4dm, written from test/report/report_page.html.
+// This file writes the run's numbers into it as a script, R = {...}:
 //
-// Written to cubeland_worlds\test_reports\report_<time>.html and
-// copied to latest.html. HTML attributes use single quotes, so the
-// macro never needs a double quote mark in its own strings.
+//   title, started, seconds, clock, note   the run
+//   checks   [group, check, wanted, got, passed] per unit test check
+//   runs     one per function and data set: times in microseconds,
+//            histogram, returned range, sample calls, input domains
+//   fns      what each function is (signature, file, lines, calls)
+//   skipped  registry numbers of the functions left out
+//
+// and each function's code as a hidden <pre id='code<n>'>. Written to
+// report_<time>.html in the report folder (cubeland_worlds\test_reports
+// unless the panel says otherwise). Strings in the script use single
+// quotes, so the macro never needs a double quote mark.
 // ----------------------------------------------------------------
 
 Text test_html(Text p_text)
@@ -59,29 +66,92 @@ Text test_micro(Real p_seconds)
   return To_text(p_seconds * 1000000.0, 3);
 }
 
-Text test_report_path(Text p_started)
+Text test_js(Text p_text)
 // ----------------------------------------------------------------
-// A new report file name from the time (seconds since 1970, so the
-// names sort in order), with _2, _3 ... for more in the same second
+// p_text as a JavaScript string in single quotes (backslashes,
+// quote marks and < escaped, so it can't end the script)
+// ----------------------------------------------------------------
+{
+  Integer l_length = Text_length(p_text);
+  Integer l_at     = 0;
+  Integer l_code   = 0;
+  Text    l_char   = "";
+  Text    l_out    = "";
+
+  if (Find_text(p_text, "\\") == 0 && Find_text(p_text, "'") == 0 && Find_text(p_text, "<") == 0 && Find_text(p_text, test_quote()) == 0) {
+    return "'" + p_text + "'";
+  }
+  for (l_at = 1; l_at <= l_length; ++l_at) {
+    l_char = Get_subtext(p_text, l_at, l_at);
+    Get_char(l_char, 1, l_code);
+    if (l_char == "\\") {
+      l_out = l_out + "\\\\";
+    } else if (l_char == "'") {
+      l_out = l_out + "\\x27";
+    } else if (l_char == "<") {
+      l_out = l_out + "\\x3c";
+    } else if (l_code == 34) {
+      l_out = l_out + "\\x22";
+    } else {
+      l_out = l_out + l_char;
+    }
+  }
+  return "'" + l_out + "'";
+}
+
+Text test_js_number(Real p_value)
+// ----------------------------------------------------------------
+// A number for the script (6 decimals); NaN and infinities as the
+// script spells them (a function given edge values can return them)
+// ----------------------------------------------------------------
+{
+  if (p_value != p_value) return "NaN";
+  if (p_value >  1.0e308) return "Infinity";
+  if (p_value < -1.0e308) return "-Infinity";
+  return To_text(p_value, 6);
+}
+
+Text test_report_path(Text p_folder)
+// ----------------------------------------------------------------
+// A new report file name in p_folder from the time (seconds since
+// 1970, so the names sort in order), with _2, _3 ... for more in the
+// same second
 // ----------------------------------------------------------------
 {
   Integer l_now    = 0;
   Integer l_number = 1;
-  Text    l_folder = TEST_REPORT_FOLDER;
   Text    l_path   = "";
 
   Get_time(l_now);
-  l_path = l_folder + "\\report_" + To_text(l_now) + ".html";
+  l_path = p_folder + "\\report_" + To_text(l_now) + ".html";
   while (File_exists(l_path) && l_number < 1000) {
     ++l_number;
-    l_path = l_folder + "\\report_" + To_text(l_now) + "_" + To_text(l_number) + ".html";
+    l_path = p_folder + "\\report_" + To_text(l_now) + "_" + To_text(l_number) + ".html";
   }
   return l_path;
 }
 
-Integer test_write_source(File &p_file, Text p_source_folder, Attributes &p_info)
+Text test_last_report()
 // ----------------------------------------------------------------
-// Write a function's code from its source file, if it can be found
+// The report written last (by this run of the panel or an earlier
+// one), "" if there is none
+// ----------------------------------------------------------------
+{
+  File l_file;
+  Text l_line = "";
+
+  if (!File_exists(TEST_LAST_REPORT_FILE)) return "";
+  if (safe_file_open(TEST_LAST_REPORT_FILE, "r", l_file) != 0) return "";
+  File_read_line(l_file, l_line);
+  File_close(l_file);
+  if (!File_exists(l_line)) return "";
+  return l_line;
+}
+
+Integer test_write_source(File &p_file, Text p_source_folder, Attributes &p_info, Integer p_id)
+// ----------------------------------------------------------------
+// Write a function's code from its source file as a hidden block the
+// page shows with the function (id 'code<p_id>'), if it can be found
 // (in p_source_folder, or the 12d working folder when that is
 // blank). Returns TRUE if it was written.
 // ----------------------------------------------------------------
@@ -99,7 +169,7 @@ Integer test_write_source(File &p_file, Text p_source_folder, Attributes &p_info
   if (!File_exists(l_path)) return FALSE;
   if (safe_file_open(l_path, "r", l_source) != 0) return FALSE;
 
-  File_write_line(p_file, "<pre class='code'>");
+  File_write_line(p_file, "<pre id='code" + To_text(p_id) + "' hidden>");
   for (l_at = 1; l_at <= l_last; ++l_at) {
     if (File_read_line(l_source, l_line) != 0) break;
     if (l_at >= l_first) File_write_line(p_file, test_html(l_line));
@@ -109,234 +179,151 @@ Integer test_write_source(File &p_file, Text p_source_folder, Attributes &p_info
   return TRUE;
 }
 
-Integer test_write_report(Attributes &p_results, Text p_source_folder, Text &p_path)
+void test_write_function_info(File &p_file, Attributes &p_info, Integer p_id)
 // ----------------------------------------------------------------
-// Write the HTML report of p_results; p_path is where it went.
-// Returns SUCCESS or FAILURE.
+// One entry of R.fns: what function p_id is
 // ----------------------------------------------------------------
 {
-  File    l_file;
-  Integer l_count    = record_integer(p_results, ATTR_TR_COUNT);
-  Integer l_checks   = record_integer(p_results, ATTR_TR_CHECKS);
-  Integer l_failed   = test_checks_failed(p_results);
-  Integer l_index    = 0;
-  Integer l_check    = 0;
-  Integer l_row      = 0;
-  Integer l_bucket   = 0;
-  Integer l_most     = 0;
-  Integer l_in_bucket= 0;
-  Integer l_done     = 0;
-  Integer l_total_runs = 0;
-  Integer l_pass     = 0;
-  Real    l_mean     = 0.0;
-  Real    l_spread   = 0.0;
-  Real    l_total    = 0.0;
-  Real    l_width    = 0.0;
-  Text    l_name     = "";
-  Text    l_class    = "";
-  Text    l_group    = "";
-  Text    l_returns  = "";
-  Text    l_bucket_name = "";
-  Text    l_note     = record_text(p_results, ATTR_TR_NOTE);
+  Integer l_writes = 0;
+
+  if (record_integer(p_info, ATTR_TEST_FLAGS) == TEST_FLAG_WRITES_FILES) l_writes = 1;
+  File_write_line(p_file, "{id:" + To_text(p_id) + ",name:" + test_js(record_text(p_info, ATTR_TEST_NAME)) +
+                  ",part:" + test_js(record_text(p_info, ATTR_TEST_PART)) + ",module:" + test_js(record_text(p_info, ATTR_TEST_MODULE)) +
+                  ",kind:" + test_js(record_text(p_info, ATTR_TEST_KIND)) + ",file:" + test_js(record_text(p_info, ATTR_TEST_FILE)) +
+                  ",first:" + To_text(record_integer(p_info, ATTR_TEST_FIRST)) + ",last:" + To_text(record_integer(p_info, ATTR_TEST_LAST)) +
+                  ",returns:" + test_js(record_text(p_info, ATTR_TEST_RETURNS)) + ",sig:" + test_js(record_text(p_info, ATTR_TEST_SIGNATURE)) +
+                  ",calls:" + test_js(record_text(p_info, ATTR_TEST_CALLS)) + ",writes:" + To_text(l_writes) +
+                  ",why:" + test_js(record_text(p_info, ATTR_TEST_WHY)) + "},");
+}
+
+void test_write_run(File &p_file, Attributes &p_results, Integer p_index)
+// ----------------------------------------------------------------
+// One entry of R.runs: function run p_index (one data set's calls)
+// ----------------------------------------------------------------
+{
+  Integer l_done    = record_integer_at(p_results, ATTR_TR_DONE, p_index);
+  Integer l_row     = 0;
+  Integer l_sample  = 0;
+  Integer l_bucket  = 0;
+  Integer l_has_ret = 0;
+  Real    l_mean    = 0.0;
+  Real    l_squares = 0.0;
+  Real    l_ret_mean= 0.0;
+  Text    l_line    = "";
+  Text    l_returns = record_text(g_test_info, ATTR_TEST_RETURNS);
+
+  if (l_done > 0) {
+    l_mean     = record_real_at(p_results, ATTR_TR_SUM,     p_index) / l_done * 1000000.0;
+    l_squares  = record_real_at(p_results, ATTR_TR_SUM_SQ,  p_index) / l_done * 1000000000000.0;
+    l_ret_mean = record_real_at(p_results, ATTR_TR_RET_SUM, p_index) / l_done;
+    if (l_returns == "Integer" || l_returns == "Real") l_has_ret = 1;
+  }
+  l_line = "{f:" + To_text(record_integer_at(p_results, ATTR_TR_ID, p_index)) + ",s:" + To_text(record_integer_at(p_results, ATTR_TR_SET, p_index)) +
+           ",n:" + To_text(l_done) + ",mean:" + test_js_number(l_mean) + ",sq:" + test_js_number(l_squares) +
+           ",min:" + test_js_number(record_real_at(p_results, ATTR_TR_MIN, p_index) * 1000000.0) +
+           ",max:" + test_js_number(record_real_at(p_results, ATTR_TR_MAX, p_index) * 1000000.0) +
+           ",first:" + test_js_number(record_real_at(p_results, ATTR_TR_FIRST, p_index) * 1000000.0) +
+           ",ms:" + test_js_number(record_real_at(p_results, ATTR_TR_TOTAL, p_index) * 1000.0) +
+           ",fnms:" + test_js_number(record_real_at(p_results, ATTR_TR_SUM, p_index) * 1000.0) +
+           ",hasret:" + To_text(l_has_ret) + ",rmin:" + test_js_number(record_real_at(p_results, ATTR_TR_RET_MIN, p_index)) +
+           ",rmax:" + test_js_number(record_real_at(p_results, ATTR_TR_RET_MAX, p_index)) + ",rmean:" + test_js_number(l_ret_mean) + ",b:[";
+  for (l_bucket = 1; l_bucket <= TEST_BUCKETS; ++l_bucket) {
+    if (l_bucket > 1) l_line = l_line + ",";
+    l_line = l_line + To_text(record_integer_at(p_results, ATTR_TR_BUCKET, (p_index - 1) * TEST_BUCKETS + l_bucket));
+  }
+  File_write_line(p_file, l_line + "],dom:" + test_js(record_text_at(p_results, ATTR_TR_DOMAINS, p_index)) + ",smp:[");
+  for (l_sample = 1; l_sample <= min_integer(l_done, TEST_SAMPLES); ++l_sample) {
+    l_row = (p_index - 1) * TEST_SAMPLES + l_sample;
+    File_write_line(p_file, "[" + test_js(record_text_at(p_results, ATTR_TR_SAMPLE_IN, l_row)) + "," +
+                    test_js(record_text_at(p_results, ATTR_TR_SAMPLE_OUT, l_row)) + "," +
+                    test_js_number(record_real_at(p_results, ATTR_TR_SAMPLE_TIME, l_row) * 1000000.0) + "],");
+  }
+  File_write_line(p_file, "]},");
+}
+
+Integer test_write_report(Attributes &p_results, Text p_source_folder, Text p_folder, Text &p_path)
+// ----------------------------------------------------------------
+// Write the HTML report of p_results in p_folder; p_path is where it
+// went. Returns SUCCESS or FAILURE.
+// ----------------------------------------------------------------
+{
+  File       l_file;
+  File       l_last;
+  Attributes l_seen;
+  Integer    l_count   = record_integer(p_results, ATTR_TR_COUNT);
+  Integer    l_checks  = record_integer(p_results, ATTR_TR_CHECKS);
+  Integer    l_skipped = record_integer(p_results, ATTR_TR_SKIPPED);
+  Integer    l_index   = 0;
+  Integer    l_id      = 0;
+  Integer    l_ok      = 0;
 
   if (!Directory_exists(SAFE_WRITE_FOLDER )) Directory_create(SAFE_WRITE_FOLDER);
   if (!Directory_exists(TEST_REPORT_FOLDER)) Directory_create(TEST_REPORT_FOLDER);
-  p_path = test_report_path(record_text(p_results, ATTR_TR_STARTED));
+  if (!Directory_exists(p_folder)) Directory_create(p_folder);
+  p_path = test_report_path(p_folder);
   if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
 
-  for (l_index = 1; l_index <= l_count; ++l_index) l_total_runs = l_total_runs + record_integer_at(p_results, ATTR_TR_DONE, l_index);
+  test_report_page_start(l_file);
 
-  // ---------------------------------------------------- head and summary
-  File_write_line(l_file, "<!doctype html>");
-  File_write_line(l_file, "<html><head><meta charset='utf-8'><title>Cubeland test report</title>");
-  File_write_line(l_file, "<style>");
-  File_write_line(l_file, "body{font-family:Segoe UI,Arial,sans-serif;margin:24px;color:#1d1f23;background:#f6f7f9}");
-  File_write_line(l_file, "h1{margin:0 0 4px}h2{margin-top:32px;border-bottom:2px solid #ccd;padding-bottom:4px}");
-  File_write_line(l_file, "table{border-collapse:collapse;background:#fff;margin:8px 0}");
-  File_write_line(l_file, "td,th{border:1px solid #d5d8de;padding:4px 8px;text-align:left;vertical-align:top;font-size:13px}");
-  File_write_line(l_file, "th{background:#e9ecf1}td.num{text-align:right;font-family:Consolas,monospace}");
-  File_write_line(l_file, ".pass{color:#17803d;font-weight:600}.fail{color:#c0262d;font-weight:600}");
-  File_write_line(l_file, ".box{background:#fff;border:1px solid #d5d8de;border-radius:6px;padding:12px 16px;margin:12px 0}");
-  File_write_line(l_file, ".sig{font-family:Consolas,monospace;font-size:14px;background:#eef1f6;padding:6px 8px;border-radius:4px}");
-  File_write_line(l_file, ".code{background:#1e2127;color:#d8dee9;padding:10px;border-radius:4px;font-size:12px;overflow:auto}");
-  File_write_line(l_file, ".bar{display:inline-block;height:12px;background:#4a7bd0;vertical-align:middle}");
-  File_write_line(l_file, ".note{background:#fff4d6;border:1px solid #e6c35c;padding:8px 12px;border-radius:4px}");
-  File_write_line(l_file, ".small{color:#5b6270;font-size:12px}");
-  File_write_line(l_file, "</style></head><body>");
-  File_write_line(l_file, "<h1>Cubeland test report</h1>");
-  File_write_line(l_file, "<div class='small'>" + test_html(record_text(p_results, ATTR_TR_TITLE)) + " &middot; started " +
-                  test_html(record_text(p_results, ATTR_TR_STARTED)) + "</div>");
-  if (l_note != "") {
-    File_write_line(l_file, "<p class='note'>The previous test run stopped inside <b>" + test_html(l_note) +
-                    "</b> (a macro error, or 12d was closed). It may not handle the inputs it was given there.</p>");
+  // ---------------------------------------------------- the run
+  File_write_line(l_file, "<script>");
+  File_write_line(l_file, "const R = {title:" + test_js(record_text(p_results, ATTR_TR_TITLE)) + ",started:" + test_js(record_text(p_results, ATTR_TR_STARTED)) +
+                  ",seconds:" + test_js_number(record_real(p_results, ATTR_TR_SECONDS)) +
+                  ",clock:" + test_js_number(record_real(p_results, ATTR_TR_CLOCK) * 1000000.0) + ",note:" + test_js(record_text(p_results, ATTR_TR_NOTE)) + ",");
+  File_write_line(l_file, "checks:[");
+  for (l_index = 1; l_index <= l_checks; ++l_index) {
+    l_ok = 0;
+    if (record_integer_at(p_results, ATTR_TR_CHECK_OK, l_index) == TRUE) l_ok = 1;
+    File_write_line(l_file, "[" + test_js(record_text_at(p_results, ATTR_TR_CHECK_GROUP, l_index)) + "," +
+                    test_js(record_text_at(p_results, ATTR_TR_CHECK_NAME, l_index)) + "," +
+                    test_js(record_text_at(p_results, ATTR_TR_CHECK_WANT, l_index)) + "," +
+                    test_js(record_text_at(p_results, ATTR_TR_CHECK_GOT, l_index)) + "," + To_text(l_ok) + "],");
   }
-  File_write_line(l_file, "<div class='box'><table>");
-  File_write_line(l_file, "<tr><th>Functions run</th><td class='num'>" + To_text(l_count) + "</td></tr>");
-  File_write_line(l_file, "<tr><th>Calls made</th><td class='num'>" + To_text(l_total_runs) + "</td></tr>");
-  if (l_checks > 0) {
-    l_class = "pass";
-    if (l_failed > 0) l_class = "fail";
-    File_write_line(l_file, "<tr><th>Unit test checks</th><td class='num'>" + To_text(l_checks) + "</td></tr>");
-    File_write_line(l_file, "<tr><th>Failed checks</th><td class='num " + l_class + "'>" + To_text(l_failed) + "</td></tr>");
-  }
-  File_write_line(l_file, "<tr><th>Whole run</th><td class='num'>" + To_text(record_real(p_results, ATTR_TR_SECONDS), 3) + " s</td></tr>");
-  File_write_line(l_file, "<tr><th>One clock reading</th><td class='num'>" + test_micro(record_real(p_results, ATTR_TR_CLOCK)) +
-                  " &micro;s (taken off every timed call)</td></tr>");
-  File_write_line(l_file, "</table></div>");
-
-  // ---------------------------------------------------- unit tests
-  if (l_checks > 0) {
-    if (l_failed > 0) {
-      File_write_line(l_file, "<h2>Failed checks</h2><table><tr><th>Group</th><th>Check</th><th>Wanted</th><th>Got</th></tr>");
-      for (l_check = 1; l_check <= l_checks; ++l_check) {
-        if (record_integer_at(p_results, ATTR_TR_CHECK_OK, l_check) == TRUE) continue;
-        File_write_line(l_file, "<tr><td>" + test_html(record_text_at(p_results, ATTR_TR_CHECK_GROUP, l_check)) + "</td><td>" +
-                        test_html(record_text_at(p_results, ATTR_TR_CHECK_NAME, l_check)) + "</td><td>" +
-                        test_html(record_text_at(p_results, ATTR_TR_CHECK_WANT, l_check)) + "</td><td class='fail'>" +
-                        test_html(record_text_at(p_results, ATTR_TR_CHECK_GOT, l_check)) + "</td></tr>");
-      }
-      File_write_line(l_file, "</table>");
-    }
-    File_write_line(l_file, "<h2>Unit tests</h2><table><tr><th>Group</th><th>Check</th><th>Wanted</th><th>Got</th><th></th></tr>");
-    for (l_check = 1; l_check <= l_checks; ++l_check) {
-      l_group = record_text_at(p_results, ATTR_TR_CHECK_GROUP, l_check);
-      l_pass  = record_integer_at(p_results, ATTR_TR_CHECK_OK, l_check) == TRUE;
-      l_class = "fail";
-      l_name  = "fail";
-      if (l_pass) {
-        l_class = "pass";
-        l_name  = "pass";
-      }
-      File_write_line(l_file, "<tr><td>" + test_html(l_group) + "</td><td>" + test_html(record_text_at(p_results, ATTR_TR_CHECK_NAME, l_check)) +
-                      "</td><td>" + test_html(record_text_at(p_results, ATTR_TR_CHECK_WANT, l_check)) + "</td><td>" +
-                      test_html(record_text_at(p_results, ATTR_TR_CHECK_GOT, l_check)) + "</td><td class='" + l_class + "'>" + l_name + "</td></tr>");
-    }
-    File_write_line(l_file, "</table>");
-  }
-
-  // ---------------------------------------------------- functions: overview
-  if (l_count > 0) {
-    File_write_line(l_file, "<h2>Functions</h2>");
-    File_write_line(l_file, "<p class='small'>Times are per call, in microseconds, measured around the call alone. Calls a second counts the whole loop, inputs included.</p>");
-    File_write_line(l_file, "<table><tr><th>Function</th><th>Part</th><th>Calls</th><th>Mean</th><th>Fastest</th><th>Slowest</th><th>Spread (sd)</th><th>All calls (ms)</th><th>Calls a second</th></tr>");
-    for (l_index = 1; l_index <= l_count; ++l_index) {
-      test_registry_info(record_integer_at(p_results, ATTR_TR_ID, l_index), g_test_info);
-      l_done = record_integer_at(p_results, ATTR_TR_DONE, l_index);
-      l_mean = 0.0;
-      l_spread = 0.0;
-      if (l_done > 0) {
-        l_mean   = record_real_at(p_results, ATTR_TR_SUM, l_index) / l_done;
-        l_spread = Sqrt(max_real(0.0, record_real_at(p_results, ATTR_TR_SUM_SQ, l_index) / l_done - l_mean * l_mean));
-      }
-      l_total = record_real_at(p_results, ATTR_TR_TOTAL, l_index);
-      l_width = 0.0;
-      if (l_total > 0.0) l_width = l_done / l_total;
-      File_write_line(l_file, "<tr><td><a href='#f" + To_text(l_index) + "'>" + test_html(record_text(g_test_info, ATTR_TEST_NAME)) +
-                      "</a></td><td>" + test_html(record_text(g_test_info, ATTR_TEST_PART)) + "</td><td class='num'>" + To_text(l_done) +
-                      "</td><td class='num'>" + test_micro(l_mean) + "</td><td class='num'>" + test_micro(record_real_at(p_results, ATTR_TR_MIN, l_index)) +
-                      "</td><td class='num'>" + test_micro(record_real_at(p_results, ATTR_TR_MAX, l_index)) + "</td><td class='num'>" +
-                      test_micro(l_spread) + "</td><td class='num'>" + To_text(l_total * 1000.0, 3) + "</td><td class='num'>" +
-                      To_text(floor_integer(l_width)) + "</td></tr>");
-    }
-    File_write_line(l_file, "</table>");
-  }
-
-  // ---------------------------------------------------- functions left out
-  if (record_integer(p_results, ATTR_TR_SKIPPED) > 0) {
-    File_write_line(l_file, "<h2>Left out</h2><table><tr><th>Function</th><th>Part</th><th>Why</th></tr>");
-    for (l_row = 1; l_row <= record_integer(p_results, ATTR_TR_SKIPPED); ++l_row) {
-      test_registry_info(record_integer_at(p_results, ATTR_TR_SKIPPED_ID, l_row), g_test_info);
-      l_name = record_text(g_test_info, ATTR_TEST_WHY);
-      if (l_name == "") l_name = "writes files (set the panel to include them)";
-      File_write_line(l_file, "<tr><td>" + test_html(record_text(g_test_info, ATTR_TEST_NAME)) + "</td><td>" +
-                      test_html(record_text(g_test_info, ATTR_TEST_PART)) + "</td><td>" + test_html(l_name) + "</td></tr>");
-    }
-    File_write_line(l_file, "</table>");
-  }
-
-  // ---------------------------------------------------- functions: detail
+  File_write_line(l_file, "],runs:[");
   for (l_index = 1; l_index <= l_count; ++l_index) {
     test_registry_info(record_integer_at(p_results, ATTR_TR_ID, l_index), g_test_info);
-    l_done    = record_integer_at(p_results, ATTR_TR_DONE, l_index);
-    l_returns = record_text(g_test_info, ATTR_TEST_RETURNS);
-    l_mean    = 0.0;
-    l_spread  = 0.0;
-    if (l_done > 0) {
-      l_mean   = record_real_at(p_results, ATTR_TR_SUM, l_index) / l_done;
-      l_spread = Sqrt(max_real(0.0, record_real_at(p_results, ATTR_TR_SUM_SQ, l_index) / l_done - l_mean * l_mean));
-    }
-    File_write_line(l_file, "<h2 id='f" + To_text(l_index) + "'>" + test_html(record_text(g_test_info, ATTR_TEST_NAME)) + "</h2>");
-    File_write_line(l_file, "<div class='sig'>" + test_html(record_text(g_test_info, ATTR_TEST_SIGNATURE)) + "</div>");
-    File_write_line(l_file, "<table>");
-    if (record_text(g_test_info, ATTR_TEST_KIND) == "library") {
-      File_write_line(l_file, "<tr><th>Where</th><td>12d library call</td></tr>");
-    } else {
-      File_write_line(l_file, "<tr><th>Where</th><td>" + test_html(record_text(g_test_info, ATTR_TEST_FILE)) + ", lines " +
-                      To_text(record_integer(g_test_info, ATTR_TEST_FIRST)) + " to " + To_text(record_integer(g_test_info, ATTR_TEST_LAST)) +
-                      " (" + To_text(record_integer(g_test_info, ATTR_TEST_LAST) - record_integer(g_test_info, ATTR_TEST_FIRST) + 1) + " lines)</td></tr>");
-    }
-    if (record_text(g_test_info, ATTR_TEST_CALLS) != "") {
-      File_write_line(l_file, "<tr><th>Calls</th><td>" + test_html(record_text(g_test_info, ATTR_TEST_CALLS)) + "</td></tr>");
-    }
-    if (record_integer(g_test_info, ATTR_TEST_FLAGS) == TEST_FLAG_WRITES_FILES) {
-      File_write_line(l_file, "<tr><th>Note</th><td>writes files (in cubeland_worlds)</td></tr>");
-    }
-    if (record_text_at(p_results, ATTR_TR_DOMAINS, l_index) != "") {
-      File_write_line(l_file, "<tr><th>Inputs</th><td>" + test_html(record_text_at(p_results, ATTR_TR_DOMAINS, l_index)) + "</td></tr>");
-    }
-    l_name = "typical values every call";
-    if (record_integer_at(p_results, ATTR_TR_RANDOM, l_index) == TRUE) l_name = "typical values, then random ones";
-    File_write_line(l_file, "<tr><th>Calls</th><td>" + To_text(l_done) + " (" + l_name + ")</td></tr>");
-    File_write_line(l_file, "<tr><th>Time a call</th><td>mean " + test_micro(l_mean) + " &micro;s, fastest " +
-                    test_micro(record_real_at(p_results, ATTR_TR_MIN, l_index)) + ", slowest " +
-                    test_micro(record_real_at(p_results, ATTR_TR_MAX, l_index)) + ", spread " + test_micro(l_spread) + "</td></tr>");
-    File_write_line(l_file, "<tr><th>All calls</th><td>" + To_text(record_real_at(p_results, ATTR_TR_TOTAL, l_index) * 1000.0, 3) +
-                    " ms with making the inputs, " + To_text(record_real_at(p_results, ATTR_TR_SUM, l_index) * 1000.0, 3) + " ms in the function</td></tr>");
-    if ((l_returns == "Integer" || l_returns == "Real") && l_done > 0) {
-      File_write_line(l_file, "<tr><th>Returned</th><td>" + To_text(record_real_at(p_results, ATTR_TR_RET_MIN, l_index), 4) + " to " +
-                      To_text(record_real_at(p_results, ATTR_TR_RET_MAX, l_index), 4) + ", mean " +
-                      To_text(record_real_at(p_results, ATTR_TR_RET_SUM, l_index) / l_done, 4) + "</td></tr>");
-    }
-    File_write_line(l_file, "</table>");
-
-    // time histogram
-    l_most = 1;
-    for (l_bucket = 1; l_bucket <= TEST_BUCKETS; ++l_bucket) {
-      l_most = max_integer(l_most, record_integer_at(p_results, ATTR_TR_BUCKET, (l_index - 1) * TEST_BUCKETS + l_bucket));
-    }
-    File_write_line(l_file, "<table><tr><th>Time a call</th><th>Calls</th><th></th></tr>");
-    for (l_bucket = 1; l_bucket <= TEST_BUCKETS; ++l_bucket) {
-      l_in_bucket = record_integer_at(p_results, ATTR_TR_BUCKET, (l_index - 1) * TEST_BUCKETS + l_bucket);
-      if (l_bucket == 1) l_bucket_name = "under 1 &micro;s";
-      if (l_bucket == 2) l_bucket_name = "1 to 3 &micro;s";
-      if (l_bucket == 3) l_bucket_name = "3 to 10 &micro;s";
-      if (l_bucket == 4) l_bucket_name = "10 to 30 &micro;s";
-      if (l_bucket == 5) l_bucket_name = "30 to 100 &micro;s";
-      if (l_bucket == 6) l_bucket_name = "100 to 300 &micro;s";
-      if (l_bucket == 7) l_bucket_name = "0.3 to 1 ms";
-      if (l_bucket == 8) l_bucket_name = "over 1 ms";
-      File_write_line(l_file, "<tr><td>" + l_bucket_name + "</td><td class='num'>" + To_text(l_in_bucket) +
-                      "</td><td><span class='bar' style='width:" + To_text(floor_integer(300.0 * l_in_bucket / l_most)) + "px'></span></td></tr>");
-    }
-    File_write_line(l_file, "</table>");
-
-    // sample calls
-    File_write_line(l_file, "<table><tr><th>Call</th><th>Inputs</th><th>Outputs</th><th>&micro;s</th></tr>");
-    for (l_row = 1; l_row <= min_integer(l_done, TEST_SAMPLES); ++l_row) {
-      l_check = (l_index - 1) * TEST_SAMPLES + l_row;
-      File_write_line(l_file, "<tr><td class='num'>" + To_text(l_row) + "</td><td>" + test_html(record_text_at(p_results, ATTR_TR_SAMPLE_IN, l_check)) +
-                      "</td><td>" + test_html(record_text_at(p_results, ATTR_TR_SAMPLE_OUT, l_check)) + "</td><td class='num'>" +
-                      test_micro(record_real_at(p_results, ATTR_TR_SAMPLE_TIME, l_check)) + "</td></tr>");
-    }
-    File_write_line(l_file, "</table>");
-
-    if (!test_write_source(l_file, p_source_folder, g_test_info) && record_text(g_test_info, ATTR_TEST_KIND) != "library") {
-      File_write_line(l_file, "<p class='small'>Code not shown: set the source folder in the panel to the folder holding src\\.</p>");
-    }
+    test_write_run(l_file, p_results, l_index);
+  }
+  File_write_line(l_file, "],skipped:[");
+  for (l_index = 1; l_index <= l_skipped; ++l_index) {
+    File_write_line(l_file, To_text(record_integer_at(p_results, ATTR_TR_SKIPPED_ID, l_index)) + ",");
   }
 
-  File_write_line(l_file, "</body></html>");
+  // ---------------------------------------------------- each function once
+  record_clear(l_seen, DATATYPE_TEST_RESULTS);
+  File_write_line(l_file, "],fns:[");
+  for (l_index = 1; l_index <= l_count + l_skipped; ++l_index) {
+    if (l_index <= l_count) {
+      l_id = record_integer_at(p_results, ATTR_TR_ID, l_index);
+    } else {
+      l_id = record_integer_at(p_results, ATTR_TR_SKIPPED_ID, l_index - l_count);
+    }
+    if (record_integer_at(l_seen, ATTR_TR_ID, l_id) != 0) continue;
+    record_set_integer_at(l_seen, ATTR_TR_ID, l_id, 1);
+    test_registry_info(l_id, g_test_info);
+    test_write_function_info(l_file, g_test_info, l_id);
+  }
+  File_write_line(l_file, "]};");
+  File_write_line(l_file, "</script>");
+
+  // ---------------------------------------------------- their code
+  record_clear(l_seen, DATATYPE_TEST_RESULTS);
+  for (l_index = 1; l_index <= l_count; ++l_index) {
+    l_id = record_integer_at(p_results, ATTR_TR_ID, l_index);
+    if (record_integer_at(l_seen, ATTR_TR_ID, l_id) != 0) continue;
+    record_set_integer_at(l_seen, ATTR_TR_ID, l_id, 1);
+    test_registry_info(l_id, g_test_info);
+    test_write_source(l_file, p_source_folder, g_test_info, l_id);
+  }
+
+  test_report_page_end(l_file);
   File_close(l_file);
+
+  // remember it for Open last report
+  if (safe_file_open(TEST_LAST_REPORT_FILE, "w", l_last) == 0) {
+    File_write_line(l_last, p_path);
+    File_close(l_last);
+  }
   return SUCCESS;
 }
 

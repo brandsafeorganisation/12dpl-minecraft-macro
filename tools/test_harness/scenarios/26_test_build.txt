@@ -1,10 +1,12 @@
 # build: test
-# The test build: run every unit test and every function once, then
-# one function 500 times with random inputs, a library call, and a
-# function that can not be run; each writes an HTML report.
+# The test build: run every unit test and every function (each data
+# set), then one function 500 times a data set, a library call, a
+# function that can not be run, a report in another folder, and Open
+# last report; each run writes an HTML report and opens it.
 wait 2
 button everything
 wait 1
+call opened
 input Find function|floor_divide
 button filter
 select_name floor_divide
@@ -15,11 +17,22 @@ wait 1
 input Find function|library
 button filter
 select_name Get_subtext
+input Data sets (typical, random, edges or all)|edges
 button run
 wait 1
 input Find function|menu_panel_run
 button filter
 button run
 wait 1
+input Report folder|cubeland_worlds\elsewhere
+input Find function|clamp_integer
+button filter
+select_name clamp_integer
+input Data sets (typical, random, edges or all)|all
+button run
+wait 1
+call opened
+button open
+call opened
 call test_reports
 quit

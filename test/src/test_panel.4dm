@@ -16,10 +16,14 @@
 //                       "library" for the library calls)
 //   Run selected        call the selected function Runs times and
 //                       write a report on it
-//   Run all once        call every function once with typical inputs
+//   Run all once        call every function a few times with each data set
 //   Unit tests          run the checks in test_cases.4dm
 //   Everything          the unit tests, then every function once
 //   Make test world     generate the world the functions work on again
+//   Open last report    open the newest report in the web browser
+//
+// Data sets says which inputs the calls get (typical values, random
+// ones, the ends of each range, or all three, compared in the report).
 //
 // It names the global records and reads the clock, as controllers do.
 // ----------------------------------------------------------------
@@ -67,9 +71,11 @@ Integer test_panel_run()
   Input_Box          l_find_box     = Create_input_box("Find function", l_message);
   List_Box           l_list         = Create_list_box("Functions", l_message, 12);
   Input_Box          l_runs_box     = Create_input_box("Runs", l_message);
-  Input_Box          l_random_box   = Create_input_box("Random inputs (yes or no)", l_message);
+  Input_Box          l_sets_box     = Create_input_box("Data sets (typical, random, edges or all)", l_message);
   Input_Box          l_writers_box  = Create_input_box("Run all includes functions that write files (yes or no)", l_message);
   Input_Box          l_source_box   = Create_input_box("Source folder (holds src, for code in the report)", l_message);
+  Input_Box          l_folder_box   = Create_input_box("Report folder", l_message);
+  Input_Box          l_open_box     = Create_input_box("Open the report when it is written (yes or no)", l_message);
   Draw_Box           l_box          = Create_draw_box(TEST_BOX_WIDTH, TEST_BOX_HEIGHT, 0);
   Horizontal_Group   l_buttons      = Create_button_group();
   Button             l_filter_button= Create_button("&Filter", "filter");
@@ -79,6 +85,7 @@ Integer test_panel_run()
   Horizontal_Group   l_buttons_2    = Create_button_group();
   Button             l_every_button = Create_button("&Everything", "everything");
   Button             l_world_button = Create_button("Make test &world", "world");
+  Button             l_open_button  = Create_button("&Open last report", "open");
   Button             l_quit_button  = Create_finish_button("Quit", "quit");
   Integer            l_running      = TRUE;
   Integer            l_result       = 0;
@@ -86,7 +93,11 @@ Integer test_panel_run()
   Integer            l_selected     = 0;
   Integer            l_id           = 0;
   Integer            l_runs         = 0;
-  Integer            l_random       = TRUE;
+  Integer            l_set          = 0;
+  Integer            l_set_first    = TEST_SET_TYPICAL;
+  Integer            l_set_last     = TEST_SETS;
+  Integer            l_open         = TRUE;
+  Integer            l_written      = FALSE;
   Integer            l_writers      = FALSE;
   Integer            l_index        = 0;
   Integer            l_ran          = 0;
@@ -106,6 +117,7 @@ Integer test_panel_run()
   Text               l_left         = "";
   Text               l_title        = "";
   Text               l_folder       = TEST_REPORT_FOLDER;
+  Text               l_last_report  = "";
 
   Append(l_filter_button, l_buttons);
   Append(l_run_button   , l_buttons);
@@ -113,13 +125,16 @@ Integer test_panel_run()
   Append(l_unit_button  , l_buttons);
   Append(l_every_button , l_buttons_2);
   Append(l_world_button , l_buttons_2);
+  Append(l_open_button  , l_buttons_2);
   Append(l_quit_button  , l_buttons_2);
   Append(l_find_box     , l_vgroup);
   Append(l_list         , l_vgroup);
   Append(l_runs_box     , l_vgroup);
-  Append(l_random_box   , l_vgroup);
+  Append(l_sets_box     , l_vgroup);
   Append(l_writers_box  , l_vgroup);
   Append(l_source_box   , l_vgroup);
+  Append(l_folder_box   , l_vgroup);
+  Append(l_open_box     , l_vgroup);
   Append(l_buttons      , l_vgroup);
   Append(l_buttons_2    , l_vgroup);
   Append(l_box          , l_vgroup);
@@ -130,9 +145,14 @@ Integer test_panel_run()
   g_test_box     = l_box;
   g_test_message = l_message;
   Set_data(l_runs_box,    To_text(TEST_DEFAULT_RUNS));
-  Set_data(l_random_box,  "yes");
+  Set_data(l_sets_box,    "all");
+  Set_data(l_folder_box,  l_folder);
+  Set_data(l_open_box,    "yes");
   Set_data(l_writers_box, "no");
+  // the code for the report: next to the working folder (12d), or one
+  // folder up (release\cubeland_test.exe in the repository)
   Set_data(l_source_box,  "");
+  if (!File_exists("src\\build.4dm") && File_exists("..\\src\\build.4dm")) Set_data(l_source_box, "..");
 
   // the same start as the game, then a world for the functions
   Set_data(l_message, "Loading textures and making the test world...");
@@ -172,8 +192,24 @@ Integer test_panel_run()
     l_runs = TEST_DEFAULT_RUNS;
     if (From_text(Text_justify(l_text), l_runs) != 0) l_runs = TEST_DEFAULT_RUNS;
     l_runs = clamp_integer(l_runs, 1, TEST_MAX_RUNS);
-    Get_data(l_random_box, l_text);
-    l_random = Text_lower(Text_justify(l_text)) != "no";
+    Get_data(l_sets_box, l_text);
+    l_text      = Text_lower(Text_justify(l_text));
+    l_set_first = TEST_SET_TYPICAL;
+    l_set_last  = TEST_SETS;
+    if (l_text == "typical") l_set_last  = TEST_SET_TYPICAL;
+    if (l_text == "random" ) {
+      l_set_first = TEST_SET_RANDOM;
+      l_set_last  = TEST_SET_RANDOM;
+    }
+    if (l_text == "edges"  ) {
+      l_set_first = TEST_SET_EDGES;
+      l_set_last  = TEST_SET_EDGES;
+    }
+    Get_data(l_open_box, l_text);
+    l_open = Text_lower(Text_justify(l_text)) != "no";
+    Get_data(l_folder_box, l_folder);
+    l_folder = Text_justify(l_folder);
+    if (l_folder == "") l_folder = TEST_REPORT_FOLDER;
     Get_data(l_writers_box, l_text);
     l_writers = Text_lower(Text_justify(l_text)) == "yes";
     Get_data(l_source_box, l_source);
@@ -188,6 +224,14 @@ Integer test_panel_run()
       Set_data(l_message, "Making the test world...");
       test_make_world(TEST_WORLD_SEED);
       Set_data(l_message, "Made the test world (seed " + To_text(TEST_WORLD_SEED) + ").");
+
+    } else if (l_cmd == "open") {
+      if (l_last_report == "") l_last_report = test_last_report();
+      if (l_last_report == "") {
+        Set_data(l_message, "No report yet in " + l_folder + ".");
+      } else if (safe_open_html(l_panel, l_last_report) != 0) {
+        Set_data(l_message, "Could not open " + l_last_report + ".");
+      }
 
     } else if (l_cmd == "run") {
       l_selected = 0;
@@ -207,12 +251,15 @@ Integer test_panel_run()
       test_results_clear(g_test_results, record_text(g_test_info, ATTR_TEST_NAME) + " x " + To_text(l_runs), l_clock);
       record_set_text(g_test_results, ATTR_TR_NOTE, test_progress_left());
       Get_time(l_start);
-      test_run_function(l_id, l_runs, l_random, g_random, g_test_results);
+      for (l_set = l_set_first; l_set <= l_set_last; ++l_set) test_run_function(l_id, l_runs, l_set, g_random, g_test_results);
       Get_time(l_end);
       record_set_real(g_test_results, ATTR_TR_SECONDS, l_end - l_start);
-      if (test_write_report(g_test_results, l_source, l_path) == SUCCESS) {
-        Set_data(l_message, "Ran " + record_text(g_test_info, ATTR_TEST_NAME) + " " + To_text(l_runs) + " times in " +
+      l_written = test_write_report(g_test_results, l_source, l_folder, l_path) == SUCCESS;
+      if (l_written) {
+        l_last_report = l_path;
+        Set_data(l_message, "Ran " + record_text(g_test_info, ATTR_TEST_NAME) + " " + To_text(l_runs) + " times a data set in " +
                  To_text(l_end - l_start, 3) + " s. Report: " + l_path);
+        if (l_open) safe_open_html(l_panel, l_path);
       } else {
         Set_data(l_message, "Ran it, but could not write the report in " + l_folder + ".");
       }
@@ -220,9 +267,9 @@ Integer test_panel_run()
     } else if (l_cmd == "run_all" || l_cmd == "unit" || l_cmd == "everything") {
       l_do_units = l_cmd == "unit" || l_cmd == "everything";
       l_do_all   = l_cmd == "run_all" || l_cmd == "everything";
-      l_title    = "Every function once";
+      l_title    = "Every function";
       if (l_cmd == "unit") l_title = "Unit tests";
-      if (l_cmd == "everything") l_title = "Unit tests and every function once";
+      if (l_cmd == "everything") l_title = "Unit tests and every function";
       test_results_clear(g_test_results, l_title, l_clock);
       record_set_text(g_test_results, ATTR_TR_NOTE, test_progress_left());
       Get_time(l_start);
@@ -247,7 +294,7 @@ Integer test_panel_run()
             continue;
           }
           if (positive_mod(l_ran, 25) == 0) Set_data(l_message, "Running " + record_text(g_test_info, ATTR_TEST_NAME) + "...");
-          test_run_function(l_index, 1, FALSE, g_random, g_test_results);
+          for (l_set = l_set_first; l_set <= l_set_last; ++l_set) test_run_function(l_index, TEST_ALL_CALLS, l_set, g_random, g_test_results);
           ++l_ran;
         }
         // whatever the functions did to the game's records, start clean
@@ -261,8 +308,11 @@ Integer test_panel_run()
                  To_text(record_integer(g_test_results, ATTR_TR_CHECKS)) + " checks passed. ";
       }
       if (l_do_all) l_text = l_text + "Ran " + To_text(l_ran) + " functions (" + To_text(l_skipped) + " left out). ";
-      if (test_write_report(g_test_results, l_source, l_path) == SUCCESS) {
+      l_written = test_write_report(g_test_results, l_source, l_folder, l_path) == SUCCESS;
+      if (l_written) {
+        l_last_report = l_path;
         Set_data(l_message, l_text + "Report: " + l_path);
+        if (l_open) safe_open_html(l_panel, l_path);
       } else {
         Set_data(l_message, l_text + "Could not write the report in " + l_folder + ".");
       }

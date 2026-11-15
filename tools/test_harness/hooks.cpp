@@ -34,6 +34,11 @@ static void place_in_grid(int item,int grid_slot){ // pick up the stack, right c
 static void register_hooks(){
   g_calls["dump"]=dump;
   g_calls["test_reports"]=[]{ if(system("ls cubeland_worlds/test_reports | sed 's/^/[reports] /'; cat cubeland_worlds/test_reports/progress.txt | sed 's/^/[progress] /'")){} };
+#ifdef CUBELAND_REAL_CLOCK
+  g_calls["domains"]=[]{ for(int id=1;id<=TEST_FUNCTION_COUNT;id++){ test_registry_info(id,g_test_info); if(record_text(g_test_info,ATTR_TEST_WHY)!="") continue;
+      test_params_prepare(g_test_info,g_test_params); printf("[domains] %s | %s\n",record_text(g_test_info,ATTR_TEST_NAME).c_str(),test_domains_text(g_test_params).c_str()); } };
+#endif
+  g_calls["opened"]=[]{ printf("[opened] %s\n", g_opened_file.c_str()); };
   g_calls["mode"]=[]{ printf("[mode] %s flying %d spectator %d creative %d survival %d screen %d tabs %d search '%s' matches %d scroll %d cursor %s x%d edits %d target %d\n",
       player_game_mode_name(player_game_mode(g_player)).c_str(),player_flying(g_player),player_spectator(g_player),player_creative(g_player),player_survival(g_player),
       ui_screen(g_ui),record_integer(g_ui,ATTR_UI_TABS),ui_search(g_ui).c_str(),ui_creative_count(g_ui),record_integer(g_ui,ATTR_UI_SCROLL),

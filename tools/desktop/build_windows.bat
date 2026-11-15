@@ -23,14 +23,14 @@ echo Translating the macro to C++ ...
 
 echo Compiling ...
 g++ -O2 -std=c++17 -w -DCUBELAND_DESKTOP -I..\test_harness build\game.cpp desktop.cpp ^
-    -o build\cubeland.exe -mwindows -static -lgdi32 -luser32 -lcomdlg32 || goto :fail
+    -o build\cubeland.exe -mwindows -static -lgdi32 -luser32 -lcomdlg32 -lshell32 || goto :fail
 
 echo Translating the test build to C++ ...
 %PY% ..\test_harness\translate.py ..\.. test\cubeland_test.4dm build\cubeland_test.cpp || goto :fail
 
 echo Compiling the test build ...
 g++ -O2 -std=c++17 -w -DCUBELAND_DESKTOP -I..\test_harness build\cubeland_test.cpp desktop.cpp ^
-    -o build\cubeland_test.exe -mwindows -static -lgdi32 -luser32 -lcomdlg32 || goto :fail
+    -o build\cubeland_test.exe -mwindows -static -lgdi32 -luser32 -lcomdlg32 -lshell32 || goto :fail
 
 echo.
 echo Built build\cubeland.exe - double-click it to play.

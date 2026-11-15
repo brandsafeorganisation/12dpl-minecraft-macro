@@ -24,6 +24,10 @@
 #endif
 #define CUBELAND_TEST_BASE_FILE_4DM_INCLUDED
 
+// The test build writes its reports where you ask and opens them in
+// the browser (see safety.h; prints a warning when it compiles)
+#define SAFE_ALLOW_TEST_REPORTS
+
 #include "src/test_build.4dm"
 
 void main()

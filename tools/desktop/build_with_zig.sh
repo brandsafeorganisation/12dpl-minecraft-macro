@@ -14,7 +14,7 @@ build() {  # entry .4dm, output name
   "$PYTHON" "$HARNESS/translate.py" "$MACRO" "$1" "$HERE/build/$2.cpp"
   $ZIG c++ -target x86_64-windows-gnu -O2 -std=c++17 -w -DCUBELAND_DESKTOP \
     -I "$HARNESS" "$HERE/build/$2.cpp" "$HERE/desktop.cpp" \
-    -o "$HERE/build/$2.exe" -static -lgdi32 -luser32 -lcomdlg32 -Wl,--subsystem,windows
+    -o "$HERE/build/$2.exe" -static -lgdi32 -luser32 -lcomdlg32 -lshell32 -Wl,--subsystem,windows
   echo "built $HERE/build/$2.exe"
 }
 build cubeland.4dm game

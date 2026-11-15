@@ -3,6 +3,7 @@
 #include <sstream>
 #include <deque>
 double g_sim_time = 13300000000.0;
+Text g_opened_file;
 long long g_next_id = 0;
 long long g_attribute_calls = 0;
 long long g_attribute_type_errors = 0;
