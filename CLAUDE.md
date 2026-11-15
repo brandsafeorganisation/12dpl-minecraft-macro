@@ -19,6 +19,8 @@ and the code layout (`src/<part>/`, `include/<part>/`).
   scaffold was rejected and had to be reverted).
 - `release/cubeland_worlds/` holds the owner's saved worlds. Leave it alone.
 - Commit and push to the branch you are given; no pull requests unless asked.
+- When a piece of work is finished and tested, also merge that branch into
+  `main` and push `main` (the owner asked for this to happen every time).
 
 ## Project specifics on top of the style guide
 
