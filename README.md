@@ -314,6 +314,7 @@ include/<part>/*.h    each module's constants, record field names and prototypes
   ui/                 menu_panel, settings_panel, game_panel (the 12d panels:
                       the controllers), font (font names and files)
 test/cubeland_test.4dm the test build: compile it instead of cubeland.4dm (see Testing)
+test/README.md        step-by-step instructions for the test build
 test/src, test/include the test build's code: registry, inputs, runner, unit tests,
                       report, panel
 tools/make_test_registry.py writes the test build's list of functions
@@ -396,6 +397,8 @@ Two switches at the top of `src/build.4dm` loosen it, and each prints a
   doesn't need any of them.
 
 ## Testing
+
+Step-by-step instructions are in [test/README.md](test/README.md).
 
 Compile **test/cubeland_test.4dm** (instead of cubeland.4dm) for the test
 build. It's the same game code with a different panel:
