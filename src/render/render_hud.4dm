@@ -445,7 +445,7 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h)
   hud_help_line(p_box, l_x, l_y, "W A S D"        , "walk (hold one key at a time)");
   hud_help_line(p_box, l_x, l_y, "Space"          , "jump, swim up, fly up; twice quickly to fly in creative");
   hud_help_line(p_box, l_x, l_y, "1 - 9"          , "choose a hotbar slot");
-  hud_help_line(p_box, l_x, l_y, "E"              , "inventory and 2 x 2 crafting");
+  hud_help_line(p_box, l_x, l_y, "E"              , "inventory and 2 x 2 crafting; every item in creative");
   hud_help_line(p_box, l_x, l_y, "Q"              , "pause and free the mouse, or close a screen");
   hud_help_line(p_box, l_x, l_y, "F / J"          , "auto-walk on/off, auto-jump on/off");
   hud_help_line(p_box, l_x, l_y, "C / Shift + W"  , "crouch on/off, crouch while held (both sink when flying)");
@@ -578,7 +578,8 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
        + "   " + To_text(p_frame_ms, 1) + " ms";
   if (settings_flag(p_settings, ATTR_SET_SHOW_DEBUG) && hud_frame_stats(p_hud) != "") l_info = l_info + "   " + hud_frame_stats(p_hud);
   if (player_creative(p_player)) l_info = l_info + "   CREATIVE";
-  if (player_flying(p_player)) l_info = l_info + "   FLYING";
+  if (player_spectator(p_player)) l_info = l_info + "   SPECTATOR";
+  if (player_flying(p_player) && !player_spectator(p_player)) l_info = l_info + "   FLYING";
   if (player_crouching(p_player)) l_info = l_info + "   CROUCHING";
   if (player_auto_walk(p_player)) l_info = l_info + "   AUTO-WALK";
   if (!settings_flag(p_settings, ATTR_SET_AUTO_JUMP)) l_info = l_info + "   auto-jump off";
@@ -586,8 +587,9 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
 
   if (p_screen_open) return;
 
-  if (settings_flag(p_settings, ATTR_SET_SHOW_HUD)) {
-    // Hand, crosshair, hotbar and health
+  // Spectators hold nothing and touch nothing: no hand, crosshair or hotbar
+  if (settings_flag(p_settings, ATTR_SET_SHOW_HUD) && !player_spectator(p_player)) {
+    // Hand, crosshair, hotbar and health (only survival has health)
     if (!l_dead) hud_draw_hand(p_box, p_w, l_strip, p_h, l_held, player_bob(p_player), player_swing_time(p_player));
 
     render_set_colour(p_box, 240.0, 240.0, 240.0);
@@ -601,7 +603,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
                     slot_item(p_inventory, l_slot), slot_count(p_inventory, l_slot), slot_damage(p_inventory, l_slot),
                     l_slot == player_selected(p_player));
     }
-    if (!player_creative(p_player)) hud_draw_health(p_box, l_bar_x, l_bar_y + l_slot_size + 8.0, l_slot_size * 4.5 - 4.0, player_health(p_player), p_now);
+    if (player_survival(p_player)) hud_draw_health(p_box, l_bar_x, l_bar_y + l_slot_size + 8.0, l_slot_size * 4.5 - 4.0, player_health(p_player), p_now);
 
     // Name of the item just selected
     if (p_now < record_real(p_hud, ATTR_HUD_NAME_UNTIL) && l_held != ITEM_NONE) {

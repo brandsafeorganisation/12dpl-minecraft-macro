@@ -28,7 +28,10 @@ void ui_clear(Attributes &p_ui)
   record_set_integer(p_ui, ATTR_X,          0);
   record_set_integer(p_ui, ATTR_Y,          0);
   record_set_integer(p_ui, ATTR_Z,          0);
+  record_set_integer(p_ui, ATTR_UI_TABS,    FALSE);
+  record_set_integer(p_ui, ATTR_UI_SCROLL,  0);
   ui_set_mouse(p_ui, -1000.0, -1000.0);
+  ui_set_search(p_ui, "");
 }
 
 Integer ui_screen(Attributes &p_ui)
@@ -66,6 +69,120 @@ void ui_set_mouse(Attributes &p_ui, Real p_x, Real p_y)
   record_set_real(p_ui, ATTR_UI_MOUSE_Y, p_y);
 }
 
+// ---------------------------------------------------------------- creative mode
+
+void ui_set_tabs(Attributes &p_ui, Integer p_creative)
+// ----------------------------------------------------------------
+// Show the creative tabs (TRUE in creative mode) on the inventory
+// screens opened from now on
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_ui, ATTR_UI_TABS, p_creative == TRUE);
+}
+
+Text ui_search(Attributes &p_ui)
+// ----------------------------------------------------------------
+// What has been typed into the creative screen's search
+// ----------------------------------------------------------------
+{
+  return record_text(p_ui, ATTR_UI_SEARCH);
+}
+
+void ui_set_search(Attributes &p_ui, Text p_search)
+// ----------------------------------------------------------------
+// Set the search and list the items whose names contain it (any
+// case), in item order, back at the top of the list
+// ----------------------------------------------------------------
+{
+  Text    l_search = Text_lower(p_search);
+  Integer l_item   = 0;
+  Integer l_count  = 0;
+  Text    l_name   = "";
+
+  record_set_text(p_ui, ATTR_UI_SEARCH, p_search);
+  for (l_item = 1; l_item <= MAX_ITEM_ID; ++l_item) {
+    l_name = item_name(l_item);
+    if (l_name == "") continue;
+    if (l_search != "") {
+      if (Find_text(Text_lower(l_name), l_search) < 1) continue;
+    }
+    ++l_count;
+    record_set_integer_at(p_ui, ATTR_UI_ITEM, l_count, l_item);
+  }
+  record_set_integer(p_ui, ATTR_UI_ITEM_COUNT, l_count);
+  record_set_integer(p_ui, ATTR_UI_SCROLL,     0);
+}
+
+void ui_type_search(Attributes &p_ui, Text p_key)
+// ----------------------------------------------------------------
+// A key typed on the creative screen: "backspace" rubs out the
+// last letter, any single character is added
+// ----------------------------------------------------------------
+{
+  Text l_search = ui_search(p_ui);
+
+  if (p_key == "backspace") {
+    if (Text_length(l_search) > 0) ui_set_search(p_ui, Get_subtext(l_search, 1, Text_length(l_search) - 1));
+    return;
+  }
+  if (Text_length(p_key) != 1 || Text_length(l_search) >= CREATIVE_SEARCH_MAX) return;
+  ui_set_search(p_ui, l_search + p_key);
+}
+
+Integer ui_creative_count(Attributes &p_ui)
+// ----------------------------------------------------------------
+// How many items match the search
+// ----------------------------------------------------------------
+{
+  return record_integer(p_ui, ATTR_UI_ITEM_COUNT);
+}
+
+Integer ui_creative_rows(Attributes &p_ui)
+// ----------------------------------------------------------------
+// Rows of matching items (9 to a row)
+// ----------------------------------------------------------------
+{
+  return floor_divide(ui_creative_count(p_ui) + 8, 9);
+}
+
+Integer ui_creative_item(Attributes &p_ui, Integer p_slot)
+// ----------------------------------------------------------------
+// Item shown in creative slot p_slot (1..CREATIVE_SLOTS) after
+// scrolling, ITEM_NONE past the end of the list
+// ----------------------------------------------------------------
+{
+  Integer l_index = record_integer(p_ui, ATTR_UI_SCROLL) * 9 + p_slot;
+
+  if (p_slot < 1 || p_slot > CREATIVE_SLOTS) return ITEM_NONE;
+  if (l_index > ui_creative_count(p_ui)) return ITEM_NONE;
+  return record_integer_at(p_ui, ATTR_UI_ITEM, l_index);
+}
+
+void ui_creative_click(Attributes &p_ui, Attributes &p_inventory, Integer p_slot, Integer p_right_button)
+// ----------------------------------------------------------------
+// A click on creative slot p_slot. Carrying a different item (or
+// clicking an empty slot) throws the carried stack away. Otherwise
+// a left click takes a full stack and a right click takes one more;
+// the list never runs out.
+// ----------------------------------------------------------------
+{
+  Integer l_item    = ui_creative_item(p_ui, p_slot);
+  Integer l_carried = slot_item (p_inventory, CURSOR_SLOT);
+  Integer l_count   = slot_count(p_inventory, CURSOR_SLOT);
+
+  if (l_carried != ITEM_NONE && l_carried != l_item) {
+    slot_clear(p_inventory, CURSOR_SLOT);
+    return;
+  }
+  if (l_item == ITEM_NONE) return;
+  if (p_right_button) {
+    if (l_carried == ITEM_NONE) l_count = 0;
+    if (l_count < item_max_stack(l_item)) slot_set(p_inventory, CURSOR_SLOT, l_item, l_count + 1, 0);
+  } else {
+    slot_set(p_inventory, CURSOR_SLOT, l_item, item_max_stack(l_item), 0);
+  }
+}
+
 // ---------------------------------------------------------------- opening and closing
 
 void ui_open(Attributes &p_ui, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_events,
@@ -85,6 +202,7 @@ void ui_open(Attributes &p_ui, Attributes &p_grid, Attributes &p_furnaces, Attri
   record_set_integer(p_ui, ATTR_Z,          p_z);
 
   if (p_screen == SCREEN_INVENTORY) grid_clear(p_grid, GRID_INVENTORY_WIDTH);
+  if (p_screen == SCREEN_CREATIVE ) ui_set_search(p_ui, "");
   if (p_screen == SCREEN_CRAFTING ) grid_clear(p_grid, GRID_TABLE_WIDTH);
 
   if (p_screen == SCREEN_CHEST) {
@@ -160,6 +278,8 @@ void ui_layout(Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_
 
   l_width  = p_slot_size * 9.0 + UI_PADDING * 2.0;
   l_height = UI_PADDING + p_slot_size * 4.0 + 8.0 + 22.0 + p_slot_size * 3.0 + 10.0 + UI_TITLE_HEIGHT;
+  // creative: the hotbar, the item rows and the search line
+  if (p_screen == SCREEN_CREATIVE) l_height = UI_PADDING * 2.0 + p_slot_size * (CREATIVE_ROWS + 1.7) + 16.0;
 
   p_x0 = p_w / 2.0 - l_width / 2.0;
   p_x1 = p_x0 + l_width;
@@ -197,6 +317,34 @@ Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Rea
     p_y = l_inv_y;
     return TRUE;
   }
+  // Creative tabs: two slot-sized tabs just above the panel's top
+  // left corner
+  if (p_slot == UI_SLOT_TAB_INVENTORY || p_slot == UI_SLOT_TAB_CREATIVE) {
+    if (p_screen != SCREEN_INVENTORY && p_screen != SCREEN_CREATIVE) return FALSE;
+    p_x = l_x0 + (p_slot - UI_SLOT_TAB_INVENTORY) * (p_size + 4.0);
+    p_y = l_y1 + 2.0;
+    return TRUE;
+  }
+
+  if (p_screen == SCREEN_CREATIVE) {
+    // the hotbar, then the item rows, then the search line with the
+    // scroll buttons at its right
+    if (p_slot > UI_SLOT_CREATIVE && p_slot <= UI_SLOT_CREATIVE + CREATIVE_SLOTS) {
+      l_cell   = p_slot - UI_SLOT_CREATIVE - 1;
+      l_row    = floor_divide(l_cell, 9);
+      l_column = l_cell - l_row * 9;
+      p_x = l_inv_x + l_column * p_size;
+      p_y = l_inv_y + p_size + 8.0 + (CREATIVE_ROWS - 1 - l_row) * p_size;
+      return TRUE;
+    }
+    if (p_slot == UI_SLOT_SCROLL_UP || p_slot == UI_SLOT_SCROLL_DOWN) {
+      p_x = l_inv_x + (9 - 2 + p_slot - UI_SLOT_SCROLL_UP) * p_size;
+      p_y = l_inv_y + p_size + 8.0 + CREATIVE_ROWS * p_size + 8.0;
+      return TRUE;
+    }
+    return FALSE;
+  }
+
   if (p_slot > HOTBAR_SLOTS && p_slot <= INVENTORY_SLOTS) {
     // 10..18 is the top row, 28..36 the bottom row
     l_row    = 3 - floor_divide(p_slot - 10, 9);
@@ -293,6 +441,33 @@ void ui_click(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Att
   Integer l_carried   = slot_item(p_inventory, CURSOR_SLOT);
 
   if (l_slot == 0) return;
+
+  // Tabs: close this screen (which returns the grid and the carried
+  // stack) and open the other
+  if (l_slot == UI_SLOT_TAB_INVENTORY && l_screen == SCREEN_CREATIVE) {
+    emit_simple_event(p_events, EVT_CLOSE_SCREEN);
+    emit_event(p_events, EVT_OPEN_SCREEN, SCREEN_INVENTORY, 0, 0, 0, 0.0, 0.0, 0.0, "");
+    return;
+  }
+  if (l_slot == UI_SLOT_TAB_CREATIVE && l_screen == SCREEN_INVENTORY) {
+    emit_simple_event(p_events, EVT_CLOSE_SCREEN);
+    emit_event(p_events, EVT_OPEN_SCREEN, SCREEN_CREATIVE, 0, 0, 0, 0.0, 0.0, 0.0, "");
+    return;
+  }
+  if (l_slot == UI_SLOT_TAB_INVENTORY || l_slot == UI_SLOT_TAB_CREATIVE) return;
+  if (l_slot == UI_SLOT_SCROLL_UP) {
+    record_set_integer(p_ui, ATTR_UI_SCROLL, max_integer(0, record_integer(p_ui, ATTR_UI_SCROLL) - 1));
+    return;
+  }
+  if (l_slot == UI_SLOT_SCROLL_DOWN) {
+    record_set_integer(p_ui, ATTR_UI_SCROLL, min_integer(max_integer(0, ui_creative_rows(p_ui) - CREATIVE_ROWS),
+                                                         record_integer(p_ui, ATTR_UI_SCROLL) + 1));
+    return;
+  }
+  if (l_slot > UI_SLOT_CREATIVE) {
+    ui_creative_click(p_ui, p_inventory, l_slot - UI_SLOT_CREATIVE, p_right_button);
+    return;
+  }
 
   if (l_slot <= INVENTORY_SLOTS) {
     if (p_right_button) {
@@ -410,6 +585,75 @@ void ui_draw_furnace(Draw_Box p_box, Attributes &p_furnaces, Integer p_furnace, 
   ui_draw_arrow(p_box, l_inv_x + l_slot_size * 3.4, l_top_y + l_slot_size * 1.5, l_slot_size * 1.6, l_slot_size, l_progress);
 }
 
+void ui_draw_tab(Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_slot, Integer p_screen, Integer p_hovered)
+// ----------------------------------------------------------------
+// A creative tab: a chest for your inventory, a grass block for
+// every item; the open one is joined to the panel below it
+// ----------------------------------------------------------------
+{
+  Integer l_open = (p_slot == UI_SLOT_TAB_INVENTORY && p_screen == SCREEN_INVENTORY) ||
+                   (p_slot == UI_SLOT_TAB_CREATIVE  && p_screen == SCREEN_CREATIVE);
+  Integer l_item = ITEM_CHEST;
+
+  if (p_slot == UI_SLOT_TAB_CREATIVE) l_item = ITEM_GRASS;
+  if (l_open) {
+    render_set_colour(p_box, UI_PANEL_R, UI_PANEL_G, UI_PANEL_B);
+    render_fill_rect (p_box, p_x, p_y - 4.0, p_x + p_size, p_y + p_size);
+  } else {
+    render_set_colour(p_box, UI_PANEL_R * 0.75, UI_PANEL_G * 0.75, UI_PANEL_B * 0.75);
+    render_fill_rect (p_box, p_x, p_y, p_x + p_size, p_y + p_size);
+  }
+  render_set_colour(p_box, UI_FRAME_R, UI_FRAME_G, UI_FRAME_B);
+  if (p_hovered) hud_frame(p_box, p_x, p_y, p_x + p_size, p_y + p_size);
+  hud_draw_item_icon(p_box, l_item, p_x + p_size * 0.5, p_y + p_size * 0.5, p_size * 0.6, ICON_FULL);
+}
+
+void ui_draw_scroll(Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_up, Integer p_hovered)
+// ----------------------------------------------------------------
+// A scroll button of the creative screen: a slot with a triangle
+// ----------------------------------------------------------------
+{
+  Real l_cx = p_x + p_size * 0.5;
+  Real l_cy = p_y + p_size * 0.5;
+  Real l_d  = p_size * 0.25;
+
+  hud_draw_slot_style(p_box, p_x, p_y, p_size, ITEM_NONE, 0, 0, p_hovered, SLOT_STYLE_LIGHT);
+  render_set_colour(p_box, 70.0, 70.0, 76.0);
+  if (p_up) {
+    g_icon_x[1] = l_cx - l_d;  g_icon_y[1] = l_cy - l_d * 0.6;
+    g_icon_x[2] = l_cx + l_d;  g_icon_y[2] = l_cy - l_d * 0.6;
+    g_icon_x[3] = l_cx;        g_icon_y[3] = l_cy + l_d * 0.8;
+  } else {
+    g_icon_x[1] = l_cx - l_d;  g_icon_y[1] = l_cy + l_d * 0.6;
+    g_icon_x[2] = l_cx + l_d;  g_icon_y[2] = l_cy + l_d * 0.6;
+    g_icon_x[3] = l_cx;        g_icon_y[3] = l_cy - l_d * 0.8;
+  }
+  Draw_polygon(p_box, 3, g_icon_x, g_icon_y);
+}
+
+void ui_draw_search(Draw_Box p_box, Attributes &p_ui, Real p_x, Real p_y, Real p_width, Real p_size)
+// ----------------------------------------------------------------
+// The creative screen's search line with a magnifying glass, the
+// typed text and a cursor bar
+// ----------------------------------------------------------------
+{
+  Real l_height = p_size * 0.7;
+  Real l_text_x = p_x + l_height + 4.0;
+  Real l_cx     = p_x + l_height * 0.45;
+  Real l_cy     = p_y + l_height * 0.55;
+  Real l_r      = l_height * 0.22;
+
+  render_set_colour(p_box, 40.0, 40.0, 44.0);
+  render_fill_rect (p_box, p_x, p_y, p_x + p_width, p_y + l_height);
+  render_set_colour(p_box, 220.0, 220.0, 224.0);
+  render_line(p_box, l_cx - l_r, l_cy - l_r, l_cx + l_r, l_cy - l_r);
+  render_line(p_box, l_cx + l_r, l_cy - l_r, l_cx + l_r, l_cy + l_r);
+  render_line(p_box, l_cx + l_r, l_cy + l_r, l_cx - l_r, l_cy + l_r);
+  render_line(p_box, l_cx - l_r, l_cy + l_r, l_cx - l_r, l_cy - l_r);
+  render_line(p_box, l_cx + l_r, l_cy - l_r, l_cx + l_r * 2.4, l_cy - l_r * 2.4);
+  hud_text(p_box, l_text_x, p_y + l_height * 0.85, l_height * 0.55, TEXT_ALIGN_LEFT, 240, 240, 240, ui_search(p_ui) + "_");
+}
+
 void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid,
              Attributes &p_furnaces, Attributes &p_book)
 // ----------------------------------------------------------------
@@ -442,6 +686,7 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
   Real    l_y         = 0.0;
   Real    l_size      = 0.0;
   Text    l_name      = "";
+  Integer l_tabs      = record_integer(p_ui, ATTR_UI_TABS) == TRUE;
 
   ui_mouse (p_ui, l_mouse_x, l_mouse_y);
   ui_layout(l_screen, p_w, p_h, l_slot_size, l_x0, l_y0, l_x1, l_y1, l_inv_x, l_inv_y, l_top_y);
@@ -461,7 +706,19 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
     l_item   = ITEM_NONE;
     l_count  = 0;
     l_damage = 0;
-    if (l_slot <= INVENTORY_SLOTS) {
+    if (l_slot == UI_SLOT_TAB_INVENTORY || l_slot == UI_SLOT_TAB_CREATIVE) {
+      if (!l_tabs) continue;
+      ui_draw_tab(p_box, l_x, l_y, l_size, l_slot, l_screen, l_slot == l_hovered);
+      continue;
+    }
+    if (l_slot == UI_SLOT_SCROLL_UP || l_slot == UI_SLOT_SCROLL_DOWN) {
+      if (ui_creative_rows(p_ui) > CREATIVE_ROWS) ui_draw_scroll(p_box, l_x, l_y, l_size, l_slot == UI_SLOT_SCROLL_UP, l_slot == l_hovered);
+      continue;
+    }
+    if (l_slot > UI_SLOT_CREATIVE) {
+      l_item  = ui_creative_item(p_ui, l_slot - UI_SLOT_CREATIVE);
+      l_count = 1;
+    } else if (l_slot <= INVENTORY_SLOTS) {
       l_item   = slot_item  (p_inventory, l_slot);
       l_count  = slot_count (p_inventory, l_slot);
       l_damage = slot_damage(p_inventory, l_slot);
@@ -493,6 +750,8 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
     ui_draw_furnace(p_box, p_furnaces, l_furnace, p_w, p_h);
   } else if (l_screen == SCREEN_CHEST) {
     // nothing more to draw
+  } else if (l_screen == SCREEN_CREATIVE) {
+    ui_draw_search(p_box, p_ui, l_inv_x, l_inv_y + l_slot_size * (CREATIVE_ROWS + 1) + 16.0, l_slot_size * 6.8, l_slot_size);
   } else {
     // Arrow from the grid to the output slot
     if (ui_slot_rect(l_screen, l_width, UI_SLOT_OUTPUT, p_w, p_h, l_x, l_y, l_size)) {

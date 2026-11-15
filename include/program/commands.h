@@ -10,7 +10,7 @@
 //   /time query daytime|gametime|day
 //   /gamerule doDaylightCycle [true|false]
 //   /give <player> <item> [count]
-//   /gamemode creative|survival
+//   /gamemode survival|creative|spectator
 //   /help
 // Times are in the block game's ticks: 24000 to a day, 0 at
 // sunrise, 6000 at noon.

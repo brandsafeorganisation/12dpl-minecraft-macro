@@ -42,9 +42,9 @@ for how to rebuild it after you change the macro.
 | Left click    | break blocks (harder blocks take more hits), hit animals     |
 | Right click   | place blocks, eat food, open crafting tables, furnaces and chests, sleep in beds, open and shut doors |
 | W A S D       | walk                                                         |
-| Space         | jump, swim up, fly up; tap twice quickly to fly or land (creative mode) |
+| Space         | jump, swim up, fly up; tap twice quickly to fly or land (creative mode only) |
 | 1 - 9         | choose a hotbar slot                                         |
-| E             | inventory and 2 x 2 crafting (E or Q closes any screen)      |
+| E             | inventory and 2 x 2 crafting (E or Q closes any screen); in creative mode, every item (see below) |
 | Q             | pause and free the mouse                                     |
 | F / J         | auto-walk on/off, auto-jump on/off                           |
 | C             | crouch on/off (sink while flying)                            |
@@ -71,10 +71,26 @@ block game's ticks: 24000 to a day, 0 at sunrise, 6000 at noon.
 | `/time set day\|noon\|night\|midnight\|<ticks>` | set the time of day |
 | `/time add <ticks>` | move the clock on |
 | `/time query daytime\|gametime\|day` | say the time |
-| `/gamemode creative\|survival` | creative: no health or damage, zombies leave you alone, and a double tap of Space flies; survival (where every world starts) brings health back and lands you |
+| `/gamemode survival\|creative\|spectator` | change game mode (also `s`, `c`, `sp` or `0`, `1`, `3`); see Game modes below |
 | `/gamerule doDaylightCycle true\|false` | start or stop the clock (saved with the world) |
 | `/give <player> <item> [count]` | give yourself items, e.g. `/give @p oak_door 3` or `/give @p minecraft:torch 64` (any player name means you) |
 | `/help` | list the commands |
+
+### Game modes
+
+| Mode | Health | Flying | Blocks | Inventory |
+|------|--------|--------|--------|-----------|
+| Survival (every world starts here) | yes: falls, zombies and drowning hurt | no | collide; break and place | your own, with crafting |
+| Creative | none; zombies leave you alone | double tap Space to fly or land; Space up, Shift or C down | collide; break and place | every item, endlessly |
+| Spectator | none; zombies leave you alone | always | fly straight through them; can't break, place or pick anything up | none (no hotbar either) |
+
+In creative mode **E** opens every item in the game. Type to search (any
+part of a name; Backspace rubs out; Escape closes this screen). A left
+click takes a full stack, a right click one more, and putting a carried
+stack down on the list throws it away. The two tabs above the screen
+switch between every item (grass block) and your own inventory with its
+crafting grid (chest). Pick block (**P**) also gives you the block if you
+don't have it.
 
 12d only sends auto-repeat for the last key held and never reports a key being
 released. Because of that, only one movement key works at a time. Each press
@@ -214,10 +230,8 @@ it: it loads the chosen file for itself, then and every time it starts.
 - **Player:** 1.8 blocks tall, with 5 blocks of reach, gravity and collision,
   swimming, fall damage, a 10-heart health bar and slow healing. **C** (or
   Shift with a movement key) crouches: lower, slower, and you stop at
-  edges instead of walking off. Worlds start in survival; in creative mode
-  (`/gamemode creative`) you take no damage, zombies ignore you, and a
-  double tap of Space turns on flying: no gravity, Space rises, C or Shift
-  sinks, and you still collide with blocks.
+  edges instead of walking off. Worlds start in survival; creative and
+  spectator modes are described under Game modes above.
 - **Breaking and placing:** a block being broken cracks in 10 pixel-art
   stages (the resource pack's `destroy_stage` images if it has them).
   Broken blocks drop as items that are picked up when you walk near them.
@@ -299,6 +313,10 @@ include/<part>/*.h    each module's constants, record field names and prototypes
   net/                net (multiplayer through a shared folder of log files)
   ui/                 menu_panel, settings_panel, game_panel (the 12d panels:
                       the controllers), font (font names and files)
+test/cubeland_test.4dm the test build: compile it instead of cubeland.4dm (see Testing)
+test/src, test/include the test build's code: registry, inputs, runner, unit tests,
+                      report, panel
+tools/make_test_registry.py writes the test build's list of functions
 tools/test_harness/   runs the macro as C++ for testing (not used by 12d)
 tools/desktop/        the same macro as a Windows program (not used by 12d)
 ```
@@ -376,6 +394,72 @@ Two switches at the top of `src/build.4dm` loosen it, and each prints a
   named `cubeland_mp`, for multiplayer across PCs.
 - `SAFETY_OFF` (off): none of the dangerous calls are blocked. The game
   doesn't need any of them.
+
+## Testing
+
+Compile **test/cubeland_test.4dm** (instead of cubeland.4dm) for the test
+build. It's the same game code with a different panel:
+
+- **Functions** lists every function in the game (680) and 32 library
+  calls (maths, text, the clock, attributes, file checks). Type part of a
+  name, a part of the game (`world`, `render`, ...) or `library` and press
+  **Filter**.
+- **Run selected** calls the selected function **Runs** times (default
+  1000, up to 10,000,000). The first call uses typical inputs, the rest
+  random ones (unless Random inputs says no).
+- **Run all once** calls every function once with typical inputs.
+- **Unit tests** runs the checks in `test/src/test_cases.4dm` (101 so
+  far: util, records, random, blocks, inventory, crafting, commands, game
+  modes, the creative inventory, events, multiplayer names, the world).
+- **Everything** does both.
+- **Make test world** makes the world the functions work on again (seed
+  12345; it isn't saved).
+
+Each run writes an HTML report to `cubeland_worlds\test_reports` (named
+by the time) with:
+
+- a summary;
+- failed checks first, then every check with what was wanted and got;
+- a table of every function run: calls, mean, fastest and slowest time a
+  call, spread, and calls a second;
+- for each function:
+  - its signature, file and lines, and the functions it calls;
+  - where each input came from (for example "p_x: a cell across the
+    world, 0 to 127");
+  - a histogram of call times and the range of numbers it returned;
+  - its first 12 calls with inputs and outputs;
+  - its code, if **Source folder** names the folder that holds `src`.
+
+Each call is timed on its own, between two readings of 12d's clock (to a
+tenth of a microsecond), and the cost of a reading is taken off.
+
+Some functions can't be run:
+
+- the three panels, which wait for events;
+- functions that take an open file, or the list widget.
+
+Functions that write files (saving, settings, multiplayer) only run when
+you pick them, or when you tell Run all to include them. Everything they
+write is named `zz_test...` inside `cubeland_worlds`, so it can't overwrite
+a saved world.
+
+Functions get the game's own records, so they work on the test world.
+12d can't catch a macro error, so the run writes the name of each
+function to `cubeland_worlds\test_reports\progress.txt` before calling
+it. If 12d stops the macro, the panel and the next report name the
+function it stopped in.
+
+The values each parameter gets are picked by its name in
+`test/src/test_inputs.4dm`. Add a rule there when a function needs values
+its parameter names don't give it.
+
+After adding, removing or changing a function, run:
+
+```bash
+python3 tools/make_test_registry.py
+```
+
+The harness build refuses to run until you do.
 
 ## Credits
 

@@ -1,0 +1,103 @@
+# Game modes: spectator flies through the ground and can't touch
+# anything or open the inventory; creative keeps flying from there and
+# E opens every item, with a search, tabs and endless stacks; survival
+# lands you and double Space does nothing.
+input New world name|Modes
+input Seed (blank for random)|4242
+button create
+wait 2
+click 430 300
+wait 2
+call mode
+key /
+type gamemode spectator
+enter
+wait 2
+call mode
+# straight down into the ground: no collision
+call look_level
+holdkey c 60
+wait 5
+call inside_stone
+snap 250_spectator_underground
+wait 1
+# clicking breaks nothing, and E opens no inventory
+capclick
+wait 2
+key e
+wait 2
+call mode
+holdkey space 90
+wait 5
+call inside_stone
+snap 251_spectator_hud
+wait 1
+# creative from spectator keeps flying
+key /
+type gamemode creative
+enter
+wait 2
+call mode
+# E: the creative screen with every item
+key e
+wait 2
+call mode
+snap 252_creative_items
+wait 1
+type iron
+wait 2
+call mode
+snap 253_creative_search
+wait 1
+# a full stack from the list, then one more by right clicking
+call slot101
+wait 2
+call mode
+call slot1
+wait 2
+call rslot102
+wait 2
+call rslot102
+wait 2
+call mode
+# a different item put down on the list is thrown away
+call slot101
+wait 2
+call mode
+key backspace 4
+wait 2
+call mode
+# the tabs: your own inventory (with its crafting grid) and back
+call slot88
+wait 2
+call mode
+snap 254_creative_inventory_tab
+wait 1
+call slot89
+wait 2
+call mode
+key escape
+wait 2
+call mode
+call dump
+# survival lands you; a double Space doesn't fly
+key /
+type gamemode survival
+enter
+wait 30
+call mode
+key space
+wait 3
+key space
+wait 5
+call mode
+key /
+type gamemode bogus
+enter
+wait 1
+key /
+type gamemode sp
+enter
+wait 2
+call mode
+quit

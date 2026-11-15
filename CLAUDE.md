@@ -86,6 +86,16 @@ and the code layout (`src/<part>/`, `include/<part>/`).
   `SAFE_WRITE_FOLDER` (`cubeland_worlds`).
 - Never delete files; overwrite them with a marker (`save_delete_world()`).
 
+## The test build: `test/`
+
+`test/cubeland_test.4dm` is a second macro made from the same source: a
+panel that runs any function many times, every function once, and the
+unit tests in `test/src/test_cases.4dm`, and writes an HTML report (README,
+Testing). After adding, removing or changing a function's parameters, run
+`python3 tools/make_test_registry.py` (the harness build checks it). Add
+unit test checks for new behaviour, and a rule in `test/src/test_inputs.4dm`
+when a new parameter name needs its own values.
+
 ## Testing: `tools/test_harness`
 
 It translates the macro to C++, runs scripted scenarios under

@@ -17,6 +17,13 @@
 #define TARGET_BLOCK  1
 #define TARGET_COW    2
 
+// Game modes (/gamemode): only survival has health and is attacked;
+// creative flies with a double tap of Space; spectator always flies,
+// passes through blocks and can't touch anything
+#define GAMEMODE_SURVIVAL   0
+#define GAMEMODE_CREATIVE   1
+#define GAMEMODE_SPECTATOR  2
+
 #define DATATYPE_PLAYER          ("player")
 #define ATTR_PLAYER_DEAD         ("dead")
 #define ATTR_PLAYER_IN_WATER     ("in_water")
@@ -29,7 +36,7 @@
 #define ATTR_PLAYER_SELECTED     ("selected")
 #define ATTR_PLAYER_AUTO_WALK    ("auto_walk")
 #define ATTR_PLAYER_FLYING       ("flying")
-#define ATTR_PLAYER_CREATIVE     ("creative")          // TRUE in creative mode (/gamemode)
+#define ATTR_PLAYER_MODE         ("creative")          // GAMEMODE_...; the field name is from when it was TRUE in creative, so older worlds load
 #define ATTR_SPACE_LAST          ("space_last")        // when Space last arrived
 #define ATTR_SPACE_GAP           ("space_gap")         // seconds between the last two Spaces
 #define ATTR_FLY_DOWN_UNTIL      ("fly_down_until")
@@ -102,8 +109,12 @@ Integer player_crouching       (Attributes &p_player);
 void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_events);
 Integer player_flying          (Attributes &p_player);
 void    player_set_flying      (Attributes &p_player, Integer p_flying);
+Integer player_game_mode       (Attributes &p_player);
+void    player_set_game_mode   (Attributes &p_player, Integer p_mode);
 Integer player_creative        (Attributes &p_player);
-void    player_set_creative    (Attributes &p_player, Integer p_creative);
+Integer player_spectator       (Attributes &p_player);
+Integer player_survival        (Attributes &p_player);
+Text    player_game_mode_name  (Integer p_mode);
 Integer player_pick_block      (Attributes &p_player, Attributes &p_inventory, Text &p_report);
 Integer player_key_active      (Attributes &p_player, Text p_key, Real p_now);
 void    player_damage          (Attributes &p_player, Attributes &p_events, Integer p_amount);

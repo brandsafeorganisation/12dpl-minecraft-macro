@@ -42,6 +42,7 @@
 #define WATER_SPEED_FACTOR   0.55
 #define FLY_SPEED_FACTOR     1.8      // horizontal speed while flying
 #define FLY_VERTICAL_SPEED   6.0      // blocks per second up (Space) or down (C)
+#define SPECTATOR_ABOVE_WORLD 32.0   // how far above the world a spectator can fly
 #define FLY_KEY_SECONDS      0.25     // a press of Space or C moves this long
 #define DOUBLE_TAP_MIN       0.08     // two Spaces this far apart (no closer: that's a held key
 #define DOUBLE_TAP_MAX       0.35     // repeating) turn flying on or off in creative mode

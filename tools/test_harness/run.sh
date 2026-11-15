@@ -1,5 +1,6 @@
 #!/bin/bash
-# Run scenario scripts against build/game (run ./build.sh first).
+# Run scenario scripts against build/game, or build/test for a scenario
+# with the line "# build: test" (run ./build.sh first).
 #
 #   ./run.sh scenarios/02_crafting_and_tools.txt   one scenario, fresh worlds
 #   ./run.sh --keep scenarios/06_*.txt            keep the saved worlds
@@ -28,7 +29,12 @@ mkdir -p "$HERE/run/out"
 cd "$HERE/run"
 for script in "${SCRIPTS[@]}"; do
   echo "=== $(basename "$script")"
-  "$HERE/build/game" "$script"
+  # a scenario with the line "# build: test" drives the test build
+  if grep -q '^# build: test' "$script"; then
+    "$HERE/build/test" "$script"
+  else
+    "$HERE/build/game" "$script"
+  fi
 done
 if ls out/*.ppm >/dev/null 2>&1; then
   python3 "$HERE/topng.py" out >/dev/null 2>&1 || echo "(install Pillow to get .png snapshots)"

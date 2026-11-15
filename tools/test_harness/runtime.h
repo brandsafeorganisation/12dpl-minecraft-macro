@@ -51,9 +51,17 @@ inline void Print(){ printf("\n"); }
 
 // ---------------------------------------------------------------- random / time
 extern double g_sim_time;
-#ifndef CUBELAND_DESKTOP
+#if defined(CUBELAND_REAL_CLOCK)
+// the test build times functions, so its clock also counts real time
+// (and its whole seconds are since 1970, as in 12d)
+#include <chrono>
+inline int Get_time(double&t){ static auto s=std::chrono::steady_clock::now(); t=g_sim_time+std::chrono::duration<double>(std::chrono::steady_clock::now()-s).count(); return 0; }
+inline int Get_time(int&t){ t=(int)(g_sim_time-11644473600.0); return 0; }
+inline int Get_time(Text&t){ long long s=(long long)g_sim_time; char b[64]; snprintf(b,sizeof b,"Sun Nov 15 %02lld:%02lld:%02lld 2026",(s/3600)%24,(s/60)%60,s%60); t=b; return 0; }
+#elif !defined(CUBELAND_DESKTOP)
 inline int Get_time(double&t){ t=g_sim_time; return 0; }
 inline int Get_time(int&t){ t=(int)g_sim_time; return 0; }
+inline int Get_time(Text&t){ long long s=(long long)g_sim_time; char b[64]; snprintf(b,sizeof b,"Sun Nov 15 %02lld:%02lld:%02lld 2026",(s/3600)%24,(s/60)%60,s%60); t=b; return 0; }
 #else
 int Get_time(double&t);
 int Get_time(int&t);

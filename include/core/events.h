@@ -47,6 +47,7 @@
 #define SCREEN_CRAFTING       2
 #define SCREEN_FURNACE        3
 #define SCREEN_CHEST          4
+#define SCREEN_CREATIVE       5     // creative mode: every item, with a search
 
 #define DATATYPE_EVENT_QUEUE  ("event_queue")
 #define DATATYPE_EVENT        ("event")

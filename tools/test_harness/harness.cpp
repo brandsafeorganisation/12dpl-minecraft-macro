@@ -24,7 +24,7 @@ struct TextCmd{ double x,y,size; int align; int r,g,b; Text s; };
 static std::vector<TextCmd> texts;
 long long g_polygons=0, g_frames=0, g_frame_polys=0;
 static Text g_snap_name="";
-static void put(int x,int y,const int*c){ if(x<0||y<0||x>=g_box_w||y>=g_box_h) return; int row=g_box_h-1-y; unsigned char*p=&fb[3*(row*g_box_w+x)]; p[0]=c[0];p[1]=c[1];p[2]=c[2]; }
+static void put(int x,int y,const int*c){ if(x<0||y<0||x>=g_box_w||y>=g_box_h) return; if(fb.size()<(size_t)(3*g_box_w*g_box_h)) return; int row=g_box_h-1-y; unsigned char*p=&fb[3*(row*g_box_w+x)]; p[0]=c[0];p[1]=c[1];p[2]=c[2]; }
 int Start_batch_draw(const Draw_Box&){ fb.assign(3*g_box_w*g_box_h,0); texts.clear(); in_batch=true; g_frame_polys=0; return 0; }
 int Set_colour(const Draw_Box&,int r,int g,int b){ pen[0]=r;pen[1]=g;pen[2]=b; return 0; }
 int Set_fill_colour(const Draw_Box&,int r,int g,int b){ fill[0]=r;fill[1]=g;fill[2]=b; return 0; }
@@ -100,7 +100,12 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
     if(e.kind=="call"){ if(g_calls.count(e.a)) g_calls[e.a](); continue; }
     if(e.kind=="input"){ auto p=e.a.find('|'); g_input_value[g_widget_by_title[e.a.substr(0,p)]]=e.a.substr(p+1); continue; }
     if(e.kind=="select"){ g_list_sel[g_widget_by_title["Saved worlds"]]=(int)e.x; continue; }
-    if(e.kind=="select_name"){ long long l=g_widget_by_title["Saved worlds"]; auto&v=g_list_items[l]; for(size_t i=0;i<v.size();i++) if(v[i]==e.a) g_list_sel[l]=(int)i+1; continue; }
+    if(e.kind=="select_name"){ // the saved world, or the item in whichever list has it
+      bool found=false;
+      if(g_widget_by_title.count("Saved worlds")){ long long l=g_widget_by_title["Saved worlds"]; auto&v=g_list_items[l]; for(size_t i=0;i<v.size();i++) if(v[i]==e.a){ g_list_sel[l]=(int)i+1; found=true; } }
+      if(!found) for(auto&kv:g_list_items) for(size_t i=0;i<kv.second.size();i++) if(kv.second[i]==e.a){ g_list_sel[kv.first]=(int)i+1; found=true; }
+      if(!found) printf("[harness] no list item %s\n",e.a.c_str());
+      continue; }
     if(e.kind=="button"){ id=g_widget_by_title["button:"+e.a]; cmd=e.a; msg=""; return 0; }
     if(e.kind=="quit"){ id=0; cmd="Panel Quit"; msg=""; return 0; }
   }

@@ -84,7 +84,7 @@ void game_reset_state(Attributes &p_game, Attributes &p_player, Attributes &p_in
   hud_clear       (p_hud);
   ui_clear        (p_ui);
   player_reset    (p_player, 0.0, 0.0, 0.0);
-  player_set_creative(p_player, FALSE);   // a new world starts in survival
+  player_set_game_mode(p_player, GAMEMODE_SURVIVAL);   // a new world starts in survival
   record_set_real (p_game, ATTR_GAME_AUTOSAVE, 0.0);
 }
 
@@ -143,7 +143,8 @@ Integer game_load_world(Text p_name, Attributes &p_game, Attributes &p_info, Att
   record_set_text (p_game, ATTR_GAME_WORLD_NAME, p_name);
   if (load_world(p_name, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_problem) != SUCCESS) return FAILURE;
   // Worlds saved while flying land you unless they are in creative
-  player_set_creative(p_player, player_creative(p_player));
+  // or spectator
+  if (player_survival(p_player)) player_set_flying(p_player, FALSE);
   events_clear(p_events);
   return SUCCESS;
 }
@@ -207,7 +208,7 @@ Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attribu
   // afresh (chests and furnaces fill up as you use them)
   world_info_spawn   (p_info, l_x, l_y, l_z);
   player_reset       (p_player, l_x, l_y + COLLISION_EPSILON, l_z);
-  player_set_creative(p_player, FALSE);
+  player_set_game_mode(p_player, GAMEMODE_SURVIVAL);
   inventory_clear    (p_inventory);
   furnaces_clear     (p_furnaces);
   drops_clear        (p_drops);
@@ -333,8 +334,8 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
     player_update(p_player, p_cows, p_events, settings_flag(p_settings, ATTR_SET_AUTO_JUMP), p_dt, p_now);
     player_position(p_player, l_x, l_y, l_z);
     cows_update (p_cows, p_random, p_events, l_x, l_y, l_z, world_is_night(world_time_of_day(p_info)),
-                 player_is_dead(p_player) || player_creative(p_player), p_dt);
-    drops_update(p_drops, p_inventory, p_events, l_x, l_y, l_z, player_is_dead(p_player), p_dt);
+                 player_is_dead(p_player) || !player_survival(p_player), p_dt);
+    drops_update(p_drops, p_inventory, p_events, l_x, l_y, l_z, player_is_dead(p_player) || player_spectator(p_player), p_dt);
 
     l_autosave = l_autosave + p_dt;
     if (l_autosave > AUTOSAVE_SECONDS) {

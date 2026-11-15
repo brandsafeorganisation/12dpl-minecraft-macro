@@ -33,6 +33,12 @@ static void place_in_grid(int item,int grid_slot){ // pick up the stack, right c
   ui_click_slot(s,"click"); }
 static void register_hooks(){
   g_calls["dump"]=dump;
+  g_calls["test_reports"]=[]{ if(system("ls cubeland_worlds/test_reports | sed 's/^/[reports] /'; cat cubeland_worlds/test_reports/progress.txt | sed 's/^/[progress] /'")){} };
+  g_calls["mode"]=[]{ printf("[mode] %s flying %d spectator %d creative %d survival %d screen %d tabs %d search '%s' matches %d scroll %d cursor %s x%d edits %d target %d\n",
+      player_game_mode_name(player_game_mode(g_player)).c_str(),player_flying(g_player),player_spectator(g_player),player_creative(g_player),player_survival(g_player),
+      ui_screen(g_ui),record_integer(g_ui,ATTR_UI_TABS),ui_search(g_ui).c_str(),ui_creative_count(g_ui),record_integer(g_ui,ATTR_UI_SCROLL),
+      item_name(slot_item(g_inventory,0)).c_str(),slot_count(g_inventory,0),g_edit_count,player_target_kind(g_player)); };
+  g_calls["inside_stone"]=[]{ int x=(int)px(),z=(int)pz(); int t=world_top_solid_y(x,z); printf("[hook] top %d at %d %d, player y %.2f block at eye %d\n",t,x,z,py(),world_get_block(x,(int)floor(py()+1.62),z)); };
   g_calls["dump_textures"]=[]{ // every texture pixel as r,g,b ("-" see-through), for make_test_pack.py check
     FILE*f=fopen("out/textures.txt","w");
     for(int t=1;t<=NUM_TEXTURES;t++){ fprintf(f,"%d",t);

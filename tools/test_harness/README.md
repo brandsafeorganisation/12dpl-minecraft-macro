@@ -68,7 +68,12 @@ needed to turn the snapshots into `.png` files.
 
 Each run starts with no saved worlds. Pass `--keep` to keep them, which
 scenario 06 needs because it loads the world that 05 saves. Worlds go in
-`run/cubeland_worlds` and snapshots in `run/out`. Rebuild after changing the
+`run/cubeland_worlds` and snapshots in `run/out`. `build.sh` builds two programs:
+`build/game` from `cubeland.4dm` and `build/test` from the test build
+`test/cubeland_test.4dm`; a scenario with the line `# build: test` runs the second.
+The test build's clock counts real time, so its reports show real call times.
+The build first checks the test registry is up to date
+(`python3 tools/make_test_registry.py --check`). Rebuild after changing the
 macro.
 
 ## Scenario scripts
@@ -143,6 +148,8 @@ that were looked up most often (to find hot spots).
 | `22_doors_beds_crouch`        | a door placed, opened, shut and walked into; the door's edge; a two block bed placed and broken (one bed drops); Shift stops you at a hole's edge; Shift sinks while flying; the house's door and bed |
 | `23_chat_commands`            | T and / open the chat line; /time set and add, /gamerule doDaylightCycle (the clock stops), /give (with and without minecraft:), an unknown item and command, Escape, /gamemode creative (no hearts) and survival |
 | `24_multiplayer`              | hosting a world; a made-up second player's log (joining, chat, walking, a block, a half written line, a clock the host ignores, leaving); the host's broken block in its log; joining the session gets the snapshot plus every log |
+| `25_game_modes`               | spectator flies down through the ground, can't break anything or open the inventory and has no hotbar; creative from there keeps flying; the creative screen lists every item, searches ("iron" finds 6), gives a full stack or one more, throws away a stack put down on it, and its tabs switch to the inventory and back; survival lands you and a double Space doesn't fly; an unknown mode |
+| `26_test_build`               | the test build (`build/test`): every unit test and every function once, then floor_divide 500 times with random inputs and its code in the report, a library call, and a panel function that can't be run; lists the reports written |
 
 ### Font files
 

@@ -168,25 +168,24 @@ Text command_give(Dynamic_Text &p_words, Integer p_count, Attributes &p_inventor
 
 Text command_gamemode(Dynamic_Text &p_words, Attributes &p_player)
 // ----------------------------------------------------------------
-// /gamemode creative|survival (also c, s, 1, 0): creative has no
-// health, isn't attacked and flies with a double tap of Space
+// /gamemode survival|creative|spectator (also s, c, sp or 0, 1, 3,
+// as in Minecraft): only survival has health; creative flies with a
+// double tap of Space; spectator flies through everything
 // ----------------------------------------------------------------
 {
-  Text l_mode = Text_lower(command_word(p_words, 2));
+  Text    l_word = Text_lower(command_word(p_words, 2));
+  Integer l_mode = -1;
 
-  if (l_mode == "creative" || l_mode == "c" || l_mode == "1") {
-    player_set_creative(p_player, TRUE);
-    return "Set own game mode to Creative (double tap Space to fly)";
-  }
-  if (l_mode == "survival" || l_mode == "s" || l_mode == "0") {
-    player_set_creative(p_player, FALSE);
-    return "Set own game mode to Survival";
-  }
-  if (l_mode == "") {
-    if (player_creative(p_player)) return "Your game mode is Creative";
-    return "Your game mode is Survival";
-  }
-  return "Unknown game mode: " + command_word(p_words, 2) + " (creative or survival)";
+  if (l_word == "") return "Your game mode is " + player_game_mode_name(player_game_mode(p_player));
+  if (l_word == "survival"  || l_word == "s"  || l_word == "0") l_mode = GAMEMODE_SURVIVAL;
+  if (l_word == "creative"  || l_word == "c"  || l_word == "1") l_mode = GAMEMODE_CREATIVE;
+  if (l_word == "spectator" || l_word == "sp" || l_word == "3") l_mode = GAMEMODE_SPECTATOR;
+  if (l_mode < 0) return "Unknown game mode: " + command_word(p_words, 2) + " (survival, creative or spectator)";
+
+  player_set_game_mode(p_player, l_mode);
+  if (l_mode == GAMEMODE_CREATIVE ) return "Set own game mode to Creative (double tap Space to fly, E then Tab for every item)";
+  if (l_mode == GAMEMODE_SPECTATOR) return "Set own game mode to Spectator (Space up, Shift or C down, through blocks)";
+  return "Set own game mode to Survival";
 }
 
 Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory)
@@ -207,7 +206,7 @@ Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attribut
   if (l_name == "gamerule") return command_gamerule(l_words, l_count, p_info);
   if (l_name == "give"    ) return command_give    (l_words, l_count, p_inventory);
   if (l_name == "gamemode") return command_gamemode(l_words, p_player);
-  if (l_name == "help"    ) return "Commands: /gamemode creative|survival, /time set|add|query, /gamerule doDaylightCycle true|false, /give <player> <item> [count]";
+  if (l_name == "help"    ) return "Commands: /gamemode survival|creative|spectator, /time set|add|query, /gamerule doDaylightCycle true|false, /give <player> <item> [count]";
   return "Unknown command: /" + command_word(l_words, 1) + " (try /help)";
 }
 

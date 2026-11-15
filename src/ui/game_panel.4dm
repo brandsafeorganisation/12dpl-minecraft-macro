@@ -536,6 +536,15 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
             l_chat = l_chat + l_msg;
           }
           hud_set_chat_input(g_hud, l_chatting, l_chat);
+        } else if (ui_screen(g_ui) == SCREEN_CREATIVE) {
+          // The creative screen's search takes every key but Escape
+          if (Text_lower(l_msg) == "escape") {
+            game_panel_close_screen();
+            game_panel_dispatch(l_now);
+            if (l_have_origin || l_have_seen) l_start_request = TRUE;
+          } else {
+            ui_type_search(g_ui, l_key);
+          }
         } else if (ui_screen(g_ui) != SCREEN_NONE) {
           if (l_key == "e" || l_key == "q") {
             game_panel_close_screen();
@@ -555,7 +564,7 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
             if (l_msg != l_key) player_shift_pressed(g_player, l_now);
             l_was_flying = player_flying(g_player);
             player_key_pressed(g_player, l_key, l_now);
-            if (player_flying(g_player) != l_was_flying) {
+            if (player_flying(g_player) != l_was_flying && player_creative(g_player)) {
               if (l_was_flying) {
                 hud_toast(g_hud, "Flying off", l_now);
               } else {
@@ -575,8 +584,16 @@ Integer game_panel_run(Text p_world_name, Integer p_mode, Integer p_seed)
           if (Text_length(l_key) == 1 && Find_text("123456789", l_key) > 0) {
             game_select_slot(g_player, g_hud, Find_text("123456789", l_key), l_now);
           }
-          if (l_key == "e") {
-            emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_INVENTORY, 0, 0, 0, 0.0, 0.0, 0.0, "");
+          if (l_key == "e" && player_spectator(g_player)) {
+            hud_toast(g_hud, "Spectators have no inventory (/gamemode survival or creative)", l_now);
+          } else if (l_key == "e") {
+            // creative mode opens on every item, with a tab for your own inventory
+            ui_set_tabs(g_ui, player_creative(g_player));
+            if (player_creative(g_player)) {
+              emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_CREATIVE, 0, 0, 0, 0.0, 0.0, 0.0, "");
+            } else {
+              emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_INVENTORY, 0, 0, 0, 0.0, 0.0, 0.0, "");
+            }
             game_panel_dispatch(l_now);
             if (l_captured) l_release = TRUE;
           }

@@ -24,12 +24,12 @@ void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)
   Real    l_yaw      = record_real   (p_player, ATTR_YAW);
   Real    l_pitch    = record_real   (p_player, ATTR_PITCH);
   Integer l_selected = record_integer(p_player, ATTR_PLAYER_SELECTED);
-  Integer l_creative = record_integer(p_player, ATTR_PLAYER_CREATIVE);
+  Integer l_mode     = record_integer(p_player, ATTR_PLAYER_MODE);
 
   if (l_selected < 1) l_selected = 1;
 
   record_clear(p_player, DATATYPE_PLAYER);
-  record_set_integer(p_player, ATTR_PLAYER_CREATIVE, l_creative);
+  record_set_integer(p_player, ATTR_PLAYER_MODE, l_mode);
   player_set_position (p_player, p_x, p_y, p_z);
   player_set_velocity (p_player, 0.0, 0.0, 0.0);
   player_set_look     (p_player, l_yaw, l_pitch);
@@ -54,7 +54,7 @@ void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)
   record_set_real   (p_player, ATTR_JUMP_UNTIL,          0.0);
   record_set_real   (p_player, ATTR_SPACE_LAST,          0.0);
   record_set_real   (p_player, ATTR_SPACE_GAP,           0.0);
-  record_set_integer(p_player, ATTR_PLAYER_FLYING,       FALSE);
+  record_set_integer(p_player, ATTR_PLAYER_FLYING,       l_mode == GAMEMODE_SPECTATOR);
   record_set_integer(p_player, ATTR_TARGET_KIND,         TARGET_NONE);
   record_set_integer(p_player, ATTR_TARGET_X,            0);
   record_set_integer(p_player, ATTR_TARGET_Y,            0);
@@ -375,11 +375,12 @@ void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_ev
 
 Integer player_flying(Attributes &p_player)
 // ----------------------------------------------------------------
-// TRUE while fly mode is on (no gravity, Space rises, C sinks);
-// only creative mode can fly
+// TRUE while fly mode is on (no gravity, Space rises, Shift or C
+// sinks): creative mode can turn it on, spectator mode always flies
 // ----------------------------------------------------------------
 {
-  return record_integer(p_player, ATTR_PLAYER_FLYING);
+  if (player_spectator(p_player)) return TRUE;
+  return record_integer(p_player, ATTR_PLAYER_FLYING) == TRUE;
 }
 
 void player_set_flying(Attributes &p_player, Integer p_flying)
@@ -396,27 +397,74 @@ void player_set_flying(Attributes &p_player, Integer p_flying)
   player_set_fall_peak(p_player, l_y);
 }
 
-Integer player_creative(Attributes &p_player)
+Integer player_game_mode(Attributes &p_player)
 // ----------------------------------------------------------------
-// TRUE in creative mode: no health or damage, zombies leave you
-// alone, and a double tap of Space flies
+// GAMEMODE_SURVIVAL, GAMEMODE_CREATIVE or GAMEMODE_SPECTATOR
 // ----------------------------------------------------------------
 {
-  return record_integer(p_player, ATTR_PLAYER_CREATIVE) == TRUE;
+  Integer l_mode = record_integer(p_player, ATTR_PLAYER_MODE);
+
+  if (l_mode == GAMEMODE_CREATIVE || l_mode == GAMEMODE_SPECTATOR) return l_mode;
+  return GAMEMODE_SURVIVAL;
 }
 
-void player_set_creative(Attributes &p_player, Integer p_creative)
+void player_set_game_mode(Attributes &p_player, Integer p_mode)
 // ----------------------------------------------------------------
-// Switch between creative (TRUE) and survival (FALSE). Survival
-// can't fly, so it lands you; creative starts at full health.
+// Change game mode. Survival can't fly, so it lands you; creative
+// keeps flying if you were; spectator always flies; leaving
+// survival fills the health bar, which only survival uses.
 // ----------------------------------------------------------------
 {
-  record_set_integer(p_player, ATTR_PLAYER_CREATIVE, p_creative == TRUE);
-  if (p_creative == TRUE) {
-    player_set_health(p_player, PLAYER_MAX_HEALTH);
-  } else if (player_flying(p_player)) {
+  Integer l_mode = GAMEMODE_SURVIVAL;
+
+  if (p_mode == GAMEMODE_CREATIVE || p_mode == GAMEMODE_SPECTATOR) l_mode = p_mode;
+  if (l_mode == GAMEMODE_SPECTATOR) {
+    player_set_flying(p_player, TRUE);
+  } else if (l_mode == GAMEMODE_SURVIVAL) {
     player_set_flying(p_player, FALSE);
+  } else if (player_game_mode(p_player) == GAMEMODE_SPECTATOR) {
+    // spectator to creative: keep flying, you may be inside a block
+    player_set_flying(p_player, TRUE);
   }
+  record_set_integer(p_player, ATTR_PLAYER_MODE, l_mode);
+  if (l_mode != GAMEMODE_SURVIVAL) player_set_health(p_player, PLAYER_MAX_HEALTH);
+  record_set_integer(p_player, ATTR_CROUCH_TOGGLE, FALSE);
+}
+
+Integer player_creative(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE in creative mode: no health, zombies leave you alone, the
+// creative inventory, and a double tap of Space flies
+// ----------------------------------------------------------------
+{
+  return player_game_mode(p_player) == GAMEMODE_CREATIVE;
+}
+
+Integer player_spectator(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE in spectator mode: always flying, through blocks, no health,
+// and nothing can be broken, placed or picked up
+// ----------------------------------------------------------------
+{
+  return player_game_mode(p_player) == GAMEMODE_SPECTATOR;
+}
+
+Integer player_survival(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE in survival mode, the only one with health and damage
+// ----------------------------------------------------------------
+{
+  return player_game_mode(p_player) == GAMEMODE_SURVIVAL;
+}
+
+Text player_game_mode_name(Integer p_mode)
+// ----------------------------------------------------------------
+// "Survival", "Creative" or "Spectator"
+// ----------------------------------------------------------------
+{
+  if (p_mode == GAMEMODE_CREATIVE ) return "Creative";
+  if (p_mode == GAMEMODE_SPECTATOR) return "Spectator";
+  return "Survival";
 }
 
 Integer player_pick_block(Attributes &p_player, Attributes &p_inventory, Text &p_report)
@@ -453,6 +501,11 @@ Integer player_pick_block(Attributes &p_player, Attributes &p_inventory, Text &p
       slot_swap(p_inventory, l_slot, l_selected);
       return TRUE;
     }
+  }
+  // creative mode has every item: put it in the selected slot
+  if (player_creative(p_player)) {
+    slot_set(p_inventory, l_selected, l_item, item_max_stack(l_item), 0);
+    return TRUE;
   }
   p_report = "No " + item_name(l_item) + " in your inventory";
   return FALSE;
@@ -547,7 +600,7 @@ void player_damage(Attributes &p_player, Attributes &p_events, Integer p_amount)
   Integer l_health = player_health(p_player) - p_amount;
 
   if (player_is_dead(p_player) || p_amount <= 0) return;
-  if (player_creative(p_player)) return;
+  if (!player_survival(p_player)) return;
 
   player_set_health(p_player, l_health);
   record_set_real  (p_player, ATTR_PLAYER_HURT,  0.4);
@@ -610,6 +663,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   Integer l_hit_down     = FALSE;
   Integer l_hit_up       = FALSE;
   Integer l_flying       = player_flying(p_player);
+  Integer l_spectator    = player_spectator(p_player);
   Real    l_down_until   = record_real(p_player, ATTR_FLY_DOWN_UNTIL);
   Real    l_vy_start     = 0.0;
   Integer l_crouching    = FALSE;
@@ -722,15 +776,22 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   l_steps   = 1 + Floor(l_longest / MAX_MOVE_STEP);
 
   l_on_ground = FALSE;
-  for (l_step = 1; l_step <= l_steps; ++l_step) {
-    physics_move_box(l_x, l_y, l_z, PLAYER_HALF_WIDTH, PLAYER_HEIGHT, l_move_x / l_steps, l_move_y / l_steps, l_move_z / l_steps,
-                     l_hit_x, l_hit_z, l_hit_down, l_hit_up);
-    if (l_hit_down) {
-      l_on_ground = TRUE;
-      if (l_vy < 0.0) l_vy = 0.0;
+  if (l_spectator) {
+    // Spectator: straight through blocks, kept inside the world
+    l_x = clamp_real(l_x + l_move_x, PLAYER_HALF_WIDTH, WORLD_SIZE_X - PLAYER_HALF_WIDTH);
+    l_y = clamp_real(l_y + l_move_y, 0.0, WORLD_HEIGHT + SPECTATOR_ABOVE_WORLD);
+    l_z = clamp_real(l_z + l_move_z, PLAYER_HALF_WIDTH, WORLD_SIZE_Z - PLAYER_HALF_WIDTH);
+  } else {
+    for (l_step = 1; l_step <= l_steps; ++l_step) {
+      physics_move_box(l_x, l_y, l_z, PLAYER_HALF_WIDTH, PLAYER_HEIGHT, l_move_x / l_steps, l_move_y / l_steps, l_move_z / l_steps,
+                       l_hit_x, l_hit_z, l_hit_down, l_hit_up);
+      if (l_hit_down) {
+        l_on_ground = TRUE;
+        if (l_vy < 0.0) l_vy = 0.0;
+      }
+      if (l_hit_up && l_vy > 0.0) l_vy = 0.0;
+      if (l_hit_x || l_hit_z) l_blocked = TRUE;
     }
-    if (l_hit_up && l_vy > 0.0) l_vy = 0.0;
-    if (l_hit_x || l_hit_z) l_blocked = TRUE;
   }
 
   // Auto-jump: walking into a one block step hops up it, and
@@ -748,8 +809,9 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
     }
   }
 
-  // Water
-  l_in_water = physics_box_in_water(l_x, l_y, l_z, PLAYER_HALF_WIDTH, PLAYER_HEIGHT);
+  // Water (spectators fly through it as if it were air)
+  l_in_water = FALSE;
+  if (!l_spectator) l_in_water = physics_box_in_water(l_x, l_y, l_z, PLAYER_HALF_WIDTH, PLAYER_HEIGHT);
   record_set_integer(p_player, ATTR_PLAYER_IN_WATER,     l_in_water);
   record_set_integer(p_player, ATTR_PLAYER_EYE_IN_WATER, world_get_block(floor_integer(l_x), floor_integer(l_y + l_eye_height), floor_integer(l_z)) == BLOCK_WATER);
 
@@ -814,6 +876,11 @@ void player_update_target(Attributes &p_player, Attributes &p_cows)
   Integer l_cow            = 0;
   Integer l_kind           = TARGET_NONE;
 
+  // spectators can't touch anything, so nothing is targeted
+  if (player_spectator(p_player)) {
+    record_set_integer(p_player, ATTR_TARGET_KIND, TARGET_NONE);
+    return;
+  }
   player_look_direction(p_player, l_dir_x, l_dir_y, l_dir_z);
 
   l_block_hit = physics_raycast_blocks(l_eye_x, l_eye_y, l_eye_z, l_dir_x, l_dir_y, l_dir_z, PLAYER_REACH,
@@ -886,6 +953,7 @@ void player_primary_action(Attributes &p_player, Attributes &p_inventory, Attrib
   Real    l_pitch  = 0.0;
 
   if (player_is_dead(p_player)) return;
+  if (player_spectator(p_player)) return;
 
   record_set_real     (p_player, ATTR_PLAYER_SWING, 0.25);
   player_update_target(p_player, p_cows);
@@ -1068,6 +1136,7 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
   Real    l_pz       = 0.0;
 
   if (player_is_dead(p_player)) return;
+  if (player_spectator(p_player)) return;
 
   player_update_target(p_player, p_cows);
   player_target_cell  (p_player, l_x, l_y, l_z);

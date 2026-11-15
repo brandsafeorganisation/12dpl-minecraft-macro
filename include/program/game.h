@@ -44,7 +44,7 @@ Integer game_load_textures    (Attributes &p_settings, Text &p_report);
 void    game_init_once        (Attributes &p_game, Attributes &p_book, Attributes &p_settings, Attributes &p_random, Integer p_time_seed);
 void    game_reset_state      (Attributes &p_game, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid,
                                Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
-                               Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox);
+                               Attributes &p_hud, Attributes &p_ui);
 Text    game_world_name       (Attributes &p_game);
 Integer game_new_world        (Text p_name, Integer p_seed, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                                Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,

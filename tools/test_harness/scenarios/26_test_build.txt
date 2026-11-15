@@ -1,0 +1,25 @@
+# build: test
+# The test build: run every unit test and every function once, then
+# one function 500 times with random inputs, a library call, and a
+# function that can not be run; each writes an HTML report.
+wait 2
+button everything
+wait 1
+input Find function|floor_divide
+button filter
+select_name floor_divide
+input Runs|500
+input Source folder (holds src, for code in the report)|../../..
+button run
+wait 1
+input Find function|library
+button filter
+select_name Get_subtext
+button run
+wait 1
+input Find function|menu_panel_run
+button filter
+button run
+wait 1
+call test_reports
+quit
