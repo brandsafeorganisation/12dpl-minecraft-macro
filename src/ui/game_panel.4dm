@@ -120,7 +120,7 @@ void game_panel_dispatch(Real p_now)
 // Dispatch the events an action caused, straight away
 // ----------------------------------------------------------------
 {
-  game_dispatch_events(g_events, g_event, g_info, g_player, g_inventory, g_grid, g_furnaces, g_drops, g_random, g_hud, g_ui, g_net, p_now);
+  game_dispatch_events(g_events, g_event, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_random, g_hud, g_ui, g_net, p_now);
 }
 
 Integer game_panel_save()
@@ -157,7 +157,7 @@ void game_panel_backdrop(Draw_Box p_box, Real p_w, Real p_h, Real p_now)
 // ----------------------------------------------------------------
 {
   render_set_shade(MENU_WORLD_SHADE);
-  render_world(p_box, p_w, p_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
+  render_world(p_box, p_w, p_h, STATUS_STRIP_HEIGHT, g_player, g_inventory, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
   render_set_shade(1.0);
 }
 
@@ -180,7 +180,7 @@ void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real
   if (ui_screen(g_ui) != SCREEN_NONE) {
     // the screen over the world, darkened
     render_set_shade(MENU_WORLD_SHADE);
-    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
+    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_inventory, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
     render_set_shade(1.0);
     hud_draw(p_box, l_w, l_h, p_captured, TRUE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
              world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
@@ -189,12 +189,12 @@ void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real
     // paused (the game menu), the help or the death screen, over the
     // world darkened
     render_set_shade(MENU_WORLD_SHADE);
-    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
+    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_inventory, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
     render_set_shade(1.0);
     hud_draw    (p_box, l_w, l_h, p_captured, FALSE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
                  world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
   } else {
-    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
+    render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_inventory, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
     hud_draw    (p_box, l_w, l_h, p_captured, FALSE, g_hud, g_player, g_inventory, g_settings, world_info_seed(g_info),
                  world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
     // who is playing, top right
@@ -665,6 +665,9 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
             if (hud_help_shown(g_hud) && l_captured) l_release = TRUE;
           }
           if (l_key == "f") player_set_auto_walk(g_player, !player_auto_walk(g_player));
+          // X swaps the selected hotbar item with the offhand (F in
+          // the block game, where it isn't auto-walk)
+          if (l_key == "x") inventory_swap_hands(g_inventory, player_selected(g_player));
           // the camera: your eyes, behind you, in front of you (F5 if
           // 12d passes it on, otherwise V)
           if (l_key == "v" || l_key == "f5") player_next_camera(g_player);

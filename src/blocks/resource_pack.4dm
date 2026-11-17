@@ -288,6 +288,16 @@ Integer pack_map_entry(Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_na
   if (p_entry == 65) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DOOR_TOP           , "block", "oak_door_top"       , PACK_TINT_NONE   , "");
   if (p_entry == 66) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_DOOR_BOTTOM        , "block", "oak_door_bottom"    , PACK_TINT_NONE   , "");
   if (p_entry == 67) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_DOOR          , "item" , "oak_door"           , PACK_TINT_NONE   , "");
+  if (p_entry == 68) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_IRON_HELMET   , "item" , "iron_helmet"        , PACK_TINT_NONE   , "");
+  if (p_entry == 69) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_IRON_CHESTPLATE, "item", "iron_chestplate"    , PACK_TINT_NONE   , "");
+  if (p_entry == 70) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_IRON_LEGGINGS , "item" , "iron_leggings"      , PACK_TINT_NONE   , "");
+  if (p_entry == 71) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_IRON_BOOTS    , "item" , "iron_boots"         , PACK_TINT_NONE   , "");
+  if (p_entry == 72) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_COW_SPAWN_EGG , "item" , "cow_spawn_egg"      , PACK_TINT_NONE   , "");
+  if (p_entry == 73) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_PIG_SPAWN_EGG , "item" , "pig_spawn_egg"      , PACK_TINT_NONE   , "");
+  if (p_entry == 74) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_ZOMBIE_SPAWN_EGG, "item", "zombie_spawn_egg"  , PACK_TINT_NONE   , "");
+  if (p_entry == 75) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ARMOUR_FULL        , "gui"  , "sprites/hud/armor_full" , PACK_TINT_NONE, "");
+  if (p_entry == 76) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ARMOUR_HALF        , "gui"  , "sprites/hud/armor_half" , PACK_TINT_NONE, "");
+  if (p_entry == 77) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ARMOUR_EMPTY       , "gui"  , "sprites/hud/armor_empty", PACK_TINT_NONE, "");
   return FALSE;
 }
 

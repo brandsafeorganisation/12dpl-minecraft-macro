@@ -280,6 +280,8 @@ void ui_layout(Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_
   l_height = UI_PADDING + p_slot_size * 4.0 + 8.0 + 22.0 + p_slot_size * 3.0 + 10.0 + UI_TITLE_HEIGHT;
   // creative: the hotbar, the item rows and the search line
   if (p_screen == SCREEN_CREATIVE) l_height = UI_PADDING * 2.0 + p_slot_size * (CREATIVE_ROWS + 1.7) + 16.0;
+  // the inventory: four rows above for the armour column
+  if (p_screen == SCREEN_INVENTORY) l_height = l_height + p_slot_size;
 
   p_x0 = p_w / 2.0 - l_width / 2.0;
   p_x1 = p_x0 + l_width;
@@ -354,11 +356,31 @@ Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Rea
     return TRUE;
   }
 
+  if (p_screen == SCREEN_INVENTORY) {
+    // the armour column at the left (head at the top) and the
+    // offhand at the bottom right of the player's picture
+    if (p_slot > UI_SLOT_ARMOUR && p_slot <= UI_SLOT_ARMOUR + ARMOUR_PLACES) {
+      p_x = l_inv_x;
+      p_y = l_top_y + (UI_SLOT_ARMOUR + ARMOUR_PLACES - p_slot) * p_size;
+      return TRUE;
+    }
+    if (p_slot == UI_SLOT_OFFHAND) {
+      p_x = l_inv_x + p_size * 4.0;
+      p_y = l_top_y;
+      return TRUE;
+    }
+  }
+
   if (p_screen == SCREEN_INVENTORY || p_screen == SCREEN_CRAFTING) {
     // The grid, centred in the three slot rows above the inventory,
-    // then an arrow and the output slot
+    // then an arrow and the output slot (on the inventory screen the
+    // 2 x 2 grid is at the top right, beside the player)
     l_grid_x = l_inv_x + p_size * 1.5;
     l_grid_y = l_top_y + (3 - p_grid_width) * p_size * 0.5;
+    if (p_screen == SCREEN_INVENTORY) {
+      l_grid_x = l_inv_x + p_size * 5.0;
+      l_grid_y = l_top_y + p_size * 2.0;
+    }
     if (p_slot > UI_SLOT_GRID && p_slot <= UI_SLOT_GRID + GRID_SLOTS) {
       l_cell   = p_slot - UI_SLOT_GRID;
       l_column = positive_mod(l_cell - 1, 3) + 1;
@@ -371,6 +393,10 @@ Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Rea
     if (p_slot == UI_SLOT_OUTPUT) {
       p_x = l_grid_x + p_grid_width * p_size + p_size * 1.9;
       p_y = l_top_y + p_size;
+      if (p_screen == SCREEN_INVENTORY) {
+        p_x = l_inv_x + p_size * 8.2;
+        p_y = l_top_y + p_size * 2.5;
+      }
       return TRUE;
     }
     return FALSE;
@@ -407,6 +433,18 @@ Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Rea
     }
   }
   return FALSE;
+}
+
+Integer ui_inventory_slot(Integer p_slot)
+// ----------------------------------------------------------------
+// Slot of the inventory record a screen slot shows (the hotbar, the
+// main inventory, the armour and the offhand), 0 for other slots
+// ----------------------------------------------------------------
+{
+  if (p_slot >= 1 && p_slot <= INVENTORY_SLOTS) return p_slot;
+  if (p_slot > UI_SLOT_ARMOUR && p_slot <= UI_SLOT_ARMOUR + ARMOUR_PLACES) return inventory_armour_slot(p_slot - UI_SLOT_ARMOUR);
+  if (p_slot == UI_SLOT_OFFHAND) return OFFHAND_SLOT;
+  return 0;
 }
 
 Integer ui_slot_at(Integer p_screen, Integer p_grid_width, Real p_px, Real p_py, Real p_w, Real p_h)
@@ -464,17 +502,20 @@ void ui_click(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Att
                                                          record_integer(p_ui, ATTR_UI_SCROLL) + 1));
     return;
   }
-  if (l_slot > UI_SLOT_CREATIVE) {
-    ui_creative_click(p_ui, p_inventory, l_slot - UI_SLOT_CREATIVE, p_right_button);
+  if (ui_inventory_slot(l_slot) > 0) {
+    l_target = ui_inventory_slot(l_slot);
+    // an armour slot only takes the piece worn there
+    if (!inventory_fits_slot(l_carried, l_target)) return;
+    if (p_right_button) {
+      slot_click_right(p_inventory, p_inventory, l_target, FALSE);
+    } else {
+      slot_click_left(p_inventory, p_inventory, l_target, FALSE);
+    }
     return;
   }
 
-  if (l_slot <= INVENTORY_SLOTS) {
-    if (p_right_button) {
-      slot_click_right(p_inventory, p_inventory, l_slot, FALSE);
-    } else {
-      slot_click_left(p_inventory, p_inventory, l_slot, FALSE);
-    }
+  if (l_slot > UI_SLOT_CREATIVE) {
+    ui_creative_click(p_ui, p_inventory, l_slot - UI_SLOT_CREATIVE, p_right_button);
     return;
   }
 
@@ -712,13 +753,14 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
       if (ui_creative_rows(p_ui) > CREATIVE_ROWS) ui_draw_scroll(p_box, l_x, l_y, l_size, l_slot == UI_SLOT_SCROLL_UP, l_slot == l_hovered);
       continue;
     }
-    if (l_slot > UI_SLOT_CREATIVE) {
+    if (ui_inventory_slot(l_slot) > 0) {
+      l_target = ui_inventory_slot(l_slot);
+      l_item   = slot_item  (p_inventory, l_target);
+      l_count  = slot_count (p_inventory, l_target);
+      l_damage = slot_damage(p_inventory, l_target);
+    } else if (l_slot > UI_SLOT_CREATIVE) {
       l_item  = ui_creative_item(p_ui, l_slot - UI_SLOT_CREATIVE);
       l_count = 1;
-    } else if (l_slot <= INVENTORY_SLOTS) {
-      l_item   = slot_item  (p_inventory, l_slot);
-      l_count  = slot_count (p_inventory, l_slot);
-      l_damage = slot_damage(p_inventory, l_slot);
     } else if (l_slot == UI_SLOT_OUTPUT) {
       if (l_recipe > 0) {
         l_item  = crafting_recipe_output(p_book, l_recipe);
@@ -741,6 +783,15 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
     }
     hud_draw_slot_style(p_box, l_x, l_y, l_size, l_item, l_count, l_damage, l_slot == l_hovered, SLOT_STYLE_LIGHT);
     if (l_slot == l_hovered && l_carried == ITEM_NONE) l_name = item_name(l_item);
+  }
+
+  // the player in the armour worn, between the armour and the grid
+  if (l_screen == SCREEN_INVENTORY) {
+    render_set_colour(p_box, 22.0, 22.0, 24.0);
+    render_fill_rect (p_box, l_inv_x + l_slot_size * 1.15, l_top_y, l_inv_x + l_slot_size * 3.85, l_top_y + l_slot_size * 4.0);
+    hud_draw_figure(p_box, l_inv_x + l_slot_size * 2.5, l_top_y + l_slot_size * 0.3, l_slot_size * 3.4 / 32.0,
+                    slot_item(p_inventory, inventory_armour_slot(ARMOUR_HEAD)), slot_item(p_inventory, inventory_armour_slot(ARMOUR_CHEST)),
+                    slot_item(p_inventory, inventory_armour_slot(ARMOUR_LEGS)), slot_item(p_inventory, inventory_armour_slot(ARMOUR_FEET)));
   }
 
   if (l_screen == SCREEN_FURNACE) {

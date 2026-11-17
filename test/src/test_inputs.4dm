@@ -179,7 +179,13 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
       p_rule = "an item";  p_low = 0.0;  p_high = MAX_ITEM_ID;  p_typical = ITEM_STONE;  return;
     }
     if (test_name_ends(p_name, "slot")) {
-      p_rule = "an inventory slot";  p_low = 0.0;  p_high = INVENTORY_SLOTS;  p_typical = 1.0;  return;
+      p_rule = "an inventory slot";  p_low = 0.0;  p_high = PLAYER_SLOTS;  p_typical = 1.0;  return;
+    }
+    if (p_name == "p_selected") {
+      p_rule = "a hotbar slot";  p_low = 1.0;  p_high = HOTBAR_SLOTS;  p_typical = 1.0;  return;
+    }
+    if (p_name == "p_place") {
+      p_rule = "where armour is worn";  p_low = ARMOUR_NONE;  p_high = ARMOUR_PLACES;  p_typical = ARMOUR_HEAD;  return;
     }
     if (p_name == "p_count" || p_name == "p_amount") {
       p_rule = "a stack size";  p_low = 0.0;  p_high = 64.0;  p_typical = 3.0;  return;

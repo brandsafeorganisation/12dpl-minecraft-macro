@@ -237,6 +237,39 @@ void test_cases_run(Attributes &p_results)
   inventory_clear(g_inventory);
   test_expect_integer(p_results, "inventory_clear empties it",        inventory_count_item(g_inventory, ITEM_STONE), 0);
 
+  // ---------------------------------------------------- armour, the offhand and spawn eggs
+  test_group(p_results, "armour, offhand and spawn eggs");
+  inventory_clear(g_inventory);
+  test_expect_integer(p_results, "a chestplate is worn on the chest",  item_armour_place(ITEM_IRON_CHESTPLATE), ARMOUR_CHEST);
+  test_expect_integer(p_results, "armour doesn't stack",               item_max_stack(ITEM_IRON_BOOTS), 1);
+  test_expect_true   (p_results, "only a helmet fits the head slot",   !inventory_fits_slot(ITEM_IRON_BOOTS, inventory_armour_slot(ARMOUR_HEAD)));
+  test_expect_true   (p_results, "anything fits the offhand",          inventory_fits_slot(ITEM_STONE, OFFHAND_SLOT));
+  test_expect_integer(p_results, "a hit with nothing worn",            inventory_armour_damage(g_inventory, 3), 3);
+  slot_set(g_inventory, 5, ITEM_IRON_HELMET, 1, 0);
+  test_expect_true   (p_results, "inventory_equip puts a helmet on",   inventory_equip(g_inventory, 5));
+  test_expect_integer(p_results, "the helmet is in the head slot",     slot_item(g_inventory, inventory_armour_slot(ARMOUR_HEAD)), ITEM_IRON_HELMET);
+  slot_set(g_inventory, inventory_armour_slot(ARMOUR_CHEST), ITEM_IRON_CHESTPLATE, 1, 0);
+  slot_set(g_inventory, inventory_armour_slot(ARMOUR_LEGS),  ITEM_IRON_LEGGINGS,   1, 0);
+  slot_set(g_inventory, inventory_armour_slot(ARMOUR_FEET),  ITEM_IRON_BOOTS,      1, 0);
+  test_expect_integer(p_results, "a full iron set gives 15 points",    inventory_armour_points(g_inventory), 15);
+  test_expect_integer(p_results, "a zombie's 3 becomes 1 in full iron", inventory_armour_damage(g_inventory, 3), 1);
+  test_expect_integer(p_results, "a hit of 10 becomes 4",              inventory_armour_damage(g_inventory, 10), 4);
+  inventory_wear_armour(g_inventory, g_events);
+  test_expect_integer(p_results, "a hit wears the boots",              slot_damage(g_inventory, inventory_armour_slot(ARMOUR_FEET)), 1);
+  slot_set(g_inventory, inventory_armour_slot(ARMOUR_HEAD), ITEM_IRON_HELMET, 1, item_max_uses(ITEM_IRON_HELMET) - 1);
+  test_expect_integer(p_results, "a worn out helmet breaks",           inventory_wear_armour(g_inventory, g_events), 1);
+  test_expect_true   (p_results, "and the head slot is empty",         slot_is_empty(g_inventory, inventory_armour_slot(ARMOUR_HEAD)));
+  slot_set(g_inventory, 2, ITEM_TORCH, 8, 0);
+  inventory_swap_hands(g_inventory, 2);
+  test_expect_integer(p_results, "swapping hands moves the torch",     slot_item(g_inventory, OFFHAND_SLOT), ITEM_TORCH);
+  test_expect_true   (p_results, "and empties the hotbar slot",        slot_is_empty(g_inventory, 2));
+  inventory_clear(g_inventory);
+  test_expect_true   (p_results, "inventory_clear takes the armour off", slot_is_empty(g_inventory, inventory_armour_slot(ARMOUR_CHEST)));
+  test_expect_integer(p_results, "a pig egg makes pigs",               item_spawn_egg_mob(ITEM_PIG_SPAWN_EGG), MOB_PIG);
+  test_expect_integer(p_results, "a stone is no spawn egg",            item_spawn_egg_mob(ITEM_STONE), NOT_A_SPAWN_EGG);
+  test_expect_text   (p_results, "the zombie egg's name",              item_name(ITEM_ZOMBIE_SPAWN_EGG), "Zombie Spawn Egg");
+  test_expect_integer(p_results, "ui slot 152 is the chest slot",      ui_inventory_slot(UI_SLOT_ARMOUR + ARMOUR_CHEST), inventory_armour_slot(ARMOUR_CHEST));
+
   // ---------------------------------------------------- crafting
   test_group(p_results, "crafting");
   grid_clear(g_grid, GRID_INVENTORY_WIDTH);

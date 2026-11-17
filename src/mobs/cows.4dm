@@ -615,4 +615,17 @@ Integer cows_box_overlaps(Attributes &p_cows, Real p_min_x, Real p_min_y, Real p
   return FALSE;
 }
 
+void cows_on_event(Attributes &p_event, Attributes &p_cows, Attributes &p_random, Attributes &p_events)
+// ----------------------------------------------------------------
+// Event handler: EVT_SPAWN_MOB puts a new mob of a kind at the
+// position given (a spawn egg was used)
+// ----------------------------------------------------------------
+{
+  if (event_type(p_event) != EVT_SPAWN_MOB) return;
+  if (mobs_spawn(p_cows, p_random, event_integer(p_event, 1), event_real(p_event, 1), event_real(p_event, 2), event_real(p_event, 3),
+                 event_integer(p_event, 2) / 1000.0) == 0) {
+    emit_toast(p_events, "There are too many mobs here already");
+  }
+}
+
 #endif

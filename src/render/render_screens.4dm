@@ -542,12 +542,7 @@ void screen_skins(Draw_Box p_box, Attributes &p_menu, Attributes &p_files, Text 
   // the skin from the front: a player is 32 skin pixels tall
   l_unit = min_real(8.0, (l_top - l_bottom - 20.0) / 32.0);
   l_base = l_bottom + 10.0;
-  hud_texture_face(p_box, TEX_PERSON_LEG_FRONT, 1.0, FALSE, l_cx - 4.0 * l_unit, l_base, 4.0 * l_unit, 0.0, 0.0, 12.0 * l_unit);
-  hud_texture_face(p_box, TEX_PERSON_LEG_FRONT, 1.0, FALSE, l_cx, l_base, 4.0 * l_unit, 0.0, 0.0, 12.0 * l_unit);
-  hud_texture_face(p_box, TEX_PERSON_SHIRT, 1.0, FALSE, l_cx - 4.0 * l_unit, l_base + 12.0 * l_unit, 8.0 * l_unit, 0.0, 0.0, 12.0 * l_unit);
-  hud_texture_face(p_box, TEX_PERSON_ARM_FRONT, 1.0, FALSE, l_cx - 8.0 * l_unit, l_base + 12.0 * l_unit, 4.0 * l_unit, 0.0, 0.0, 12.0 * l_unit);
-  hud_texture_face(p_box, TEX_PERSON_ARM_FRONT, 1.0, FALSE, l_cx + 4.0 * l_unit, l_base + 12.0 * l_unit, 4.0 * l_unit, 0.0, 0.0, 12.0 * l_unit);
-  hud_texture_face(p_box, TEX_PERSON_FACE, 1.0, FALSE, l_cx - 4.0 * l_unit, l_base + 24.0 * l_unit, 8.0 * l_unit, 0.0, 0.0, 8.0 * l_unit);
+  hud_draw_figure(p_box, l_cx, l_base, l_unit, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE);
 
   menu_draw_title(p_box, p_w, p_h - 14.0, "Skin");
   l_path = SKIN_FOLDER;

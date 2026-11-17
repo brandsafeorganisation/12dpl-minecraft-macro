@@ -284,7 +284,7 @@ void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_events
 }
 
 void game_dispatch_events(Attributes &p_events, Attributes &p_event, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                          Attributes &p_grid, Attributes &p_furnaces, Attributes &p_drops, Attributes &p_random,
+                          Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_random,
                           Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Real p_now)
 // ----------------------------------------------------------------
 // Hand every queued event to each module's handler. Handlers may
@@ -301,7 +301,8 @@ void game_dispatch_events(Attributes &p_events, Attributes &p_event, Attributes 
   while (next_event(p_events, p_event)) {
     mesh_on_event   (p_event);
     world_on_event  (p_event, p_info, p_events);
-    player_on_event (p_event, p_player, p_events);
+    player_on_event (p_event, p_player, p_inventory, p_events);
+    cows_on_event   (p_event, p_cows, p_random, p_events);
     save_on_event   (p_event);
     furnace_on_event(p_event, p_furnaces, p_events);
     chest_on_event  (p_event, p_furnaces, p_events);
@@ -355,7 +356,7 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
     record_set_real(p_game, ATTR_GAME_AUTOSAVE, l_autosave);
   }
 
-  game_dispatch_events(p_events, p_event, p_info, p_player, p_inventory, p_grid, p_furnaces, p_drops, p_random, p_hud, p_ui, p_net, p_now);
+  game_dispatch_events(p_events, p_event, p_info, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_random, p_hud, p_ui, p_net, p_now);
 }
 
 void game_select_slot(Attributes &p_player, Attributes &p_hud, Integer p_slot, Real p_now)

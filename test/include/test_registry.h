@@ -13,8 +13,8 @@
 // reference parameters afterwards and the seconds it took in p_out.
 // ----------------------------------------------------------------
 
-#define TEST_FUNCTION_COUNT     807
-#define TEST_MACRO_COUNT        775
+#define TEST_FUNCTION_COUNT     827
+#define TEST_MACRO_COUNT        795
 #define TEST_INTEGER_SLOTS      12
 #define TEST_REAL_SLOTS         13
 #define TEST_TEXT_SLOTS         6

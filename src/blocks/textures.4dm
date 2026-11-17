@@ -1736,6 +1736,184 @@ void make_texture_door_edge(Integer p_tex, Integer p_door_tex)
   }
 }
 
+void make_armour_palette(Integer p_tex)
+// ----------------------------------------------------------------
+// Colours of iron armour: 1 outline, 2 shadow, 3 iron, 4 shine
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 60 , 60 , 64 );
+  texture_set_palette(p_tex, 2, 150, 150, 156);
+  texture_set_palette(p_tex, 3, 206, 206, 212);
+  texture_set_palette(p_tex, 4, 250, 250, 252);
+}
+
+void make_texture_item_armour(Integer p_tex, Integer p_place)
+// ----------------------------------------------------------------
+// Item picture: a piece of iron armour (p_place ARMOUR_HEAD ..
+// ARMOUR_FEET)
+// ----------------------------------------------------------------
+{
+  make_armour_palette(p_tex);
+  if (p_place == ARMOUR_HEAD) {
+    texture_row(p_tex,  1, "................");
+    texture_row(p_tex,  2, "................");
+    texture_row(p_tex,  3, "................");
+    texture_row(p_tex,  4, "....11111111....");
+    texture_row(p_tex,  5, "...1443333331...");
+    texture_row(p_tex,  6, "..143333333321..");
+    texture_row(p_tex,  7, "..133222222231..");
+    texture_row(p_tex,  8, "..1321....1231..");
+    texture_row(p_tex,  9, "..1321....1231..");
+    texture_row(p_tex, 10, "..1221....1221..");
+    texture_row(p_tex, 11, "..111......111..");
+    texture_row(p_tex, 12, "................");
+    texture_row(p_tex, 13, "................");
+    texture_row(p_tex, 14, "................");
+    texture_row(p_tex, 15, "................");
+    texture_row(p_tex, 16, "................");
+    return;
+  }
+  if (p_place == ARMOUR_CHEST) {
+    texture_row(p_tex,  1, "................");
+    texture_row(p_tex,  2, ".1111......1111.");
+    texture_row(p_tex,  3, ".14331111113341.");
+    texture_row(p_tex,  4, ".14333333333341.");
+    texture_row(p_tex,  5, ".12333333333321.");
+    texture_row(p_tex,  6, ".11233333333211.");
+    texture_row(p_tex,  7, "..123333333321..");
+    texture_row(p_tex,  8, "..133333333331..");
+    texture_row(p_tex,  9, "..133333333331..");
+    texture_row(p_tex, 10, "..123333333321..");
+    texture_row(p_tex, 11, "..122333333221..");
+    texture_row(p_tex, 12, "..122222222221..");
+    texture_row(p_tex, 13, "..111111111111..");
+    texture_row(p_tex, 14, "................");
+    texture_row(p_tex, 15, "................");
+    texture_row(p_tex, 16, "................");
+    return;
+  }
+  if (p_place == ARMOUR_LEGS) {
+    texture_row(p_tex,  1, "................");
+    texture_row(p_tex,  2, "................");
+    texture_row(p_tex,  3, "..111111111111..");
+    texture_row(p_tex,  4, "..143333333341..");
+    texture_row(p_tex,  5, "..133333333331..");
+    texture_row(p_tex,  6, "..133322223331..");
+    texture_row(p_tex,  7, "..13321..12331..");
+    texture_row(p_tex,  8, "..1331....1331..");
+    texture_row(p_tex,  9, "..1331....1331..");
+    texture_row(p_tex, 10, "..1331....1331..");
+    texture_row(p_tex, 11, "..1331....1331..");
+    texture_row(p_tex, 12, "..1331....1331..");
+    texture_row(p_tex, 13, "..1331....1331..");
+    texture_row(p_tex, 14, "..1221....1221..");
+    texture_row(p_tex, 15, "..1111....1111..");
+    texture_row(p_tex, 16, "................");
+    return;
+  }
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "................");
+  texture_row(p_tex,  4, "................");
+  texture_row(p_tex,  5, "................");
+  texture_row(p_tex,  6, "................");
+  texture_row(p_tex,  7, "................");
+  texture_row(p_tex,  8, "..1111....1111..");
+  texture_row(p_tex,  9, "..1431....1341..");
+  texture_row(p_tex, 10, "..1331....1331..");
+  texture_row(p_tex, 11, ".11331....13311.");
+  texture_row(p_tex, 12, "1433331..1333341");
+  texture_row(p_tex, 13, "1222221..1222221");
+  texture_row(p_tex, 14, "1111111..1111111");
+  texture_row(p_tex, 15, "................");
+  texture_row(p_tex, 16, "................");
+}
+
+void make_texture_spawn_egg(Integer p_tex, Integer p_red, Integer p_green, Integer p_blue,
+                            Integer p_spot_red, Integer p_spot_green, Integer p_spot_blue)
+// ----------------------------------------------------------------
+// Item picture: a spawn egg in the mob's colour with spots
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, floor_integer(p_red * 0.45), floor_integer(p_green * 0.45), floor_integer(p_blue * 0.45));
+  texture_set_palette(p_tex, 2, p_red, p_green, p_blue);
+  texture_set_palette(p_tex, 3, min_integer(255, p_red + 60), min_integer(255, p_green + 60), min_integer(255, p_blue + 60));
+  texture_set_palette(p_tex, 4, p_spot_red, p_spot_green, p_spot_blue);
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "......1111......");
+  texture_row(p_tex,  3, ".....122221.....");
+  texture_row(p_tex,  4, "....12232221....");
+  texture_row(p_tex,  5, "....12322421....");
+  texture_row(p_tex,  6, "...1232222221...");
+  texture_row(p_tex,  7, "...1222242221...");
+  texture_row(p_tex,  8, "..122422222221..");
+  texture_row(p_tex,  9, "..122222224221..");
+  texture_row(p_tex, 10, "..122242222221..");
+  texture_row(p_tex, 11, "..122222222221..");
+  texture_row(p_tex, 12, "..124222242221..");
+  texture_row(p_tex, 13, "...1222222221...");
+  texture_row(p_tex, 14, "....11222211....");
+  texture_row(p_tex, 15, "......1111......");
+  texture_row(p_tex, 16, "................");
+}
+
+void make_texture_armour_icon(Integer p_tex, Integer p_fill)
+// ----------------------------------------------------------------
+// An armour bar icon (a little chestplate): p_fill 2 full, 1 the
+// left half, 0 the empty outline
+// ----------------------------------------------------------------
+{
+  Integer l_u = 0;
+  Integer l_v = 0;
+
+  texture_set_palette(p_tex, 1, 28 , 28 , 30 );
+  texture_set_palette(p_tex, 2, 226, 226, 232);
+  texture_set_palette(p_tex, 3, 160, 160, 168);
+  texture_set_palette(p_tex, 4, 72 , 72 , 76 );
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "..1111....1111..");
+  texture_row(p_tex,  4, ".14441111114441.");
+  texture_row(p_tex,  5, ".14444444444441.");
+  texture_row(p_tex,  6, ".14444444444441.");
+  texture_row(p_tex,  7, "..144444444441..");
+  texture_row(p_tex,  8, "...1444444441...");
+  texture_row(p_tex,  9, "...1444444441...");
+  texture_row(p_tex, 10, "...1444444441...");
+  texture_row(p_tex, 11, "...1444444441...");
+  texture_row(p_tex, 12, "...1111111111...");
+  texture_row(p_tex, 13, "................");
+  texture_row(p_tex, 14, "................");
+  texture_row(p_tex, 15, "................");
+  texture_row(p_tex, 16, "................");
+  if (p_fill == 0) return;
+  for (l_v = 1; l_v <= TEX_SIZE; ++l_v) {
+    for (l_u = 1; l_u <= TEX_SIZE; ++l_u) {
+      if (texture_get(p_tex, l_u, l_v) != 4) continue;
+      if (p_fill == 1 && l_u > 8) continue;
+      texture_set(p_tex, l_u, l_v, 2);
+      if (l_v >= 9) texture_set(p_tex, l_u, l_v, 3);
+    }
+  }
+}
+
+void make_texture_armour_worn(Integer p_tex, Integer p_helmet_front)
+// ----------------------------------------------------------------
+// Iron armour as worn on the player model: brushed iron, or (for
+// the front of the helmet) only a rim round the face
+// ----------------------------------------------------------------
+{
+  make_armour_palette(p_tex);
+  texture_fill   (p_tex, 3);
+  texture_blotch (p_tex, 2, 4, 0.0, 0.22, 95);
+  texture_speckle(p_tex, 4, 0.05, 97);
+  texture_fill_rect(p_tex, 1, 16, 16, 16, 2);
+  if (p_helmet_front) {
+    texture_fill_rect(p_tex, 1, 1, 16, 1, 4);
+    texture_fill_rect(p_tex, 3, 5, 14, 16, TEX_TRANSPARENT);
+  }
+}
+
 Integer texture_is_sprite(Integer p_tex)
 // ----------------------------------------------------------------
 // TRUE for the textures drawn as pictures with see-through pixels
@@ -1877,6 +2055,18 @@ void textures_generate()
   make_texture_person        (TEX_PERSON_ARM_FRONT,  6);
   make_texture_person        (TEX_PERSON_ARM_TOP,    5);
   make_texture_person        (TEX_PERSON_LEG_FRONT,  7);
+  make_texture_item_armour   (TEX_ITEM_IRON_HELMET,     ARMOUR_HEAD);
+  make_texture_item_armour   (TEX_ITEM_IRON_CHESTPLATE, ARMOUR_CHEST);
+  make_texture_item_armour   (TEX_ITEM_IRON_LEGGINGS,   ARMOUR_LEGS);
+  make_texture_item_armour   (TEX_ITEM_IRON_BOOTS,      ARMOUR_FEET);
+  make_texture_spawn_egg     (TEX_ITEM_COW_SPAWN_EGG,    68 , 52 , 36 , 168, 168, 168);
+  make_texture_spawn_egg     (TEX_ITEM_PIG_SPAWN_EGG,    236, 156, 156, 204, 96 , 96 );
+  make_texture_spawn_egg     (TEX_ITEM_ZOMBIE_SPAWN_EGG, 0  , 170, 170, 112, 150, 92 );
+  make_texture_armour_icon   (TEX_ARMOUR_FULL,  2);
+  make_texture_armour_icon   (TEX_ARMOUR_HALF,  1);
+  make_texture_armour_icon   (TEX_ARMOUR_EMPTY, 0);
+  make_texture_armour_worn   (TEX_ARMOUR_IRON,         FALSE);
+  make_texture_armour_worn   (TEX_ARMOUR_HELMET_FRONT, TRUE);
 }
 
 #endif

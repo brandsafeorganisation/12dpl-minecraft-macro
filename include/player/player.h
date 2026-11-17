@@ -126,7 +126,7 @@ Integer player_place_double    (Attributes &p_player, Attributes &p_cows, Attrib
                                 Integer p_x, Integer p_y, Integer p_z);
 void    player_toggle_door     (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 Integer player_crouching       (Attributes &p_player);
-void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_events);
+void    player_on_event        (Attributes &p_event, Attributes &p_player, Attributes &p_inventory, Attributes &p_events);
 Integer player_flying          (Attributes &p_player);
 Integer player_camera          (Attributes &p_player);
 void    player_next_camera     (Attributes &p_player);
@@ -146,6 +146,7 @@ Integer player_overlaps_cell   (Attributes &p_player, Integer p_x, Integer p_y, 
 void    player_wear_tool       (Attributes &p_player, Attributes &p_inventory, Attributes &p_events);
 void    player_primary_action  (Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events,
                                 Attributes &p_random, Real p_now);
+Integer player_use_slot        (Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Integer p_slot);
 void    player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Real p_now);
 Integer player_furnace_facing  (Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z);
 

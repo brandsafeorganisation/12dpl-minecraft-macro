@@ -103,7 +103,14 @@
 #define ITEM_RAW_PORKCHOP     82
 #define ITEM_COOKED_PORKCHOP  83
 #define ITEM_DOOR             84   // places the two halves of a door
-#define MAX_ITEM_ID           84
+#define ITEM_IRON_HELMET      85   // armour: worn in the armour slots
+#define ITEM_IRON_CHESTPLATE  86
+#define ITEM_IRON_LEGGINGS    87
+#define ITEM_IRON_BOOTS       88
+#define ITEM_COW_SPAWN_EGG    89   // spawn eggs (creative): right click a block
+#define ITEM_PIG_SPAWN_EGG    90   // to put the mob on it
+#define ITEM_ZOMBIE_SPAWN_EGG 91
+#define MAX_ITEM_ID           91
 
 // Tool kinds and tiers
 #define TOOL_NONE             0
@@ -115,6 +122,16 @@
 #define TIER_WOOD             1
 #define TIER_STONE            2
 #define TIER_IRON             3
+
+// Where a piece of armour is worn (item_armour_place)
+#define ARMOUR_NONE           0
+#define ARMOUR_HEAD           1
+#define ARMOUR_CHEST          2
+#define ARMOUR_LEGS           3
+#define ARMOUR_FEET           4
+#define ARMOUR_PLACES         4
+#define ARMOUR_MAX_POINTS     20   // every armour point takes 1/25 off a hit
+#define NOT_A_SPAWN_EGG       -1   // item_spawn_egg_mob of other items
 
 // Face directions (outward normal of a block face)
 #define DIR_PX                1
@@ -168,6 +185,9 @@ Integer item_tool_tier       (Integer p_item);
 Integer item_max_uses        (Integer p_item);
 Integer item_attack_damage   (Integer p_item);
 Integer item_food_value      (Integer p_item);
+Integer item_armour_place    (Integer p_item);
+Integer item_armour_points   (Integer p_item);
+Integer item_spawn_egg_mob   (Integer p_item);
 Integer item_fuel_seconds    (Integer p_item);
 Integer item_smelt_result    (Integer p_item);
 Integer item_top_texture     (Integer p_item);

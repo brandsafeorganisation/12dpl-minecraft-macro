@@ -38,6 +38,7 @@
 #define EVT_ZOMBIE_ATTACK     17   // i1 damage (a zombie hit the player)
 #define EVT_LIGHT_CHANGED     18   // i1..i3 cell: block light may have changed up to LIGHT_RADIUS from it
 #define EVT_FURNACE_LIT       19   // i1..i3 cell of a furnace, i4 TRUE if it started burning, FALSE if it went out
+#define EVT_SPAWN_MOB         20   // i1 MOB_* kind, i2 yaw in thousandths of a radian, r1..r3 position (a spawn egg was used)
 
 #define EVENT_REMOTE          1.0  // r3 of a block event another player caused
 

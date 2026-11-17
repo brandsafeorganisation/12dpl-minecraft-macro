@@ -163,6 +163,7 @@ that were looked up most often (to find hot spots).
 | `27_pause_menu`               | Q shows the game menu over the darkened world, the button under the mouse lights up, Controls shows the keys and a click goes back, Mode cycles the game mode, Back to Game plays on; creative flight lands on the ground; the creative screen over the darkened world; Save and Quit to Title |
 | `29_body_pose`                | the player model from outside: legs together standing still, the head turning before the body, the crouch leaning forward |
 | `30_title_screens`            | the title screen; typing a new world's name in creative; its picture taken after a couple of seconds; the world list's pictures, game modes, files, dates and versions; searching it; the multiplayer screen |
+| `31_armour_offhand_eggs`      | only the right piece goes in each armour slot; the picture in the inventory, the armour bar and the 3D model wear it; a zombie's hit is 1 not 3 in full iron and wears every piece; a torch in the offhand shows by the hotbar, is placed with an empty main hand and X swaps it; a cow egg makes a cow (used up in survival); the armour comes back with the world; the eggs in the creative list and a zombie egg not used up |
 | `28_skin_camera`              | the skin picker: a file that isn't a skin is reported, the supplied skin (`release/skins/purple.png`) dresses the player model; V: the camera behind, in front (walking backwards), and the eyes again |
 
 ### Font files

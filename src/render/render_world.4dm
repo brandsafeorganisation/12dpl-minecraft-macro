@@ -12,6 +12,7 @@
 #include "../../include/mobs/cows.h"
 #include "../../include/core/slots.h"
 #include "../../include/items/drops.h"
+#include "../../include/items/inventory.h"
 #include "../../include/core/records.h"
 #include "../../include/program/settings.h"
 #include "../../include/render/render.h"
@@ -1132,18 +1133,23 @@ void render_pig(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_t
   render_mob_end();
 }
 
-void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, Real p_pitch, Real p_swing, Integer p_crouch)
+void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, Real p_pitch, Real p_swing, Integer p_crouch,
+                   Integer p_helmet, Integer p_chestplate, Integer p_leggings, Integer p_boots)
 // ----------------------------------------------------------------
 // A player: the body faces yaw and the head is turned head_turn
 // from it and looks up or down by pitch; legs and arms swing by
 // swing. Crouching, the body leans forward from the neck, the legs
 // step back under it and the head and arms come down with it.
+// Armour worn (TRUE for each piece) is a slightly bigger box round
+// the part it covers, queued before it so it is painted over it.
 // ----------------------------------------------------------------
 {
   Real l_neck      = 1.5;    // where the head sits on the body
   Real l_lean      = 0.0;    // the body tips forward this much (radians)
   Real l_legs_back = 0.0;
   Real l_arm_tip   = 0.0;
+  Real l_a         = PERSON_ARMOUR_GAP;
+  Real l_foot      = 0.625;  // from the hip to the middle of a boot
 
   if (p_crouch) {
     l_neck      = 1.3;
@@ -1152,6 +1158,24 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
     l_arm_tip   = 0.4;
   }
   render_mob_begin(p_x, p_y, p_z, p_yaw, 0.0);
+  //                along                               up                                    across   half f        half y          half s        turn         pitch                 hip    side             top              front                    back
+  if (p_helmet) {
+    render_mob_part(0.0                               , l_neck + 0.25                       ,  0.0   , 0.25 + l_a    , 0.25 + l_a    , 0.25 + l_a  , p_head_turn,  p_pitch            , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_HELMET_FRONT, TEX_ARMOUR_IRON);
+  }
+  if (p_chestplate) {
+    render_mob_part(-0.375 * Sin(l_lean)              , l_neck - 0.375 * Cos(l_lean)        ,  0.0   , 0.125 + l_a   , 0.375 + l_a   , 0.25 + l_a  , 0.0        , -l_lean             , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+    render_mob_part(0.0                               , l_neck - 0.375                      ,  0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip - p_swing , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+    render_mob_part(0.0                               , l_neck - 0.375                      , -0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip + p_swing , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+  }
+  // boots hang from the hip like the legs, a little bigger than the leggings
+  if (p_boots) {
+    render_mob_part(l_legs_back + l_foot * Sin(p_swing) , 0.75 - l_foot * Cos(p_swing)      ,  0.125 , 0.125 + 2.0 * l_a, 0.125 + l_a, 0.125 + 2.0 * l_a, 0.0  ,  p_swing            , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+    render_mob_part(l_legs_back - l_foot * Sin(p_swing) , 0.75 - l_foot * Cos(p_swing)      , -0.125 , 0.125 + 2.0 * l_a, 0.125 + l_a, 0.125 + 2.0 * l_a, 0.0  , -p_swing            , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+  }
+  if (p_leggings) {
+    render_mob_part(l_legs_back                       , 0.375                               ,  0.125 , 0.125 + l_a   , 0.375         , 0.125 + l_a , 0.0        ,  p_swing            , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+    render_mob_part(l_legs_back                       , 0.375                               , -0.125 , 0.125 + l_a   , 0.375         , 0.125 + l_a , 0.0        , -p_swing            , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+  }
   // sized like the block game's player (1 pixel of the skin is 1/16
   // block): 4 x 12 x 4 legs and arms, an 8 x 12 x 4 body, an 8 x 8 x 8
   // head, with each face from its own part of the skin. The body hangs
@@ -1219,10 +1243,10 @@ void render_camera_place(Attributes &p_player, Real &p_x, Real &p_y, Real &p_z, 
   }
 }
 
-void render_collect_self(Attributes &p_player)
+void render_collect_self(Attributes &p_player, Attributes &p_inventory)
 // ----------------------------------------------------------------
-// Queue the player's own body (in their skin) when the view is from
-// outside it; spectators have no body
+// Queue the player's own body (in their skin and the armour worn)
+// when the view is from outside it; spectators have no body
 // ----------------------------------------------------------------
 {
   Real l_x     = 0.0;
@@ -1237,7 +1261,9 @@ void render_collect_self(Attributes &p_player)
   player_look    (p_player, l_yaw, l_pitch);
   g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
   render_person(l_x, l_y, l_z, player_body_yaw(p_player), wrap_angle(l_yaw - player_body_yaw(p_player)), l_pitch,
-                Sin(player_bob(p_player)) * MOB_LEG_SWING * player_stride(p_player), player_crouching(p_player));
+                Sin(player_bob(p_player)) * MOB_LEG_SWING * player_stride(p_player), player_crouching(p_player),
+                !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_HEAD)), !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_CHEST)),
+                !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_LEGS)), !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_FEET)));
 }
 
 void render_collect_peers(Attributes &p_peers)
@@ -1255,7 +1281,8 @@ void render_collect_peers(Attributes &p_peers)
     peer_position(p_peers, l_peer, l_x, l_y, l_z);
     if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > (g_render_distance + 2.0) * (g_render_distance + 2.0)) continue;
     g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
-    render_person(l_x, l_y, l_z, peer_yaw(p_peers, l_peer), 0.0, peer_pitch(p_peers, l_peer), Sin(peer_step(p_peers, l_peer)) * MOB_LEG_SWING, FALSE);
+    render_person(l_x, l_y, l_z, peer_yaw(p_peers, l_peer), 0.0, peer_pitch(p_peers, l_peer), Sin(peer_step(p_peers, l_peer)) * MOB_LEG_SWING, FALSE,
+                  FALSE, FALSE, FALSE, FALSE);
   }
 }
 
@@ -2496,7 +2523,7 @@ Integer render_ray_colour(Real p_x, Real p_y, Real p_z, Real p_dir_x, Real p_dir
   return to_byte(l_red) * 65536 + to_byte(l_green) * 256 + to_byte(l_blue);
 }
 
-void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows,
+void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_inventory, Attributes &p_cows,
                   Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now)
 // ----------------------------------------------------------------
 // Draw the 3D view from the player's eyes: sky, then every face far
@@ -2527,7 +2554,7 @@ void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attrib
   render_collect_cows  (p_cows);
   render_collect_drops (p_drops);
   render_collect_peers (p_peers);
-  render_collect_self  (p_player);
+  render_collect_self  (p_player, p_inventory);
   g_box_light = 1.0;
   g_stat_faces = g_face_total;
 

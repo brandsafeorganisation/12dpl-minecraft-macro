@@ -579,14 +579,14 @@ void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h, Integer p_from_menu)
   hud_help_heading(p_box, l_x, l_y, "MOUSE");
   hud_help_line(p_box, l_x, l_y, "Click the view" , "start playing (the mouse turns the camera)");
   hud_help_line(p_box, l_x, l_y, "Left click"     , "break blocks (harder blocks take more hits), hit animals");
-  hud_help_line(p_box, l_x, l_y, "Right click"    , "place blocks, eat, use tables and furnaces, open doors");
+  hud_help_line(p_box, l_x, l_y, "Right click"    , "place blocks, eat, put on armour, use spawn eggs and doors");
   hud_help_heading(p_box, l_x, l_y, "KEYBOARD");
   hud_help_line(p_box, l_x, l_y, "W A S D"        , "walk (hold one key at a time)");
   hud_help_line(p_box, l_x, l_y, "Space"          , "jump, swim up, fly up; twice quickly to fly in creative");
   hud_help_line(p_box, l_x, l_y, "1 - 9"          , "choose a hotbar slot");
   hud_help_line(p_box, l_x, l_y, "E"              , "inventory and 2 x 2 crafting; every item in creative");
   hud_help_line(p_box, l_x, l_y, "Q"              , "pause and free the mouse, or close a screen");
-  hud_help_line(p_box, l_x, l_y, "F / J"          , "auto-walk on/off, auto-jump on/off");
+  hud_help_line(p_box, l_x, l_y, "F / J / X"      , "auto-walk, auto-jump on/off; X swaps hand and offhand");
   hud_help_line(p_box, l_x, l_y, "C / Shift + W"  , "crouch on/off, crouch while held (both sink when flying)");
   hud_help_line(p_box, l_x, l_y, "T / slash"      , "chat, or a command: /gamemode /time /gamerule /give /help");
   hud_help_line(p_box, l_x, l_y, "P / U / V or F5" , "pick the block you look at, hide the HUD, camera behind / in front");
@@ -653,6 +653,71 @@ void hud_draw_hand(Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integ
 
   if (p_item != ITEM_NONE) {
     hud_draw_item_icon(p_box, p_item, l_base_x + 4.0 * l_scale, l_base_y + 148.0 * l_scale, 82.0 * l_scale, ICON_FULL);
+  }
+}
+
+void hud_draw_figure(Draw_Box p_box, Real p_centre_x, Real p_base_y, Real p_unit,
+                     Integer p_helmet, Integer p_chestplate, Integer p_leggings, Integer p_boots)
+// ----------------------------------------------------------------
+// The player from the front in their skin, standing on base_y and
+// 32 units tall (1 unit is a skin pixel), with the armour worn
+// (ITEM_NONE where nothing is worn) drawn over it half a unit
+// bigger all round
+// ----------------------------------------------------------------
+{
+  Real l_x = p_centre_x;
+  Real l_y = p_base_y;
+  Real l_u = p_unit;
+  Real l_a = p_unit * 0.5;
+
+  hud_texture_face(p_box, TEX_PERSON_LEG_FRONT, 1.0, FALSE, l_x - 4.0 * l_u, l_y, 4.0 * l_u, 0.0, 0.0, 12.0 * l_u);
+  hud_texture_face(p_box, TEX_PERSON_LEG_FRONT, 1.0, FALSE, l_x, l_y, 4.0 * l_u, 0.0, 0.0, 12.0 * l_u);
+  hud_texture_face(p_box, TEX_PERSON_SHIRT, 1.0, FALSE, l_x - 4.0 * l_u, l_y + 12.0 * l_u, 8.0 * l_u, 0.0, 0.0, 12.0 * l_u);
+  hud_texture_face(p_box, TEX_PERSON_ARM_FRONT, 1.0, FALSE, l_x - 8.0 * l_u, l_y + 12.0 * l_u, 4.0 * l_u, 0.0, 0.0, 12.0 * l_u);
+  hud_texture_face(p_box, TEX_PERSON_ARM_FRONT, 1.0, FALSE, l_x + 4.0 * l_u, l_y + 12.0 * l_u, 4.0 * l_u, 0.0, 0.0, 12.0 * l_u);
+  hud_texture_face(p_box, TEX_PERSON_FACE, 1.0, FALSE, l_x - 4.0 * l_u, l_y + 24.0 * l_u, 8.0 * l_u, 0.0, 0.0, 8.0 * l_u);
+
+  // leggings from the waist down, boots over the feet
+  if (p_leggings != ITEM_NONE) {
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.92, FALSE, l_x - 4.0 * l_u - l_a, l_y + 3.0 * l_u, 4.0 * l_u + l_a, 0.0, 0.0, 11.0 * l_u);
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.92, FALSE, l_x, l_y + 3.0 * l_u, 4.0 * l_u + l_a, 0.0, 0.0, 11.0 * l_u);
+  }
+  if (p_boots != ITEM_NONE) {
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.85, FALSE, l_x - 4.0 * l_u - l_a, l_y - l_a, 4.0 * l_u, 0.0, 0.0, 4.0 * l_u + l_a);
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.85, FALSE, l_x + l_a, l_y - l_a, 4.0 * l_u, 0.0, 0.0, 4.0 * l_u + l_a);
+  }
+  // the chestplate covers the body and the tops of the arms
+  if (p_chestplate != ITEM_NONE) {
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 1.0, FALSE, l_x - 4.0 * l_u - l_a, l_y + 12.0 * l_u, 8.0 * l_u + 2.0 * l_a, 0.0, 0.0, 12.0 * l_u + l_a);
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.9, FALSE, l_x - 8.0 * l_u - l_a, l_y + 19.0 * l_u, 4.0 * l_u, 0.0, 0.0, 5.0 * l_u + l_a);
+    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.9, FALSE, l_x + 4.0 * l_u + l_a, l_y + 19.0 * l_u, 4.0 * l_u, 0.0, 0.0, 5.0 * l_u + l_a);
+  }
+  if (p_helmet != ITEM_NONE) {
+    hud_texture_face(p_box, TEX_ARMOUR_HELMET_FRONT, 1.0, FALSE, l_x - 4.0 * l_u - l_a, l_y + 24.0 * l_u, 8.0 * l_u + 2.0 * l_a, 0.0, 0.0, 8.0 * l_u + l_a);
+  }
+}
+
+void hud_draw_armour(Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_points)
+// ----------------------------------------------------------------
+// Armour bar of ten icons (from the resource pack if it has them),
+// each worth two points, like the health bar
+// ----------------------------------------------------------------
+{
+  Integer l_icon = 0;
+  Integer l_left = 0;
+  Real    l_size = p_width / 10.0;
+  Real    l_ix   = 0.0;
+
+  for (l_icon = 1; l_icon <= 10; ++l_icon) {
+    l_ix   = p_x0 + (l_icon - 1) * l_size;
+    l_left = p_points - (l_icon - 1) * 2;
+    if (l_left >= 2) {
+      hud_texture_face(p_box, TEX_ARMOUR_FULL, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
+    } else if (l_left == 1) {
+      hud_texture_face(p_box, TEX_ARMOUR_HALF, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
+    } else {
+      hud_texture_face(p_box, TEX_ARMOUR_EMPTY, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
+    }
   }
 }
 
@@ -744,6 +809,11 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
     // the crosshair)
     if (player_camera(p_player) == CAMERA_FIRST) {
       if (!l_dead) hud_draw_hand(p_box, p_w, l_strip, p_h, l_held, player_bob(p_player), player_swing_time(p_player));
+      // the offhand's item in the lower left
+      if (!l_dead && slot_item(p_inventory, OFFHAND_SLOT) != ITEM_NONE) {
+        hud_draw_item_icon(p_box, slot_item(p_inventory, OFFHAND_SLOT), p_w * 0.16 - Sin(player_bob(p_player)) * 6.0,
+                           l_strip + (p_h - l_strip) * 0.16 + Absolute(Cos(player_bob(p_player))) * 5.0, 70.0 * (p_h - l_strip) / 480.0, ICON_FULL);
+      }
       render_set_colour(p_box, 240.0, 240.0, 240.0);
       render_line(p_box, p_w / 2.0 - 9.0, l_centre_y, p_w / 2.0 - 3.0, l_centre_y);
       render_line(p_box, p_w / 2.0 + 3.0, l_centre_y, p_w / 2.0 + 9.0, l_centre_y);
@@ -756,7 +826,19 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
                     slot_item(p_inventory, l_slot), slot_count(p_inventory, l_slot), slot_damage(p_inventory, l_slot),
                     l_slot == player_selected(p_player));
     }
-    if (player_survival(p_player)) hud_draw_health(p_box, l_bar_x, l_bar_y + l_slot_size + 8.0, l_slot_size * 4.5 - 4.0, player_health(p_player), p_now);
+    // the offhand slot to the left of the hotbar when it holds something
+    if (slot_item(p_inventory, OFFHAND_SLOT) != ITEM_NONE) {
+      hud_draw_slot(p_box, l_bar_x - l_slot_size * 1.3, l_bar_y, l_slot_size, slot_item(p_inventory, OFFHAND_SLOT),
+                    slot_count(p_inventory, OFFHAND_SLOT), slot_damage(p_inventory, OFFHAND_SLOT), FALSE);
+    }
+    if (player_survival(p_player)) {
+      hud_draw_health(p_box, l_bar_x, l_bar_y + l_slot_size + 8.0, l_slot_size * 4.5 - 4.0, player_health(p_player), p_now);
+      // the armour bar above the hearts while anything is worn
+      if (inventory_armour_points(p_inventory) > 0) {
+        hud_draw_armour(p_box, l_bar_x, l_bar_y + l_slot_size + 10.0 + (l_slot_size * 4.5 - 4.0) / 10.0, l_slot_size * 4.5 - 4.0,
+                        inventory_armour_points(p_inventory));
+      }
+    }
 
     // Name of the item just selected
     if (p_now < record_real(p_hud, ATTR_HUD_NAME_UNTIL) && l_held != ITEM_NONE) {

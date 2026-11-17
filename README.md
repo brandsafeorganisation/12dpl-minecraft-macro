@@ -53,13 +53,14 @@ it to run the tests (see [test/README.md](test/README.md)).
 | Click view    | start playing (the mouse then turns the camera); after a pause, **Back to Game** or W A S D or Space carries on |
 | Mouse         | look around                                                  |
 | Left click    | break blocks (harder blocks take more hits), hit animals     |
-| Right click   | place blocks, eat food, open crafting tables, furnaces and chests, sleep in beds, open and shut doors |
+| Right click   | place blocks, eat food, put on armour, use spawn eggs, open crafting tables, furnaces and chests, sleep in beds, open and shut doors; if the item in your hand does nothing, the offhand's item is used |
 | W A S D       | walk                                                         |
 | Space         | jump, swim up, fly up; tap twice quickly to fly or stop flying (creative mode only); flying down onto the ground lands you |
 | 1 - 9         | choose a hotbar slot                                         |
 | E             | inventory and 2 x 2 crafting (E or Q closes any screen); in creative mode, every item (see below) |
 | Q / Escape    | pause: the game menu (see below)                             |
 | F / J         | auto-walk on/off, auto-jump on/off                           |
+| X             | swap the selected hotbar item with the offhand (F in the block game, but F is auto-walk here) |
 | C             | crouch on/off (sink while flying)                            |
 | Shift + W A S D | crouch while held: slower, and you don't walk off edges (sink while flying) |
 | T             | chat; Enter sends the line, Escape drops it                  |
@@ -301,7 +302,22 @@ it: it loads the chosen file for itself, then and every time it starts.
   (wood), 132 (stone) or 251 (iron) uses.
 - **Inventory:** a 9-slot hotbar and a 27-slot (9 x 3) inventory. Click to pick
   up, drop or swap a stack. Right-click to split a stack or place one item.
-  Every item that isn't a block has its own 16 x 16 pixel-art icon.
+  Every item that isn't a block has its own 16 x 16 pixel-art icon. The
+  inventory screen also has four armour slots beside a picture of you in
+  what you wear, and the offhand slot.
+- **Offhand:** a second item held in the other hand (put it there in the
+  inventory, or press X). It shows in the lower left and beside the hotbar.
+  Right-click uses the main hand's item, or the offhand's if that one does
+  nothing: hold a pickaxe and keep torches in the offhand to light a cave.
+- **Armour:** an iron helmet, chestplate, leggings and boots. Wear them in
+  the armour slots (each slot only takes its own piece) or right-click with
+  one in your hand. A full set gives 15 armour points, shown above the
+  hearts; each point takes 1/25 off a zombie's hit, so a full set turns 3
+  damage into 1. Every hit wears every piece (165, 240, 225 and 195 hits).
+  You wear it on your model too (V).
+- **Spawn eggs:** a cow, pig and zombie egg in the creative inventory.
+  Right-click a block to put the mob on it; in creative the egg isn't
+  used up.
 - **Crafting:** lay items out in the grid: 2 x 2 in the inventory (E), 3 x 3
   at a crafting table. The result appears in the output slot; click it to
   craft. Shapes can go anywhere in the grid and can be mirrored.
@@ -321,6 +337,10 @@ it: it loads the chosen file for itself, then and every time it starts.
   | axe               | 3 planks, cobblestone or iron ingots in an L, 2 sticks |
   | shovel            | 1 plank, cobblestone or iron ingot over 2 sticks |
   | sword             | 2 planks, cobblestone or iron ingots over 1 stick |
+  | iron helmet       | 5 iron ingots: 3 across the top, 1 under each end |
+  | iron chestplate   | 8 iron ingots: the 3 x 3 grid without the top middle |
+  | iron leggings     | 7 iron ingots: the 3 x 3 grid without the middle and bottom middle |
+  | iron boots        | 4 iron ingots: 2 under each other at each side   |
 
 - **Furnace:** has input, fuel and output slots. It cooks beef, bakes
   cobblestone into stone and sand into glass, smelts iron ore into iron

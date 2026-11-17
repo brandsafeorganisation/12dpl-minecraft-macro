@@ -11,7 +11,8 @@
 // the player's inventory, a crafting grid and the furnaces.
 //
 // The inventory record: slots 1..9 are the hotbar, 10..36 the 9 x 3
-// main inventory and slot CURSOR_SLOT (0) is the stack the mouse
+// main inventory, 37..40 the armour worn (head, chest, legs, feet),
+// 41 the offhand and slot CURSOR_SLOT (0) is the stack the mouse
 // is carrying while a screen is open.
 // ----------------------------------------------------------------
 
@@ -46,5 +47,14 @@ Integer inventory_add_worn   (Attributes &p_inventory, Integer p_item, Integer p
 Integer inventory_count_item (Attributes &p_inventory, Integer p_item);
 Integer inventory_remove_item(Attributes &p_inventory, Integer p_item, Integer p_count);
 void    inventory_return_cursor(Attributes &p_inventory, Attributes &p_events, Real p_x, Real p_y, Real p_z);
+
+// ---------------------------------------------------------------- armour and the offhand
+Integer inventory_armour_slot  (Integer p_place);
+Integer inventory_fits_slot    (Integer p_item, Integer p_slot);
+Integer inventory_armour_points(Attributes &p_inventory);
+Integer inventory_armour_damage(Attributes &p_inventory, Integer p_amount);
+Integer inventory_wear_armour  (Attributes &p_inventory, Attributes &p_events);
+Integer inventory_equip        (Attributes &p_inventory, Integer p_slot);
+void    inventory_swap_hands   (Attributes &p_inventory, Integer p_selected);
 
 #endif

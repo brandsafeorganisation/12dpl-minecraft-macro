@@ -5,6 +5,7 @@
 #include "../../include/core/util.h"
 #include "../../include/blocks/blocks.h"
 #include "../../include/blocks/textures.h"
+#include "../../include/mobs/cows.h"
 
 // ---------------------------------------------------------------- blocks
 
@@ -603,6 +604,13 @@ Text item_name(Integer p_item)
   if (p_item == ITEM_WOODEN_SWORD   ) return "Wooden Sword";
   if (p_item == ITEM_STONE_SWORD    ) return "Stone Sword";
   if (p_item == ITEM_DOOR           ) return "Oak Door";
+  if (p_item == ITEM_IRON_HELMET    ) return "Iron Helmet";
+  if (p_item == ITEM_IRON_CHESTPLATE) return "Iron Chestplate";
+  if (p_item == ITEM_IRON_LEGGINGS  ) return "Iron Leggings";
+  if (p_item == ITEM_IRON_BOOTS     ) return "Iron Boots";
+  if (p_item == ITEM_COW_SPAWN_EGG  ) return "Cow Spawn Egg";
+  if (p_item == ITEM_PIG_SPAWN_EGG  ) return "Pig Spawn Egg";
+  if (p_item == ITEM_ZOMBIE_SPAWN_EGG) return "Zombie Spawn Egg";
   return "";
 }
 
@@ -633,10 +641,11 @@ Integer item_is_block(Integer p_item)
 
 Integer item_max_stack(Integer p_item)
 // ----------------------------------------------------------------
-// How many of an item fit in one slot (tools don't stack)
+// How many of an item fit in one slot (tools and armour don't stack)
 // ----------------------------------------------------------------
 {
   if (item_tool_kind(p_item) != TOOL_NONE) return 1;
+  if (item_armour_place(p_item) != ARMOUR_NONE) return 1;
   return MAX_STACK;
 }
 
@@ -668,9 +677,14 @@ Integer item_tool_tier(Integer p_item)
 
 Integer item_max_uses(Integer p_item)
 // ----------------------------------------------------------------
-// Number of uses before a tool breaks, 0 for items that don't wear
+// Number of uses before a tool breaks (hits taken for armour), 0
+// for items that don't wear
 // ----------------------------------------------------------------
 {
+  if (p_item == ITEM_IRON_HELMET    ) return 165;
+  if (p_item == ITEM_IRON_CHESTPLATE) return 240;
+  if (p_item == ITEM_IRON_LEGGINGS  ) return 225;
+  if (p_item == ITEM_IRON_BOOTS     ) return 195;
   if (item_tool_tier(p_item) == TIER_WOOD ) return 60;
   if (item_tool_tier(p_item) == TIER_STONE) return 132;
   if (item_tool_tier(p_item) == TIER_IRON ) return 251;
@@ -702,6 +716,42 @@ Integer item_food_value(Integer p_item)
   if (p_item == ITEM_COOKED_PORKCHOP) return 7;
   if (p_item == ITEM_ROTTEN_FLESH   ) return 1;
   return 0;
+}
+
+Integer item_armour_place(Integer p_item)
+// ----------------------------------------------------------------
+// Where a piece of armour is worn (ARMOUR_HEAD .. ARMOUR_FEET),
+// ARMOUR_NONE for everything else
+// ----------------------------------------------------------------
+{
+  if (p_item == ITEM_IRON_HELMET    ) return ARMOUR_HEAD;
+  if (p_item == ITEM_IRON_CHESTPLATE) return ARMOUR_CHEST;
+  if (p_item == ITEM_IRON_LEGGINGS  ) return ARMOUR_LEGS;
+  if (p_item == ITEM_IRON_BOOTS     ) return ARMOUR_FEET;
+  return ARMOUR_NONE;
+}
+
+Integer item_armour_points(Integer p_item)
+// ----------------------------------------------------------------
+// Armour points a worn piece gives (a full iron set gives 15)
+// ----------------------------------------------------------------
+{
+  if (p_item == ITEM_IRON_HELMET    ) return 2;
+  if (p_item == ITEM_IRON_CHESTPLATE) return 6;
+  if (p_item == ITEM_IRON_LEGGINGS  ) return 5;
+  if (p_item == ITEM_IRON_BOOTS     ) return 2;
+  return 0;
+}
+
+Integer item_spawn_egg_mob(Integer p_item)
+// ----------------------------------------------------------------
+// MOB_* kind a spawn egg makes, NOT_A_SPAWN_EGG for other items
+// ----------------------------------------------------------------
+{
+  if (p_item == ITEM_COW_SPAWN_EGG   ) return MOB_COW;
+  if (p_item == ITEM_PIG_SPAWN_EGG   ) return MOB_PIG;
+  if (p_item == ITEM_ZOMBIE_SPAWN_EGG) return MOB_ZOMBIE;
+  return NOT_A_SPAWN_EGG;
 }
 
 Integer item_fuel_seconds(Integer p_item)
@@ -779,6 +829,13 @@ Integer item_sprite_texture(Integer p_item)
   if (p_item == ITEM_STONE_SWORD    ) return TEX_ITEM_STONE_SWORD;
   if (p_item == ITEM_ROTTEN_FLESH   ) return TEX_ITEM_ROTTEN_FLESH;
   if (p_item == ITEM_DOOR           ) return TEX_ITEM_DOOR;
+  if (p_item == ITEM_IRON_HELMET    ) return TEX_ITEM_IRON_HELMET;
+  if (p_item == ITEM_IRON_CHESTPLATE) return TEX_ITEM_IRON_CHESTPLATE;
+  if (p_item == ITEM_IRON_LEGGINGS  ) return TEX_ITEM_IRON_LEGGINGS;
+  if (p_item == ITEM_IRON_BOOTS     ) return TEX_ITEM_IRON_BOOTS;
+  if (p_item == ITEM_COW_SPAWN_EGG  ) return TEX_ITEM_COW_SPAWN_EGG;
+  if (p_item == ITEM_PIG_SPAWN_EGG  ) return TEX_ITEM_PIG_SPAWN_EGG;
+  if (p_item == ITEM_ZOMBIE_SPAWN_EGG) return TEX_ITEM_ZOMBIE_SPAWN_EGG;
   return block_plant_texture(p_item);
 }
 

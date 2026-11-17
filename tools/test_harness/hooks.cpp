@@ -135,6 +135,18 @@ static void register_hooks(){
   g_calls["mobs_calm"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ record_set_real_at(g_cows,ATTR_MOB_ATTACK,c,100.0); record_set_real_at(g_cows,ATTR_COW_FLASH,c,0.0); } };
   g_calls["body"]=[]{ double y=0,p=0; player_look(g_player,y,p); printf("[hook] yaw %.2f body %.2f stride %.2f crouch %d\n",y,player_body_yaw(g_player),player_stride(g_player),player_crouching(g_player)); };
   g_calls["no_mobs"]=[]{ cows_clear(g_cows); };
+  // armour, the offhand and spawn eggs (31_armour_offhand_eggs)
+  g_calls["give_armour"]=[]{ slot_set(g_inventory,19,ITEM_IRON_HELMET,1,0); slot_set(g_inventory,20,ITEM_IRON_CHESTPLATE,1,0); slot_set(g_inventory,21,ITEM_IRON_LEGGINGS,1,0);
+    slot_set(g_inventory,22,ITEM_IRON_BOOTS,1,0); slot_set(g_inventory,23,ITEM_COW_SPAWN_EGG,2,0); slot_set(g_inventory,24,ITEM_TORCH,8,0); };
+  g_calls["armour"]=[]{ printf("[armour] points %d health %d worn:",inventory_armour_points(g_inventory),player_health(g_player));
+    for(int s=ARMOUR_SLOT_FIRST;s<=OFFHAND_SLOT;s++) printf(" [%d]%s x%d wear %d",s,item_name(slot_item(g_inventory,s)).c_str(),slot_count(g_inventory,s),slot_damage(g_inventory,s));
+    printf("  cursor %s held %s\n",item_name(slot_item(g_inventory,0)).c_str(),item_name(player_held_item(g_player,g_inventory)).c_str()); };
+  g_calls["zombie_hit"]=[]{ emit_event(g_events,EVT_ZOMBIE_ATTACK,ZOMBIE_DAMAGE,0,0,0,0.0,0.0,0.0,""); };
+  g_calls["hold_egg"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_COW_SPAWN_EGG,2,0); };
+  g_calls["hold_zombie_egg"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_ZOMBIE_SPAWN_EGG,1,0); };
+  g_calls["hold_nothing"]=[]{ slot_clear(g_inventory,player_selected(g_player)); };
+  g_calls["mobs"]=[]{ printf("[mobs] cows %d pigs %d zombies %d all %d\n",mobs_count_kind(g_cows,MOB_COW),mobs_count_kind(g_cows,MOB_PIG),mobs_count_kind(g_cows,MOB_ZOMBIE),cows_alive_count(g_cows)); };
+  g_calls["target_above"]=[]{ int x,y,z; player_target_cell(g_player,x,y,z); printf("[hook] target %d %d %d block above %d\n",x,y,z,world_get_block(x,y+1,z)); };
   // the title screen's panorama: stand at (x, z) given by pano_at_<x>_<z>, 90 degree view, no HUD
   for(int k=0;k<8;k++) g_calls["pano_yaw"+std::to_string(k)]=[k]{ double y=0,p=0; player_look(g_player,y,p); set_look(k*PI/4.0,0.0); };
   g_calls["pano_setup"]=[]{ record_set_integer(g_settings,ATTR_SET_FOV,90); record_set_integer(g_settings,ATTR_SET_SHOW_HUD,0); record_set_integer(g_settings,ATTR_SET_RENDER_DISTANCE,RENDER_DISTANCE_MAX); record_set_integer(g_settings,ATTR_SET_DETAIL,DETAIL_HIGH); cows_clear(g_cows); world_set_time_of_day(g_info,0.30); };

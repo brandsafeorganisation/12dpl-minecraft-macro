@@ -65,6 +65,10 @@
 // ---------------------------------------------------------------- inventory
 #define HOTBAR_SLOTS         9
 #define INVENTORY_SLOTS      36        // 9 hotbar + 27 (9 x 3) main
+#define ARMOUR_SLOT_FIRST    37        // armour worn: 37 head, 38 chest, 39 legs, 40 feet
+#define ARMOUR_SLOT_LAST     40
+#define OFFHAND_SLOT         41        // the item in the other hand
+#define PLAYER_SLOTS         41        // every slot of the inventory record
 #define MAX_STACK            64
 
 // ---------------------------------------------------------------- entities

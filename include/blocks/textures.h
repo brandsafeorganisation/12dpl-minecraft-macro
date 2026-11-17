@@ -119,13 +119,25 @@
 #define TEX_PERSON_ARM_FRONT   107
 #define TEX_PERSON_ARM_TOP     108    // the shoulder
 #define TEX_PERSON_LEG_FRONT   109
-#define NUM_TEXTURES           109
+#define TEX_ITEM_IRON_HELMET   110    // armour items
+#define TEX_ITEM_IRON_CHESTPLATE 111
+#define TEX_ITEM_IRON_LEGGINGS 112
+#define TEX_ITEM_IRON_BOOTS    113
+#define TEX_ITEM_COW_SPAWN_EGG 114    // spawn eggs
+#define TEX_ITEM_PIG_SPAWN_EGG 115
+#define TEX_ITEM_ZOMBIE_SPAWN_EGG 116
+#define TEX_ARMOUR_FULL        117    // armour bar icons over the health bar
+#define TEX_ARMOUR_HALF        118
+#define TEX_ARMOUR_EMPTY       119
+#define TEX_ARMOUR_IRON        120    // worn iron armour on the player model
+#define TEX_ARMOUR_HELMET_FRONT 121   // the helmet's front: a rim round the face
+#define NUM_TEXTURES           121
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         27904  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         30976  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       872    // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      436    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       968    // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      484    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

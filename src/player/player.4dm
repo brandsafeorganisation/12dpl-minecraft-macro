@@ -401,10 +401,11 @@ void player_turn(Attributes &p_player, Real p_yaw_change, Real p_pitch_change)
   player_set_look(p_player, wrap_angle(l_yaw + p_yaw_change), clamp_real(l_pitch + p_pitch_change, -MAX_PITCH, MAX_PITCH));
 }
 
-void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_events)
+void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_inventory, Attributes &p_events)
 // ----------------------------------------------------------------
 // EVT_ZOMBIE_ATTACK: a zombie hit the player (i1 damage, r1 and r3
-// the direction it was facing), which hurts and knocks back
+// the direction it was facing), which hurts (less for the armour
+// worn, which wears) and knocks back
 // ----------------------------------------------------------------
 {
   Real l_vx = 0.0;
@@ -414,7 +415,10 @@ void player_on_event(Attributes &p_event, Attributes &p_player, Attributes &p_ev
   if (event_type(p_event) != EVT_ZOMBIE_ATTACK) return;
   if (player_is_dead(p_player)) return;
 
-  player_damage(p_player, p_events, event_integer(p_event, 1));
+  if (player_survival(p_player)) {
+    player_damage(p_player, p_events, inventory_armour_damage(p_inventory, event_integer(p_event, 1)));
+    inventory_wear_armour(p_inventory, p_events);
+  }
   player_velocity(p_player, l_vx, l_vy, l_vz);
   player_set_velocity(p_player, event_real(p_event, 1) * 6.0, 4.5, event_real(p_event, 3) * 6.0);
 }
@@ -1178,16 +1182,16 @@ Integer player_furnace_facing(Real p_player_x, Real p_player_z, Integer p_cell_x
   return BLOCK_FURNACE_NZ;
 }
 
-void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Real p_now)
+Integer player_use_slot(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Integer p_slot)
 // ----------------------------------------------------------------
-// Right click: open a crafting table or furnace, eat food, or
-// place the held block against the face the crosshair is on
-// (a plant there is replaced)
+// Use the item in one hand (the selected hotbar slot or the
+// offhand) on what the crosshair is on: eat it, put a spawn egg's
+// mob on the block or place it as a block against the face the
+// crosshair is on (a plant there is replaced). Returns FALSE if the
+// item does nothing, so the other hand can have a go.
 // ----------------------------------------------------------------
 {
-  Integer l_held     = player_held_item(p_player, p_inventory);
-  Integer l_slot     = player_selected(p_player);
-  Integer l_block    = 0;
+  Integer l_held     = slot_item(p_inventory, p_slot);
   Integer l_place    = BLOCK_AIR;
   Integer l_x        = 0;
   Integer l_y        = 0;
@@ -1200,16 +1204,122 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
   Integer l_cell_z   = 0;
   Integer l_existing = 0;
   Integer l_food     = 0;
+  Integer l_mob      = item_spawn_egg_mob(l_held);
   Real    l_px       = 0.0;
   Real    l_py       = 0.0;
   Real    l_pz       = 0.0;
+  Real    l_yaw      = 0.0;
+  Real    l_pitch    = 0.0;
+
+  if (l_held == ITEM_NONE) return FALSE;
+  player_target_cell  (p_player, l_x, l_y, l_z);
+  player_target_normal(p_player, l_normal_x, l_normal_y, l_normal_z);
+
+  l_food = item_food_value(l_held);
+  if (l_food > 0) {
+    if (player_health(p_player) >= PLAYER_MAX_HEALTH) {
+      emit_toast(p_events, "You are already at full health");
+      return TRUE;
+    }
+    player_set_health(p_player, player_health(p_player) + l_food);
+    slot_take_one    (p_inventory, p_slot);
+    record_set_real  (p_player, ATTR_PLAYER_SWING, 0.25);
+    emit_item_event(p_events, EVT_PLAYER_ATE, l_held, l_food);
+    return TRUE;
+  }
+
+  // Armour used from the hand is put on
+  if (item_armour_place(l_held) != ARMOUR_NONE) {
+    inventory_equip(p_inventory, p_slot);
+    record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
+    return TRUE;
+  }
+
+  l_place = item_places_block(l_held);
+  if (l_held == ITEM_DOOR) l_place = BLOCK_DOOR_FIRST;
+  if (l_place == BLOCK_AIR && l_mob == NOT_A_SPAWN_EGG) return FALSE;
+  if (player_target_kind(p_player) != TARGET_BLOCK) return FALSE;
+
+  // Clicking a plant replaces it; otherwise the block goes against
+  // the face that was clicked
+  l_cell_x = l_x + l_normal_x;
+  l_cell_y = l_y + l_normal_y;
+  l_cell_z = l_z + l_normal_z;
+  if (block_is_plant(world_get_block(l_x, l_y, l_z))) {
+    l_cell_x = l_x;
+    l_cell_y = l_y;
+    l_cell_z = l_z;
+  } else if (l_normal_x == 0 && l_normal_y == 0 && l_normal_z == 0) {
+    return FALSE;
+  }
+  if (!world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) return FALSE;
+
+  l_existing = world_get_block(l_cell_x, l_cell_y, l_cell_z);
+  if (l_existing != BLOCK_AIR && l_existing != BLOCK_WATER && !block_is_plant(l_existing)) return FALSE;
+
+  // A spawn egg puts its mob in that cell, facing the player; it is
+  // used up except in creative mode
+  if (l_mob != NOT_A_SPAWN_EGG) {
+    player_look(p_player, l_yaw, l_pitch);
+    emit_event(p_events, EVT_SPAWN_MOB, l_mob, floor_integer(wrap_angle(l_yaw + PI) * 1000.0), 0, 0,
+               l_cell_x + 0.5, l_cell_y + COLLISION_EPSILON, l_cell_z + 0.5, "");
+    if (!player_creative(p_player)) slot_take_one(p_inventory, p_slot);
+    record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
+    return TRUE;
+  }
+
+  // Plants need ground to stand on; a torch needs any solid block
+  if (l_place == BLOCK_TORCH) {
+    if (!world_is_solid(l_cell_x, l_cell_y - 1, l_cell_z)) {
+      emit_toast(p_events, "Torches go on top of a block");
+      return TRUE;
+    }
+  } else if (block_is_plant(l_place)) {
+    if (world_get_block(l_cell_x, l_cell_y - 1, l_cell_z) != BLOCK_GRASS && world_get_block(l_cell_x, l_cell_y - 1, l_cell_z) != BLOCK_DIRT) return FALSE;
+  } else {
+    // Not inside the player or a cow
+    if (player_overlaps_cell(p_player, l_cell_x, l_cell_y, l_cell_z)) return TRUE;
+    if (cows_box_overlaps(p_cows, l_cell_x, l_cell_y, l_cell_z, l_cell_x + 1.0, l_cell_y + 1.0, l_cell_z + 1.0)) return TRUE;
+  }
+
+  if (l_held == ITEM_FURNACE) {
+    player_position(p_player, l_px, l_py, l_pz);
+    l_place = player_furnace_facing(l_px, l_pz, l_cell_x, l_cell_z);
+  }
+
+  // Doors and beds take two cells
+  if (l_held == ITEM_DOOR || l_held == ITEM_BED) {
+    if (!player_place_double(p_player, p_cows, p_events, l_held, l_cell_x, l_cell_y, l_cell_z)) return TRUE;
+    slot_take_one       (p_inventory, p_slot);
+    record_set_real     (p_player, ATTR_PLAYER_SWING, 0.25);
+    player_update_target(p_player, p_cows);
+    return TRUE;
+  }
+
+  world_place_block(p_events, l_cell_x, l_cell_y, l_cell_z, l_place);
+  slot_take_one    (p_inventory, p_slot);
+  record_set_real  (p_player, ATTR_PLAYER_SWING, 0.25);
+  player_update_target(p_player, p_cows);
+  return TRUE;
+}
+
+void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Real p_now)
+// ----------------------------------------------------------------
+// Right click: open a crafting table, furnace or chest, sleep in a
+// bed or open a door; otherwise use the item in the main hand, or
+// if that does nothing the one in the offhand (player_use_slot)
+// ----------------------------------------------------------------
+{
+  Integer l_block    = 0;
+  Integer l_x        = 0;
+  Integer l_y        = 0;
+  Integer l_z        = 0;
 
   if (player_is_dead(p_player)) return;
   if (player_spectator(p_player)) return;
 
   player_update_target(p_player, p_cows);
   player_target_cell  (p_player, l_x, l_y, l_z);
-  player_target_normal(p_player, l_normal_x, l_normal_y, l_normal_z);
 
   if (player_target_kind(p_player) == TARGET_BLOCK) {
     l_block = world_get_block(l_x, l_y, l_z);
@@ -1236,73 +1346,8 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
     }
   }
 
-  l_food = item_food_value(l_held);
-  if (l_food > 0) {
-    if (player_health(p_player) >= PLAYER_MAX_HEALTH) {
-      emit_toast(p_events, "You are already at full health");
-      return;
-    }
-    player_set_health(p_player, player_health(p_player) + l_food);
-    slot_take_one    (p_inventory, l_slot);
-    record_set_real  (p_player, ATTR_PLAYER_SWING, 0.25);
-    emit_item_event(p_events, EVT_PLAYER_ATE, l_held, l_food);
-    return;
-  }
-
-  l_place = item_places_block(l_held);
-  if (l_held == ITEM_DOOR) l_place = BLOCK_DOOR_FIRST;
-  if (l_place == BLOCK_AIR) return;
-  if (player_target_kind(p_player) != TARGET_BLOCK) return;
-
-  // Clicking a plant replaces it; otherwise the block goes against
-  // the face that was clicked
-  l_cell_x = l_x + l_normal_x;
-  l_cell_y = l_y + l_normal_y;
-  l_cell_z = l_z + l_normal_z;
-  if (block_is_plant(world_get_block(l_x, l_y, l_z))) {
-    l_cell_x = l_x;
-    l_cell_y = l_y;
-    l_cell_z = l_z;
-  } else if (l_normal_x == 0 && l_normal_y == 0 && l_normal_z == 0) {
-    return;
-  }
-  if (!world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) return;
-
-  l_existing = world_get_block(l_cell_x, l_cell_y, l_cell_z);
-  if (l_existing != BLOCK_AIR && l_existing != BLOCK_WATER && !block_is_plant(l_existing)) return;
-
-  // Plants need ground to stand on; a torch needs any solid block
-  if (l_place == BLOCK_TORCH) {
-    if (!world_is_solid(l_cell_x, l_cell_y - 1, l_cell_z)) {
-      emit_toast(p_events, "Torches go on top of a block");
-      return;
-    }
-  } else if (block_is_plant(l_place)) {
-    if (world_get_block(l_cell_x, l_cell_y - 1, l_cell_z) != BLOCK_GRASS && world_get_block(l_cell_x, l_cell_y - 1, l_cell_z) != BLOCK_DIRT) return;
-  } else {
-    // Not inside the player or a cow
-    if (player_overlaps_cell(p_player, l_cell_x, l_cell_y, l_cell_z)) return;
-    if (cows_box_overlaps(p_cows, l_cell_x, l_cell_y, l_cell_z, l_cell_x + 1.0, l_cell_y + 1.0, l_cell_z + 1.0)) return;
-  }
-
-  if (l_held == ITEM_FURNACE) {
-    player_position(p_player, l_px, l_py, l_pz);
-    l_place = player_furnace_facing(l_px, l_pz, l_cell_x, l_cell_z);
-  }
-
-  // Doors and beds take two cells
-  if (l_held == ITEM_DOOR || l_held == ITEM_BED) {
-    if (!player_place_double(p_player, p_cows, p_events, l_held, l_cell_x, l_cell_y, l_cell_z)) return;
-    slot_take_one       (p_inventory, l_slot);
-    record_set_real     (p_player, ATTR_PLAYER_SWING, 0.25);
-    player_update_target(p_player, p_cows);
-    return;
-  }
-
-  world_place_block(p_events, l_cell_x, l_cell_y, l_cell_z, l_place);
-  slot_take_one    (p_inventory, l_slot);
-  record_set_real  (p_player, ATTR_PLAYER_SWING, 0.25);
-  player_update_target(p_player, p_cows);
+  if (player_use_slot(p_player, p_inventory, p_cows, p_events, player_selected(p_player))) return;
+  player_use_slot(p_player, p_inventory, p_cows, p_events, OFFHAND_SLOT);
 }
 
 #endif

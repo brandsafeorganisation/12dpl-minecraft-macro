@@ -301,10 +301,10 @@ Integer container_remove_item(Attributes &p_container, Integer p_first, Integer 
 
 void inventory_clear(Attributes &p_inventory)
 // ----------------------------------------------------------------
-// Empty every slot and the cursor
+// Empty every slot (armour and the offhand too) and the cursor
 // ----------------------------------------------------------------
 {
-  container_clear(p_inventory, DATATYPE_INVENTORY, CURSOR_SLOT, INVENTORY_SLOTS);
+  container_clear(p_inventory, DATATYPE_INVENTORY, CURSOR_SLOT, PLAYER_SLOTS);
 }
 
 Integer inventory_add(Attributes &p_inventory, Integer p_item, Integer p_count)
@@ -356,6 +356,96 @@ void inventory_return_cursor(Attributes &p_inventory, Attributes &p_events, Real
   if (l_left > 0) emit_drop_event(p_events, l_item, l_left, slot_damage(p_inventory, CURSOR_SLOT), p_x, p_y, p_z);
 
   slot_clear(p_inventory, CURSOR_SLOT);
+}
+
+// ---------------------------------------------------------------- armour and the offhand
+
+Integer inventory_armour_slot(Integer p_place)
+// ----------------------------------------------------------------
+// Slot where armour worn at a place (ARMOUR_HEAD .. ARMOUR_FEET)
+// goes
+// ----------------------------------------------------------------
+{
+  return ARMOUR_SLOT_FIRST + p_place - 1;
+}
+
+Integer inventory_fits_slot(Integer p_item, Integer p_slot)
+// ----------------------------------------------------------------
+// TRUE if an item may go in a slot: an armour slot takes only the
+// piece worn there; every other slot takes anything
+// ----------------------------------------------------------------
+{
+  if (p_slot < ARMOUR_SLOT_FIRST || p_slot > ARMOUR_SLOT_LAST) return TRUE;
+  if (p_item == ITEM_NONE) return TRUE;
+  return inventory_armour_slot(item_armour_place(p_item)) == p_slot && item_armour_place(p_item) != ARMOUR_NONE;
+}
+
+Integer inventory_armour_points(Attributes &p_inventory)
+// ----------------------------------------------------------------
+// Armour points of everything worn (0 .. ARMOUR_MAX_POINTS)
+// ----------------------------------------------------------------
+{
+  Integer l_slot   = 0;
+  Integer l_points = 0;
+
+  for (l_slot = ARMOUR_SLOT_FIRST; l_slot <= ARMOUR_SLOT_LAST; ++l_slot) {
+    l_points = l_points + item_armour_points(slot_item(p_inventory, l_slot));
+  }
+  return min_integer(l_points, ARMOUR_MAX_POINTS);
+}
+
+Integer inventory_armour_damage(Attributes &p_inventory, Integer p_amount)
+// ----------------------------------------------------------------
+// What is left of a hit of p_amount after the worn armour: every
+// point takes 1/25 off, rounded to the nearest whole point
+// ----------------------------------------------------------------
+{
+  Integer l_points = inventory_armour_points(p_inventory);
+
+  if (p_amount <= 0) return 0;
+  return floor_integer(p_amount * (25 - l_points) / 25.0 + 0.5);
+}
+
+Integer inventory_wear_armour(Attributes &p_inventory, Attributes &p_events)
+// ----------------------------------------------------------------
+// A hit was taken: every worn piece wears once and may break.
+// Returns the number of pieces that broke.
+// ----------------------------------------------------------------
+{
+  Integer l_slot   = 0;
+  Integer l_item   = 0;
+  Integer l_broken = 0;
+
+  for (l_slot = ARMOUR_SLOT_FIRST; l_slot <= ARMOUR_SLOT_LAST; ++l_slot) {
+    l_item = slot_item(p_inventory, l_slot);
+    if (l_item == ITEM_NONE) continue;
+    if (slot_wear(p_inventory, l_slot)) {
+      emit_toast(p_events, item_name(l_item) + " broke");
+      ++l_broken;
+    }
+  }
+  return l_broken;
+}
+
+Integer inventory_equip(Attributes &p_inventory, Integer p_slot)
+// ----------------------------------------------------------------
+// Put on the armour in slot p_slot, swapping it with any piece
+// already worn there. Returns FALSE if it isn't armour.
+// ----------------------------------------------------------------
+{
+  Integer l_place = item_armour_place(slot_item(p_inventory, p_slot));
+
+  if (l_place == ARMOUR_NONE) return FALSE;
+  slot_swap(p_inventory, p_slot, inventory_armour_slot(l_place));
+  return TRUE;
+}
+
+void inventory_swap_hands(Attributes &p_inventory, Integer p_selected)
+// ----------------------------------------------------------------
+// Swap the selected hotbar slot with the offhand
+// ----------------------------------------------------------------
+{
+  slot_swap(p_inventory, p_selected, OFFHAND_SLOT);
 }
 
 #endif

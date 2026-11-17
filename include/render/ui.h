@@ -17,7 +17,9 @@
 // Slot numbers on screen: 1..36 the inventory, UI_SLOT_GRID + n
 // grid slot n (1..9), UI_SLOT_OUTPUT the crafting result, and
 // UI_SLOT_FURNACE + FURNACE_SLOT_* the furnace's slots and
-// UI_SLOT_CHEST + n slot n of the open chest.
+// UI_SLOT_CHEST + n slot n of the open chest. The inventory screen
+// also has the armour worn (UI_SLOT_ARMOUR + ARMOUR_*) in a column
+// beside a picture of the player, and the offhand (UI_SLOT_OFFHAND).
 //
 // In creative mode the inventory screen has two tabs above it (the
 // player's inventory and every item, UI_SLOT_TAB_*). The creative
@@ -48,7 +50,9 @@
 #define UI_SLOT_SCROLL_UP       90   // creative screen: scroll the items
 #define UI_SLOT_SCROLL_DOWN     91
 #define UI_SLOT_CREATIVE        100  // + 1 .. CREATIVE_ROWS * 9 (101..145)
-#define UI_SLOT_LAST            145
+#define UI_SLOT_ARMOUR          150  // + ARMOUR_HEAD .. ARMOUR_FEET (151..154): armour worn (inventory screen)
+#define UI_SLOT_OFFHAND         155  // the offhand (inventory screen)
+#define UI_SLOT_LAST            155
 #define CREATIVE_ROWS           5
 #define CREATIVE_SLOTS          45   // CREATIVE_ROWS * 9
 #define CREATIVE_SEARCH_MAX     24   // longest search
@@ -77,6 +81,7 @@ void    ui_on_event       (Attributes &p_event, Attributes &p_ui, Attributes &p_
 void    ui_layout         (Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1,
                            Real &p_inv_x, Real &p_inv_y, Real &p_top_y);
 Integer ui_slot_rect      (Integer p_screen, Integer p_grid_width, Integer p_slot, Real p_w, Real p_h, Real &p_x, Real &p_y, Real &p_size);
+Integer ui_inventory_slot (Integer p_slot);
 Integer ui_slot_at        (Integer p_screen, Integer p_grid_width, Real p_px, Real p_py, Real p_w, Real p_h);
 void    ui_click          (Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces,
                            Attributes &p_book, Attributes &p_events, Real p_x, Real p_y, Integer p_right_button, Real p_w, Real p_h);

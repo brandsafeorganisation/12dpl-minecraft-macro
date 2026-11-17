@@ -1,0 +1,136 @@
+# Armour: only the right piece goes in each armour slot, the player
+# picture and the 3D model wear it, the armour bar, a zombie's hit is
+# smaller and wears every piece; the offhand: a torch put there shows
+# by the hotbar, is placed by a right click with an empty main hand,
+# and X swaps it into the main hand; spawn eggs: a cow egg makes a cow
+# and is used up in survival, the eggs are in the creative list
+ui Singleplayer
+ui Create New World
+field World Name|Armour
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call to_meadow
+call noon
+call no_mobs
+call look_level
+call give_armour
+key e
+wait 2
+# the chestplate won't go in the helmet slot
+call slot20
+wait 1
+call slot151
+wait 1
+call armour
+call slot152
+wait 1
+call slot19
+wait 1
+call slot151
+wait 1
+call slot21
+wait 1
+call slot153
+wait 1
+call slot22
+wait 1
+call slot154
+wait 1
+call slot24
+wait 1
+call slot155
+wait 1
+call armour
+snap 310_inventory_armour
+wait 4
+key e
+wait 2
+click 430 300
+wait 2
+snap 311_hud_armour_offhand
+wait 1
+call full
+call zombie_hit
+wait 2
+call armour
+call zombie_hit
+wait 30
+call armour
+key v
+wait 3
+snap 312_model_armour
+wait 1
+key v
+wait 3
+snap 314_model_armour_front
+wait 1
+key W
+holdkey W 10
+wait 1
+snap 315_model_armour_crouch
+wait 2
+key v
+wait 2
+# a cow egg on the ground in front: a cow, and one egg used
+call aim_block_front
+call hold_egg
+wait 1
+caprclick
+wait 2
+call mobs
+call armour
+# the main hand empty: the offhand's torch is placed (the cow is
+# taken away first, as it stands where the crosshair is)
+call no_mobs
+call hold_nothing
+call aim_block_front
+wait 1
+call target_above
+caprclick
+wait 2
+call target_above
+call armour
+# X swaps the hands
+key x
+wait 1
+call armour
+key x
+wait 1
+call armour
+# armour comes back with the world
+key q
+ui Save and Quit to Title
+ui Singleplayer
+field #15|Armour
+ui row:Armour
+ui Play Selected World
+wait 2
+click 430 300
+wait 2
+call armour
+# creative: the eggs are in the list, and a zombie egg isn't used up
+key /
+type gamemode creative
+enter
+wait 1
+key e
+wait 2
+type egg
+wait 2
+snap 313_creative_eggs
+wait 4
+call mode
+key escape
+wait 1
+call no_mobs
+call hold_zombie_egg
+call aim_block_front
+wait 1
+caprclick
+wait 2
+call mobs
+call armour
+quit

@@ -35,7 +35,8 @@
 #define MAX_POLY_POINTS    24
 #define CRACK_LIGHTEST     330     // crack pixels lighter than this (red + green + blue) aren't drawn
 #define CRACK_DARKEN       0.55    // crack pixels are drawn this much darker
-#define MOB_MAX_PARTS      8       // boxes an animal is built from, at most
+#define MOB_MAX_PARTS      16      // boxes an animal (or a player in armour) is built from, at most
+#define PERSON_ARMOUR_GAP  0.035   // worn armour stands this far off the body
 #define MOB_LEG_SWING      0.5     // how far legs swing from the hip while walking (radians)
 #define PEER_NAME_DISTANCE 48.0    // other players' names show up to this far away
 #define MOB_HEAD_TURN      0.9     // how far a head turns to look at you (radians)
@@ -298,13 +299,14 @@ void    render_pig             (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p
 void    render_sky_colours     (Real p_time_of_day);
 void    render_sky_disc        (Draw_Box p_box, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_size, Integer p_moon);
 void    render_stars           (Draw_Box p_box, Real p_brightness);
-void    render_world           (Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows,
+void    render_world           (Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_inventory, Attributes &p_cows,
                                 Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now);
 Integer render_ray_colour      (Real p_x, Real p_y, Real p_z, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_distance);
-void    render_person          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, Real p_pitch, Real p_swing, Integer p_crouch);
+void    render_person          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, Real p_pitch, Real p_swing, Integer p_crouch,
+                                Integer p_helmet, Integer p_chestplate, Integer p_leggings, Integer p_boots);
 void    render_collect_peers   (Attributes &p_peers);
 void    render_camera_place    (Attributes &p_player, Real &p_x, Real &p_y, Real &p_z, Real &p_yaw, Real &p_pitch);
-void    render_collect_self    (Attributes &p_player);
+void    render_collect_self    (Attributes &p_player, Attributes &p_inventory);
 void    render_peer_names      (Draw_Box p_box, Attributes &p_peers);
 
 #endif
