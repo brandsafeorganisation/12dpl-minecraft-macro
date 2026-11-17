@@ -95,7 +95,7 @@ void screen_title(Draw_Box p_box, Attributes &p_menu, Real p_w, Real p_h, Text p
   menu_draw_widgets(p_box, p_menu, p_now);
   l_line = l_line + " " + l_ver;
   hud_shadow_text(p_box, 6.0, 40.0, 13.0, TEXT_ALIGN_LEFT, 255, 255, 255, l_line);
-  hud_shadow_text(p_box, p_w - 6.0 - menu_text_width("Made in 12d Model", 13.0), 40.0, 13.0, TEXT_ALIGN_LEFT, 255, 255, 255, "Made in 12d Model");
+  hud_shadow_text(p_box, p_w - 6.0 - 1.3 * menu_text_width("Made in 12d Model", 13.0), 40.0, 13.0, TEXT_ALIGN_LEFT, 255, 255, 255, "Made in 12d Model");
 }
 
 // ---------------------------------------------------------------- the world list

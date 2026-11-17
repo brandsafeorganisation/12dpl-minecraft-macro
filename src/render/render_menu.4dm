@@ -559,9 +559,9 @@ void menu_draw_logo(Draw_Box p_box, Real p_w, Real p_h, Text p_splash)
   if (p_splash == "") return;
   Set_text_align (p_box, TEXT_ALIGN_CENTRE);
   Set_text_colour(p_box, 60, 60, 0);
-  Draw_text      (p_box, p_w / 2.0 + 182.0, l_top - 62.0, 17.0, 0.35, p_splash);
+  Draw_text      (p_box, p_w / 2.0 + 172.0, l_top - 80.0, 17.0, 0.35, p_splash);
   Set_text_colour(p_box, 255, 255, 0);
-  Draw_text      (p_box, p_w / 2.0 + 180.0, l_top - 60.0, 17.0, 0.35, p_splash);
+  Draw_text      (p_box, p_w / 2.0 + 170.0, l_top - 78.0, 17.0, 0.35, p_splash);
 }
 
 #include "panorama_data.4dm"
