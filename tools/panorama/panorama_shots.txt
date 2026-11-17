@@ -1,0 +1,43 @@
+# Eight views all round one spot for tools/panorama/make_panorama.py
+input New world name|Panorama
+input Seed (blank for random)|31337
+button create
+wait 2
+click 430 300
+wait 2
+call pano_setup
+call pano_spot
+wait 3
+call pano_yaw0
+wait 2
+snap pano0
+wait 2
+call pano_yaw1
+wait 2
+snap pano1
+wait 2
+call pano_yaw2
+wait 2
+snap pano2
+wait 2
+call pano_yaw3
+wait 2
+snap pano3
+wait 2
+call pano_yaw4
+wait 2
+snap pano4
+wait 2
+call pano_yaw5
+wait 2
+snap pano5
+wait 2
+call pano_yaw6
+wait 2
+snap pano6
+wait 2
+call pano_yaw7
+wait 2
+snap pano7
+wait 2
+quit

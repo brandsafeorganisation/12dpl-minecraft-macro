@@ -1132,23 +1132,37 @@ void render_pig(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_swing, Real p_t
   render_mob_end();
 }
 
-void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing)
+void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, Real p_pitch, Real p_swing, Integer p_crouch)
 // ----------------------------------------------------------------
-// Another player: legs and arms that swing as they walk, a body,
-// and a head that looks up and down where they look
+// A player: the body faces yaw and the head is turned head_turn
+// from it and looks up or down by pitch; legs and arms swing by
+// swing. Crouching, the body leans forward from the neck, the legs
+// step back under it and the head and arms come down with it.
 // ----------------------------------------------------------------
 {
+  Real l_neck      = 1.5;    // where the head sits on the body
+  Real l_lean      = 0.0;    // the body tips forward this much (radians)
+  Real l_legs_back = 0.0;
+  Real l_arm_tip   = 0.0;
+
+  if (p_crouch) {
+    l_neck      = 1.3;
+    l_lean      = 0.5;
+    l_legs_back = -0.25;
+    l_arm_tip   = 0.4;
+  }
   render_mob_begin(p_x, p_y, p_z, p_yaw, 0.0);
   // sized like the block game's player (1 pixel of the skin is 1/16
   // block): 4 x 12 x 4 legs and arms, an 8 x 12 x 4 body, an 8 x 8 x 8
-  // head, with each face from its own part of the skin
-  //              along  up     across  half f  half y  half s  turn  pitch     hip    side                   top                    front                 back
-  render_mob_part(0.0  , 0.375,  0.125, 0.125 , 0.375 , 0.125 , 0.0 ,  p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
-  render_mob_part(0.0  , 0.375, -0.125, 0.125 , 0.375 , 0.125 , 0.0 , -p_swing, TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
-  render_mob_part(0.0  , 1.125,  0.0  , 0.125 , 0.375 , 0.25  , 0.0 ,  0.0    , FALSE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT    , TEX_PERSON_SHIRT_BACK);
-  render_mob_part(0.0  , 1.125,  0.375, 0.125 , 0.375 , 0.125 , 0.0 , -p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
-  render_mob_part(0.0  , 1.125, -0.375, 0.125 , 0.375 , 0.125 , 0.0 ,  p_swing, TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
-  render_mob_part(0.0  , 1.75 ,  0.0  , 0.25  , 0.25  , 0.25  , 0.0 ,  p_pitch, FALSE, TEX_PERSON_HEAD_SIDE , TEX_PERSON_HEAD_TOP  , TEX_PERSON_FACE     , TEX_PERSON_HEAD_BACK );
+  // head, with each face from its own part of the skin. The body hangs
+  // from the neck, so leaning moves its middle back and down.
+  //              along                         up                          across  half f  half y  half s  turn         pitch                 hip    side                   top                    front                 back
+  render_mob_part(l_legs_back                 , 0.375                     ,  0.125, 0.125 , 0.375 , 0.125 , 0.0        ,  p_swing            , TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
+  render_mob_part(l_legs_back                 , 0.375                     , -0.125, 0.125 , 0.375 , 0.125 , 0.0        , -p_swing            , TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
+  render_mob_part(-0.375 * Sin(l_lean)        , l_neck - 0.375 * Cos(l_lean),  0.0  , 0.125 , 0.375 , 0.25  , 0.0        , -l_lean             , FALSE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT    , TEX_PERSON_SHIRT_BACK);
+  render_mob_part(0.0                         , l_neck - 0.375            ,  0.375, 0.125 , 0.375 , 0.125 , 0.0        , l_arm_tip - p_swing , TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
+  render_mob_part(0.0                         , l_neck - 0.375            , -0.375, 0.125 , 0.375 , 0.125 , 0.0        , l_arm_tip + p_swing , TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
+  render_mob_part(0.0                         , l_neck + 0.25             ,  0.0  , 0.25  , 0.25  , 0.25  , p_head_turn,  p_pitch            , FALSE, TEX_PERSON_HEAD_SIDE , TEX_PERSON_HEAD_TOP  , TEX_PERSON_FACE     , TEX_PERSON_HEAD_BACK );
   render_mob_end();
 }
 
@@ -1222,7 +1236,8 @@ void render_collect_self(Attributes &p_player)
   player_position(p_player, l_x, l_y, l_z);
   player_look    (p_player, l_yaw, l_pitch);
   g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
-  render_person(l_x, l_y, l_z, l_yaw, l_pitch, Sin(player_bob(p_player)) * MOB_LEG_SWING);
+  render_person(l_x, l_y, l_z, player_body_yaw(p_player), wrap_angle(l_yaw - player_body_yaw(p_player)), l_pitch,
+                Sin(player_bob(p_player)) * MOB_LEG_SWING * player_stride(p_player), player_crouching(p_player));
 }
 
 void render_collect_peers(Attributes &p_peers)
@@ -1240,7 +1255,7 @@ void render_collect_peers(Attributes &p_peers)
     peer_position(p_peers, l_peer, l_x, l_y, l_z);
     if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > (g_render_distance + 2.0) * (g_render_distance + 2.0)) continue;
     g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
-    render_person(l_x, l_y, l_z, peer_yaw(p_peers, l_peer), peer_pitch(p_peers, l_peer), Sin(peer_step(p_peers, l_peer)) * MOB_LEG_SWING);
+    render_person(l_x, l_y, l_z, peer_yaw(p_peers, l_peer), 0.0, peer_pitch(p_peers, l_peer), Sin(peer_step(p_peers, l_peer)) * MOB_LEG_SWING, FALSE);
   }
 }
 
@@ -2360,6 +2375,125 @@ void render_target_outline(Draw_Box p_box)
       render_world_line(p_box, l_px, l_py, l_pz, l_px + l_dx / OUTLINE_PIECES, l_py + l_dy / OUTLINE_PIECES, l_pz + l_dz / OUTLINE_PIECES);
     }
   }
+}
+
+Integer render_ray_colour(Real p_x, Real p_y, Real p_z, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_distance)
+// ----------------------------------------------------------------
+// The colour seen from (x, y, z) along a direction, as red * 65536
+// + green * 256 + blue: the average colour of the first block face
+// the ray meets (lit like the view, misted towards the sky colour
+// with distance and tinted blue through water), or the sky. Used
+// for the small pictures of worlds in the world list. Plants,
+// torches and glass are looked through.
+// ----------------------------------------------------------------
+{
+  Integer l_cell_x  = floor_integer(p_x);
+  Integer l_cell_y  = floor_integer(p_y);
+  Integer l_cell_z  = floor_integer(p_z);
+  Integer l_step_x  = 1;
+  Integer l_step_y  = 1;
+  Integer l_step_z  = 1;
+  Integer l_block   = 0;
+  Integer l_face    = 0;
+  Integer l_tex     = 0;
+  Integer l_slot    = 0;
+  Integer l_quad    = 0;
+  Integer l_water   = FALSE;
+  Integer l_hit     = FALSE;
+  Real    l_next_x  = 0.0;
+  Real    l_next_y  = 0.0;
+  Real    l_next_z  = 0.0;
+  Real    l_delta_x = 1000000.0;
+  Real    l_delta_y = 1000000.0;
+  Real    l_delta_z = 1000000.0;
+  Real    l_gone    = 0.0;
+  Real    l_red     = 0.0;
+  Real    l_green   = 0.0;
+  Real    l_blue    = 0.0;
+  Real    l_light   = 0.0;
+  Real    l_mist    = 0.0;
+
+  if (p_dir_x < 0.0) l_step_x = -1;
+  if (p_dir_y < 0.0) l_step_y = -1;
+  if (p_dir_z < 0.0) l_step_z = -1;
+  if (Absolute(p_dir_x) > 0.000001) l_delta_x = Absolute(1.0 / p_dir_x);
+  if (Absolute(p_dir_y) > 0.000001) l_delta_y = Absolute(1.0 / p_dir_y);
+  if (Absolute(p_dir_z) > 0.000001) l_delta_z = Absolute(1.0 / p_dir_z);
+  // distance along the ray to the first cell edge on each axis
+  l_next_x = (l_cell_x + 1 - p_x) * l_delta_x;
+  if (l_step_x < 0) l_next_x = (p_x - l_cell_x) * l_delta_x;
+  l_next_y = (l_cell_y + 1 - p_y) * l_delta_y;
+  if (l_step_y < 0) l_next_y = (p_y - l_cell_y) * l_delta_y;
+  l_next_z = (l_cell_z + 1 - p_z) * l_delta_z;
+  if (l_step_z < 0) l_next_z = (p_z - l_cell_z) * l_delta_z;
+
+  while (!l_hit && l_gone < p_distance) {
+    if (l_next_x <= l_next_y && l_next_x <= l_next_z) {
+      l_gone   = l_next_x;
+      l_next_x = l_next_x + l_delta_x;
+      l_cell_x = l_cell_x + l_step_x;
+      l_face   = DIR_NX;
+      if (l_step_x < 0) l_face = DIR_PX;
+    } else if (l_next_y <= l_next_z) {
+      l_gone   = l_next_y;
+      l_next_y = l_next_y + l_delta_y;
+      l_cell_y = l_cell_y + l_step_y;
+      l_face   = DIR_NY;
+      if (l_step_y < 0) l_face = DIR_PY;
+    } else {
+      l_gone   = l_next_z;
+      l_next_z = l_next_z + l_delta_z;
+      l_cell_z = l_cell_z + l_step_z;
+      l_face   = DIR_NZ;
+      if (l_step_z < 0) l_face = DIR_PZ;
+    }
+    if (!world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) {
+      if (l_cell_y < 0) l_hit = TRUE;   // below the world: dark
+      if (l_cell_y >= 0) l_gone = p_distance;
+      continue;
+    }
+    l_block = world_get_block(l_cell_x, l_cell_y, l_cell_z);
+    if (l_block == BLOCK_AIR || l_block == BLOCK_GLASS || block_is_plant(l_block)) continue;
+    if (block_light_emission(l_block) > 0 && !block_is_solid(l_block)) continue;
+    if (l_block == BLOCK_WATER) {
+      // the surface tints what is under it; deep water ends the ray
+      if (!l_water) l_mist = l_gone;
+      l_water = TRUE;
+      if (l_gone - l_mist > 6.0) l_hit = TRUE;
+      continue;
+    }
+    l_hit = TRUE;
+  }
+
+  if (!l_hit) return to_byte(g_fog_r) * 65536 + to_byte(g_fog_g) * 256 + to_byte(g_fog_b);
+  if (world_in_bounds(l_cell_x, l_cell_y, l_cell_z) && l_block != BLOCK_WATER) {
+    l_tex = block_face_texture(l_block, l_face);
+    for (l_quad = 1; l_quad <= 4; ++l_quad) {
+      l_slot  = (l_tex - 1) * 4 + l_quad;
+      l_red   = l_red   + g_tex_quad_r[l_slot] / 4.0;
+      l_green = l_green + g_tex_quad_g[l_slot] / 4.0;
+      l_blue  = l_blue  + g_tex_quad_b[l_slot] / 4.0;
+    }
+    l_light = max_real(0.3, g_view_daylight) * block_face_shade(l_face);
+  } else {
+    l_red   = 30.0;
+    l_green = 50.0;
+    l_blue  = 110.0;
+    l_light = max_real(0.3, g_view_daylight);
+  }
+  l_red   = l_red   * l_light;
+  l_green = l_green * l_light;
+  l_blue  = l_blue  * l_light;
+  if (l_water) {
+    l_red   = lerp_real(l_red  , 40.0 , 0.55);
+    l_green = lerp_real(l_green, 70.0 , 0.55);
+    l_blue  = lerp_real(l_blue , 170.0, 0.55);
+  }
+  l_mist  = clamp_real((l_gone - p_distance * 0.5) / (p_distance * 0.5), 0.0, 1.0);
+  l_red   = lerp_real(l_red  , g_fog_r, l_mist);
+  l_green = lerp_real(l_green, g_fog_g, l_mist);
+  l_blue  = lerp_real(l_blue , g_fog_b, l_mist);
+  return to_byte(l_red) * 65536 + to_byte(l_green) * 256 + to_byte(l_blue);
 }
 
 void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows,

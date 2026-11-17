@@ -2,325 +2,317 @@
 #define SETTINGS_PANEL_4DM_INCLUDED
 
 #include "../../include/core/common.h"
+#include "../../include/core/util.h"
 #include "../../include/core/records.h"
 #include "../../include/program/settings.h"
 #include "../../include/program/save.h"
-#include "../../include/ui/panels.h"
 #include "../../include/program/game.h"
+#include "../../include/render/menu.h"
+#include "../../include/ui/panels.h"
 #include "../../include/ui/font.h"
 
 // ----------------------------------------------------------------
-// The settings panel: every setting is a line showing its value and
-// a row of buttons that change it. 12d buttons can't change their
-// own text, so the value is shown in a message box above them.
-// Button replies start with "set_" so they can't be confused with
-// the other panels' buttons.
+// The options (controller), drawn in the view over the panorama, or
+// over the world darkened when opened from the game menu: the
+// options screen itself, the resource pack and skin pickers and the
+// multiplayer name and folder. Changes apply straight away and are
+// saved to the settings file when Done is pressed.
 // ----------------------------------------------------------------
 
-void settings_panel_show(Attributes &p_settings, Colour_Message_Box p_render_row, Colour_Message_Box p_detail_row,
-                         Colour_Message_Box p_fov_row, Colour_Message_Box p_mouse_row, Colour_Message_Box p_plants_row,
-                         Colour_Message_Box p_shading_row, Colour_Message_Box p_jump_row, Colour_Message_Box p_hud_row,
-                         Colour_Message_Box p_debug_row, Colour_Message_Box p_pack_row, Colour_Message_Box p_font_row,
-                         Colour_Message_Box p_skin_row)
+void settings_slider(Attributes &p_settings, Integer p_id, Real p_value)
 // ----------------------------------------------------------------
-// Show the current value of every setting
+// Set the setting of a slider from where it is (0..1), in its steps
 // ----------------------------------------------------------------
 {
-  Set_data(p_render_row , settings_describe(p_settings, ATTR_SET_RENDER_DISTANCE));
-  Set_data(p_detail_row , settings_describe(p_settings, ATTR_SET_DETAIL));
-  Set_data(p_fov_row    , settings_describe(p_settings, ATTR_SET_FOV));
-  Set_data(p_mouse_row  , settings_describe(p_settings, ATTR_SET_SENSITIVITY));
-  Set_data(p_plants_row , settings_describe(p_settings, ATTR_SET_PLANTS));
-  Set_data(p_shading_row, settings_describe(p_settings, ATTR_SET_SHADING));
-  Set_data(p_jump_row   , settings_describe(p_settings, ATTR_SET_AUTO_JUMP));
-  Set_data(p_hud_row    , settings_describe(p_settings, ATTR_SET_SHOW_HUD));
-  Set_data(p_debug_row  , settings_describe(p_settings, ATTR_SET_SHOW_DEBUG));
-  Set_data(p_pack_row   , settings_describe(p_settings, ATTR_SET_RESOURCE_PACK));
-  Set_data(p_font_row   , settings_describe(p_settings, ATTR_SET_FONT));
-  Set_data(p_skin_row   , settings_describe(p_settings, ATTR_SET_SKIN));
+  Integer l_steps = 0;
+
+  if (p_id == W_FOV) {
+    l_steps = floor_integer(p_value * (FOV_MAX - FOV_MIN) / FOV_STEP + 0.5);
+    record_set_integer(p_settings, ATTR_SET_FOV, clamp_integer(FOV_MIN + l_steps * FOV_STEP, FOV_MIN, FOV_MAX));
+  } else if (p_id == W_RENDER) {
+    l_steps = floor_integer(p_value * (RENDER_DISTANCE_MAX - RENDER_DISTANCE_MIN) / RENDER_DISTANCE_STEP + 0.5);
+    record_set_integer(p_settings, ATTR_SET_RENDER_DISTANCE,
+                       clamp_integer(RENDER_DISTANCE_MIN + l_steps * RENDER_DISTANCE_STEP, RENDER_DISTANCE_MIN, RENDER_DISTANCE_MAX));
+  } else if (p_id == W_MOUSE) {
+    l_steps = floor_integer(p_value * (SENSITIVITY_MAX - SENSITIVITY_MIN) + 0.5);
+    record_set_integer(p_settings, ATTR_SET_SENSITIVITY, clamp_integer(SENSITIVITY_MIN + l_steps, SENSITIVITY_MIN, SENSITIVITY_MAX));
+  }
 }
 
-Integer settings_panel_run(Attributes &p_settings)
+Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_settings, Integer p_in_game)
 // ----------------------------------------------------------------
-// Show the settings until Done is pressed; changes apply straight
-// away and are saved to the settings file when the panel closes
-// Returns 0, or SHUTDOWN_CODE if 12d asked the macro to stop
+// Show the options until Done (or Escape). Returns 0, PANEL_CLOSED
+// if the window was closed, or SHUTDOWN_CODE if 12d asked the macro
+// to stop.
 // ----------------------------------------------------------------
 {
-  Text               l_title          = GAME_TITLE;
-  Panel              l_panel          = Create_panel(l_title + " - settings");
-  Vertical_Group     l_vgroup         = Create_vertical_group(0);
-  Colour_Message_Box l_message        = Create_colour_message_box("");
+  Integer   l_screen     = SCREEN_OPTIONS;
+  Integer   l_result     = 0;
+  Integer   l_doit       = TRUE;
+  Integer   l_want_frame = TRUE;
+  Integer   l_has_xy     = FALSE;
+  Integer   l_widget     = 0;
+  Integer   l_id         = 0;
+  Integer   l_hover      = 0;
+  Integer   l_drag       = 0;
+  Integer   l_width      = 0;
+  Integer   l_height     = 0;
+  Integer64 l_event_id   = 0;
+  Real      l_now        = 0.0;
+  Real      l_last_frame = 0.0;
+  Real      l_x          = 0.0;
+  Real      l_y          = 0.0;
+  Real      l_w          = 0.0;
+  Real      l_h          = 0.0;
+  Text      l_cmd        = "";
+  Text      l_msg        = "";
+  Text      l_key        = "";
+  Text      l_pack       = settings_resource_pack(p_settings);
+  Text      l_report     = "";
+  Text      l_keep       = "";
 
-  Colour_Message_Box l_render_row     = Create_colour_message_box("");
-  Horizontal_Group   l_render_buttons = Create_button_group();
-  Button             l_render_less    = Create_button("- Shorter view", "set_render_down");
-  Button             l_render_more    = Create_button("Longer view +", "set_render_up");
-  Button             l_render_most    = Create_button("Furthest", "set_render_max");
-
-  Colour_Message_Box l_detail_row     = Create_colour_message_box("");
-  Horizontal_Group   l_detail_buttons = Create_button_group();
-  Button             l_detail_low     = Create_button("Low", "set_detail_low");
-  Button             l_detail_normal  = Create_button("Normal", "set_detail_normal");
-  Button             l_detail_high    = Create_button("High", "set_detail_high");
-
-  Colour_Message_Box l_fov_row        = Create_colour_message_box("");
-  Horizontal_Group   l_fov_buttons    = Create_button_group();
-  Button             l_fov_less       = Create_button("- Narrower", "set_fov_down");
-  Button             l_fov_more       = Create_button("Wider +", "set_fov_up");
-
-  Colour_Message_Box l_mouse_row      = Create_colour_message_box("");
-  Horizontal_Group   l_mouse_buttons  = Create_button_group();
-  Button             l_mouse_less     = Create_button("- Slower", "set_mouse_down");
-  Button             l_mouse_more     = Create_button("Faster +", "set_mouse_up");
-
-  Colour_Message_Box l_plants_row     = Create_colour_message_box("");
-  Colour_Message_Box l_shading_row    = Create_colour_message_box("");
-  Colour_Message_Box l_jump_row       = Create_colour_message_box("");
-  Colour_Message_Box l_hud_row        = Create_colour_message_box("");
-  Colour_Message_Box l_debug_row      = Create_colour_message_box("");
-  Horizontal_Group   l_toggle_buttons = Create_button_group();
-  Button             l_plants_toggle  = Create_button("Grass and flowers", "set_plants");
-  Button             l_shading_toggle = Create_button("Shadows", "set_shading");
-  Button             l_jump_toggle    = Create_button("Auto-jump", "set_jump");
-  Button             l_hud_toggle     = Create_button("HUD", "set_hud");
-  Button             l_debug_toggle   = Create_button("Statistics", "set_debug");
-
-  Colour_Message_Box l_pack_row       = Create_colour_message_box("");
-  File_Box           l_pack_box       = Create_file_box("Resource pack (.zip file or unzipped folder)", l_message, PACK_FILE_BOX_MODE, "*.zip");
-  Horizontal_Group   l_pack_buttons   = Create_button_group();
-  Button             l_pack_load      = Create_button("Use this resource pack", "set_pack_load");
-  Button             l_pack_clear     = Create_button("Built-in textures", "set_pack_clear");
-
-  Colour_Message_Box l_font_row       = Create_colour_message_box("");
-  Horizontal_Group   l_font_buttons   = Create_button_group();
-  Button             l_font_next      = Create_button("Next font", "set_font_next");
-  Button             l_font_default   = Create_button("12d's default", "set_font_default");
-  Input_Box          l_font_name_box  = Create_input_box("Font name (any font installed in Windows)", l_message);
-  File_Box           l_font_file_box  = Create_file_box("... or a font file (.ttf, .otf or .ttc)", l_message, PACK_FILE_BOX_MODE, "*.ttf");
-  Horizontal_Group   l_font_use       = Create_button_group();
-  Button             l_font_name_use  = Create_button("Use this font name", "set_font_name");
-  Button             l_font_file_use  = Create_button("Use this font file", "set_font_file");
-
-  Colour_Message_Box l_skin_row       = Create_colour_message_box("");
-  File_Box           l_skin_box       = Create_file_box("Skin (a .png laid out like a block game skin)", l_message, PACK_FILE_BOX_MODE, "*.png");
-  Horizontal_Group   l_skin_buttons   = Create_button_group();
-  Button             l_skin_use       = Create_button("Use this skin", "set_skin_load");
-  Button             l_skin_clear     = Create_button("Built-in skin", "set_skin_clear");
-
-  Input_Box          l_name_box       = Create_input_box("Multiplayer name (blank for your Windows name)", l_message);
-  Input_Box          l_folder_box     = Create_input_box("Multiplayer folder (shared by every player)", l_message);
-
-  Horizontal_Group   l_end_buttons    = Create_button_group();
-  Button             l_reset_button   = Create_button("Reset to defaults", "set_defaults");
-  Button             l_done_button    = Create_finish_button("Done", "set_done");
-
-  Integer            l_result         = 0;
-  Integer            l_doit           = TRUE;
-  Integer64          l_id             = 0;
-  Text               l_cmd            = "";
-  Text               l_msg            = "";
-  Text               l_pack           = "";
-  Text               l_report         = "";
-  Text               l_font           = "";
-
-  Append(l_render_less, l_render_buttons);
-  Append(l_render_more, l_render_buttons);
-  Append(l_render_most, l_render_buttons);
-  Append(l_detail_low   , l_detail_buttons);
-  Append(l_detail_normal, l_detail_buttons);
-  Append(l_detail_high  , l_detail_buttons);
-  Append(l_fov_less, l_fov_buttons);
-  Append(l_fov_more, l_fov_buttons);
-  Append(l_mouse_less, l_mouse_buttons);
-  Append(l_mouse_more, l_mouse_buttons);
-  Append(l_plants_toggle , l_toggle_buttons);
-  Append(l_shading_toggle, l_toggle_buttons);
-  Append(l_jump_toggle   , l_toggle_buttons);
-  Append(l_hud_toggle    , l_toggle_buttons);
-  Append(l_debug_toggle  , l_toggle_buttons);
-  Append(l_pack_load , l_pack_buttons);
-  Append(l_pack_clear, l_pack_buttons);
-  Append(l_font_next   , l_font_buttons);
-  Append(l_font_default, l_font_buttons);
-  Append(l_font_name_use, l_font_use);
-  Append(l_font_file_use, l_font_use);
-  Append(l_skin_use     , l_skin_buttons);
-  Append(l_skin_clear   , l_skin_buttons);
-  Append(l_reset_button, l_end_buttons);
-  Append(l_done_button , l_end_buttons);
-
-  Append(l_render_row    , l_vgroup);
-  Append(l_render_buttons, l_vgroup);
-  Append(l_detail_row    , l_vgroup);
-  Append(l_detail_buttons, l_vgroup);
-  Append(l_fov_row       , l_vgroup);
-  Append(l_fov_buttons   , l_vgroup);
-  Append(l_mouse_row     , l_vgroup);
-  Append(l_mouse_buttons , l_vgroup);
-  Append(l_plants_row    , l_vgroup);
-  Append(l_shading_row   , l_vgroup);
-  Append(l_jump_row      , l_vgroup);
-  Append(l_hud_row       , l_vgroup);
-  Append(l_debug_row     , l_vgroup);
-  Append(l_toggle_buttons, l_vgroup);
-  Append(l_pack_row      , l_vgroup);
-  Append(l_pack_box      , l_vgroup);
-  Append(l_pack_buttons  , l_vgroup);
-  Append(l_font_row      , l_vgroup);
-  Append(l_font_buttons  , l_vgroup);
-  Append(l_font_name_box , l_vgroup);
-  Append(l_font_file_box , l_vgroup);
-  Append(l_font_use      , l_vgroup);
-  Append(l_skin_row      , l_vgroup);
-  Append(l_skin_box      , l_vgroup);
-  Append(l_skin_buttons  , l_vgroup);
-  Append(l_name_box      , l_vgroup);
-  Append(l_folder_box    , l_vgroup);
-  Append(l_end_buttons   , l_vgroup);
-  Append(l_message       , l_vgroup);
-  Append(l_vgroup        , l_panel);
-
-  Show_widget(l_panel);
-  settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row, l_skin_row);
-  Set_data(l_pack_box, settings_resource_pack(p_settings));
-  Set_data(l_font_name_box, settings_font(p_settings));
-  Set_data(l_font_file_box, settings_font_file(p_settings));
-  Set_data(l_skin_box, settings_skin(p_settings));
-  Set_data(l_name_box, settings_player_name(p_settings));
-  Set_data(l_folder_box, settings_mp_folder(p_settings));
-  Set_data(l_message, "Longer views and higher detail look better but draw more slowly.");
+  menu_clear(g_menu);
+  Set_focus(p_keys);
 
   while (l_doit) {
-    l_id  = 0;
-    l_cmd = "";
-    l_msg = "";
-    if (Wait_on_events(l_id, l_cmd, l_msg) != 0) continue;
+    // ------------------------------------------------ frame
+    if (l_want_frame) {
+      Get_time(l_now);
+      Get_size(p_box, l_width, l_height);
+      l_w = l_width;
+      l_h = l_height;
+      Start_batch_draw(p_box);
+      font_apply(p_box, settings_font(p_settings));
+      if (p_in_game) {
+        game_panel_backdrop(p_box, l_w, l_h, l_now);
+      } else {
+        menu_background(p_box, l_w, l_h, FALSE, l_now);
+      }
+      if (l_screen == SCREEN_OPTIONS) screen_options(p_box, g_menu, p_settings, l_w, l_h, l_now);
+      if (l_screen == SCREEN_PACKS  ) screen_packs  (p_box, g_menu, g_files, l_pack, l_w, l_h, l_now);
+      if (l_screen == SCREEN_SKINS  ) screen_skins  (p_box, g_menu, g_files, settings_skin(p_settings), l_w, l_h, l_now);
+      if (l_screen == SCREEN_PLAYER ) screen_player (p_box, g_menu, FALSE, l_w, l_h, l_now);
+      if (l_screen == SCREEN_FONTS  ) screen_fonts  (p_box, g_menu, g_files, settings_font(p_settings), settings_font_file(p_settings), l_w, l_h, l_now);
+      End_batch_draw(p_box);
+      l_last_frame = l_now;
+      l_want_frame = FALSE;
+    }
+
+    // ------------------------------------------------ next event
+    l_event_id = 0;
+    l_cmd      = "";
+    l_msg      = "";
+    if (Wait_on_events(l_event_id, l_cmd, l_msg) != 0) continue;
+    Get_time(l_now);
+    l_id = 0;
 
     if (l_cmd == "CodeShutdown") {
       Set_exit_code(l_cmd);
       l_result = SHUTDOWN_CODE;
       l_doit   = FALSE;
-    } else if (l_cmd == "Panel Quit" || l_cmd == "set_done") {
-      // the multiplayer boxes are kept as typed
-      Get_data(l_name_box, l_font);
-      settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, l_font);
-      Get_data(l_folder_box, l_font);
-      settings_set_text(p_settings, ATTR_SET_MP_FOLDER, l_font);
-      l_doit = FALSE;
-    } else if (l_cmd == "set_render_down") {
-      settings_change(p_settings, ATTR_SET_RENDER_DISTANCE, -1);
-    } else if (l_cmd == "set_render_up") {
-      settings_change(p_settings, ATTR_SET_RENDER_DISTANCE, 1);
-    } else if (l_cmd == "set_render_max") {
-      record_set_integer(p_settings, ATTR_SET_RENDER_DISTANCE, RENDER_DISTANCE_MAX);
-    } else if (l_cmd == "set_detail_low") {
-      record_set_integer(p_settings, ATTR_SET_DETAIL, DETAIL_LOW);
-    } else if (l_cmd == "set_detail_normal") {
-      record_set_integer(p_settings, ATTR_SET_DETAIL, DETAIL_NORMAL);
-    } else if (l_cmd == "set_detail_high") {
-      record_set_integer(p_settings, ATTR_SET_DETAIL, DETAIL_HIGH);
-    } else if (l_cmd == "set_fov_down") {
-      settings_change(p_settings, ATTR_SET_FOV, -1);
-    } else if (l_cmd == "set_fov_up") {
-      settings_change(p_settings, ATTR_SET_FOV, 1);
-    } else if (l_cmd == "set_mouse_down") {
-      settings_change(p_settings, ATTR_SET_SENSITIVITY, -1);
-    } else if (l_cmd == "set_mouse_up") {
-      settings_change(p_settings, ATTR_SET_SENSITIVITY, 1);
-    } else if (l_cmd == "set_plants") {
-      settings_toggle(p_settings, ATTR_SET_PLANTS);
-    } else if (l_cmd == "set_shading") {
-      settings_toggle(p_settings, ATTR_SET_SHADING);
-    } else if (l_cmd == "set_jump") {
-      settings_toggle(p_settings, ATTR_SET_AUTO_JUMP);
-    } else if (l_cmd == "set_hud") {
-      settings_toggle(p_settings, ATTR_SET_SHOW_HUD);
-    } else if (l_cmd == "set_debug") {
-      settings_toggle(p_settings, ATTR_SET_SHOW_DEBUG);
-    } else if (l_cmd == "set_pack_load") {
-      l_pack = "";
-      Get_data(l_pack_box, l_pack);
-      settings_set_resource_pack(p_settings, l_pack);
-      Set_data(l_message, "Loading the resource pack ...");
-      if (game_load_textures(p_settings, l_report) == 0) {
-        // nothing usable: go back to the built-in textures
-        settings_set_resource_pack(p_settings, "");
-        l_report = l_report + " Using the built-in textures.";
+      continue;
+    }
+    if (l_cmd == "Panel Quit") {
+      l_result = PANEL_CLOSED;
+      l_doit   = FALSE;
+      continue;
+    }
+    if (l_cmd == "Panel_Resize") l_want_frame = TRUE;
+
+    if (l_event_id == Get_id64(p_box)) {
+      // ------------------------------------------------ mouse
+      l_has_xy = game_panel_split_xy(l_msg, l_x, l_y) == SUCCESS;
+      if (!l_has_xy) continue;
+      menu_set_mouse(g_menu, l_x, l_y);
+      l_widget = menu_at(g_menu, l_x, l_y);
+      l_drag   = record_integer(g_menu, ATTR_MENU_DRAG);
+      // a slider or scroll bar held down follows the mouse
+      if ((l_cmd == "mouse_move" && l_drag != 0) || (l_cmd == "click_lb_down" && menu_widget_kind(g_menu, l_widget) >= MENU_SLIDER &&
+                                                    menu_widget_kind(g_menu, l_widget) != MENU_ROW)) {
+        if (l_cmd == "click_lb_down") {
+          l_drag = menu_widget_id(g_menu, l_widget);
+          record_set_integer(g_menu, ATTR_MENU_DRAG, l_drag);
+        }
+        if (l_drag == W_LIST_SCROLL) {
+          if (menu_widget_of(g_menu, W_LIST_SCROLL) > 0) menu_scroll_to(g_menu, menu_slider_value_at(g_menu, menu_widget_of(g_menu, W_LIST_SCROLL), l_x, l_y));
+        } else if (menu_widget_of(g_menu, l_drag) > 0) {
+          settings_slider(p_settings, l_drag, menu_slider_value_at(g_menu, menu_widget_of(g_menu, l_drag), l_x, l_y));
+        }
+        l_want_frame = TRUE;
+        continue;
       }
-      Set_data(l_message, l_report);
-    } else if (l_cmd == "set_skin_load") {
-      l_pack = "";
-      Get_data(l_skin_box, l_pack);
-      settings_set_text(p_settings, ATTR_SET_SKIN, Text_justify(l_pack));
-      game_load_textures(p_settings, l_report);
-      if (Find_text(l_report, "Skin: ") == 0) {
-        // not a skin we could read: back to the built-in one
-        settings_set_text(p_settings, ATTR_SET_SKIN, "");
-        game_load_textures(p_settings, l_font);
-        l_report = l_report + " Using the built-in skin.";
+      if (l_cmd == "mouse_move") {
+        if (l_widget != l_hover || l_now - l_last_frame > MENU_FRAME_GAP) l_want_frame = TRUE;
+        l_hover = l_widget;
+        continue;
       }
-      Set_data(l_message, l_report);
-    } else if (l_cmd == "set_skin_clear") {
-      settings_set_text(p_settings, ATTR_SET_SKIN, "");
-      Set_data(l_skin_box, "");
-      game_load_textures(p_settings, l_report);
-      Set_data(l_message, "Using the built-in skin.");
-    } else if (l_cmd == "set_pack_clear") {
-      settings_set_resource_pack(p_settings, "");
-      Set_data(l_pack_box, "");
-      game_load_textures(p_settings, l_report);
-      Set_data(l_message, "Using the built-in textures.");
-    } else if (l_cmd == "set_font_next") {
-      settings_set_font(p_settings, font_next_choice(settings_font(p_settings)));
-      settings_set_font_file(p_settings, "");
-      Set_data(l_font_name_box, settings_font(p_settings));
-      Set_data(l_font_file_box, "");
-    } else if (l_cmd == "set_font_default") {
-      settings_set_font(p_settings, "");
-      settings_set_font_file(p_settings, "");
-      Set_data(l_font_name_box, "");
-      Set_data(l_font_file_box, "");
-      Set_data(l_message, "The default font comes back when the game is next opened.");
-    } else if (l_cmd == "set_font_name") {
-      l_font = "";
-      Get_data(l_font_name_box, l_font);
-      settings_set_font(p_settings, l_font);
-      settings_set_font_file(p_settings, "");
-      Set_data(l_font_file_box, "");
-      Set_data(l_message, "If that font isn't installed, Windows draws a similar one instead.");
-    } else if (l_cmd == "set_font_file") {
-      l_pack = "";
-      Get_data(l_font_file_box, l_pack);
-      if (font_family_from_file(l_pack, l_font, l_report) == SUCCESS) {
-        settings_set_font(p_settings, l_font);
-        settings_set_font_file(p_settings, l_pack);
-        Set_data(l_font_name_box, l_font);
-        Set_data(l_message, "Using " + l_font + ". The font has to be installed in Windows (double click the file, then Install) for 12d to draw with it.");
+      if (l_cmd != "click_lb" && l_cmd != "double_click_lb") continue;
+      Set_focus(p_keys);
+      l_want_frame = TRUE;
+      if (l_drag != 0) {
+        record_set_integer(g_menu, ATTR_MENU_DRAG, 0);
+        continue;
+      }
+      l_id = menu_widget_id(g_menu, l_widget);
+      if (menu_widget_kind(g_menu, l_widget) == MENU_FIELD) {
+        menu_set_focus(g_menu, l_id);
+        continue;
+      }
+      if (l_id == 0) continue;
+
+    } else if (l_event_id == Get_id64(p_keys)) {
+      // ------------------------------------------------ keys
+      if (l_cmd == "keystroke") {
+        l_key = Text_lower(l_msg);
+        Set_data(p_keys, "");
+        l_want_frame = TRUE;
+        if (l_key == "escape") {
+          l_id = W_DONE;
+        } else if (menu_type_key(g_menu, l_key, l_msg)) {
+          continue;
+        } else {
+          continue;
+        }
+      } else if (l_cmd == "text selected") {
+        Set_data(p_keys, "");
+        Set_focus(p_keys);
+        l_id = W_DONE;
+        if (l_screen == SCREEN_FONTS && menu_focus(g_menu) == W_FONT_NAME) l_id = W_FONT_USE;
+        l_want_frame = TRUE;
       } else {
-        Set_data(l_message, l_report);
+        continue;
       }
-    } else if (l_cmd == "set_defaults") {
-      l_pack = settings_resource_pack(p_settings);
-      l_font = settings_skin(p_settings);
-      settings_defaults(p_settings);
-      settings_set_resource_pack(p_settings, l_pack);   // keep the textures and skin: they have buttons
-      settings_set_text(p_settings, ATTR_SET_SKIN, l_font);
-      Set_data(l_font_name_box, "");
-      Set_data(l_font_file_box, "");
-      Set_data(l_name_box, settings_player_name(p_settings));
-      Set_data(l_folder_box, settings_mp_folder(p_settings));
     } else {
       continue;
     }
-    settings_panel_show(p_settings, l_render_row, l_detail_row, l_fov_row, l_mouse_row, l_plants_row, l_shading_row, l_jump_row, l_hud_row, l_debug_row, l_pack_row, l_font_row, l_skin_row);
+
+    // ------------------------------------------------ the widget's action
+    if (l_screen == SCREEN_OPTIONS) {
+      if (l_id == W_DONE) {
+        l_doit = FALSE;
+      } else if (l_id == W_DETAIL) {
+        record_set_integer(p_settings, ATTR_SET_DETAIL, settings_detail(p_settings) + 1);
+        if (settings_detail(p_settings) > DETAIL_HIGH) record_set_integer(p_settings, ATTR_SET_DETAIL, DETAIL_LOW);
+      } else if (l_id == W_PLANTS) {
+        settings_toggle(p_settings, ATTR_SET_PLANTS);
+      } else if (l_id == W_SHADING) {
+        settings_toggle(p_settings, ATTR_SET_SHADING);
+      } else if (l_id == W_AUTO_JUMP) {
+        settings_toggle(p_settings, ATTR_SET_AUTO_JUMP);
+      } else if (l_id == W_SHOW_HUD) {
+        settings_toggle(p_settings, ATTR_SET_SHOW_HUD);
+      } else if (l_id == W_STATISTICS) {
+        settings_toggle(p_settings, ATTR_SET_SHOW_DEBUG);
+      } else if (l_id == W_FONT) {
+        save_list_files(g_files, FONT_FOLDER, "*.*", FALSE);
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        menu_set_field_text(g_menu, W_FONT_NAME, "");
+        menu_set_focus(g_menu, 0);
+        l_screen = SCREEN_FONTS;
+      } else if (l_id == W_PACKS) {
+        save_list_files(g_files, PACK_FOLDER, "*.zip", TRUE);
+        l_pack = settings_resource_pack(p_settings);
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        l_screen = SCREEN_PACKS;
+      } else if (l_id == W_SKINS) {
+        save_list_files(g_files, SKIN_FOLDER, "*.png", FALSE);
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        l_screen = SCREEN_SKINS;
+      } else if (l_id == W_PLAYER_SETTINGS) {
+        menu_set_field_text(g_menu, W_PLAYER_NAME, settings_player_name(p_settings));
+        menu_set_field_text(g_menu, W_FOLDER, settings_mp_folder(p_settings));
+        menu_set_focus(g_menu, 0);
+        l_screen = SCREEN_PLAYER;
+      } else if (l_id == W_DEFAULTS) {
+        // the textures, skin and font stay: they have screens of their own
+        l_pack = settings_resource_pack(p_settings);
+        l_keep = settings_skin(p_settings);
+        l_key  = settings_font(p_settings);
+        settings_defaults(p_settings);
+        settings_set_resource_pack(p_settings, l_pack);
+        settings_set_text(p_settings, ATTR_SET_SKIN, l_keep);
+        settings_set_font(p_settings, l_key);
+        menu_note(g_menu, "Settings back to their defaults.", FALSE, l_now);
+      }
+
+    } else if (l_screen == SCREEN_PACKS) {
+      if (l_id > W_AVAILABLE_ROW && l_id <= W_AVAILABLE_ROW + record_integer(g_files, ATTR_FL_COUNT)) {
+        l_pack = record_text_at(g_files, ATTR_FL_PATH, l_id - W_AVAILABLE_ROW);
+      } else if (l_id == W_SELECTED_ROW + 1) {
+        l_pack = "";
+      } else if (l_id == W_DONE) {
+        if (l_pack != settings_resource_pack(p_settings)) {
+          // loading a pack takes a while: say so first
+          game_panel_notice(p_box, "Loading resource pack", save_file_name(l_pack));
+          settings_set_resource_pack(p_settings, l_pack);
+          if (game_load_textures(p_settings, l_report) == 0 && l_pack != "") {
+            settings_set_resource_pack(p_settings, "");
+            game_load_textures(p_settings, l_keep);
+            menu_note(g_menu, l_report + " Using the built-in textures.", TRUE, l_now);
+          } else if (l_pack != "") {
+            menu_note(g_menu, l_report, FALSE, l_now);
+          } else {
+            menu_note(g_menu, "Using the built-in textures.", FALSE, l_now);
+          }
+        }
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        l_screen = SCREEN_OPTIONS;
+      }
+
+    } else if (l_screen == SCREEN_SKINS) {
+      if (l_id >= W_SKIN_ROW && l_id <= W_SKIN_ROW + record_integer(g_files, ATTR_FL_COUNT)) {
+        l_keep = "";
+        if (l_id > W_SKIN_ROW) l_keep = record_text_at(g_files, ATTR_FL_PATH, l_id - W_SKIN_ROW);
+        settings_set_text(p_settings, ATTR_SET_SKIN, l_keep);
+        game_load_textures(p_settings, l_report);
+        if (l_keep != "" && Find_text(l_report, "Skin: ") == 0) {
+          // not a skin that could be read: back to the built-in one
+          settings_set_text(p_settings, ATTR_SET_SKIN, "");
+          game_load_textures(p_settings, l_key);
+          menu_note(g_menu, l_report + " Using the built-in skin.", TRUE, l_now);
+        }
+      } else if (l_id == W_DONE) {
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        l_screen = SCREEN_OPTIONS;
+      }
+
+    } else if (l_screen == SCREEN_FONTS) {
+      if (l_id > W_FONT_ROW && l_id <= W_FONT_ROW + FONT_CHOICES) {
+        settings_set_font(p_settings, font_choice(l_id - W_FONT_ROW));
+        settings_set_font_file(p_settings, "");
+      } else if (l_id > W_FONT_ROW + FONT_CHOICES && l_id <= W_FONT_ROW + FONT_CHOICES + record_integer(g_files, ATTR_FL_COUNT)) {
+        l_keep = record_text_at(g_files, ATTR_FL_PATH, l_id - W_FONT_ROW - FONT_CHOICES);
+        if (font_family_from_file(l_keep, l_key, l_report) == SUCCESS) {
+          settings_set_font(p_settings, l_key);
+          settings_set_font_file(p_settings, l_keep);
+          menu_note(g_menu, "Using " + l_key + " (12d draws it once the file is installed in Windows).", FALSE, l_now);
+        } else {
+          menu_note(g_menu, l_report, TRUE, l_now);
+        }
+      } else if (l_id == W_FONT_USE) {
+        l_key = Text_justify(menu_field_text(g_menu, W_FONT_NAME));
+        settings_set_font(p_settings, l_key);
+        settings_set_font_file(p_settings, "");
+        if (l_key != "") menu_note(g_menu, "If " + l_key + " isn't installed, Windows draws a similar font instead.", FALSE, l_now);
+      } else if (l_id == W_DONE) {
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        menu_set_focus(g_menu, 0);
+        l_screen = SCREEN_OPTIONS;
+      }
+
+    } else if (l_screen == SCREEN_PLAYER) {
+      if (l_id == W_DONE) {
+        settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, Text_justify(menu_field_text(g_menu, W_PLAYER_NAME)));
+        settings_set_text(p_settings, ATTR_SET_MP_FOLDER, Text_justify(menu_field_text(g_menu, W_FOLDER)));
+        menu_set_focus(g_menu, 0);
+        l_screen = SCREEN_OPTIONS;
+      }
+    }
   }
 
   save_ensure_folder();
-  if (settings_save(p_settings, save_settings_path()) != SUCCESS) {
-    Set_data(l_message, "Couldn't save the settings file.");
-  }
-  Hide_widget(l_panel);
+  settings_save(p_settings, save_settings_path());
+  menu_begin(g_menu);   // the options' widgets are gone
   return l_result;
 }
 

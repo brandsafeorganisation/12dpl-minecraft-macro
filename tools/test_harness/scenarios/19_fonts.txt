@@ -1,34 +1,36 @@
-# Fonts: cycle the list, type a name, read family names from font
-# files (Windows UTF-16 names, a Mac name, a collection, not a font),
-# then check the game draws its text with the chosen font and that
-# the choice is saved. Run make_test_fonts.py first.
-button menu_settings
+# Fonts: pick from the list, type a name, read family names from font
+# files in the fonts folder (Windows UTF-16 names, a Mac name, a
+# collection, not a font), then check the game draws its text with the
+# chosen font and that the choice is saved. Run make_test_fonts.py
+# first (run.sh copies the files to the fonts folder).
+ui Options...
+ui Font...
 call font
-button set_font_next
-button set_font_next
+ui Consolas
 call font
-input Font name (any font installed in Windows)|  Lucida Console
-button set_font_name
+snap 191_font_picker
+wait 4
+field Or type the name|  Lucida Console
+ui Use
 call font
-input ... or a font file (.ttf, .otf or .ttc)|../packs/test_font.ttf
-button set_font_file
+slide #16|1
+snap 192_font_files
+wait 4
+ui test_font.ttf
 call font
-input ... or a font file (.ttf, .otf or .ttc)|../packs/test_mac.otf
-button set_font_file
+ui test_mac.otf
 call font
-input ... or a font file (.ttf, .otf or .ttc)|../packs/test_collection.ttc
-button set_font_file
+ui test_collection.ttc
 call font
-input ... or a font file (.ttf, .otf or .ttc)|../packs/not_a_font.ttf
-button set_font_file
+ui not_a_font.ttf
 call font
-input ... or a font file (.ttf, .otf or .ttc)|../packs/missing.ttf
-button set_font_file
-call font
-button set_done
-input New world name|Fonts
-input Seed (blank for random)|5
-button create
+ui Done
+ui Done
+ui Singleplayer
+ui Create New World
+field World Name|Fonts
+field Seed for the World Generator|5
+ui Create New World
 wait 2
 click 430 300
 wait 2

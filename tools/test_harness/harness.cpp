@@ -58,6 +58,7 @@ int End_batch_draw(const Draw_Box&){ in_batch=false; g_frames++;
 // ---------------------------------------------------------------- script
 struct Ev{ Text kind; Text a; double x=0,y=0; };
 static std::deque<Ev> script;
+static const int MENU_FIELD_BACKSPACES=50;
 static void load_script(const char*path){ std::ifstream in(path); Text line; while(std::getline(in,line)){ std::istringstream s(line); Text k; if(!(s>>k)||k[0]=='#') continue;
   if(k=="tick"||k=="wait"){ int n=1; s>>n; for(int i=0;i<n;i++) script.push_back({"tick","",0,0}); }
   else if(k=="type"){ Text rest; std::getline(s,rest); if(!rest.empty()&&rest[0]==' ') rest=rest.substr(1); for(char c:rest) script.push_back({"key",Text(1,c)}); }
@@ -74,10 +75,15 @@ static void load_script(const char*path){ std::ifstream in(path); Text line; whi
   else if(k=="select"){ int n; s>>n; script.push_back({"select","",(double)n,0}); }
   else if(k=="select_name"){ Text rest; std::getline(s,rest); rest=Text_justify(rest); script.push_back({"select_name",rest,0,0}); }
   else if(k=="time"){ double t; s>>t; script.push_back({"time","",t,0}); }
+  else if(k=="ui"){ Text rest; std::getline(s,rest); rest=Text_justify(rest); script.push_back({"ui",rest}); }
+  else if(k=="slide"){ Text rest; std::getline(s,rest); rest=Text_justify(rest); script.push_back({"slide",rest}); }
+  else if(k=="field"){ Text rest; std::getline(s,rest); rest=Text_justify(rest); auto p=rest.find('|'); script.push_back({"ui",rest.substr(0,p)}); for(int i=0;i<MENU_FIELD_BACKSPACES;i++) script.push_back({"key","backspace"}); if(p!=Text::npos) for(char c:rest.substr(p+1)) script.push_back({"key",Text(1,c)}); }
   else if(k=="call"){ Text n; s>>n; script.push_back({"call",n}); }
   else if(k=="quit"){ script.push_back({"quit",""}); }
 }}
 std::map<Text,std::function<void()>> g_calls;
+// set by hooks.cpp: where the menu widget with a label (or "#id") is, false if none
+std::function<bool(const Text&,double&,double&,double&,double&)> g_ui_find;
 static void print_attr_top(){ std::vector<std::pair<long long,Text>> v; for(auto&p:g_attribute_by_name) v.push_back({p.second,p.first}); std::sort(v.rbegin(),v.rend()); for(size_t i=0;i<v.size()&&i<15;i++) printf("[attr] %lld %s\n",v[i].first,v[i].second.c_str()); }
 static void print_frames(){ if(getenv("TRACE_ATTR")) print_attr_top(); printf("[frames] %lld polygons %lld attribute calls %lld type errors %lld\n", g_frames, g_polygons, g_attribute_calls, g_attribute_type_errors); }
 struct FrameAtExit{ FrameAtExit(){ atexit(print_frames);} } frame_at_exit;
@@ -88,7 +94,7 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
     if(script.empty()){ cmd="Panel Quit"; id=0; msg=""; return 0; }
     Ev e=script.front(); script.pop_front();
     long long box=g_widget_by_title["drawbox"];
-    long long keys=g_widget_by_title["Keys (click here if the keys stop working)"];
+    long long keys=g_widget_by_title["Keys"];
     if(getenv("TRACE")) printf("[event] %s %s %g %g\n",e.kind.c_str(),e.a.c_str(),e.x,e.y);
     if(e.kind=="tick"||e.kind=="look"){ // mouse move from current cursor
       double bx=g_cursor_x-100+e.x, by=100+g_box_h-g_cursor_y-e.y; id=box; cmd="mouse_move"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }
@@ -96,6 +102,9 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
     if(e.kind=="enter"){ id=keys; cmd="text selected"; msg=""; return 0; }
     if(e.kind=="click"||e.kind=="rclick"||e.kind=="lbdown"||e.kind=="move"){ g_cursor_x=(int)(100+e.x); g_cursor_y=(int)(100+g_box_h-e.y); id=box; cmd= e.kind=="click"?"click_lb": e.kind=="rclick"?"click_rb": e.kind=="move"?"mouse_move":"click_lb_down"; char b[64]; snprintf(b,64,"%g %g",e.x,e.y); msg=b; return 0; }
     if(e.kind=="capclick"||e.kind=="caprclick"){ double bx=g_cursor_x-100, by=100+g_box_h-g_cursor_y; id=box; cmd= e.kind=="capclick"?"click_lb_down":"click_rb"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }
+    if(e.kind=="slide"){ auto p=e.a.find('|'); double x0=0,y0=0,x1=0,y1=0, f=atof(e.a.substr(p+1).c_str());
+      if(g_ui_find&&g_ui_find(e.a.substr(0,p),x0,y0,x1,y1)){ double x=x0+4+f*(x1-x0-8), y=(y0+y1)/2; if(y1-y0>x1-x0){ /* a scroll bar: down from its top */ x=(x0+x1)/2; y=y1-f*(y1-y0); } script.push_front({"click","",x,y}); script.push_front({"lbdown","",x,y}); } else printf("[harness] no menu widget %s\n",e.a.c_str()); continue; }
+    if(e.kind=="ui"){ double x0=0,y0=0,x1=0,y1=0; if(g_ui_find&&g_ui_find(e.a,x0,y0,x1,y1)){ double x=(x0+x1)/2,y=(y0+y1)/2; script.push_front({"click","",x,y}); script.push_front({"lbdown","",x,y}); } else printf("[harness] no menu widget %s\n",e.a.c_str()); continue; }
     if(e.kind=="snap"){ g_snap_name=e.a; continue; }
     if(e.kind=="time"){ g_sim_time+=e.x; continue; }
     if(e.kind=="call"){ if(g_calls.count(e.a)) g_calls[e.a](); continue; }

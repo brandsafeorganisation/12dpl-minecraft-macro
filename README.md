@@ -8,20 +8,30 @@ A first-person block-building sandbox for 12d Model, drawn entirely in a
 1. Compile `cubeland.4dm` with the 12d macro compiler. It pulls in everything
    else through `src/build.4dm`.
 2. Run the compiled `cubeland.4do`.
-3. The **Cubeland - worlds** panel opens. Type a world name and, optionally, a
-   seed, then press **Create new world**. You can also pick a saved world and
-   press **Play selected**.
-4. Click the game view to start playing. Press **H** at any time for the
+3. The **Cubeland** panel opens on the title screen, over a slowly turning
+   view of a world. Everything happens in this one view: the panel has no
+   other buttons or boxes, only a small **Keys** box under the view (12d
+   only sends key presses to a box that can be typed in, so that box keeps
+   the keyboard; click the view if the keys ever stop working).
+4. **Singleplayer** lists your worlds: each with a picture taken a couple
+   of seconds after it was last opened, its name, its file and when it was
+   last played, its game mode and the version it was last played in (red
+   if that is newer than this one). Type in the box at the top to search.
+   Pick one and press **Play Selected World** (or click it twice), or press
+   **Create New World**, type a name and, optionally, a seed, choose
+   **Game Mode** (survival or creative) and press **Create New World**.
+5. Click the view to start playing. Press **H** at any time for the
    controls. You start inside a small house with a crafting table, a
    furnace, a chest, a bed and two torches.
-5. **Settings** (on the world menu, in game, or the **O** key) opens a panel
-   of buttons for render distance (50 blocks to start with), texture
-   detail, field of view, mouse speed, grass and flowers, shadows,
-   auto-jump, the HUD and statistics, the resource pack and the font.
+6. **Options...** (on the title screen, in the game menu, or the **O** key)
+   has sliders for the field of view, render distance (50 blocks to start
+   with) and mouse speed, buttons for texture detail, grass and flowers,
+   shadows, auto-jump, the HUD and statistics, and screens for the font,
+   your skin, resource packs and the multiplayer name and folder.
 
 Worlds are saved in a `cubeland_worlds` folder inside the 12d working folder.
-A world is saved when you quit to the menu, when you press **Save**, and every
-two minutes while you play. Settings are kept in
+A world is saved when you quit to the title screen, when you press **Save
+Game** in the game menu, and every two minutes while you play. Settings are kept in
 `cubeland_worlds/cubeland_settings.txt`. Worlds saved by the first version
 can't be opened by this one (items were renumbered).
 
@@ -71,14 +81,21 @@ also sees Shift held by itself); Caps Lock does the same.
 drawn darker behind it, like the block game's:
 
 - **Back to Game** carries on (so do W A S D and Space).
-- **Options...** opens the settings.
+- **Options...** opens the options over the darkened world.
 - **Controls...** shows the keys; a click goes back to the menu.
 - **Save Game** saves the world.
 - **Mode** shows the game mode; each click moves on to the next one
   (survival, creative, spectator).
-- **Save and Quit to Title** saves and goes back to the world list.
+- **Save and Quit to Title** saves and goes back to the title screen.
 
 The inventory and every other screen also show over the darkened world.
+
+### Your player from outside
+
+With the camera behind or in front of you (**V**), your head turns a
+little before your body follows it, your body leans forward and your
+legs step back when you crouch, and your arms and legs settle back
+together when you stand still.
 
 ### Commands
 
@@ -123,14 +140,15 @@ hops up one-block steps for you.
 a shared folder of text files. Each player appends what they do to their
 own log file there and reads everyone else's a few times a second.
 
-1. Every player sets the same **Multiplayer folder** in the settings. The
+1. Every player sets the same **Shared Folder** on the **Multiplayer**
+   screen (from the title screen, or **Options... > Multiplayer...**). The
    default, `cubeland_worlds\mp`, works for two copies of the game on one
    PC. Across PCs use a shared network folder whose name is `cubeland_mp`,
-   such as `\\host-pc\shared\cubeland_mp` (see Safety below). A
-   **Multiplayer name** can be set there too; blank uses your Windows name.
-2. The host selects a world and presses **Host selected**. A copy of the
-   world goes into the folder.
-3. Everyone else presses **Join game**. They get the host's world as it was
+   such as `\\host-pc\shared\cubeland_mp` (see Safety below). **Your
+   Name** can be set there too; blank uses your Windows name.
+2. The host picks a world in **Singleplayer** and presses **Host
+   Selected**. A copy of the world goes into the folder.
+3. Everyone else presses **Join Game** on the **Multiplayer** screen. They get the host's world as it was
    when hosting started, plus every change anyone has made since, and start
    at the spawn point with an empty inventory. Their own copy is saved as
    `MP <world>`.
@@ -152,10 +170,13 @@ new file names.
 ## Resource packs
 
 The textures can come from a block game resource pack instead of the
-built-in ones. In **Settings**, type or browse to the pack's `.zip` file
-(or the folder you unzipped it into) in the **Resource pack** box and press
-**Use this resource pack**; **Built-in textures** switches back. The choice
-is saved and loaded again next time.
+built-in ones. Put the pack's `.zip` file (or the folder you unzipped it
+into) in a `resourcepacks` folder next to `cubeland_worlds` (the 12d
+working folder, or next to `cubeland.exe`). **Options... > Resource
+Packs...** lists them under **Available**: click one to move it to
+**Selected**, click the selected one to go back to the built-in textures,
+and press **Done** to load it. The choice is saved and loaded again next
+time.
 
 The macro reads the zip and its PNG images itself (12dPL has no image
 library), so loading a pack takes a moment. It uses the images under
@@ -178,10 +199,13 @@ a detailed image survive. Interlaced PNGs aren't supported.
 ## Skins
 
 Your player wears a skin: a PNG laid out like the block game's player
-skins (64 x 64, or the older 64 x 32). In **Settings**, type or browse
-to the file in the **Skin** box and press **Use this skin**; **Built-in
-skin** goes back to the plain look. One comes with the game:
-`release/skins/purple.png`. The choice is saved with the other settings.
+skins (64 x 64, or the older 64 x 32). Put skins in a `skins` folder next
+to `cubeland_worlds`; **Options... > Skin...** lists them (and the
+built-in skin) and shows the one you click from the front. One comes with
+the game: `release/skins/purple.png`. The choice is saved with the other
+settings. In 12d, copy the `skins` folder (and any `resourcepacks` and
+`fonts` folders) from `release` into the 12d working folder, next to
+`cubeland_worlds`; `cubeland.exe` finds them in `release` already.
 
 You see your skin with the camera behind or in front of you (**V**).
 Every face of the model comes from its own part of the skin, with the
@@ -192,15 +216,15 @@ are drawn in your skin too (skins aren't shared through the folder).
 ## Fonts
 
 The game's text (hotbar counts, messages, the help and inventory screens)
-can use any font installed in Windows. In **Settings**:
+can use any font installed in Windows. **Options... > Font...** lists:
 
-- **Next font** steps through fonts that come with Windows (Arial, Segoe
-  UI, Consolas, Courier New, Verdana, Tahoma, Trebuchet MS, Georgia,
-  Comic Sans MS); **12d's default** goes back to the normal font.
-- **Font name** takes the name of any installed font; press **Use this
-  font name**.
-- **Font file** takes a `.ttf`, `.otf` or `.ttc` file; **Use this font
-  file** reads the font's name from the file and uses it.
+- fonts that come with Windows (Arial, Segoe UI, Consolas, Courier New,
+  Verdana, Tahoma, Trebuchet MS, Georgia, Comic Sans MS), each written in
+  itself; **Default** is 12d's normal font;
+- the `.ttf`, `.otf` and `.ttc` files in a `fonts` folder next to
+  `cubeland_worlds`: clicking one reads the font's name from the file and
+  uses it;
+- and a box to type the name of any installed font (press **Use**).
 
 12d can only draw with fonts that Windows has installed, so a font file
 you pick has to be installed too (double click it, then **Install**). If
@@ -317,7 +341,7 @@ it: it loads the chosen file for itself, then and every time it starts.
 ## Code layout
 
 ```
-cubeland.4dm          main(): world menu, then the game, until Quit
+cubeland.4dm          main(): the game's panel, the title screen and the game, until Quit
 CLAUDE.md             project rules and testing notes on top of the style guide
 resources/            12dPL style guide, differences from C, API references
 docs/                 the ScuffedMinecraft port plan and its progress
@@ -339,13 +363,18 @@ include/<part>/*.h    each module's constants, record field names and prototypes
   player/             player: movement and actions
   render/             render_world (the 3D view), render_hud (crosshair,
                       hotbar, health, hand, help, item icons), render_ui
-                      (inventory, crafting table, furnace and chest screens)
+                      (inventory, crafting table, furnace and chest screens),
+                      render_menu (buttons, text boxes, sliders, the
+                      panorama), render_screens (the title screen, world
+                      list, options and pickers); panorama_data is written by
+                      tools/panorama/make_panorama.py
   program/            settings (the settings record and its file), save
                       (world files), commands (the chat commands), game
                       (starting worlds, the per-frame update, event dispatch)
   net/                net (multiplayer through a shared folder of log files)
-  ui/                 menu_panel, settings_panel, game_panel (the 12d panels:
-                      the controllers), font (font names and files)
+  ui/                 menu_panel (the game's panel and the title screen),
+                      settings_panel (the options), game_panel (playing): the
+                      controllers; font (font names and files)
 test/cubeland_test.4dm the test build: compile it instead of cubeland.4dm (see Testing)
 test/README.md        step-by-step instructions for the test build
 test/src, test/include the test build's code: registry, inputs, runner, unit tests,
@@ -445,7 +474,7 @@ build. It's the same game code with a different panel:
   1000, up to 10,000,000). The first call uses typical inputs, the rest
   random ones (unless Random inputs says no).
 - **Run all once** calls every function once with typical inputs.
-- **Unit tests** runs the checks in `test/src/test_cases.4dm` (101 so
+- **Unit tests** runs the checks in `test/src/test_cases.4dm` (128 so
   far: util, records, random, blocks, inventory, crafting, commands, game
   modes, the creative inventory, events, multiplayer names, the world).
 - **Everything** does both.
@@ -472,7 +501,7 @@ tenth of a microsecond), and the cost of a reading is taken off.
 
 Some functions can't be run:
 
-- the three panels, which wait for events;
+- the panel controllers, which wait for events;
 - functions that take an open file, or the list widget.
 
 Functions that write files (saving, settings, multiplayer) only run when

@@ -1,7 +1,9 @@
 # Kill a cow with a sword for beef, then place a furnace that faces the player
-input New world name|Cow Test
-input Seed (blank for random)|777
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Cow Test
+field Seed for the World Generator|777
+ui Create New World
 wait 2
 click 430 300
 wait 2

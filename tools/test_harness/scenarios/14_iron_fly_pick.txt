@@ -1,8 +1,10 @@
 # Iron ore needs a stone pickaxe, iron recipes, pick block (P), flying
 # (G, Space, C), hiding the HUD (U) and the frame statistics (I)
-input New world name|Iron
-input Seed (blank for random)|4242
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Iron
+field Seed for the World Generator|4242
+ui Create New World
 wait 2
 click 430 300
 wait 2

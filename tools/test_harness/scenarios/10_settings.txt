@@ -1,14 +1,19 @@
-# The settings panel from the world menu and from the game, and the - / = keys
-button menu_settings
-button set_render_up
-button set_render_up
-button set_detail_high
-button set_plants
-button set_done
+# The options from the title screen and from the game menu (sliders,
+# buttons that cycle and toggle, Reset to Defaults), and the - / = keys
+ui Options...
+slide Render Distance|0.9
+ui Texture Detail
+ui Texture Detail
+ui Grass and Flowers
+snap 102_options
+wait 4
+ui Done
 call settings
-input New world name|Settings
-input Seed (blank for random)|99
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Settings
+field Seed for the World Generator|99
+ui Create New World
 wait 2
 click 430 300
 wait 2
@@ -20,11 +25,15 @@ key -
 key -
 key -
 call settings
-button game_settings
-button set_defaults
-button set_render_max
-button set_done
+key q
+ui Options...
+ui Reset to Defaults
+slide Render Distance|1
+snap 103_options_in_game
+wait 4
+ui Done
 call settings
+ui Back to Game
 wait 3
 snap 101_max_view
 wait 1

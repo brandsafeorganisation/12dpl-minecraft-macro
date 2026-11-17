@@ -158,6 +158,7 @@ int Append(const Widget &child, const Widget &parent) {
   return 0;
 }
 int Set_sizing_constraints(const Widget &, int, int) { return 0; }
+int Set_width_in_chars(const Widget &, int) { return 0; }
 int Set_notify_resizing(const Widget &) { return 0; }
 
 // ---------------------------------------------------------------- data
@@ -206,7 +207,7 @@ static int fixed_height(long long id) {
     case K_PANEL: case K_VGROUP: { int h = 0; for (long long k : n.kids) h += fixed_height(k) + (n.kind == K_VGROUP ? GAP : 0); return h; }
     case K_HGROUP: return ROW + 4;
     case K_MESSAGE: return 20;
-    case K_INPUT: case K_FILE: return n.keys ? 18 : ROW;
+    case K_INPUT: case K_FILE: return n.keys ? -GAP : ROW;   // the keys box isn't shown: keys go from the view
     case K_LIST: return LIST_H + 20;
     case K_BUTTON: return ROW + 4;
     case K_DRAW: return 0;   // takes what is left
@@ -491,7 +492,7 @@ static void create_controls(long long id, HWND parent) {
     case K_MESSAGE: n.hwnd = ctrl("STATIC", n.value.c_str(), SS_LEFT | SS_ENDELLIPSIS | SS_NOPREFIX); break;
     case K_BUTTON: n.hwnd = ctrl("BUTTON", n.title.c_str(), BS_PUSHBUTTON | WS_TABSTOP); break;
     case K_INPUT: case K_FILE:
-      if (n.keys) { n.hwnd = ctrl("STATIC", "Keys go to the game view (click the view if they stop working). Esc pauses.", SS_LEFT | SS_NOPREFIX); break; }
+      if (n.keys) break;   // nothing to show: key presses go straight from the view to the game
       n.label = ctrl("STATIC", n.title.c_str(), SS_LEFT | SS_NOPREFIX);
       n.hwnd = ctrl("EDIT", n.value.c_str(), ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE);
       if (n.kind == K_FILE) n.browse = ctrl("BUTTON", "Browse...", BS_PUSHBUTTON);

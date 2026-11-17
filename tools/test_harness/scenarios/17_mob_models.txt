@@ -2,9 +2,11 @@
 # front, the side and behind, and a zombie (kept from burning in the
 # sun so its colours show). With a resource pack the same parts come
 # from the pack's mob skins (scenario 13 checks the sampling).
-input New world name|Mob Models
-input Seed (blank for random)|777
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Mob Models
+field Seed for the World Generator|777
+ui Create New World
 wait 2
 click 430 300
 wait 2

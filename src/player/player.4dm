@@ -46,6 +46,8 @@ void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)
   record_set_real   (p_player, ATTR_PLAYER_HURT,         0.0);
   record_set_real   (p_player, ATTR_PLAYER_SWING,        0.0);
   record_set_real   (p_player, ATTR_PLAYER_BOB,          0.0);
+  record_set_real   (p_player, ATTR_PLAYER_BODY_YAW,     l_yaw);
+  record_set_real   (p_player, ATTR_PLAYER_STRIDE,       0.0);
   record_set_text   (p_player, ATTR_MOVE_KEY,            "");
   record_set_real   (p_player, ATTR_MOVE_UNTIL,          0.0);
   record_set_real   (p_player, ATTR_MOVE_LAST,           0.0);
@@ -231,6 +233,50 @@ Real player_bob(Attributes &p_player)
 // ----------------------------------------------------------------
 {
   return record_real(p_player, ATTR_PLAYER_BOB);
+}
+
+Real player_body_yaw(Attributes &p_player)
+// ----------------------------------------------------------------
+// Which way the body faces (the head may be turned from it)
+// ----------------------------------------------------------------
+{
+  return record_real(p_player, ATTR_PLAYER_BODY_YAW);
+}
+
+Real player_stride(Attributes &p_player)
+// ----------------------------------------------------------------
+// How far the legs swing: 0 standing still, 1 walking
+// ----------------------------------------------------------------
+{
+  return record_real(p_player, ATTR_PLAYER_STRIDE);
+}
+
+void player_update_body(Attributes &p_player, Integer p_walking, Real p_dt)
+// ----------------------------------------------------------------
+// Turn the body after the head: standing, it only turns when the
+// head is more than HEAD_TURN_LIMIT from it; walking, it turns to
+// face where the head looks. The legs swing while walking and come
+// back together when standing still.
+// ----------------------------------------------------------------
+{
+  Real l_yaw    = 0.0;
+  Real l_pitch  = 0.0;
+  Real l_body   = record_real(p_player, ATTR_PLAYER_BODY_YAW);
+  Real l_diff   = 0.0;
+  Real l_stride = record_real(p_player, ATTR_PLAYER_STRIDE);
+  Real l_target = 0.0;
+
+  player_look(p_player, l_yaw, l_pitch);
+  l_diff = wrap_angle(l_yaw - l_body);
+  if (p_walking) l_body = l_body + l_diff * min_real(1.0, p_dt * BODY_TURN_RATE);
+  l_diff = wrap_angle(l_yaw - l_body);
+  if (l_diff >  HEAD_TURN_LIMIT) l_body = l_yaw - HEAD_TURN_LIMIT;
+  if (l_diff < -HEAD_TURN_LIMIT) l_body = l_yaw + HEAD_TURN_LIMIT;
+  record_set_real(p_player, ATTR_PLAYER_BODY_YAW, wrap_angle(l_body));
+
+  if (p_walking) l_target = 1.0;
+  l_stride = l_stride + (l_target - l_stride) * min_real(1.0, p_dt * STRIDE_RATE);
+  record_set_real(p_player, ATTR_PLAYER_STRIDE, l_stride);
 }
 
 Real player_fall_peak(Attributes &p_player)
@@ -858,6 +904,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   player_set_fall_peak(p_player, l_fall_peak);
 
   if (l_on_ground && l_moving) record_set_real(p_player, ATTR_PLAYER_BOB, player_bob(p_player) + p_dt * 9.0 * l_ease);
+  player_update_body(p_player, l_moving && (l_on_ground || l_in_water), p_dt);
 
   // Slow healing
   l_health = player_health(p_player);

@@ -60,7 +60,7 @@ inline int Get_time(int&t){ t=(int)(g_sim_time-11644473600.0); return 0; }
 inline int Get_time(Text&t){ long long s=(long long)g_sim_time; char b[64]; snprintf(b,sizeof b,"Sun Nov 15 %02lld:%02lld:%02lld 2026",(s/3600)%24,(s/60)%60,s%60); t=b; return 0; }
 #elif !defined(CUBELAND_DESKTOP)
 inline int Get_time(double&t){ t=g_sim_time; return 0; }
-inline int Get_time(int&t){ t=(int)g_sim_time; return 0; }
+inline int Get_time(int&t){ t=(int)(g_sim_time-11644473600.0); return 0; }   // seconds since 1970, as in 12d
 inline int Get_time(Text&t){ long long s=(long long)g_sim_time; char b[64]; snprintf(b,sizeof b,"Sun Nov 15 %02lld:%02lld:%02lld 2026",(s/3600)%24,(s/60)%60,s%60); t=b; return 0; }
 #else
 int Get_time(double&t);
@@ -104,6 +104,7 @@ inline int Shell_execute(const Widget&,const Text&,const Text&f,const Text&,cons
 inline int Show_widget(const Widget&){ return 0; }
 inline int Hide_widget(const Widget&){ return 0; }
 inline int Set_focus(const Widget&){ return 0; }
+inline int Set_width_in_chars(const Widget&,int){ return 0; }
 inline int Set_sizing_constraints(const Widget&,int,int){ return 0; }
 inline int Set_notify_resizing(const Widget&){ return 0; }
 inline int Set_exit_code(const Text&){ return 0; }
@@ -155,6 +156,7 @@ int Shell_execute(const Widget&,const Text&op,const Text&file,const Text&params,
 Draw_Box Create_draw_box(int w,int h,int);
 int Append(const Widget&child,const Widget&parent);
 int Show_widget(const Widget&); int Hide_widget(const Widget&); int Set_focus(const Widget&);
+int Set_width_in_chars(const Widget&,int);
 int Set_sizing_constraints(const Widget&,int,int); int Set_notify_resizing(const Widget&);
 inline int Set_exit_code(const Text&){ return 0; }
 inline long long Get_id64(const Widget&w){ return w.id; }
@@ -200,10 +202,16 @@ inline int Directory_create(const Text&n){ return mkdir(fix_path(n).c_str()); }
 inline int Directory_create(const Text&n){ return mkdir(fix_path(n).c_str(),0755); }
 #endif
 inline int Delete_files(const Text&n){ return remove(fix_path(n).c_str()); }
+// "*" and "?" patterns, any case, like Windows
+inline bool name_matches(const char*p,const char*n){ if(!*p) return !*n; if(*p=='*') return name_matches(p+1,n)||(*n&&name_matches(p,n+1)); return *n&&(*p=='?'||tolower(*p)==tolower(*n))&&name_matches(p+1,n+1); }
 inline int List_files_in_folder(const Text&folder,const Text&pat,int&count,Dynamic_Text&names){
-  count=0; DIR*d=opendir(fix_path(folder).c_str()); if(!d) return 1; Text ext=pat.substr(1);
-  while(auto e=readdir(d)){ Text n=e->d_name; if(n.size()>ext.size()&&n.compare(n.size()-ext.size(),ext.size(),ext)==0){ names.items.push_back(n); count++; } }
-  closedir(d); return 0; }
+  count=0; DIR*d=opendir(fix_path(folder).c_str()); if(!d) return 1; std::vector<Text> found;
+  while(auto e=readdir(d)){ Text n=e->d_name; struct stat st; if(stat((fix_path(folder)+"/"+n).c_str(),&st)!=0||S_ISDIR(st.st_mode)) continue; if(name_matches(pat.c_str(),n.c_str())) found.push_back(n); }
+  closedir(d); std::sort(found.begin(),found.end()); for(auto&n:found) names.items.push_back(n); count=(int)found.size(); return 0; }
+inline int List_subfolders_in_folder(const Text&folder,const Text&,int&count,Dynamic_Text&names){
+  count=0; DIR*d=opendir(fix_path(folder).c_str()); if(!d) return 1;
+  while(auto e=readdir(d)){ Text n=e->d_name; if(n=="."||n=="..") continue; struct stat st; if(stat((fix_path(folder)+"/"+n).c_str(),&st)==0&&S_ISDIR(st.st_mode)){ names.items.push_back(n); count++; } }
+  closedir(d); std::sort(names.items.end()-count,names.items.end()); return 0; }
 inline int Get_number_of_command_arguments(){ return 0; }
 inline int Get_command_argument(int,Text&t){ t=""; return 0; }
 

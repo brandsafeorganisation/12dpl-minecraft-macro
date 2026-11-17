@@ -1,6 +1,7 @@
 # Load the world saved by 05 (run with --keep after it), fall, die and respawn
-select 1
-button play
+ui Singleplayer
+ui #101
+ui Play Selected World
 wait 2
 call dump
 click 430 300
@@ -18,5 +19,6 @@ wait 1
 key r
 wait 3
 call dump
-button quit
+key q
+ui Save and Quit to Title
 quit

@@ -300,7 +300,8 @@ void    render_sky_disc        (Draw_Box p_box, Real p_dir_x, Real p_dir_y, Real
 void    render_stars           (Draw_Box p_box, Real p_brightness);
 void    render_world           (Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attributes &p_player, Attributes &p_cows,
                                 Attributes &p_drops, Attributes &p_peers, Attributes &p_settings, Real p_time_of_day, Real p_now);
-void    render_person          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_pitch, Real p_swing);
+Integer render_ray_colour      (Real p_x, Real p_y, Real p_z, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_distance);
+void    render_person          (Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, Real p_pitch, Real p_swing, Integer p_crouch);
 void    render_collect_peers   (Attributes &p_peers);
 void    render_camera_place    (Attributes &p_player, Real &p_x, Real &p_y, Real &p_z, Real &p_yaw, Real &p_pitch);
 void    render_collect_self    (Attributes &p_player);

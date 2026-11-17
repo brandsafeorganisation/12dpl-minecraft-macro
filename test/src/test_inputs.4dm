@@ -112,6 +112,17 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
   if (p_function == "inflate_build" && p_name == "p_count") {
     p_rule = "code lengths in the table";  p_low = 1.0;  p_high = 288.0;  p_typical = 30.0;  return;
   }
+  if (p_function == "mesh_group_faces") {
+    // its faces must lie in the section whose corner it is given:
+    // section 1 is the one with its corner at 0, 0, 0
+    if (p_name == "p_section") {
+      p_rule = "the first section";  p_low = 1.0;  p_high = 1.0;  p_typical = 1.0;  return;
+    }
+    p_rule = "the first section's corner";  p_low = 0.0;  p_high = 0.0;  p_typical = 0.0;  return;
+  }
+  if (p_function == "save_hex_value" && p_name == "p_digits") {
+    p_rule = "hex digits of a colour";  p_low = 1.0;  p_high = 6.0;  p_typical = 6.0;  return;
+  }
   if (p_name == "p_bit_depth") {
     p_rule = "8 bits a sample (1, 2 and 4 are packed differently; 16 is read as 8)";  p_low = 8.0;  p_high = 8.0;  p_typical = 8.0;  return;
   }

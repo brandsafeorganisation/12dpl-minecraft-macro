@@ -82,10 +82,12 @@ One command per line; `#` starts a comment.
 
 | Command                | What it does                                                   |
 |------------------------|----------------------------------------------------------------|
-| `input <title>\|<text>` | type text into the input box with that title                   |
-| `button <reply>`       | press a button (`create`, `play`, `delete`, `save`, `quit`)    |
-| `select <n>`           | select the nth saved world in the menu                         |
-| `select_name <name>`   | select the saved world with that name in the menu              |
+| `ui <label>`           | click the menu widget (button, field, row) whose label is or starts with `<label>`; `#<id>` picks one by id, `row:<world>` a world's row; the game menu's buttons by name too |
+| `field <label>\|<text>` | click a text field, rub out what's in it and type `<text>`   |
+| `slide <label>\|<f>`   | click a slider `<f>` (0..1) of the way along                   |
+| `input <title>\|<text>` | test build only: type text into its panel's input box         |
+| `button <reply>`       | test build only: press one of its panel's buttons              |
+| `select_name <name>`   | test build only: select that item in its function list         |
 | `click <x> <y>`        | left click the view at (x, y), from the bottom left            |
 | `rclick`, `lbdown`, `move` | right click, mouse down, or mouse move at (x, y)           |
 | `capclick`, `caprclick` | left or right click at the cursor while it's captured         |
@@ -103,7 +105,15 @@ One command per line; `#` starts a comment.
 When a script runs out, the panel is closed, so every scenario ends.
 
 `snap` names the next frame that is drawn, which is the frame after the next
-event, so put a `wait 1` (or another event) after it. `call` hooks that click
+event, so put a `wait 1` (or another event) after it. Menus only redraw when
+the mouse moves onto another widget or every 0.1 s, so after a snap of a
+menu wait 4 frames.
+
+`ui` looks the widget up in the menu as it was last drawn, so a `ui` line
+works on whatever screen the previous line left on show. Each run gets
+`run/resourcepacks` (the test pack's zip and folder, and a file that isn't
+a pack), `run/skins` (the supplied skin and a file that isn't one) and
+`run/fonts` (the test fonts) for the pickers. `call` hooks that click
 (`slot<n>`, `output`, `grid_*`) put their clicks at the front of the queue, so
 they happen before the next script line.
 
@@ -135,14 +145,14 @@ that were looked up most often (to find hot spots).
 | `09_help_screen`              | the help panel                                                  |
 | `10_settings`                 | the settings panel from the menu and in game, the - / = keys    |
 | `11_save_and_load`            | items, tool wear, a furnace and block edits survive save and load |
-| `12_delete_world`             | deleting a world empties and hides its file; the name can be reused |
-| `13_resource_pack`            | a missing pack is reported; the test pack loads from its folder and from its zip (see below) |
+| `12_delete_world`             | the world list; deleting a world (asked twice) empties and hides its file; the name can be reused |
+| `13_resource_pack`            | the pack picker; a file that isn't a pack is reported; the test pack loads from its folder and from its zip (see below) |
 | `14_iron_fly_pick`            | iron ore needs a stone pickaxe, iron recipes, pick block, hiding the HUD, frame statistics, a double Space that does nothing in survival, then /gamemode creative and flying |
 | `15_night_torches_zombies`    | a torch lights a cave and the light goes when it's broken; sunset and night skies; a zombie walks up and hits, a sword kills it; zombies spawn at night and burn at noon; glass; the house at night; a bed skips to morning and sets the spawn point |
 | `16_chest`                    | items put in a chest survive save and load and spill out when it's broken |
 | `17_mob_models`               | the cow from the front, side and back, and a zombie, with their per-face textures |
 | `18_plants`                   | grass, a poppy, a dandelion, a dead bush and a torch drawn as crossed pictures, from the front, an angle and above; aiming through the empty part of a poppy's cell hits what's behind it; a torch's small outline |
-| `19_fonts`                    | the font list, a typed font name, family names read from font files (Windows and Mac names, a collection, a file that isn't a font, a missing file), and the game drawing its text with the chosen font; run `make_test_fonts.py` first |
+| `19_fonts`                    | the font picker, a typed font name, family names read from the font files in the fonts folder (Windows and Mac names, a collection, a file that isn't a font), and the game drawing its text with the chosen font; run `make_test_fonts.py` first |
 | `20_lit_furnace`              | a furnace with fuel becomes a lit furnace block that gives off light, and goes dark again when it stops burning |
 | `21_pigs`                     | a new world has pigs; the pig model from the side and the front; a pig killed with a sword drops raw porkchops |
 | `22_doors_beds_crouch`        | a door placed, opened, shut and walked into; the door's edge; a two block bed placed and broken (one bed drops); Shift stops you at a hole's edge; Shift sinks while flying; the house's door and bed |
@@ -151,7 +161,9 @@ that were looked up most often (to find hot spots).
 | `25_game_modes`               | spectator flies down through the ground, can't break anything or open the inventory and has no hotbar; creative from there keeps flying; the creative screen lists every item, searches ("iron" finds 6), gives a full stack or one more, throws away a stack put down on it, and its tabs switch to the inventory and back; survival lands you and a double Space doesn't fly; an unknown mode |
 | `26_test_build`               | the test build (`build/test`): every unit test and every function with each data set (typical, random, edges), then floor_divide 500 times a data set with its code in the report, a library call with edge values only, a panel function that can't be run, a report in another folder, Open last report; lists the reports written and what was opened |
 | `27_pause_menu`               | Q shows the game menu over the darkened world, the button under the mouse lights up, Controls shows the keys and a click goes back, Mode cycles the game mode, Back to Game plays on; creative flight lands on the ground; the creative screen over the darkened world; Save and Quit to Title |
-| `28_skin_camera`              | a missing skin is reported, the supplied skin (`release/skins/purple.png`) dresses the player model; V: the camera behind, in front (walking backwards), and the eyes again |
+| `29_body_pose`                | the player model from outside: legs together standing still, the head turning before the body, the crouch leaning forward |
+| `30_title_screens`            | the title screen; typing a new world's name in creative; its picture taken after a couple of seconds; the world list's pictures, game modes, files, dates and versions; searching it; the multiplayer screen |
+| `28_skin_camera`              | the skin picker: a file that isn't a skin is reported, the supplied skin (`release/skins/purple.png`) dresses the player model; V: the camera behind, in front (walking backwards), and the eyes again |
 
 ### Font files
 

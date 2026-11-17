@@ -132,6 +132,21 @@ Things learned the hard way:
   (`IDLE_RELEASE_SECONDS`), so the next snap shows the pause screen.
 - Mouse capture can't be tested here (no real cursor or focus); say so
   when changing `game_panel.4dm`'s capture code.
+- Scenarios drive the menus with `ui <label>`, `field <label>|<text>` and
+  `slide <label>|<f>` (harness README). Menus redraw only on hover changes
+  or every 0.1 s, so `wait 4` after a menu `snap`.
+
+### The one panel
+
+The game has a single 12d panel (`app_run` in `menu_panel.4dm`): the
+Draw_Box and a small "Keys" input box that keeps the keyboard (a Draw_Box
+gets no key presses). Every screen is drawn in the view with the widget
+kit in `render_menu.4dm` (buttons, fields, sliders, list rows, scroll
+bars laid out into the menu record each frame) and the screens in
+`render_screens.4dm`. Don't add 12d widgets for new options: add widgets
+to a screen and handle their ids in its controller. The title screen's
+panorama is generated: `tools/panorama/panorama_shots.txt` (a harness
+scenario) then `tools/panorama/make_panorama.py`.
 
 ## Windows build: `tools/desktop`
 

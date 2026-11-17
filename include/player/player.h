@@ -43,6 +43,13 @@
 #define CAMERA_FRONT             2
 #define CAMERA_DISTANCE          4.0     // blocks from the eyes in the two outside views
 
+// The body as seen from outside: the head turns up to HEAD_TURN_LIMIT
+// (radians) before the body follows; walking turns the body to the
+// head at BODY_TURN_RATE, and the legs settle at STRIDE_RATE
+#define HEAD_TURN_LIMIT          0.6
+#define BODY_TURN_RATE           6.0
+#define STRIDE_RATE              8.0
+
 #define ATTR_PLAYER_CAMERA       ("camera")            // CAMERA_... (not saved)
 #define ATTR_PLAYER_MODE         ("creative")          // GAMEMODE_...; the field name is from when it was TRUE in creative, so older worlds load
 #define ATTR_SPACE_LAST          ("space_last")        // when Space last arrived
@@ -51,6 +58,8 @@
 #define ATTR_CROUCH_UNTIL        ("crouch_until")      // crouched by Shift + a key until then
 #define ATTR_CROUCH_TOGGLE       ("crouch_toggle")     // crouched by C until C is pressed again
 #define ATTR_CROUCHING           ("crouching")         // crouched this frame
+#define ATTR_PLAYER_BODY_YAW     ("body_yaw")          // which way the body faces (the head turns first)
+#define ATTR_PLAYER_STRIDE       ("stride")            // 0 standing .. 1 walking: how far the legs swing
 #define ATTR_MOVE_KEY            ("move_key")
 #define ATTR_MOVE_UNTIL          ("move_until")
 #define ATTR_MOVE_LAST           ("move_last")
@@ -91,6 +100,9 @@ Integer player_eye_in_water    (Attributes &p_player);
 Real    player_hurt_time       (Attributes &p_player);
 Real    player_swing_time      (Attributes &p_player);
 Real    player_bob             (Attributes &p_player);
+Real    player_body_yaw        (Attributes &p_player);
+Real    player_stride          (Attributes &p_player);
+void    player_update_body     (Attributes &p_player, Integer p_walking, Real p_dt);
 Real    player_fall_peak       (Attributes &p_player);
 void    player_set_fall_peak   (Attributes &p_player, Real p_peak);
 Integer player_selected        (Attributes &p_player);

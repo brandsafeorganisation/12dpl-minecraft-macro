@@ -1,17 +1,23 @@
-# Player skins and the camera. A missing skin is reported and the
-# built-in look stays; the supplied skin (release/skins/purple.png, a
-# 64 x 64 skin with a second layer) dresses the player model. V moves
+# Player skins and the camera. A file that isn't a skin is reported
+# and the built-in look stays; the supplied skin (release/skins/
+# purple.png, copied to the skins folder by run.sh, a 64 x 64 skin with
+# a second layer) dresses the player model. V moves
 # the camera behind the player, then in front looking back, then back
 # to the eyes (the hand and crosshair only show from the eyes).
-button menu_settings
-input Skin (a .png laid out like a block game skin)|../no_such_skin.png
-button set_skin_load
-input Skin (a .png laid out like a block game skin)|../../../release/skins/purple.png
-button set_skin_load
-button set_done
-input New world name|Skin
-input Seed (blank for random)|4242
-button create
+ui Options...
+ui Skin...
+ui broken.png
+call font
+ui purple.png
+snap 284_skin_picker
+wait 4
+ui Done
+ui Done
+ui Singleplayer
+ui Create New World
+field World Name|Skin
+field Seed for the World Generator|4242
+ui Create New World
 wait 2
 click 430 300
 wait 2

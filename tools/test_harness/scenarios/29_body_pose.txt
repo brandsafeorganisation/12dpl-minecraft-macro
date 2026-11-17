@@ -1,0 +1,47 @@
+# The player model from outside: standing still the legs are
+# together; the head turns before the body; Shift crouches.
+ui Singleplayer
+ui Create New World
+field World Name|Pose
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call to_meadow
+call noon
+call no_mobs
+call look_level
+key v
+key v
+wait 3
+call body
+snap 290_front_standing
+wait 2
+look 80 0
+wait 3
+call body
+snap 291_head_turned
+wait 2
+look 300 0
+wait 3
+call body
+snap 292_body_follows
+wait 2
+key W
+holdkey W 10
+wait 1
+call body
+snap 293_crouch
+wait 2
+key c
+wait 4
+call body
+snap 294_crouch_still
+wait 2
+look 300 0
+wait 3
+call body
+snap 295_crouch_side
+wait 2
+quit

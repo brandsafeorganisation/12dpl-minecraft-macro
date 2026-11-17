@@ -18,6 +18,8 @@
 #define SHUTDOWN_CODE  424242
 
 #define GAME_TITLE     "Cubeland"
-#define GAME_VERSION   "1.0"
+#define GAME_LOGO      "CUBELAND"
+#define GAME_VERSION   "1.1"
+#define GAME_VERSION_CODE 101   // major * 100 + minor: a world last played in a newer version is shown in red
 
 #endif

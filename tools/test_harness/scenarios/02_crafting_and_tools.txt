@@ -1,7 +1,9 @@
 # Logs -> planks (2 x 2 grid) -> crafting table -> place it -> 3 x 3 pickaxe -> mine stone
-input New world name|Crafty
-input Seed (blank for random)|4242
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Crafty
+field Seed for the World Generator|4242
+ui Create New World
 wait 2
 click 430 300
 wait 2

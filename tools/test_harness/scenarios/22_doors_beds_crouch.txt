@@ -3,9 +3,11 @@
 # blocks the way when shut; a bed is placed foot and head, and breaking
 # its head removes both halves and drops one bed. Shift (a capital W)
 # crouches: you stop at the edge of a hole instead of walking in.
-input New world name|Doors
-input Seed (blank for random)|4242
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Doors
+field Seed for the World Generator|4242
+ui Create New World
 wait 2
 click 430 300
 wait 2

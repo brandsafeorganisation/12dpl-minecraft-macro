@@ -1,7 +1,9 @@
 # Crack overlay on a block being broken, and the underwater view
-input New world name|Look
-input Seed (blank for random)|31337
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Look
+field Seed for the World Generator|31337
+ui Create New World
 wait 1
 snap 80_help
 wait 1

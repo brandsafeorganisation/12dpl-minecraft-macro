@@ -1,8 +1,10 @@
 # Pigs: a new world has some; the pig model from the side and the
 # front; killing one with a sword drops raw porkchops
-input New world name|Pigs
-input Seed (blank for random)|777
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Pigs
+field Seed for the World Generator|777
+ui Create New World
 wait 2
 click 430 300
 wait 2

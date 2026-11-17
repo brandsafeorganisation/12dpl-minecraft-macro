@@ -1,9 +1,11 @@
 # Plants are two pictures crossed in an X, fixed in the world: the same
 # row of grass, poppy, dandelion and dead bush (and a torch behind them)
 # seen from the front, from an angle and from above
-input New world name|Plants
-input Seed (blank for random)|2024
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Plants
+field Seed for the World Generator|2024
+ui Create New World
 wait 2
 click 430 300
 wait 2

@@ -1,7 +1,9 @@
 # Look around the generated world: house, water, forest, desert, meadow, cave, hills
-input New world name|Scenery
-input Seed (blank for random)|2024
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Scenery
+field Seed for the World Generator|2024
+ui Create New World
 wait 2
 click 430 300
 wait 2

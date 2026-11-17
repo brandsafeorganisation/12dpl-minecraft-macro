@@ -31,7 +31,30 @@ static void place_in_grid(int item,int grid_slot){ // pick up the stack, right c
   ui_click_slot(s,"click");          // these are pushed to the FRONT, so push in reverse order
   ui_click_slot(40+grid_slot,"rclick");
   ui_click_slot(s,"click"); }
+extern std::function<bool(const Text&,double&,double&,double&,double&)> g_ui_find;
+static bool ui_find(const Text&label,double&x,double&y,double&x1,double&y1){
+  int n=menu_widgets(g_menu);
+  // "row:<world name>": that world's row in the world list
+  if(label.compare(0,4,"row:")==0){ for(int w=1;w<=n;w++){ int id=record_integer_at(g_menu,ATTR_MENU_ID,w);
+      if(id>W_WORLD_ROW&&id<=W_WORLD_ROW+MAX_LISTED_WORLDS&&record_text_at(g_worlds,ATTR_WL_NAME,id-W_WORLD_ROW)==label.substr(4)){
+        x=record_real_at(g_menu,ATTR_MENU_X0,w); x1=record_real_at(g_menu,ATTR_MENU_X1,w); y=record_real_at(g_menu,ATTR_MENU_Y0,w); y1=record_real_at(g_menu,ATTR_MENU_Y1,w); return true; } }
+    return false; }
+  for(int pass=0;pass<2;pass++) for(int w=1;w<=n;w++){
+    if(!record_integer_at(g_menu,ATTR_MENU_ENABLED,w)) continue;
+    Text l=record_text_at(g_menu,ATTR_MENU_LABEL,w); int id=record_integer_at(g_menu,ATTR_MENU_ID,w);
+    bool hit= label.size()>1&&label[0]=='#' ? id==atoi(label.c_str()+1) : (pass==0 ? l==label : l.compare(0,label.size(),label)==0);
+    if(!hit) continue;
+    x=record_real_at(g_menu,ATTR_MENU_X0,w); x1=record_real_at(g_menu,ATTR_MENU_X1,w); y=record_real_at(g_menu,ATTR_MENU_Y0,w); y1=record_real_at(g_menu,ATTR_MENU_Y1,w);
+    if(getenv("TRACE")) printf("[ui] %s at %.0f %.0f\n",label.c_str(),x,y);
+    return true; }
+  // then the game menu's buttons (drawn by the HUD, not in the menu record)
+  const char* pause[]={"","Back to Game","Options...","Controls...","Save Game","Mode","Save and Quit to Title"};
+  for(int b=1;b<=PAUSE_BUTTONS;b++) if(label==pause[b]){ hud_pause_button_rect(g_box_w,g_box_h,b,x,y,x1,y1); return true; }
+  return false; }
 static void register_hooks(){
+  g_ui_find=ui_find;
+  g_calls["menu"]=[]{ int n=menu_widgets(g_menu); printf("[menu]"); for(int w=1;w<=n;w++) printf(" [%d %s%s]",record_integer_at(g_menu,ATTR_MENU_ID,w),record_text_at(g_menu,ATTR_MENU_LABEL,w).c_str(),record_integer_at(g_menu,ATTR_MENU_ENABLED,w)?"":" (off)"); printf("\n"); };
+  g_calls["worlds"]=[]{ int n=record_integer(g_worlds,ATTR_WL_COUNT); for(int e=1;e<=n;e++) printf("[world] %s played %d date '%s' mode %d version %d %s picture %d\n",record_text_at(g_worlds,ATTR_WL_NAME,e).c_str(),record_integer_at(g_worlds,ATTR_WL_PLAYED,e),record_text_at(g_worlds,ATTR_WL_DATE,e).c_str(),record_integer_at(g_worlds,ATTR_WL_MODE,e),record_integer_at(g_worlds,ATTR_WL_VERSION,e),record_text_at(g_worlds,ATTR_WL_VERSION_TEXT,e).c_str(),record_integer_at(g_worlds,ATTR_WL_THUMB,e)); };
   g_calls["dump"]=dump;
   g_calls["test_reports"]=[]{ if(system("ls cubeland_worlds/test_reports | sed 's/^/[reports] /'; cat cubeland_worlds/test_reports/progress.txt | sed 's/^/[progress] /'")){} };
 #ifdef CUBELAND_REAL_CLOCK
@@ -110,6 +133,12 @@ static void register_hooks(){
   g_calls["dusk"]=[]{ world_set_time_of_day(g_info,0.5); };
   g_calls["cow_turn"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ double y=cow_yaw(g_cows,c)+1.3; record_set_real_at(g_cows,ATTR_YAW,c,y); record_set_real_at(g_cows,ATTR_COW_GOAL_YAW,c,y); record_set_real_at(g_cows,ATTR_TIMER,c,100.0); } };
   g_calls["mobs_calm"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ record_set_real_at(g_cows,ATTR_MOB_ATTACK,c,100.0); record_set_real_at(g_cows,ATTR_COW_FLASH,c,0.0); } };
+  g_calls["body"]=[]{ double y=0,p=0; player_look(g_player,y,p); printf("[hook] yaw %.2f body %.2f stride %.2f crouch %d\n",y,player_body_yaw(g_player),player_stride(g_player),player_crouching(g_player)); };
+  g_calls["no_mobs"]=[]{ cows_clear(g_cows); };
+  // the title screen's panorama: stand at (x, z) given by pano_at_<x>_<z>, 90 degree view, no HUD
+  for(int k=0;k<8;k++) g_calls["pano_yaw"+std::to_string(k)]=[k]{ double y=0,p=0; player_look(g_player,y,p); set_look(k*PI/4.0,0.0); };
+  g_calls["pano_setup"]=[]{ record_set_integer(g_settings,ATTR_SET_FOV,90); record_set_integer(g_settings,ATTR_SET_SHOW_HUD,0); record_set_integer(g_settings,ATTR_SET_RENDER_DISTANCE,RENDER_DISTANCE_MAX); record_set_integer(g_settings,ATTR_SET_DETAIL,DETAIL_HIGH); cows_clear(g_cows); world_set_time_of_day(g_info,0.30); };
+  g_calls["pano_spot"]=[]{ const char*e=getenv("PANO_X"); int x=e?atoi(e):record_integer(g_info,ATTR_HOUSE_X)-6; e=getenv("PANO_Z"); int z=e?atoi(e):record_integer(g_info,ATTR_HOUSE_Z)-6; e=getenv("PANO_UP"); double up=e?atof(e):2.0; int t=world_top_solid_y(x,z); player_reset(g_player,x+0.5,t+up,z+0.5); player_set_game_mode(g_player,GAMEMODE_SPECTATOR); player_set_flying(g_player,1); printf("[hook] panorama at %d %d top %d\n",x,z,t); };
   g_calls["noon"]=[]{ world_set_time_of_day(g_info,0.25); };
   g_calls["shared_cells"]=[]{ printf("[hook] host broke 87 67 63: %d; bob placed 86 68 63: %d and 86 69 63: %d\n",world_get_block(87,67,63),world_get_block(86,68,63),world_get_block(86,69,63)); };
   g_calls["clock"]=[]{ double t=world_time_of_day(g_info); printf("[hook] clock %s (%.3f) day %d daylight %.2f\n",world_clock_text(t).c_str(),t,record_integer(g_info,ATTR_WORLD_DAYS),world_daylight(t)); };

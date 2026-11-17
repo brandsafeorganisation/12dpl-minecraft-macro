@@ -1,0 +1,52 @@
+# The title screen over the panorama; making a world by typing its name
+# (Escape-free, with Backspace) in creative mode; a couple of seconds of
+# play takes the world's picture; the world list shows it with the game
+# mode, the file, when it was played and the version; the search box
+# filters the list.
+snap 300_title
+wait 4
+ui Singleplayer
+ui Create New World
+snap 301_create
+wait 4
+key backspace 20
+type Picture World
+ui Game Mode
+snap 302_create_creative
+wait 4
+ui Create New World
+wait 2
+click 430 300
+wait 3
+call to_meadow
+call noon
+wait 90
+call mode
+key q
+ui Save and Quit to Title
+ui Singleplayer
+ui Create New World
+field World Name|Second
+ui Create New World
+wait 2
+click 430 300
+wait 2
+key q
+ui Save and Quit to Title
+ui Singleplayer
+call worlds
+snap 303_world_list
+wait 4
+field #15|pic
+call menu
+snap 305_world_search
+wait 4
+ui row:Picture World
+snap 304_world_picked
+wait 4
+ui Back
+ui Multiplayer
+snap 306_multiplayer
+wait 4
+ui Back
+quit

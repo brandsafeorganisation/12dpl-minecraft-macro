@@ -2,9 +2,11 @@
 # anything or open the inventory; creative keeps flying from there and
 # E opens every item, with a search, tabs and endless stacks; survival
 # lands you and double Space does nothing.
-input New world name|Modes
-input Seed (blank for random)|4242
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Modes
+field Seed for the World Generator|4242
+ui Create New World
 wait 2
 click 430 300
 wait 2

@@ -1,9 +1,11 @@
 # Chat and commands: T opens the chat line, / opens it with the /
 # typed; Enter sends it. /time set, /gamerule doDaylightCycle and /give
 # change the world; an unknown command and Escape are handled.
-input New world name|Chat
-input Seed (blank for random)|777
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Chat
+field Seed for the World Generator|777
+ui Create New World
 wait 2
 click 430 300
 wait 2

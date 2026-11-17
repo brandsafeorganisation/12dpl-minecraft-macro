@@ -83,6 +83,7 @@ void game_reset_state(Attributes &p_game, Attributes &p_player, Attributes &p_in
 {
   events_clear    (p_events);
   save_clear_edits();
+  save_clear_thumbnail();
   inventory_clear (p_inventory);
   grid_clear      (p_grid, GRID_INVENTORY_WIDTH);
   furnaces_clear  (p_furnaces);
@@ -103,12 +104,13 @@ Text game_world_name(Attributes &p_game)
   return record_text(p_game, ATTR_GAME_WORLD_NAME);
 }
 
-Integer game_new_world(Text p_name, Integer p_seed, Attributes &p_game, Attributes &p_info, Attributes &p_player,
+Integer game_new_world(Text p_name, Integer p_seed, Integer p_mode, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                        Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
                        Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui)
 // ----------------------------------------------------------------
 // Generate a fresh world from a seed, put the player in the starter
-// house with some cows about, and save it straight away
+// house with some cows about in a game mode (GAMEMODE_...), and save
+// it straight away
 // ----------------------------------------------------------------
 {
   Attributes l_cow_random;
@@ -125,6 +127,7 @@ Integer game_new_world(Text p_name, Integer p_seed, Attributes &p_game, Attribut
   world_info_spawn(p_info, l_spawn_x, l_spawn_y, l_spawn_z);
   player_reset    (p_player, l_spawn_x, l_spawn_y + COLLISION_EPSILON, l_spawn_z);
   player_set_look (p_player, HALF_PI * 3.0, -0.1);
+  player_set_game_mode(p_player, p_mode);
 
   // Cows and pigs come from the seed too, so a seed always starts
   // the same (pigs from a sequence of their own, so they don't move

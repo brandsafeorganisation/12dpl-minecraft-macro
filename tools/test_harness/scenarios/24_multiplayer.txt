@@ -5,14 +5,21 @@
 # The host breaks a block, which goes in the host's log. Then quit and
 # join the same session: the guest gets the snapshot plus every log,
 # so the block the host broke is gone and bob's block is there.
-input New world name|Shared
-input Seed (blank for random)|4242
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Shared
+field Seed for the World Generator|4242
+ui Create New World
 wait 2
-button quit
+click 430 300
 wait 2
-select_name Shared
-button host
+key q
+ui Save and Quit to Title
+wait 2
+ui Singleplayer
+field #15|Shared
+ui row:Shared
+ui Host Selected
 wait 2
 click 430 300
 wait 2
@@ -43,9 +50,11 @@ wait 10
 call net
 snap 241_bob_left
 wait 1
-button quit
+key q
+ui Save and Quit to Title
 wait 2
-button join
+ui Multiplayer
+ui Join Game
 wait 2
 click 430 300
 wait 2

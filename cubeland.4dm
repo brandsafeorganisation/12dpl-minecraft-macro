@@ -36,7 +36,8 @@
 //   src/<part>/       the code by part of the game: core, blocks,
 //                     world, items, mobs, player and program (the
 //                     model), render (the views) and ui (the
-//                     controllers: the 12d panels)
+//                     controllers: the game's one panel, whose view
+//                     shows the title screen, the options and the game)
 //   include/<part>/   each module's constants, global data and
 //                     prototypes, in the same folders
 // Modules don't report to each other directly: they emit game
@@ -56,24 +57,13 @@
 
 void main()
 // --------------------------------------------------------
-// Entry point: world menu, then the game, until Quit
+// Entry point: the game's panel, with the title screen,
+// until Quit
 // --------------------------------------------------------
 {
-  Integer l_running   = TRUE;
-  Integer l_result    = 0;
   Integer l_time_seed = 0;
 
   Get_time(l_time_seed);
   game_init_once(g_game, g_book, g_settings, g_random, l_time_seed);
-
-  while (l_running) {
-    l_result = menu_panel_run(g_game, g_random, g_settings);
-
-    if (l_result == MENU_RESULT_QUIT || l_result == SHUTDOWN_CODE) {
-      l_running = FALSE;
-    } else {
-      l_result = game_panel_run(record_text(g_game, ATTR_MENU_WORLD), l_result, record_integer(g_game, ATTR_MENU_SEED));
-      if (l_result == SHUTDOWN_CODE) l_running = FALSE;
-    }
-  }
+  app_run();
 }

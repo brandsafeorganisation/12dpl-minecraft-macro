@@ -1,8 +1,10 @@
 # A burning furnace becomes a lit furnace block that gives off light
 # (and glows at night); when its fuel runs out it goes dark again
-input New world name|Lit Furnace
-input Seed (blank for random)|777
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Lit Furnace
+field Seed for the World Generator|777
+ui Create New World
 wait 2
 click 430 300
 wait 2

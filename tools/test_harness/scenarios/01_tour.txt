@@ -1,6 +1,8 @@
-input New world name|Tour
-input Seed (blank for random)|12345
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Tour
+field Seed for the World Generator|12345
+ui Create New World
 wait 2
 snap 01_help
 click 430 300
@@ -22,5 +24,6 @@ snap 06_inventory
 wait 1
 key e
 wait 2
-button quit
+key q
+ui Save and Quit to Title
 quit

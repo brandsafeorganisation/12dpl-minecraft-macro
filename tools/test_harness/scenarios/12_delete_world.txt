@@ -1,16 +1,33 @@
 # Delete a world (safety.h forbids deleting files, so the file is emptied
 # and hidden), then reuse its name for a new world
-input New world name|Doomed
-input Seed (blank for random)|5
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Doomed
+field Seed for the World Generator|5
+ui Create New World
 wait 2
-button quit
-select 1
-button delete
-button delete
-input New world name|Doomed
-input Seed (blank for random)|6
-button create
+click 430 300
+wait 2
+key q
+ui Save and Quit to Title
+ui Singleplayer
+snap 120_world_list
+wait 4
+call worlds
+field #15|Doomed
+ui row:Doomed
+ui Delete
+snap 121_delete_confirm
+wait 4
+ui Delete
+call worlds
+ui Create New World
+field World Name|Doomed
+field Seed for the World Generator|6
+ui Create New World
+wait 2
+click 430 300
 wait 2
 call dump
-button quit
+key q
+ui Save and Quit to Title

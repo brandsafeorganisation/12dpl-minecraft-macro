@@ -1,7 +1,9 @@
 # Save a world with items, a worn tool, a furnace, a broken block and a torch, then load it back (the torch light is rebuilt)
-input New world name|Round Trip
-input Seed (blank for random)|8080
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Round Trip
+field Seed for the World Generator|8080
+ui Create New World
 wait 2
 click 430 300
 wait 2
@@ -24,9 +26,11 @@ call torch_ahead
 call torch_light_check
 wait 30
 call dump
-button quit
-select 1
-button play
+key q
+ui Save and Quit to Title
+ui Singleplayer
+ui #101
+ui Play Selected World
 wait 2
 call dump
 call to_cave

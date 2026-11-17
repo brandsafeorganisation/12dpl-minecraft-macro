@@ -68,6 +68,8 @@
 #include "render/render_world.4dm"
 #include "render/render_hud.4dm"
 #include "render/render_ui.4dm"
+#include "render/render_menu.4dm"
+#include "render/render_screens.4dm"
 
 // program: settings, saving, starting worlds and the frame update
 #include "program/settings.4dm"
@@ -78,7 +80,7 @@
 #include "net/net.4dm"
 #include "program/game.4dm"
 
-// ui: the 12d panels (controllers) and fonts
+// ui: the game's panel and its controllers, and fonts
 #include "ui/font.4dm"
 #include "ui/menu_panel.4dm"
 #include "ui/settings_panel.4dm"

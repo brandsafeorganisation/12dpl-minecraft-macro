@@ -1,7 +1,9 @@
 # Put beef and fuel in a furnace through its screen, cook for a minute, eat, save
-input New world name|Cook Test
-input Seed (blank for random)|777
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Cook Test
+field Seed for the World Generator|777
+ui Create New World
 wait 2
 click 430 300
 wait 2
@@ -51,6 +53,7 @@ wait 1
 caprclick
 wait 2
 call dump
-button save
+key q
+ui Save Game
 wait 2
 quit

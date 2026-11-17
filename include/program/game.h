@@ -38,6 +38,9 @@
   Attributes g_net;         // multiplayer: the session and what to send
   Attributes g_peers;       // multiplayer: the other players
   Attributes g_net_inbox;   // multiplayer: lines read from their logs, not acted on yet
+  Attributes g_menu;        // the menu screen on show: its widgets and typed text
+  Attributes g_worlds;      // the world list
+  Attributes g_files;       // resource packs or skins found in their folders
 }
 
 Integer game_load_textures    (Attributes &p_settings, Text &p_report);
@@ -46,7 +49,7 @@ void    game_reset_state      (Attributes &p_game, Attributes &p_player, Attribu
                                Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
                                Attributes &p_hud, Attributes &p_ui);
 Text    game_world_name       (Attributes &p_game);
-Integer game_new_world        (Text p_name, Integer p_seed, Attributes &p_game, Attributes &p_info, Attributes &p_player,
+Integer game_new_world        (Text p_name, Integer p_seed, Integer p_mode, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                                Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
                                Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui);
 Integer game_load_world       (Text p_name, Attributes &p_game, Attributes &p_info, Attributes &p_player,

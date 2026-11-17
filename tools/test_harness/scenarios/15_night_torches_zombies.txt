@@ -1,7 +1,9 @@
 # Day and night, torches and their light, zombies, glass and beds
-input New world name|Night
-input Seed (blank for random)|31337
-button create
+ui Singleplayer
+ui Create New World
+field World Name|Night
+field Seed for the World Generator|31337
+ui Create New World
 wait 2
 click 430 300
 wait 2

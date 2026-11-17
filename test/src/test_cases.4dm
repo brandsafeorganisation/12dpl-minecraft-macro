@@ -116,6 +116,8 @@ void test_cases_run(Attributes &p_results)
   Attributes l_record;
   Attributes l_random;
   Attributes l_other;
+  Attributes l_menu;
+  Attributes l_set;
   Integer    l_i      = 0;
   Integer    l_value  = 0;
   Integer    l_inside = TRUE;
@@ -299,6 +301,41 @@ void test_cases_run(Attributes &p_results)
   test_expect_integer(p_results, "the face is at 8, 8 of the skin",   l_x * 100 + l_y, 808);
   test_expect_integer(p_results, "its second layer at 40, 8",         l_over_x * 100 + l_over_y, 4008);
   test_expect_integer(p_results, "no skin file: nothing replaced",    pack_apply_skin("zz_no_such_skin.png", l_reply), 0);
+
+  // ---------------------------------------------------- menus and the world list
+  test_group(p_results, "menus and the world list");
+  menu_clear(l_menu);
+  menu_begin(l_menu);
+  menu_add(l_menu, MENU_BUTTON, W_PLAY, 10.0, 10.0, 110.0, 40.0, "Play", TRUE);
+  menu_add(l_menu, MENU_BUTTON, W_DELETE, 120.0, 10.0, 220.0, 40.0, "Delete", FALSE);
+  menu_add(l_menu, MENU_FIELD, W_SEARCH, 10.0, 50.0, 220.0, 80.0, "", TRUE);
+  test_expect_integer(p_results, "a click on a button finds its id",   menu_id_at(l_menu, 60.0, 25.0), W_PLAY);
+  test_expect_integer(p_results, "a button that is off can't be hit",  menu_id_at(l_menu, 170.0, 25.0), 0);
+  test_expect_integer(p_results, "a click beside them finds nothing",  menu_id_at(l_menu, 300.0, 25.0), 0);
+  menu_set_focus(l_menu, W_SEARCH);
+  menu_type_key(l_menu, "a", "A");
+  menu_type_key(l_menu, "b", "b");
+  menu_type_key(l_menu, "backspace", "backspace");
+  menu_type_key(l_menu, "c", "c");
+  test_expect_text   (p_results, "typing keeps capitals, backspace rubs out", menu_field_text(l_menu, W_SEARCH), "Ac");
+  menu_set_focus(l_menu, 0);
+  test_expect_integer(p_results, "with no field chosen typing is ignored", menu_type_key(l_menu, "x", "x"), FALSE);
+  test_expect_text   (p_results, "long text is cut short with ...",   menu_fit_text("A very long world name indeed", 10.0, 60.0), "A very lon...");
+  test_expect_text   (p_results, "short text is kept",                menu_fit_text("Short", 10.0, 60.0), "Short");
+  menu_set_scroll(l_menu, 9, 5, 3);
+  test_expect_integer(p_results, "a list scrolls no further than its end", menu_scroll(l_menu), 2);
+  settings_defaults(l_set);
+  settings_slider(l_set, W_FOV, 1.0);
+  test_expect_integer(p_results, "the FOV slider at its right end",   settings_fov_degrees(l_set), FOV_MAX);
+  settings_slider(l_set, W_RENDER, 0.0);
+  test_expect_integer(p_results, "the render slider at its left end", settings_render_distance(l_set), RENDER_DISTANCE_MIN);
+  settings_slider(l_set, W_MOUSE, 0.5);
+  test_expect_integer(p_results, "the mouse slider halfway",          record_integer(l_set, ATTR_SET_SENSITIVITY), 6);
+  test_expect_text   (p_results, "a colour as hex",                   save_hex_colour(16711680 + 2 * 256 + 171), "ff02ab");
+  test_expect_integer(p_results, "hex back to a colour",              save_hex_value("ff02ab", 1, 6), 16711680 + 2 * 256 + 171);
+  test_expect_text   (p_results, "12d's clock as a date",             save_date_text("Sun Nov 15 14:03:22 2026"), "15 Nov 2026, 14:03");
+  test_expect_text   (p_results, "the last part of a path",           save_file_name("resourcepacks\\faithful.zip"), "faithful.zip");
+  test_expect_text   (p_results, "a world name is kept when free",    menu_free_world_name("zz_no_such_world"), "zz_no_such_world");
 
   // ---------------------------------------------------- creative inventory
   test_group(p_results, "creative inventory");
