@@ -376,7 +376,7 @@ void test_cases_run(Attributes &p_results)
   test_expect_true   (p_results, "every named item is listed",        ui_creative_count(g_ui) >= 40);
   test_expect_integer(p_results, "the list starts with bedrock",      ui_creative_item(g_ui, 1), ITEM_BEDROCK);
   ui_set_search(g_ui, "IRON");
-  test_expect_integer(p_results, "searching iron (any case) finds 6", ui_creative_count(g_ui), 6);
+  test_expect_integer(p_results, "searching iron (any case) finds 10 (with the armour)", ui_creative_count(g_ui), 10);
   ui_type_search(g_ui, "backspace");
   test_expect_text   (p_results, "backspace rubs out a letter",       ui_search(g_ui), "IRO");
   ui_set_search(g_ui, "zzz");
