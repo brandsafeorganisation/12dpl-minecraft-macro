@@ -22,7 +22,7 @@
 #define GAME_VIEW_WIDTH      860
 #define GAME_VIEW_HEIGHT     520
 #define PAUSED_FRAME_GAP     0.25
-#define MENU_FRAME_GAP       0.1    // menus redraw at least this often while the mouse moves (the panorama turns)
+#define MENU_DRAG_GAP        0.05   // a slider or scroll bar being dragged redraws at most this often
 #define DOUBLE_CLICK_SECONDS 0.4
 #define KEYS_BOX_TITLE       "Keys"
 
@@ -35,6 +35,7 @@ Integer app_run              ();
 Integer menu_panel_run       (Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Attributes &p_random, Attributes &p_settings);
 void    menu_open_worlds     (Attributes &p_menu, Attributes &p_worlds);
 Text    menu_free_world_name (Text p_base);
+Integer menu_turned           (Real p_last_frame, Real p_now);
 Text    menu_splash          (Integer p_pick);
 void    menu_background      (Draw_Box p_box, Real p_w, Real p_h, Integer p_title, Real p_now);
 Integer settings_panel_run   (Draw_Box p_box, Input_Box p_keys, Attributes &p_settings, Integer p_in_game);

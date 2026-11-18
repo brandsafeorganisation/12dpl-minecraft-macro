@@ -31,11 +31,40 @@ Text menu_on_off(Integer p_on)
   return "OFF";
 }
 
+Integer menu_thumbnail_colour(Integer p_entry, Integer p_row, Integer p_column)
+// ----------------------------------------------------------------
+// Colour of square (row, column) of a listed world's picture drawn
+// THUMB_SIZE / 2 squares across: the average of its 2 x 2 cells,
+// each channel rounded to a multiple of 8 so that neighbours of
+// almost the same colour join into one run
+// ----------------------------------------------------------------
+{
+  Integer l_cell   = ((p_row - 1) * 2) * THUMB_SIZE + (p_column - 1) * 2 + 1;
+  Integer l_red    = 0;
+  Integer l_green  = 0;
+  Integer l_blue   = 0;
+  Integer l_colour = 0;
+  Integer l_corner = 0;
+
+  for (l_corner = 0; l_corner <= 3; ++l_corner) {
+    l_colour = save_listed_colour(p_entry, l_cell + positive_mod(l_corner, 2) + floor_divide(l_corner, 2) * THUMB_SIZE);
+    l_red    = l_red   + floor_divide(l_colour, 65536);
+    l_green  = l_green + positive_mod(floor_divide(l_colour, 256), 256);
+    l_blue   = l_blue  + positive_mod(l_colour, 256);
+  }
+  l_red   = floor_divide(l_red,   32) * 8;
+  l_green = floor_divide(l_green, 32) * 8;
+  l_blue  = floor_divide(l_blue,  32) * 8;
+  return l_red * 65536 + l_green * 256 + l_blue;
+}
+
 void menu_draw_thumbnail(Draw_Box p_box, Integer p_entry, Integer p_has_picture, Real p_x0, Real p_y0, Real p_size)
 // ----------------------------------------------------------------
 // A listed world's picture as a size x size square with its bottom
-// left at (x0, y0), each row drawn as runs of one colour; a world
-// without one shows a grass block
+// left at (x0, y0), a world without one shows a grass block. It is
+// drawn at half its resolution (menu_thumbnail_colour), each row as
+// runs of one colour: a list of full pictures was thousands of
+// polygons a frame.
 // ----------------------------------------------------------------
 {
   Integer l_row    = 0;
@@ -43,7 +72,8 @@ void menu_draw_thumbnail(Draw_Box p_box, Integer p_entry, Integer p_has_picture,
   Integer l_start  = 0;
   Integer l_colour = 0;
   Integer l_run    = 0;
-  Real    l_cell   = p_size / THUMB_SIZE;
+  Integer l_across = floor_divide(THUMB_SIZE, 2);
+  Real    l_cell   = p_size / l_across;
   Real    l_top    = 0.0;
 
   if (!p_has_picture) {
@@ -52,16 +82,16 @@ void menu_draw_thumbnail(Draw_Box p_box, Integer p_entry, Integer p_has_picture,
     hud_draw_item_icon(p_box, ITEM_GRASS, p_x0 + p_size / 2.0, p_y0 + p_size / 2.0, p_size * 0.7, ICON_FULL);
     return;
   }
-  for (l_row = 1; l_row <= THUMB_SIZE; ++l_row) {
+  for (l_row = 1; l_row <= l_across; ++l_row) {
     l_top   = p_y0 + p_size - (l_row - 1) * l_cell;
     l_start = 1;
-    l_run   = save_listed_colour(p_entry, (l_row - 1) * THUMB_SIZE + 1);
-    for (l_column = 2; l_column <= THUMB_SIZE + 1; ++l_column) {
+    l_run   = menu_thumbnail_colour(p_entry, l_row, 1);
+    for (l_column = 2; l_column <= l_across + 1; ++l_column) {
       l_colour = -1;
-      if (l_column <= THUMB_SIZE) l_colour = save_listed_colour(p_entry, (l_row - 1) * THUMB_SIZE + l_column);
+      if (l_column <= l_across) l_colour = menu_thumbnail_colour(p_entry, l_row, l_column);
       if (l_colour == l_run) continue;
       render_set_colour(p_box, floor_divide(l_run, 65536) * 1.0, positive_mod(floor_divide(l_run, 256), 256) * 1.0, positive_mod(l_run, 256) * 1.0);
-      render_fill_rect(p_box, p_x0 + (l_start - 1) * l_cell, l_top - l_cell, p_x0 + (l_column - 1) * l_cell, l_top);
+      render_fill_rect(p_box, p_x0 + (l_start - 1) * l_cell, l_top - l_cell, p_x0 + (l_column - 1) * l_cell + 0.5, l_top);
       l_run   = l_colour;
       l_start = l_column;
     }

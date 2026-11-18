@@ -187,24 +187,16 @@ void menu_set_focus(Attributes &p_menu, Integer p_id)
 Integer menu_type_key(Attributes &p_menu, Text p_key, Text p_raw)
 // ----------------------------------------------------------------
 // A key typed while a field has the keyboard: a character (raw, as
-// typed, so capitals stay) goes on the end, backspace takes the
-// last one off. Returns TRUE if the key was used.
+// typed, so capitals stay) goes on the end, Backspace takes the
+// last one off and Ctrl+Backspace the last word (text_after_key).
+// p_key is its name (key_name). Returns TRUE if the key was used.
 // ----------------------------------------------------------------
 {
   Integer l_id   = menu_focus(p_menu);
-  Text    l_text = "";
 
   if (l_id == 0) return FALSE;
-  l_text = menu_field_text(p_menu, l_id);
-  if (p_key == "backspace") {
-    if (Text_length(l_text) > 0) l_text = Get_subtext(l_text, 1, Text_length(l_text) - 1);
-  } else if (Text_length(p_raw) == 1) {
-    if (Text_length(l_text) >= MENU_FIELD_LONGEST) return TRUE;
-    l_text = l_text + p_raw;
-  } else {
-    return FALSE;
-  }
-  menu_set_field_text(p_menu, l_id, l_text);
+  if (p_key != "backspace" && p_key != "backspace_word" && !key_is_text(p_raw)) return FALSE;
+  menu_set_field_text(p_menu, l_id, text_after_key(menu_field_text(p_menu, l_id), p_raw, MENU_FIELD_LONGEST));
   return TRUE;
 }
 
@@ -502,8 +494,10 @@ void panorama_set_row(Integer p_row, Text p_cells)
 void menu_draw_panorama(Draw_Box p_box, Real p_w, Real p_h, Real p_turn, Real p_shade)
 // ----------------------------------------------------------------
 // The view all round a world behind the title screen, turned by
-// turn cells and made shade (0..1) as bright. Each row is drawn as
-// runs of cells of one colour, so the sky is a few long strips.
+// turn cells and made shade (0..1) as bright. Each row is cut into
+// runs of cells of one colour (so the sky is a few long strips),
+// and the runs are drawn colour by colour: setting a colour is a
+// 12d call as dear as drawing, so each is set once, not per run.
 // ----------------------------------------------------------------
 {
   Integer l_row    = 0;
@@ -514,6 +508,8 @@ void menu_draw_panorama(Draw_Box p_box, Real p_w, Real p_h, Real p_turn, Real p_
   Integer l_colour = 0;
   Integer l_run    = 0;
   Integer l_start  = 0;
+  Integer l_runs   = 0;
+  Integer l_index  = 0;
   Real    l_cell   = 0.0;
   Real    l_y0     = 0.0;
   Real    l_x0     = 0.0;
@@ -523,8 +519,10 @@ void menu_draw_panorama(Draw_Box p_box, Real p_w, Real p_h, Real p_turn, Real p_
   l_shown = floor_integer(p_w / l_cell) + 2;
   l_first = positive_mod(floor_integer(p_turn), PANO_COLUMNS);
   l_x0    = -(p_turn - Floor(p_turn)) * l_cell;
+  for (l_colour = 1; l_colour <= PANO_COLOURS; ++l_colour) g_pano_run_first[l_colour] = 0;
+
+  // the runs on screen, chained by colour
   for (l_row = 1; l_row <= PANO_ROWS; ++l_row) {
-    l_y0    = p_h - l_row * l_cell;
     l_start = 0;
     l_run   = 0;
     for (l_step = 0; l_step <= l_shown; ++l_step) {
@@ -535,11 +533,34 @@ void menu_draw_panorama(Draw_Box p_box, Real p_w, Real p_h, Real p_turn, Real p_
       }
       if (l_colour == l_run) continue;
       if (l_run > 0) {
-        render_set_colour(p_box, g_pano_r[l_run] * p_shade, g_pano_g[l_run] * p_shade, g_pano_b[l_run] * p_shade);
-        render_fill_rect (p_box, l_x0 + l_start * l_cell, l_y0, l_x0 + l_step * l_cell + 0.5, l_y0 + l_cell + 0.5);
+        if (l_runs < PANO_DRAWN_RUNS) {
+          ++l_runs;
+          g_pano_run_row  [l_runs] = l_row;
+          g_pano_run_start[l_runs] = l_start;
+          g_pano_run_end  [l_runs] = l_step;
+          g_pano_run_next [l_runs] = g_pano_run_first[l_run];
+          g_pano_run_first[l_run]  = l_runs;
+        } else {
+          // more runs than the table holds: draw this one straight away
+          l_y0 = p_h - l_row * l_cell;
+          render_set_colour(p_box, g_pano_r[l_run] * p_shade, g_pano_g[l_run] * p_shade, g_pano_b[l_run] * p_shade);
+          render_fill_rect (p_box, l_x0 + l_start * l_cell, l_y0, l_x0 + l_step * l_cell + 0.5, l_y0 + l_cell + 0.5);
+        }
       }
       l_run   = l_colour;
       l_start = l_step;
+    }
+  }
+
+  // each colour once, then all its runs
+  for (l_colour = 1; l_colour <= PANO_COLOURS; ++l_colour) {
+    l_index = g_pano_run_first[l_colour];
+    if (l_index == 0) continue;
+    render_set_colour(p_box, g_pano_r[l_colour] * p_shade, g_pano_g[l_colour] * p_shade, g_pano_b[l_colour] * p_shade);
+    while (l_index > 0) {
+      l_y0 = p_h - g_pano_run_row[l_index] * l_cell;
+      render_fill_rect(p_box, l_x0 + g_pano_run_start[l_index] * l_cell, l_y0, l_x0 + g_pano_run_end[l_index] * l_cell + 0.5, l_y0 + l_cell + 0.5);
+      l_index = g_pano_run_next[l_index];
     }
   }
 }

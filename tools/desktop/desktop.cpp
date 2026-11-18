@@ -328,7 +328,10 @@ static LRESULT CALLBACK view_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
     case WM_CHAR: {
       long long keys = key_box_of(panel_of(id));
       if (w >= 32 && w < 127) { char c[2] = {(char)w, 0}; push_event(keys, "keystroke", c); }
-      if (w == 8)  push_event(keys, "keystroke", "backspace");   // for the chat line
+      // keys that type nothing come as 12d sends them: Backspace as
+      // character 8, Ctrl+Backspace as 127
+      if (w == 8)   push_event(keys, "keystroke", "\x08");
+      if (w == 127) push_event(keys, "keystroke", "\x7f");
       if (w == 13) push_event(keys, "text selected", "");        // Enter, as 12d's input box reports it
       return 0;
     }
@@ -427,7 +430,7 @@ int Draw_text(const Draw_Box &, double x, double y, double size, double, const T
                           ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_SWISS, g_font_name.c_str());
   SelectObject(g_mdc, f);
   SetTextColor(g_mdc, RGB((g_text >> 16) & 255, (g_text >> 8) & 255, g_text & 255));
-  SetTextAlign(g_mdc, (g_align == 30 ? TA_CENTER : TA_LEFT) | TA_TOP);
+  SetTextAlign(g_mdc, (UINT)g_align);   // 12d passes its mode on to Windows as TA_* flags
   TextOutA(g_mdc, (int)x, g_fb_h - (int)y, t.c_str(), (int)t.size());
   g_gdi_dirty = true;
   return 0;

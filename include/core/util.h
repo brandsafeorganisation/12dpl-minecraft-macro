@@ -6,6 +6,13 @@
 // their arguments). Random sequences are in records.h.
 // ----------------------------------------------------------------
 
+// Characters 12d sends in a "keystroke" event for keys that type
+// nothing (see key_name)
+#define KEY_CODE_BACKSPACE    8
+#define KEY_CODE_ENTER        13
+#define KEY_CODE_ESCAPE       27
+#define KEY_CODE_DELETE_WORD  127    // Ctrl+Backspace
+
 Real    clamp_real          (Real p_value, Real p_low, Real p_high);
 Real    angle_of            (Real p_y, Real p_x);
 Text    two_digits          (Integer p_value);
@@ -25,5 +32,9 @@ Real    wrap_angle          (Real p_angle);
 Integer text_to_seed        (Text p_text);
 Text    file_title_from_path(Text p_path);
 Integer text_is_safe_name   (Text p_name);
+Text    key_name            (Text p_msg);
+Integer key_is_text         (Text p_msg);
+Text    text_without_last_word(Text p_text);
+Text    text_after_key      (Text p_text, Text p_msg, Integer p_longest);
 
 #endif

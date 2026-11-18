@@ -700,7 +700,8 @@ void hud_draw_figure(Draw_Box p_box, Real p_centre_x, Real p_base_y, Real p_unit
 void hud_draw_armour(Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_points)
 // ----------------------------------------------------------------
 // Armour bar of ten icons (from the resource pack if it has them),
-// each worth two points, like the health bar
+// each worth two points, like the health bar: an empty icon with a
+// full or half one over it
 // ----------------------------------------------------------------
 {
   Integer l_icon = 0;
@@ -711,12 +712,12 @@ void hud_draw_armour(Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer
   for (l_icon = 1; l_icon <= 10; ++l_icon) {
     l_ix   = p_x0 + (l_icon - 1) * l_size;
     l_left = p_points - (l_icon - 1) * 2;
+    // the empty icon, with the full or half one over it
+    hud_texture_face(p_box, TEX_ARMOUR_EMPTY, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
     if (l_left >= 2) {
       hud_texture_face(p_box, TEX_ARMOUR_FULL, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
     } else if (l_left == 1) {
       hud_texture_face(p_box, TEX_ARMOUR_HALF, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
-    } else {
-      hud_texture_face(p_box, TEX_ARMOUR_EMPTY, 1.0, FALSE, l_ix, p_y0, l_size, 0.0, 0.0, l_size);
     }
   }
 }

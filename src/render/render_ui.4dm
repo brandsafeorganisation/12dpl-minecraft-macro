@@ -115,18 +115,15 @@ void ui_set_search(Attributes &p_ui, Text p_search)
 
 void ui_type_search(Attributes &p_ui, Text p_key)
 // ----------------------------------------------------------------
-// A key typed on the creative screen: "backspace" rubs out the
-// last letter, any single character is added
+// A key typed on the creative screen (its message as 12d sends it,
+// or its name): Backspace rubs out the last letter, Ctrl+Backspace
+// the last word, any character is added (text_after_key)
 // ----------------------------------------------------------------
 {
   Text l_search = ui_search(p_ui);
+  Text l_after  = text_after_key(l_search, p_key, CREATIVE_SEARCH_MAX);
 
-  if (p_key == "backspace") {
-    if (Text_length(l_search) > 0) ui_set_search(p_ui, Get_subtext(l_search, 1, Text_length(l_search) - 1));
-    return;
-  }
-  if (Text_length(p_key) != 1 || Text_length(l_search) >= CREATIVE_SEARCH_MAX) return;
-  ui_set_search(p_ui, l_search + p_key);
+  if (l_after != l_search) ui_set_search(p_ui, l_after);
 }
 
 Integer ui_creative_count(Attributes &p_ui)

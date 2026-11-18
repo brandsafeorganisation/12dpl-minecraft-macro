@@ -139,6 +139,8 @@ void test_cases_run(Attributes &p_results)
   Integer    l_h      = 0;
   Integer    l_over_x = 0;
   Integer    l_over_y = 0;
+  Text       l_bs     = " ";
+  Text       l_ctrl_bs = " ";
 
   // ---------------------------------------------------- util
   test_group(p_results, "util");
@@ -236,6 +238,22 @@ void test_cases_run(Attributes &p_results)
   test_expect_true   (p_results, "slot_is_empty after the swap",      slot_is_empty(g_inventory, 1));
   inventory_clear(g_inventory);
   test_expect_integer(p_results, "inventory_clear empties it",        inventory_count_item(g_inventory, ITEM_STONE), 0);
+
+  // ---------------------------------------------------- typed keys
+  test_group(p_results, "typed keys");
+  Set_char(l_bs, 1, KEY_CODE_BACKSPACE);
+  Set_char(l_ctrl_bs, 1, KEY_CODE_DELETE_WORD);
+  test_expect_text   (p_results, "12d's Backspace character is named",   key_name(l_bs), "backspace");
+  test_expect_text   (p_results, "Ctrl+Backspace is named",               key_name(l_ctrl_bs), "backspace_word");
+  test_expect_text   (p_results, "a letter's name is lower case",         key_name("W"), "w");
+  test_expect_text   (p_results, "Backspace rubs out a character",        text_after_key("Hello", l_bs, 48), "Hell");
+  test_expect_text   (p_results, "the name works as well",                text_after_key("Hello", "backspace", 48), "Hell");
+  test_expect_text   (p_results, "Ctrl+Backspace rubs out the last word", text_after_key("New World 2", l_ctrl_bs, 48), "New World ");
+  test_expect_text   (p_results, "and the spaces after it",               text_after_key("New World  ", l_ctrl_bs, 48), "New ");
+  test_expect_text   (p_results, "a single word goes",                    text_after_key("Hello", l_ctrl_bs, 48), "");
+  test_expect_text   (p_results, "a capital is typed as it is",           text_after_key("a", "B", 48), "aB");
+  test_expect_text   (p_results, "nothing past the longest",              text_after_key("abc", "d", 3), "abc");
+  test_expect_text   (p_results, "Backspace on nothing stays nothing",    text_after_key("", l_bs, 48), "");
 
   // ---------------------------------------------------- armour, the offhand and spawn eggs
   test_group(p_results, "armour, offhand and spawn eggs");

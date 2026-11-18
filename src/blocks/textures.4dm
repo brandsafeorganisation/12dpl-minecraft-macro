@@ -1542,43 +1542,54 @@ void make_texture_destroy(Integer p_tex, Integer p_stage)
 
 void make_texture_heart(Integer p_tex, Integer p_fill)
 // ----------------------------------------------------------------
-// A health bar heart: p_fill 2 full, 1 the left half, 0 only the
-// dark outline (the empty container)
+// A health bar heart. p_fill 0 is the empty container: one solid
+// dark heart. 2 (full) and 1 (the left half) are only the red inside
+// with a shine, drawn over the container. Each is a few large
+// rectangles: an outline in its own colour broke a heart into ~36
+// one-pixel pieces, and the bar drew 20 of them every frame.
 // ----------------------------------------------------------------
 {
   Integer l_u = 0;
   Integer l_v = 0;
 
-  texture_set_palette(p_tex, 1, 24 , 12 , 12 );
+  texture_set_palette(p_tex, 1, 36 , 14 , 14 );
   texture_set_palette(p_tex, 2, 220, 30 , 30 );
-  texture_set_palette(p_tex, 3, 255, 140, 140);
-  texture_set_palette(p_tex, 4, 70 , 40 , 40 );
+  texture_set_palette(p_tex, 3, 255, 150, 150);
   texture_row(p_tex,  1, "................");
   texture_row(p_tex,  2, "................");
   texture_row(p_tex,  3, "..1111....1111..");
-  texture_row(p_tex,  4, ".144441..144441.");
-  texture_row(p_tex,  5, "1444444114444441");
-  texture_row(p_tex,  6, "1444444444444441");
-  texture_row(p_tex,  7, "1444444444444441");
-  texture_row(p_tex,  8, "1444444444444441");
-  texture_row(p_tex,  9, ".14444444444441.");
-  texture_row(p_tex, 10, "..144444444441..");
-  texture_row(p_tex, 11, "...1444444441...");
-  texture_row(p_tex, 12, "....14444441....");
-  texture_row(p_tex, 13, ".....144441.....");
-  texture_row(p_tex, 14, "......1441......");
+  texture_row(p_tex,  4, ".111111..111111.");
+  texture_row(p_tex,  5, "1111111111111111");
+  texture_row(p_tex,  6, "1111111111111111");
+  texture_row(p_tex,  7, "1111111111111111");
+  texture_row(p_tex,  8, "1111111111111111");
+  texture_row(p_tex,  9, ".11111111111111.");
+  texture_row(p_tex, 10, "..111111111111..");
+  texture_row(p_tex, 11, "...1111111111...");
+  texture_row(p_tex, 12, "....11111111....");
+  texture_row(p_tex, 13, ".....111111.....");
+  texture_row(p_tex, 14, "......1111......");
   texture_row(p_tex, 15, ".......11.......");
   texture_row(p_tex, 16, "................");
   if (p_fill == 0) return;
+  // the inside: one pixel in from the edge of the container
+  texture_row(p_tex,  3, "................");
+  texture_row(p_tex,  4, "..2222....2222..");
+  texture_row(p_tex,  5, ".22222222222222.");
+  texture_row(p_tex,  6, ".22222222222222.");
+  texture_row(p_tex,  7, ".22222222222222.");
+  texture_row(p_tex,  8, ".22222222222222.");
+  texture_row(p_tex,  9, "..222222222222..");
+  texture_row(p_tex, 10, "...2222222222...");
+  texture_row(p_tex, 11, "....22222222....");
+  texture_row(p_tex, 12, ".....222222.....");
+  texture_row(p_tex, 13, "......2222......");
+  texture_row(p_tex, 14, ".......22.......");
+  texture_row(p_tex, 15, "................");
+  texture_fill_rect(p_tex, 3, 5, 4, 6, 3);   // shine
+  if (p_fill == 2) return;
   for (l_v = 1; l_v <= TEX_SIZE; ++l_v) {
-    for (l_u = 1; l_u <= TEX_SIZE; ++l_u) {
-      if (texture_get(p_tex, l_u, l_v) != 4) continue;
-      if (p_fill == 1 && l_u > 8) continue;
-      texture_set(p_tex, l_u, l_v, 2);
-      if (l_v == 4 || l_v == 5) {
-        if (l_u == 3 || l_u == 4) texture_set(p_tex, l_u, l_v, 3);
-      }
-    }
+    for (l_u = 9; l_u <= TEX_SIZE; ++l_u) texture_set(p_tex, l_u, l_v, TEX_TRANSPARENT);
   }
 }
 
@@ -1859,41 +1870,44 @@ void make_texture_spawn_egg(Integer p_tex, Integer p_red, Integer p_green, Integ
 
 void make_texture_armour_icon(Integer p_tex, Integer p_fill)
 // ----------------------------------------------------------------
-// An armour bar icon (a little chestplate): p_fill 2 full, 1 the
-// left half, 0 the empty outline
+// An armour bar icon (a little chestplate). p_fill 0 is the empty
+// one, a solid dark shape; 2 (full) and 1 (the left half) are only
+// the iron inside, drawn over it (few rectangles each, like the
+// hearts)
 // ----------------------------------------------------------------
 {
   Integer l_u = 0;
   Integer l_v = 0;
 
-  texture_set_palette(p_tex, 1, 28 , 28 , 30 );
+  texture_set_palette(p_tex, 1, 30 , 30 , 34 );
   texture_set_palette(p_tex, 2, 226, 226, 232);
-  texture_set_palette(p_tex, 3, 160, 160, 168);
-  texture_set_palette(p_tex, 4, 72 , 72 , 76 );
+  texture_set_palette(p_tex, 3, 168, 168, 176);
   texture_row(p_tex,  1, "................");
   texture_row(p_tex,  2, "................");
   texture_row(p_tex,  3, "..1111....1111..");
-  texture_row(p_tex,  4, ".14441111114441.");
-  texture_row(p_tex,  5, ".14444444444441.");
-  texture_row(p_tex,  6, ".14444444444441.");
-  texture_row(p_tex,  7, "..144444444441..");
-  texture_row(p_tex,  8, "...1444444441...");
-  texture_row(p_tex,  9, "...1444444441...");
-  texture_row(p_tex, 10, "...1444444441...");
-  texture_row(p_tex, 11, "...1444444441...");
+  texture_row(p_tex,  4, ".11111111111111.");
+  texture_row(p_tex,  5, ".11111111111111.");
+  texture_row(p_tex,  6, ".11111111111111.");
+  texture_row(p_tex,  7, "..111111111111..");
+  texture_row(p_tex,  8, "...1111111111...");
+  texture_row(p_tex,  9, "...1111111111...");
+  texture_row(p_tex, 10, "...1111111111...");
+  texture_row(p_tex, 11, "...1111111111...");
   texture_row(p_tex, 12, "...1111111111...");
   texture_row(p_tex, 13, "................");
-  texture_row(p_tex, 14, "................");
-  texture_row(p_tex, 15, "................");
-  texture_row(p_tex, 16, "................");
   if (p_fill == 0) return;
+  texture_fill_rect(p_tex, 1, 1, TEX_SIZE, TEX_SIZE, TEX_TRANSPARENT);
+  texture_row(p_tex,  4, "..222......222..");
+  texture_row(p_tex,  5, "..222222222222..");
+  texture_row(p_tex,  6, "..222222222222..");
+  texture_row(p_tex,  7, "...2222222222...");
+  texture_row(p_tex,  8, "....33333333....");
+  texture_row(p_tex,  9, "....33333333....");
+  texture_row(p_tex, 10, "....33333333....");
+  texture_row(p_tex, 11, "....33333333....");
+  if (p_fill == 2) return;
   for (l_v = 1; l_v <= TEX_SIZE; ++l_v) {
-    for (l_u = 1; l_u <= TEX_SIZE; ++l_u) {
-      if (texture_get(p_tex, l_u, l_v) != 4) continue;
-      if (p_fill == 1 && l_u > 8) continue;
-      texture_set(p_tex, l_u, l_v, 2);
-      if (l_v >= 9) texture_set(p_tex, l_u, l_v, 3);
-    }
+    for (l_u = 9; l_u <= TEX_SIZE; ++l_u) texture_set(p_tex, l_u, l_v, TEX_TRANSPARENT);
   }
 }
 

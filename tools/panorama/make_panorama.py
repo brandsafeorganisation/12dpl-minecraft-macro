@@ -82,6 +82,9 @@ def main():
             px[col, row] = tuple(int(a / n + 0.5) for a in acc)
     pano = pano.filter(ImageFilter.GaussianBlur(0.6))
     small = pano.quantize(colors=COLOURS, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+    # each cell takes the commonest colour round it: lone cells of
+    # texture noise go, so rows have a quarter fewer runs to draw
+    small = small.convert("RGB").filter(ImageFilter.ModeFilter(3)).quantize(palette=small, dither=Image.Dither.NONE)
     palette = small.getpalette()[:3 * COLOURS]
     while len(palette) < 3 * COLOURS:
         palette += [0, 0, 0]

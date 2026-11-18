@@ -93,12 +93,12 @@ One command per line; `#` starts a comment.
 | `capclick`, `caprclick` | left or right click at the cursor while it's captured         |
 | `look <dx> <dy>`       | move the mouse by (dx, dy) pixels                              |
 | `wait <n>`             | let n frames pass                                              |
-| `key <c> [n]`          | press a key (n times); `space` for the space bar               |
+| `key <c> [n]`          | press a key (n times); `space` for the space bar; `bs` and `ctrlbs` are Backspace and Ctrl+Backspace as 12d sends them (characters 8 and 127) |
 | `type <text>`          | press each character of the rest of the line, spaces included   |
 | `enter`                | press Enter in the keys box (sends a chat line)                |
 | `holdkey <c> <n>`      | hold a key for n frames (auto-repeat)                          |
 | `time <s>`             | move the clock on by s seconds without a frame                 |
-| `snap <name>`          | save the next frame as `run/out/<name>.ppm`/`.png`             |
+| `snap <name>`          | save the next frame as `run/out/<name>.ppm`/`.png`; prints its polygons, draw calls, texts and record calls (`FRAME_LOG=1` prints them for every frame) |
 | `call <hook>`          | run a hook from `hooks.cpp`                                    |
 | `quit`                 | close the panel                                                |
 

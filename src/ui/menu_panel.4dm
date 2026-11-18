@@ -86,6 +86,14 @@ Text menu_free_world_name(Text p_base)
   return p_base + " " + To_text(l_number);
 }
 
+Integer menu_turned(Real p_last_frame, Real p_now)
+// ----------------------------------------------------------------
+// TRUE if the panorama has turned a cell since the last frame
+// ----------------------------------------------------------------
+{
+  return Floor(p_now * PANO_SPEED) != Floor(p_last_frame * PANO_SPEED);
+}
+
 Text menu_splash(Integer p_pick)
 // ----------------------------------------------------------------
 // One of the yellow lines on the title screen
@@ -102,10 +110,12 @@ Text menu_splash(Integer p_pick)
 
 void menu_background(Draw_Box p_box, Real p_w, Real p_h, Integer p_title, Real p_now)
 // ----------------------------------------------------------------
-// The turning panorama, darker behind every screen but the title
+// The turning panorama, darker behind every screen but the title. It
+// turns a whole cell at a time, so a frame is only needed for each
+// cell (menu_turned)
 // ----------------------------------------------------------------
 {
-  Real l_turn  = p_now * PANO_SPEED;
+  Real l_turn  = Floor(p_now * PANO_SPEED);
   Real l_shade = MENU_SCREEN_SHADE;
 
   l_turn = l_turn - Floor(l_turn / PANO_COLUMNS) * PANO_COLUMNS;
@@ -162,6 +172,7 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
       l_w = l_width;
       l_h = l_height;
       Start_batch_draw(p_box);
+      render_forget_colour();
       font_apply(p_box, settings_font(p_settings));
       menu_background(p_box, l_w, l_h, l_screen == SCREEN_TITLE, l_now);
       if (l_screen == SCREEN_TITLE      ) screen_title (p_box, g_menu, l_w, l_h, l_splash, l_now);
@@ -200,7 +211,7 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
           menu_scroll_to(g_menu, menu_slider_value_at(g_menu, menu_widget_of(g_menu, W_LIST_SCROLL), l_x, l_y));
           l_want_frame = TRUE;
         }
-        if (l_widget != l_hover || l_now - l_last_frame > MENU_FRAME_GAP) l_want_frame = TRUE;
+        if (l_widget != l_hover || menu_turned(l_last_frame, l_now)) l_want_frame = TRUE;
         l_hover = l_widget;
         continue;
       }
@@ -239,7 +250,7 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
     } else if (l_event_id == Get_id64(p_keys)) {
       // ------------------------------------------------ keys
       if (l_cmd == "keystroke") {
-        l_key = Text_lower(l_msg);
+        l_key = key_name(l_msg);
         Set_data(p_keys, "");
         l_want_frame = TRUE;
         if (l_key == "escape") {

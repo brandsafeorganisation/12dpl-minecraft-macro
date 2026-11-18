@@ -111,9 +111,23 @@ void render_set_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blue)
   Integer l_r = to_byte(p_red   * g_view_shade);
   Integer l_g = to_byte(p_green * g_view_shade);
   Integer l_b = to_byte(p_blue  * g_view_shade);
+  Integer l_colour = l_r * 65536 + l_g * 256 + l_b;
 
+  // each 12d call costs about as much as drawing a polygon, so a
+  // colour already set isn't set again
+  if (l_colour == g_view_colour) return;
+  g_view_colour = l_colour;
   Set_colour     (p_box, l_r, l_g, l_b);
   Set_fill_colour(p_box, l_r, l_g, l_b);
+}
+
+void render_forget_colour()
+// ----------------------------------------------------------------
+// Forget which colour is set (at the start of every frame), so the
+// next render_set_colour sets it
+// ----------------------------------------------------------------
+{
+  g_view_colour = -1;
 }
 
 void render_set_shade(Real p_shade)
@@ -135,7 +149,10 @@ void render_set_face_colour(Draw_Box p_box, Real p_red, Real p_green, Real p_blu
   Integer l_r = Floor(p_red   * g_view_shade);
   Integer l_g = Floor(p_green * g_view_shade);
   Integer l_b = Floor(p_blue  * g_view_shade);
+  Integer l_colour = l_r * 65536 + l_g * 256 + l_b;
 
+  if (l_colour == g_view_colour) return;
+  g_view_colour = l_colour;
   Set_colour     (p_box, l_r, l_g, l_b);
   Set_fill_colour(p_box, l_r, l_g, l_b);
 }

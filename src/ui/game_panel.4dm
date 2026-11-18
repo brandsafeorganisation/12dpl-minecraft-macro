@@ -108,6 +108,7 @@ void game_panel_notice(Draw_Box p_box, Text p_title, Text p_line)
 
   Get_time(l_now);
   Start_batch_draw(p_box);
+  render_forget_colour();
   font_apply(p_box, settings_font(g_settings));
   menu_background(p_box, l_w, l_h, FALSE, l_now);
   hud_shadow_text(p_box, l_w / 2.0, l_h / 2.0 + 30.0, 18.0, TEXT_ALIGN_CENTRE, 255, 255, 255, p_title);
@@ -176,6 +177,7 @@ void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real
   l_h = l_height;
 
   Start_batch_draw(p_box);
+  render_forget_colour();
   font_apply(p_box, settings_font(g_settings));
   if (ui_screen(g_ui) != SCREEN_NONE) {
     // the screen over the world, darkened
@@ -581,7 +583,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
     } else if (l_id == Get_id64(p_keys)) {
       // ------------------------------------------------ keyboard
       if (l_cmd == "keystroke") {
-        l_key = Text_lower(l_msg);
+        l_key = key_name(l_msg);
         l_last_input = l_now;
         // Escape works as Q, except while typing a chat line
         if (l_key == "escape" && !l_chatting) l_key = "q";
@@ -592,10 +594,8 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
           if (l_key == "escape") {
             l_chatting = FALSE;
             l_chat     = "";
-          } else if (l_key == "backspace") {
-            if (Text_length(l_chat) > 0) l_chat = Get_subtext(l_chat, 1, Text_length(l_chat) - 1);
-          } else if (Text_length(l_msg) == 1) {
-            l_chat = l_chat + l_msg;
+          } else {
+            l_chat = text_after_key(l_chat, l_msg, CHAT_LONGEST);
           }
           hud_set_chat_input(g_hud, l_chatting, l_chat);
         } else if (ui_screen(g_ui) == SCREEN_CREATIVE) {
@@ -605,7 +605,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
             game_panel_dispatch(l_now);
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
           } else {
-            ui_type_search(g_ui, l_key);
+            ui_type_search(g_ui, l_msg);
           }
         } else if (ui_screen(g_ui) != SCREEN_NONE) {
           if (l_key == "e" || l_key == "q") {

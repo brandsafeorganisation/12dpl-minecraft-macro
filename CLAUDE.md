@@ -134,7 +134,17 @@ Things learned the hard way:
   when changing `game_panel.4dm`'s capture code.
 - Scenarios drive the menus with `ui <label>`, `field <label>|<text>` and
   `slide <label>|<f>` (harness README). Menus redraw only on hover changes
-  or every 0.1 s, so `wait 4` after a menu `snap`.
+  or when the panorama turns a cell, so `wait 4` after a menu `snap`.
+- Text alignment modes are Windows' TA_* flags (12d passes them on):
+  `TEXT_ALIGN_CENTRE` is 6 (top centre). The tools follow the flags.
+- 12d sends keys that type nothing as control characters (Backspace 8,
+  Ctrl+Backspace 127, Escape 27): read keys with `key_name()` and edit
+  text with `text_after_key()`. The harness's `key bs` / `key ctrlbs`
+  send them.
+- Every 12d draw call costs about as much as a polygon. `[snap]` lines
+  print polygons, draw calls and record calls per frame: check them
+  after a drawing change. `render_set_colour` skips a colour that is
+  already set, so draw things of one colour together.
 
 ### The one panel
 

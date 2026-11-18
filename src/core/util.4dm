@@ -277,4 +277,81 @@ Integer text_is_safe_name(Text p_name)
   return TRUE;
 }
 
+// ---------------------------------------------------------------- typed keys
+
+Text key_name(Text p_msg)
+// ----------------------------------------------------------------
+// The name of a key from a "keystroke" event's message, lower case.
+// 12d sends a key that types nothing as a control character:
+// Backspace is character 8, Ctrl+Backspace 127, Escape 27 and Enter
+// 13; they are named "backspace", "backspace_word", "escape" and
+// "enter" (the Windows build and the test harness send the names).
+// Any other key is its character in lower case.
+// ----------------------------------------------------------------
+{
+  Integer l_code = 0;
+
+  if (Text_length(p_msg) != 1) return Text_lower(p_msg);
+  Get_char(p_msg, 1, l_code);
+  if (l_code == KEY_CODE_BACKSPACE) return "backspace";
+  if (l_code == KEY_CODE_DELETE_WORD) return "backspace_word";
+  if (l_code == KEY_CODE_ESCAPE) return "escape";
+  if (l_code == KEY_CODE_ENTER) return "enter";
+  return Text_lower(p_msg);
+}
+
+Integer key_is_text(Text p_msg)
+// ----------------------------------------------------------------
+// TRUE if a keystroke's message is one character that types
+// something (not a control character)
+// ----------------------------------------------------------------
+{
+  Integer l_code = 0;
+
+  if (Text_length(p_msg) != 1) return FALSE;
+  Get_char(p_msg, 1, l_code);
+  if (l_code < 32 || l_code == KEY_CODE_DELETE_WORD) return FALSE;
+  return TRUE;
+}
+
+Text text_without_last_word(Text p_text)
+// ----------------------------------------------------------------
+// Ctrl+Backspace: the text without its last word (and the spaces
+// after it), as Windows does
+// ----------------------------------------------------------------
+{
+  Integer l_end = Text_length(p_text);
+
+  while (l_end > 0) {
+    if (Get_subtext(p_text, l_end, l_end) != " ") break;
+    --l_end;
+  }
+  while (l_end > 0) {
+    if (Get_subtext(p_text, l_end, l_end) == " ") break;
+    --l_end;
+  }
+  if (l_end <= 0) return "";
+  return Get_subtext(p_text, 1, l_end);
+}
+
+Text text_after_key(Text p_text, Text p_msg, Integer p_longest)
+// ----------------------------------------------------------------
+// A line of text after a key is typed at its end: Backspace rubs
+// out the last character, Ctrl+Backspace the last word, a character
+// (as typed, so capitals stay) goes on the end unless the text is
+// already p_longest long; other keys change nothing
+// ----------------------------------------------------------------
+{
+  Text l_key = key_name(p_msg);
+
+  if (l_key == "backspace") {
+    if (Text_length(p_text) > 0) return Get_subtext(p_text, 1, Text_length(p_text) - 1);
+    return p_text;
+  }
+  if (l_key == "backspace_word") return text_without_last_word(p_text);
+  if (!key_is_text(p_msg)) return p_text;
+  if (Text_length(p_text) >= p_longest) return p_text;
+  return p_text + p_msg;
+}
+
 #endif

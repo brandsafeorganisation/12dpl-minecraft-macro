@@ -17,8 +17,12 @@
 #define TOAST_SECONDS       3.0
 #define MAX_CHAT_LINES      8     // chat lines kept (shown while typing)
 #define CHAT_SECONDS        10.0  // a chat line shows this long otherwise
+#define CHAT_LONGEST        200   // characters a chat line takes
+// Text alignment modes are Windows' (TA_* flags, which 12d passes on):
+// 0 is TA_TOP | TA_LEFT, 6 is TA_TOP | TA_CENTER. (30 would be
+// TA_BASELINE | TA_CENTER, which puts the text above y.)
 #define TEXT_ALIGN_LEFT     0     // top left of the text at (x, y)
-#define TEXT_ALIGN_CENTRE   30    // top centre of the text at (x, y)
+#define TEXT_ALIGN_CENTRE   6     // top centre of the text at (x, y)
 #define ICON_QUICK          0     // block icons as 2 x 2 colours (hotbar, hand)
 #define ICON_FULL           1     // block icons with their whole 16 x 16 texture
 #define SLOT_STYLE_DARK     0     // hotbar slots over the world

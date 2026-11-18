@@ -143,7 +143,8 @@
 #define PANO_ROWS            96
 #define PANO_CELLS           61440
 #define PANO_COLOURS         64
-#define PANO_SPEED           3.0
+#define PANO_SPEED           3.0      // a redraw for each whole cell turned, so 3 a second
+#define PANO_DRAWN_RUNS      12000    // runs of one colour drawn at most (a 4K screen needs ~9000)
 
 /*Global variables*/ {
   Integer g_pano_ready = 0;
@@ -151,6 +152,13 @@
   Integer g_pano_r[PANO_COLOURS];
   Integer g_pano_g[PANO_COLOURS];
   Integer g_pano_b[PANO_COLOURS];
+  // the runs of one colour found on screen this frame, chained per
+  // colour so each colour is set once (menu_draw_panorama)
+  Integer g_pano_run_first[PANO_COLOURS];
+  Integer g_pano_run_next [PANO_DRAWN_RUNS];
+  Integer g_pano_run_row  [PANO_DRAWN_RUNS];
+  Integer g_pano_run_start[PANO_DRAWN_RUNS];
+  Integer g_pano_run_end  [PANO_DRAWN_RUNS];
 }
 
 void    menu_clear          (Attributes &p_menu);

@@ -98,6 +98,7 @@
   Real    g_view_now          = 0.0;   // clock for animation (water shimmer)  // time of day, 0 sunrise, 0.25 noon, 0.5 sunset, 0.75 midnight
   Real    g_box_light         = 1.0;   // light of the entity being queued
   Real    g_view_shade        = 1.0;   // every colour is multiplied by this (dims the world behind menus)
+  Integer g_view_colour = -1;   // the pen and fill colour set last (r * 65536 + g * 256 + b), -1 if not known
 
   // The boxes of the animal being queued (render_mob_begin .. end)
   Real    g_mob_x      = 0.0;
@@ -246,6 +247,7 @@
 
 void    render_init            ();
 void    render_set_detail      (Integer p_level);
+void    render_forget_colour   ();
 void    render_set_colour      (Draw_Box p_box, Real p_red, Real p_green, Real p_blue);
 void    render_set_shade       (Real p_shade);
 void    render_set_face_colour (Draw_Box p_box, Real p_red, Real p_green, Real p_blue);

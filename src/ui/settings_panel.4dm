@@ -82,6 +82,7 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
       l_w = l_width;
       l_h = l_height;
       Start_batch_draw(p_box);
+      render_forget_colour();
       font_apply(p_box, settings_font(p_settings));
       if (p_in_game) {
         game_panel_backdrop(p_box, l_w, l_h, l_now);
@@ -138,11 +139,16 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         } else if (menu_widget_of(g_menu, l_drag) > 0) {
           settings_slider(p_settings, l_drag, menu_slider_value_at(g_menu, menu_widget_of(g_menu, l_drag), l_x, l_y));
         }
-        l_want_frame = TRUE;
+        // a drag redraws at most every MENU_DRAG_GAP (a frame can
+        // cost more than the mouse's events come); letting go draws
+        // where it ended
+        if (l_cmd == "click_lb_down" || l_now - l_last_frame >= MENU_DRAG_GAP) l_want_frame = TRUE;
         continue;
       }
       if (l_cmd == "mouse_move") {
-        if (l_widget != l_hover || l_now - l_last_frame > MENU_FRAME_GAP) l_want_frame = TRUE;
+        // the title screen's panorama turns; the world behind the
+        // in-game options stands still
+        if (l_widget != l_hover || (!p_in_game && menu_turned(l_last_frame, l_now))) l_want_frame = TRUE;
         l_hover = l_widget;
         continue;
       }
@@ -163,7 +169,7 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
     } else if (l_event_id == Get_id64(p_keys)) {
       // ------------------------------------------------ keys
       if (l_cmd == "keystroke") {
-        l_key = Text_lower(l_msg);
+        l_key = key_name(l_msg);
         Set_data(p_keys, "");
         l_want_frame = TRUE;
         if (l_key == "escape") {
