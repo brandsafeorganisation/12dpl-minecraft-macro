@@ -74,6 +74,7 @@ void crafting_init_book(Attributes &p_book)
   crafting_add_recipe(p_book, ITEM_IRON_CHESTPLATE,1, 3, 3, "A.AAAAAAA", ITEM_IRON_INGOT , ITEM_NONE );
   crafting_add_recipe(p_book, ITEM_IRON_LEGGINGS , 1, 3, 3, "AAAA.AA.A", ITEM_IRON_INGOT , ITEM_NONE );
   crafting_add_recipe(p_book, ITEM_IRON_BOOTS    , 1, 3, 2, "A.AA.A"   , ITEM_IRON_INGOT , ITEM_NONE );
+  crafting_add_recipe(p_book, ITEM_FLINT_AND_STEEL,1, 2, 1, "AB"       , ITEM_IRON_INGOT , ITEM_FLINT);
 }
 
 Integer crafting_recipe_count(Attributes &p_book)

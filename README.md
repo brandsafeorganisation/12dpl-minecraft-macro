@@ -135,6 +135,43 @@ moves you for a moment and holding the key keeps you moving. Space keeps your
 current movement going so you can run and jump, and auto-jump (on by default)
 hops up one-block steps for you.
 
+## The Nether
+
+A second dimension under a red haze: a great cavern of netherrack
+between a bedrock floor and roof, with a lava sea, hills and pillars,
+patches of soul sand (it slows you down), glowstone hanging from the
+roof and nether quartz ore.
+
+1. **Obsidian.** Deep underground (y 6 to 14) there are pools of lava
+   in small hollows, with a rim of obsidian where the lava has cooled.
+   Obsidian takes 20 hits with an iron pickaxe (nothing less collects
+   it).
+2. **Flint and steel.** Gravel sometimes drops flint (about 1 in 7);
+   craft it with an iron ingot.
+3. **The portal.** Build an obsidian frame standing up, its inside 2 x 3
+   (up to 10 x 10; the corners can be left out), and right-click its
+   inside with flint and steel. Stand in the purple portal for 4
+   seconds (1 in creative) to go through.
+
+You come out at the same place across (the world is too small for the
+block game's 1 : 8), in the portal you last used there, the nearest
+portal, or a new one built for you on an obsidian ledge. Walk back in
+to go home. Breaking any of a portal's frame puts it out.
+
+- Lava burns (4 damage every half second in survival); you can swim in
+  it slowly, and place blocks into it.
+- Glowstone gives light; the Nether is lit evenly and dimly everywhere.
+- No animals or zombies come in the Nether; mobs, items on the ground,
+  furnaces and chests stay in the dimension they are in (furnaces only
+  cook while you are in theirs). You can't sleep there; if you die you
+  respawn in the overworld.
+- A world saved in the Nether opens there. The dimension you're not in
+  is kept as its changed blocks and made again from the seed when you
+  go back.
+- In multiplayer, you only see the players and block changes of the
+  dimension you are in; changes made in the other one while you're
+  away aren't kept.
+
 ## Multiplayer
 
 12dPL can't open network connections, so copies of the game talk through
@@ -315,6 +352,8 @@ it: it loads the chosen file for itself, then and every time it starts.
   hearts; each point takes 1/25 off a zombie's hit, so a full set turns 3
   damage into 1. Every hit wears every piece (165, 240, 225 and 195 hits).
   You wear it on your model too (V).
+- **The Nether:** obsidian, flint and steel and a portal take you
+  there (see The Nether below).
 - **Spawn eggs:** a cow, pig and zombie egg in the creative inventory.
   Right-click a block to put the mob on it; in creative the egg isn't
   used up.
@@ -341,6 +380,7 @@ it: it loads the chosen file for itself, then and every time it starts.
   | iron chestplate   | 8 iron ingots: the 3 x 3 grid without the top middle |
   | iron leggings     | 7 iron ingots: the 3 x 3 grid without the middle and bottom middle |
   | iron boots        | 4 iron ingots: 2 under each other at each side   |
+  | flint and steel   | an iron ingot beside a flint                     |
 
 - **Furnace:** has input, fuel and output slots. It cooks beef, bakes
   cobblestone into stone and sand into glass, smelts iron ore into iron

@@ -376,6 +376,21 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
       game_update(l_dt, l_real_dt, l_frame_start, l_playing, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces,
                   g_cows, g_drops, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
 
+      // Through a portal: the other dimension is made while a notice
+      // says where you are going
+      if (player_wants_travel(g_player)) {
+        if (world_dimension() == DIM_NETHER) {
+          game_panel_notice(p_box, "Leaving the Nether", "Building the overworld");
+        } else {
+          game_panel_notice(p_box, "Entering the Nether", "Building the Nether");
+        }
+        game_travel(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
+        game_panel_dispatch(l_frame_start);
+        game_build_nearby(g_player, settings_render_distance(g_settings));
+        Get_time(l_frame_start);
+        l_last_frame = l_frame_start;
+      }
+
       // The world's picture for the world list, a couple of seconds in
       if (l_playing && l_played < THUMB_AFTER_SECONDS) {
         l_played = l_played + l_real_dt;
@@ -573,7 +588,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         } else if (l_calibration == 2) {
           hud_toast(g_hud, "Couldn't grab the mouse: try moving the panel, then click again", l_now);
         } else {
-          if (player_is_dead(g_player)) game_respawn(g_info, g_player, g_events);
+          if (player_is_dead(g_player)) game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
           l_start_request  = TRUE;
           l_start_by_click = TRUE;
         }
@@ -615,7 +630,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
           }
         } else if (player_is_dead(g_player)) {
           if (l_key == "r") {
-            game_respawn(g_info, g_player, g_events);
+            game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
           }
         } else {

@@ -16,8 +16,20 @@ Integer block_is_solid(Integer p_block)
 {
   if (p_block == BLOCK_AIR   ) return FALSE;
   if (p_block == BLOCK_WATER ) return FALSE;
+  if (p_block == BLOCK_LAVA  ) return FALSE;
+  if (p_block == BLOCK_PORTAL) return FALSE;
   if (block_is_plant(p_block)) return FALSE;
   return TRUE;
+}
+
+Integer block_is_liquid(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for water and lava: you swim in them
+// ----------------------------------------------------------------
+{
+  if (p_block == BLOCK_WATER) return TRUE;
+  if (p_block == BLOCK_LAVA ) return TRUE;
+  return FALSE;
 }
 
 Integer block_is_plant(Integer p_block)
@@ -238,6 +250,8 @@ Integer block_light_emission(Integer p_block)
 {
   if (p_block == BLOCK_TORCH) return TORCH_LIGHT;
   if (block_furnace_is_lit(p_block)) return FURNACE_LIGHT;
+  if (p_block == BLOCK_GLOWSTONE) return GLOWSTONE_LIGHT;
+  if (p_block == BLOCK_PORTAL) return PORTAL_LIGHT;
   return 0;
 }
 
@@ -249,6 +263,7 @@ Integer block_is_see_through(Integer p_block)
 // ----------------------------------------------------------------
 {
   if (p_block == BLOCK_GLASS) return TRUE;
+  if (p_block == BLOCK_PORTAL) return TRUE;
   return FALSE;
 }
 
@@ -261,6 +276,8 @@ Integer block_hides_faces(Integer p_block)
 {
   if (block_is_see_through(p_block)) return FALSE;
   if (block_is_shaped(p_block)) return FALSE;
+  // lava is opaque: it hides what is behind it like a solid block
+  if (p_block == BLOCK_LAVA) return TRUE;
   return block_is_solid(p_block);
 }
 
@@ -341,6 +358,8 @@ Integer block_hand_hits(Integer p_block)
 {
   if (p_block == BLOCK_BEDROCK       ) return 0;
   if (p_block == BLOCK_WATER         ) return 0;
+  if (p_block == BLOCK_LAVA          ) return 0;
+  if (p_block == BLOCK_PORTAL        ) return 0;
   if (p_block == BLOCK_AIR           ) return 0;
   if (block_is_plant(p_block)       ) return 1;
   if (p_block == BLOCK_LEAVES        ) return 1;
@@ -360,6 +379,11 @@ Integer block_hand_hits(Integer p_block)
   if (p_block == BLOCK_SANDSTONE     ) return 6;
   if (p_block == BLOCK_COAL_ORE      ) return 10;
   if (p_block == BLOCK_IRON_ORE      ) return 12;
+  if (p_block == BLOCK_NETHERRACK    ) return 3;
+  if (p_block == BLOCK_SOUL_SAND     ) return 3;
+  if (p_block == BLOCK_GLOWSTONE     ) return 2;
+  if (p_block == BLOCK_QUARTZ_ORE    ) return 10;
+  if (p_block == BLOCK_OBSIDIAN      ) return 120;   // 20 hits with an iron pickaxe
   return 8;
 }
 
@@ -385,6 +409,10 @@ Integer block_tool_kind(Integer p_block)
   if (p_block == BLOCK_COAL_ORE      ) return TOOL_PICKAXE;
   if (p_block == BLOCK_IRON_ORE      ) return TOOL_PICKAXE;
   if (block_is_furnace(p_block)      ) return TOOL_PICKAXE;
+  if (p_block == BLOCK_NETHERRACK    ) return TOOL_PICKAXE;
+  if (p_block == BLOCK_QUARTZ_ORE    ) return TOOL_PICKAXE;
+  if (p_block == BLOCK_OBSIDIAN      ) return TOOL_PICKAXE;
+  if (p_block == BLOCK_SOUL_SAND     ) return TOOL_SHOVEL;
   return TOOL_NONE;
 }
 
@@ -401,10 +429,12 @@ Integer block_needs_tool(Integer p_block)
 Integer block_tier_needed(Integer p_block)
 // ----------------------------------------------------------------
 // The lowest tool tier that collects a block: iron ore needs a stone
-// pickaxe or better, everything else any tier of its tool
+// pickaxe or better, obsidian an iron one (there are no diamonds),
+// everything else any tier of its tool
 // ----------------------------------------------------------------
 {
   if (p_block == BLOCK_IRON_ORE) return TIER_STONE;
+  if (p_block == BLOCK_OBSIDIAN) return TIER_IRON;
   return TIER_WOOD;
 }
 
@@ -450,6 +480,9 @@ Integer block_drop_item(Integer p_block, Integer p_tool_item)
   if (p_block == BLOCK_TALL_GRASS) return ITEM_NONE;
   if (p_block == BLOCK_DEAD_BUSH ) return ITEM_STICK;
   if (p_block == BLOCK_WATER   ) return ITEM_NONE;
+  if (p_block == BLOCK_LAVA    ) return ITEM_NONE;
+  if (p_block == BLOCK_PORTAL  ) return ITEM_NONE;
+  if (p_block == BLOCK_QUARTZ_ORE) return ITEM_NETHER_QUARTZ;
   if (p_block == BLOCK_AIR     ) return ITEM_NONE;
   if (p_block == BLOCK_BEDROCK ) return ITEM_NONE;
   if (block_is_furnace(p_block)) return ITEM_FURNACE;
@@ -497,6 +530,13 @@ Integer block_face_texture(Integer p_block, Integer p_direction)
   if (p_block == BLOCK_IRON_ORE   ) return TEX_IRON_ORE;
   if (p_block == BLOCK_GRAVEL     ) return TEX_GRAVEL;
   if (p_block == BLOCK_GLASS      ) return TEX_GLASS;
+  if (p_block == BLOCK_OBSIDIAN   ) return TEX_OBSIDIAN;
+  if (p_block == BLOCK_NETHERRACK ) return TEX_NETHERRACK;
+  if (p_block == BLOCK_SOUL_SAND  ) return TEX_SOUL_SAND;
+  if (p_block == BLOCK_GLOWSTONE  ) return TEX_GLOWSTONE;
+  if (p_block == BLOCK_QUARTZ_ORE ) return TEX_QUARTZ_ORE;
+  if (p_block == BLOCK_LAVA       ) return TEX_LAVA;
+  if (p_block == BLOCK_PORTAL     ) return TEX_PORTAL;
 
   if (p_block == BLOCK_CHEST) {
     if (p_direction == DIR_PY || p_direction == DIR_NY) return TEX_CHEST_TOP;
@@ -611,6 +651,14 @@ Text item_name(Integer p_item)
   if (p_item == ITEM_COW_SPAWN_EGG  ) return "Cow Spawn Egg";
   if (p_item == ITEM_PIG_SPAWN_EGG  ) return "Pig Spawn Egg";
   if (p_item == ITEM_ZOMBIE_SPAWN_EGG) return "Zombie Spawn Egg";
+  if (p_item == ITEM_OBSIDIAN       ) return "Obsidian";
+  if (p_item == ITEM_NETHERRACK     ) return "Netherrack";
+  if (p_item == ITEM_SOUL_SAND      ) return "Soul Sand";
+  if (p_item == ITEM_GLOWSTONE      ) return "Glowstone";
+  if (p_item == ITEM_QUARTZ_ORE     ) return "Nether Quartz Ore";
+  if (p_item == ITEM_FLINT          ) return "Flint";
+  if (p_item == ITEM_FLINT_AND_STEEL) return "Flint and Steel";
+  if (p_item == ITEM_NETHER_QUARTZ  ) return "Nether Quartz";
   return "";
 }
 
@@ -620,6 +668,7 @@ Integer item_places_block(Integer p_item)
 // Furnaces are turned to face the player when placed
 // ----------------------------------------------------------------
 {
+  if (p_item >= FIRST_NETHER_ITEM && p_item <= LAST_NETHER_ITEM) return p_item;
   if (p_item < ITEM_BEDROCK   ) return BLOCK_AIR;
   if (p_item > MAX_BLOCK_ID   ) return BLOCK_AIR;
   if (p_item == BLOCK_WATER   ) return BLOCK_AIR;
@@ -646,6 +695,7 @@ Integer item_max_stack(Integer p_item)
 {
   if (item_tool_kind(p_item) != TOOL_NONE) return 1;
   if (item_armour_place(p_item) != ARMOUR_NONE) return 1;
+  if (p_item == ITEM_FLINT_AND_STEEL) return 1;
   return MAX_STACK;
 }
 
@@ -681,6 +731,7 @@ Integer item_max_uses(Integer p_item)
 // for items that don't wear
 // ----------------------------------------------------------------
 {
+  if (p_item == ITEM_FLINT_AND_STEEL) return 64;
   if (p_item == ITEM_IRON_HELMET    ) return 165;
   if (p_item == ITEM_IRON_CHESTPLATE) return 240;
   if (p_item == ITEM_IRON_LEGGINGS  ) return 225;
@@ -836,6 +887,9 @@ Integer item_sprite_texture(Integer p_item)
   if (p_item == ITEM_COW_SPAWN_EGG  ) return TEX_ITEM_COW_SPAWN_EGG;
   if (p_item == ITEM_PIG_SPAWN_EGG  ) return TEX_ITEM_PIG_SPAWN_EGG;
   if (p_item == ITEM_ZOMBIE_SPAWN_EGG) return TEX_ITEM_ZOMBIE_SPAWN_EGG;
+  if (p_item == ITEM_FLINT          ) return TEX_ITEM_FLINT;
+  if (p_item == ITEM_FLINT_AND_STEEL) return TEX_ITEM_FLINT_AND_STEEL;
+  if (p_item == ITEM_NETHER_QUARTZ  ) return TEX_ITEM_NETHER_QUARTZ;
   return block_plant_texture(p_item);
 }
 

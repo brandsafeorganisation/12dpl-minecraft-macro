@@ -22,6 +22,7 @@
 #define ATTR_CHEST_X        ("chest_x")
 #define ATTR_CHEST_Y        ("chest_y")
 #define ATTR_CHEST_Z        ("chest_z")
+#define ATTR_CHEST_DIM      ("chest_dim")   // DIM_* the chest is in
 
 Integer chest_slot          (Integer p_chest, Integer p_which);
 Integer chest_used          (Attributes &p_store, Integer p_chest);

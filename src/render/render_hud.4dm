@@ -790,6 +790,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   if (player_spectator(p_player)) l_info = l_info + "   SPECTATOR";
   if (player_flying(p_player) && !player_spectator(p_player)) l_info = l_info + "   FLYING";
   if (player_crouching(p_player)) l_info = l_info + "   CROUCHING";
+  if (world_dimension() == DIM_NETHER) l_info = l_info + "   NETHER";
   if (player_auto_walk(p_player)) l_info = l_info + "   AUTO-WALK";
   if (!settings_flag(p_settings, ATTR_SET_AUTO_JUMP)) l_info = l_info + "   auto-jump off";
   hud_text(p_box, 8.0, l_strip - 5.0, 11.0, TEXT_ALIGN_LEFT, 170, 176, 186, l_info);
@@ -888,6 +889,23 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   if (l_hurt > 0.0 && !l_dead) {
     l_edge = 4.0 + l_hurt * 24.0;
     render_set_colour(p_box, 200.0, 16.0, 16.0);
+    render_fill_rect(p_box, 0.0, l_strip, p_w, l_strip + l_edge);
+    render_fill_rect(p_box, 0.0, p_h - l_edge, p_w, p_h);
+    render_fill_rect(p_box, 0.0, l_strip, l_edge, p_h);
+    render_fill_rect(p_box, p_w - l_edge, l_strip, p_w, p_h);
+  }
+
+  // A portal's purple closing in while you stand in it, lava's orange
+  l_edge = 0.0;
+  if (player_portal_time(p_player) > 0.0 && !l_dead) {
+    l_edge = 6.0 + 90.0 * clamp_real(player_portal_time(p_player) / PORTAL_SECONDS, 0.0, 1.0);
+    render_set_colour(p_box, 128.0, 52.0, 210.0);
+  }
+  if (player_in_lava(p_player) && !l_dead) {
+    l_edge = 40.0;
+    render_set_colour(p_box, 236.0, 110.0, 20.0);
+  }
+  if (l_edge > 0.0) {
     render_fill_rect(p_box, 0.0, l_strip, p_w, l_strip + l_edge);
     render_fill_rect(p_box, 0.0, p_h - l_edge, p_w, p_h);
     render_fill_rect(p_box, 0.0, l_strip, l_edge, p_h);

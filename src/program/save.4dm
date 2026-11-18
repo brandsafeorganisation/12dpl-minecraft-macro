@@ -26,8 +26,9 @@ void save_clear_edits()
 // Forget every recorded block change (new or freshly loaded world)
 // ----------------------------------------------------------------
 {
-  g_edit_count    = 0;
-  g_edit_overflow = 0;
+  g_edit_count       = 0;
+  g_edit_overflow    = 0;
+  g_other_edit_count = 0;
 }
 
 void save_record_edit(Integer p_index, Integer p_block)
@@ -52,6 +53,64 @@ void save_record_edit(Integer p_index, Integer p_block)
   ++g_edit_count;
   g_edit_index[g_edit_count] = p_index;
   g_edit_block[g_edit_count] = p_block;
+}
+
+void save_record_other_edit(Integer p_index, Integer p_block)
+// ----------------------------------------------------------------
+// A block change of the other dimension, read from a world file
+// ----------------------------------------------------------------
+{
+  if (g_other_edit_count >= MAX_EDITS) return;
+  ++g_other_edit_count;
+  g_other_edit_index[g_other_edit_count] = p_index;
+  g_other_edit_block[g_other_edit_count] = p_block;
+}
+
+void save_swap_edits()
+// ----------------------------------------------------------------
+// Going through a portal: this dimension's changes are put away and
+// the other dimension's become the ones being recorded
+// ----------------------------------------------------------------
+{
+  Integer l_edit  = 0;
+  Integer l_count = max_integer(g_edit_count, g_other_edit_count);
+  Integer l_keep  = 0;
+
+  for (l_edit = 1; l_edit <= l_count; ++l_edit) {
+    l_keep = g_edit_index[l_edit];
+    g_edit_index[l_edit] = g_other_edit_index[l_edit];
+    g_other_edit_index[l_edit] = l_keep;
+    l_keep = g_edit_block[l_edit];
+    g_edit_block[l_edit] = g_other_edit_block[l_edit];
+    g_other_edit_block[l_edit] = l_keep;
+  }
+  l_keep = g_edit_count;
+  g_edit_count = g_other_edit_count;
+  g_other_edit_count = l_keep;
+  g_edit_overflow = 0;
+}
+
+void save_apply_edits()
+// ----------------------------------------------------------------
+// Put the recorded changes into the freshly generated blocks (after
+// a portal), with the light of any torches and glowstone among them
+// ----------------------------------------------------------------
+{
+  Integer l_edit = 0;
+  Integer l_x    = 0;
+  Integer l_y    = 0;
+  Integer l_z    = 0;
+
+  for (l_edit = 1; l_edit <= g_edit_count; ++l_edit) {
+    world_cell_of_index(g_edit_index[l_edit], l_x, l_y, l_z);
+    world_set_block(l_x, l_y, l_z, g_edit_block[l_edit]);
+  }
+  world_finish_maps();
+  for (l_edit = 1; l_edit <= g_edit_count; ++l_edit) {
+    if (block_light_emission(g_edit_block[l_edit]) == 0) continue;
+    world_cell_of_index(g_edit_index[l_edit], l_x, l_y, l_z);
+    world_light_update(l_x, l_y, l_z);
+  }
 }
 
 void save_on_event(Attributes &p_event)
@@ -700,6 +759,7 @@ Integer save_world_to(Text p_path, Text p_name, Attributes &p_info, Attributes &
       File_write_line(l_file, "thumb " + To_text(l_row) + " " + l_line);
     }
   }
+  File_write_line(l_file, "dimension " + To_text(world_dimension()));
   File_write_line(l_file, "seed " + To_text(world_info_seed(p_info)));
 
   save_write_record(l_file, RECORD_WORLD,     p_info);
@@ -715,6 +775,19 @@ Integer save_world_to(Text p_path, Text p_name, Attributes &p_info, Attributes &
   for (l_edit = 1; l_edit <= g_edit_count; ++l_edit) {
     if (l_on_row == 0) l_line = "edits";
     l_line = l_line + " " + To_text(g_edit_index[l_edit]) + " " + To_text(g_edit_block[l_edit]);
+    ++l_on_row;
+    if (l_on_row >= EDITS_PER_LINE) {
+      File_write_line(l_file, l_line);
+      l_on_row = 0;
+    }
+  }
+  if (l_on_row > 0) File_write_line(l_file, l_line);
+
+  // and the other dimension's
+  l_on_row = 0;
+  for (l_edit = 1; l_edit <= g_other_edit_count; ++l_edit) {
+    if (l_on_row == 0) l_line = "other_edits";
+    l_line = l_line + " " + To_text(g_other_edit_index[l_edit]) + " " + To_text(g_other_edit_block[l_edit]);
     ++l_on_row;
     if (l_on_row >= EDITS_PER_LINE) {
       File_write_line(l_file, l_line);
@@ -800,6 +873,7 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
   Integer      l_fy       = 0;
   Integer      l_fz       = 0;
   Integer      l_seeded   = FALSE;
+  Integer      l_dimension = DIM_OVERWORLD;
 
   p_problem = "";
   if (!File_exists(p_path)) {
@@ -853,8 +927,11 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
         g_thumb_now[(l_index - 1) * THUMB_SIZE + l_word] = save_hex_value(l_target, (l_word - 1) * 6 + 1, 6);
       }
       if (l_index == THUMB_SIZE) g_thumb_ready = 1;
+    } else if (l_key == "dimension" && l_count >= 2) {
+      l_dimension = save_word_integer(l_words, 2);
+      if (l_dimension != DIM_NETHER) l_dimension = DIM_OVERWORLD;
     } else if (l_key == "seed" && l_count >= 2) {
-      world_generate(p_info, save_word_integer(l_words, 2));
+      world_generate_dimension(p_info, save_word_integer(l_words, 2), l_dimension);
       mesh_reset();
       player_reset(p_player, 0.0, 0.0, 0.0);
       l_seeded = TRUE;
@@ -877,6 +954,12 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
         world_cell_of_index(l_index, l_cell_x, l_cell_y, l_cell_z);
         world_set_block(l_cell_x, l_cell_y, l_cell_z, l_block);
         mesh_mark_dirty(l_cell_x, l_cell_y, l_cell_z);
+      }
+    } else if (l_key == "other_edits") {
+      for (l_word = 2; l_word + 1 <= l_count; l_word = l_word + 2) {
+        l_index = save_word_integer(l_words, l_word);
+        if (l_index < 1 || l_index > WORLD_CELLS) continue;
+        save_record_other_edit(l_index, save_word_integer(l_words, l_word + 1));
       }
     }
   }
@@ -903,7 +986,7 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
 
   // Furnaces that lost their block (shouldn't happen) are forgotten
   for (l_furnace = 1; l_furnace <= MAX_FURNACES; ++l_furnace) {
-    if (!furnace_used(p_furnaces, l_furnace)) continue;
+    if (!furnace_here(p_furnaces, l_furnace)) continue;
     furnace_cell(p_furnaces, l_furnace, l_fx, l_fy, l_fz);
     if (!block_is_furnace(world_get_block(l_fx, l_fy, l_fz))) furnace_set_used(p_furnaces, l_furnace, FALSE);
   }

@@ -1,0 +1,72 @@
+# The Nether: an overworld has lava pools with obsidian rims; flint
+# and steel lights an obsidian frame; standing in the portal takes you
+# to the Nether (a portal is built there), which has netherrack, a lava
+# sea, soul sand, glowstone and quartz; lava burns in survival; a world
+# saved in the Nether loads in it; back through, the overworld's
+# changes are still there; breaking the frame puts the portal out
+ui Singleplayer
+ui Create New World
+field World Name|Nether
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call nether_stats
+call to_meadow
+call noon
+call no_mobs
+call obsidian_frame
+wait 2
+call hold_flint_and_steel
+caprclick
+wait 2
+call portals
+snap 320_portal_lit
+wait 2
+call creative
+call into_portal
+wait 20
+call portals
+wait 30
+call portals
+call nether_stats
+wait 3
+snap 321_nether_arrived
+wait 2
+call nether_overlook
+wait 3
+snap 322_nether_view
+wait 2
+call out_of_portal
+wait 3
+call portals
+call survival
+call into_lava
+wait 20
+call portals
+snap 323_in_lava
+wait 2
+call creative
+call back_to_portal
+wait 3
+key q
+ui Save and Quit to Title
+ui Singleplayer
+field #15|Nether
+ui row:Nether
+ui Play Selected World
+wait 2
+click 430 300
+wait 2
+call portals
+call into_portal
+wait 45
+call portals
+call nether_stats
+snap 324_back_home
+wait 2
+call break_frame
+wait 3
+call portals
+quit

@@ -60,6 +60,11 @@
 #define ATTR_CROUCHING           ("crouching")         // crouched this frame
 #define ATTR_PLAYER_BODY_YAW     ("body_yaw")          // which way the body faces (the head turns first)
 #define ATTR_PLAYER_STRIDE       ("stride")            // 0 standing .. 1 walking: how far the legs swing
+#define ATTR_PLAYER_IN_LAVA      ("in_lava")
+#define ATTR_PLAYER_LAVA_TIMER   ("lava_timer")        // time to the next burn
+#define ATTR_PLAYER_PORTAL_TIME  ("portal_time")       // seconds stood in a portal
+#define ATTR_PLAYER_PORTAL_DONE  ("portal_done")       // TRUE after going through, until out of the portal
+#define ATTR_PLAYER_TRAVEL       ("travel")            // TRUE: take the player through (game_travel)
 #define ATTR_MOVE_KEY            ("move_key")
 #define ATTR_MOVE_UNTIL          ("move_until")
 #define ATTR_MOVE_LAST           ("move_last")
@@ -146,6 +151,11 @@ Integer player_overlaps_cell   (Attributes &p_player, Integer p_x, Integer p_y, 
 void    player_wear_tool       (Attributes &p_player, Attributes &p_inventory, Attributes &p_events);
 void    player_primary_action  (Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events,
                                 Attributes &p_random, Real p_now);
+Integer player_in_lava         (Attributes &p_player);
+Real    player_portal_time     (Attributes &p_player);
+Integer player_wants_travel    (Attributes &p_player);
+void    player_arrived         (Attributes &p_player);
+void    player_lava_and_portal (Attributes &p_player, Attributes &p_events, Real p_x, Real p_y, Real p_z, Real p_dt);
 Integer player_use_slot        (Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Integer p_slot);
 void    player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Real p_now);
 Integer player_furnace_facing  (Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z);

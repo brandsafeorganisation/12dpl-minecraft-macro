@@ -680,6 +680,82 @@ void player_damage(Attributes &p_player, Attributes &p_events, Integer p_amount)
   }
 }
 
+Integer player_in_lava(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE while the player is in lava
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_PLAYER_IN_LAVA) == TRUE;
+}
+
+Real player_portal_time(Attributes &p_player)
+// ----------------------------------------------------------------
+// Seconds the player has stood in a portal (0 outside one)
+// ----------------------------------------------------------------
+{
+  return record_real(p_player, ATTR_PLAYER_PORTAL_TIME);
+}
+
+Integer player_wants_travel(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE once the player has stood in a portal long enough: the
+// controller then takes them through (game_travel)
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_PLAYER_TRAVEL) == TRUE;
+}
+
+void player_arrived(Attributes &p_player)
+// ----------------------------------------------------------------
+// The player has come through a portal: nothing more to do, and a
+// portal doesn't take them back until they have stepped out of it
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_player, ATTR_PLAYER_TRAVEL,      FALSE);
+  record_set_integer(p_player, ATTR_PLAYER_PORTAL_DONE, TRUE);
+  record_set_real   (p_player, ATTR_PLAYER_PORTAL_TIME, 0.0);
+  record_set_real   (p_player, ATTR_PLAYER_FALL_PEAK,   0.0);
+  player_set_velocity(p_player, 0.0, 0.0, 0.0);
+}
+
+void player_lava_and_portal(Attributes &p_player, Attributes &p_events, Real p_x, Real p_y, Real p_z, Real p_dt)
+// ----------------------------------------------------------------
+// Lava at the feet or body burns LAVA_DAMAGE every
+// LAVA_HURT_SECONDS (survival only, see player_damage). Standing in
+// a portal for PORTAL_SECONDS (PORTAL_QUICK_SECONDS outside survival)
+// asks to go through, once until the player steps out of it.
+// ----------------------------------------------------------------
+{
+  Integer l_cell_x  = floor_integer(p_x);
+  Integer l_cell_z  = floor_integer(p_z);
+  Integer l_feet    = world_get_block(l_cell_x, floor_integer(p_y + 0.2), l_cell_z);
+  Integer l_body    = world_get_block(l_cell_x, floor_integer(p_y + 1.2), l_cell_z);
+  Integer l_lava    = (l_feet == BLOCK_LAVA || l_body == BLOCK_LAVA) && !player_spectator(p_player);
+  Integer l_portal  = l_feet == BLOCK_PORTAL || l_body == BLOCK_PORTAL;
+  Real    l_timer   = record_real(p_player, ATTR_PLAYER_LAVA_TIMER) - p_dt;
+  Real    l_time    = player_portal_time(p_player);
+  Real    l_wait    = PORTAL_SECONDS;
+
+  record_set_integer(p_player, ATTR_PLAYER_IN_LAVA, l_lava);
+  if (l_lava && l_timer <= 0.0) {
+    l_timer = LAVA_HURT_SECONDS;
+    player_damage(p_player, p_events, LAVA_DAMAGE);
+  }
+  if (!l_lava) l_timer = 0.0;
+  record_set_real(p_player, ATTR_PLAYER_LAVA_TIMER, l_timer);
+
+  if (!l_portal) {
+    record_set_real   (p_player, ATTR_PLAYER_PORTAL_TIME, 0.0);
+    record_set_integer(p_player, ATTR_PLAYER_PORTAL_DONE, FALSE);
+    return;
+  }
+  if (record_integer(p_player, ATTR_PLAYER_PORTAL_DONE) == TRUE) return;
+  if (!player_survival(p_player)) l_wait = PORTAL_QUICK_SECONDS;
+  l_time = l_time + p_dt;
+  record_set_real(p_player, ATTR_PLAYER_PORTAL_TIME, l_time);
+  if (l_time >= l_wait) record_set_integer(p_player, ATTR_PLAYER_TRAVEL, TRUE);
+}
+
 void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_auto_jump, Real p_dt, Real p_now)
 // ----------------------------------------------------------------
 // Walk, jump, swim, fall and collide; fall damage, regeneration
@@ -767,6 +843,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
 
   if (l_in_water) l_speed = l_speed * WATER_SPEED_FACTOR;
   if (l_flying)   l_speed = l_speed * FLY_SPEED_FACTOR;
+  if (l_on_ground && world_get_block(floor_integer(l_x), floor_integer(l_y - 0.1), floor_integer(l_z)) == BLOCK_SOUL_SAND) l_speed = l_speed * SOUL_SAND_SPEED;
   if (l_crouching) l_speed = l_speed * CROUCH_SPEED_FACTOR;
 
   l_wish_x = l_heading_x * l_forward - l_heading_z * l_strafe;
@@ -890,6 +967,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   player_set_position(p_player, l_x, l_y, l_z);
   player_set_velocity(p_player, l_vx, l_vy, l_vz);
   record_set_integer (p_player, ATTR_ON_GROUND,  l_on_ground);
+  player_lava_and_portal(p_player, p_events, l_x, l_y, l_z, p_dt);
   record_set_real    (p_player, ATTR_JUMP_UNTIL, l_jump_until);
 
   // Fall damage: measured from the highest point since leaving the
@@ -1104,7 +1182,7 @@ Integer player_cell_free(Attributes &p_player, Attributes &p_cows, Integer p_x, 
 
   if (!world_in_bounds(p_x, p_y, p_z)) return FALSE;
   l_existing = world_get_block(p_x, p_y, p_z);
-  if (l_existing != BLOCK_AIR && l_existing != BLOCK_WATER && !block_is_plant(l_existing)) return FALSE;
+  if (l_existing != BLOCK_AIR && !block_is_liquid(l_existing) && !block_is_plant(l_existing)) return FALSE;
   if (player_overlaps_cell(p_player, p_x, p_y, p_z)) return FALSE;
   if (cows_box_overlaps(p_cows, p_x, p_y, p_z, p_x + 1.0, p_y + 1.0, p_z + 1.0)) return FALSE;
   return TRUE;
@@ -1215,6 +1293,18 @@ Integer player_use_slot(Attributes &p_player, Attributes &p_inventory, Attribute
   player_target_cell  (p_player, l_x, l_y, l_z);
   player_target_normal(p_player, l_normal_x, l_normal_y, l_normal_z);
 
+  // Flint and steel lights a portal in an obsidian frame
+  if (l_held == ITEM_FLINT_AND_STEEL) {
+    if (player_target_kind(p_player) != TARGET_BLOCK) return FALSE;
+    record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
+    if (world_light_portal(p_events, l_x + l_normal_x, l_y + l_normal_y, l_z + l_normal_z)) {
+      if (slot_wear(p_inventory, p_slot)) emit_toast(p_events, item_name(l_held) + " broke");
+    } else {
+      emit_toast(p_events, "Flint and steel lights the inside of an obsidian frame (2 x 3 to 10 x 10)");
+    }
+    return TRUE;
+  }
+
   l_food = item_food_value(l_held);
   if (l_food > 0) {
     if (player_health(p_player) >= PLAYER_MAX_HEALTH) {
@@ -1255,7 +1345,7 @@ Integer player_use_slot(Attributes &p_player, Attributes &p_inventory, Attribute
   if (!world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) return FALSE;
 
   l_existing = world_get_block(l_cell_x, l_cell_y, l_cell_z);
-  if (l_existing != BLOCK_AIR && l_existing != BLOCK_WATER && !block_is_plant(l_existing)) return FALSE;
+  if (l_existing != BLOCK_AIR && !block_is_liquid(l_existing) && !block_is_plant(l_existing)) return FALSE;
 
   // A spawn egg puts its mob in that cell, facing the player; it is
   // used up except in creative mode

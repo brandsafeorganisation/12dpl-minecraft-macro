@@ -13,8 +13,8 @@
 // reference parameters afterwards and the seconds it took in p_out.
 // ----------------------------------------------------------------
 
-#define TEST_FUNCTION_COUNT     834
-#define TEST_MACRO_COUNT        802
+#define TEST_FUNCTION_COUNT     867
+#define TEST_MACRO_COUNT        835
 #define TEST_INTEGER_SLOTS      12
 #define TEST_REAL_SLOTS         13
 #define TEST_TEXT_SLOTS         6
@@ -117,6 +117,8 @@ void    test_registry_info_20 (Integer p_id, Attributes &p_info);
 void    test_registry_call_20 (Integer p_id, Attributes &p_in, Attributes &p_out);
 void    test_registry_info_21 (Integer p_id, Attributes &p_info);
 void    test_registry_call_21 (Integer p_id, Attributes &p_in, Attributes &p_out);
+void    test_registry_info_22 (Integer p_id, Attributes &p_info);
+void    test_registry_call_22 (Integer p_id, Attributes &p_in, Attributes &p_out);
 void    test_registry_info (Integer p_id, Attributes &p_info);
 void    test_registry_call (Integer p_id, Attributes &p_in, Attributes &p_out);
 

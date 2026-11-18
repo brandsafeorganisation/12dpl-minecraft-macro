@@ -131,13 +131,23 @@
 #define TEX_ARMOUR_EMPTY       119
 #define TEX_ARMOUR_IRON        120    // worn iron armour on the player model
 #define TEX_ARMOUR_HELMET_FRONT 121   // the helmet's front: a rim round the face
-#define NUM_TEXTURES           121
+#define TEX_OBSIDIAN           122    // block faces (not sprites, see texture_is_sprite)
+#define TEX_NETHERRACK         123
+#define TEX_SOUL_SAND          124
+#define TEX_GLOWSTONE          125
+#define TEX_QUARTZ_ORE         126
+#define TEX_LAVA               127
+#define TEX_PORTAL             128    // a sprite: you see through its gaps
+#define TEX_ITEM_FLINT         129
+#define TEX_ITEM_FLINT_AND_STEEL 130
+#define TEX_ITEM_NETHER_QUARTZ 131
+#define NUM_TEXTURES           131
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         30976  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         33536  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       968    // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      484    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       1048   // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      524    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

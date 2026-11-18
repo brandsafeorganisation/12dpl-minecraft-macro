@@ -275,7 +275,7 @@ void net_send_state(Attributes &p_net, Attributes &p_player, Attributes &p_info,
             + Absolute(l_pitch - record_real(p_net, ATTR_NET_SENT_PITCH));
     if (l_moved > 0.01) {
       net_queue(p_net, "P " + To_text(l_x, 2) + " " + To_text(l_y, 2) + " " + To_text(l_z, 2) + " " +
-                       To_text(l_yaw, 3) + " " + To_text(l_pitch, 3));
+                       To_text(l_yaw, 3) + " " + To_text(l_pitch, 3) + " " + To_text(world_dimension()));
       record_set_real(p_net, ATTR_NET_SENT_X,     l_x);
       record_set_real(p_net, ATTR_NET_SENT_Y,     l_y);
       record_set_real(p_net, ATTR_NET_SENT_Z,     l_z);
@@ -308,7 +308,8 @@ void net_on_event(Attributes &p_event, Attributes &p_net)
   if (net_mode(p_net) == NET_OFF) return;
   if (l_type != EVT_BLOCK_BROKEN && l_type != EVT_BLOCK_PLACED) return;
   if (event_is_remote(p_event)) return;
-  net_queue(p_net, "B " + To_text(l_x) + " " + To_text(l_y) + " " + To_text(l_z) + " " + To_text(world_get_block(l_x, l_y, l_z)));
+  net_queue(p_net, "B " + To_text(l_x) + " " + To_text(l_y) + " " + To_text(l_z) + " " + To_text(world_get_block(l_x, l_y, l_z)) + " " +
+                   To_text(world_dimension()));
 }
 
 // ---------------------------------------------------------------- reading
@@ -502,6 +503,7 @@ void net_apply_line(Attributes &p_net, Attributes &p_peers, Integer p_peer, Text
   Integer      l_count = From_text(p_line, l_words);
   Text         l_tag   = "";
   Text         l_name  = peer_name(p_peers, p_peer);
+  Integer      l_dimension = DIM_OVERWORLD;
 
   if (l_count < 1) return;
   Get_item(l_words, 1, l_tag);
@@ -521,6 +523,9 @@ void net_apply_line(Attributes &p_net, Attributes &p_peers, Integer p_peer, Text
     if (peer_here(p_peers, p_peer)) hud_chat(p_hud, l_name + " left the game", p_now);
     record_set_integer_at(p_peers, ATTR_PEER_HERE, p_peer, FALSE);
   } else if (l_tag == "P" && l_count >= 6) {
+    l_dimension = DIM_OVERWORLD;
+    if (l_count >= 7) l_dimension = net_word_integer(l_words, 7);
+    record_set_integer_at(p_peers, ATTR_PEER_DIM, p_peer, l_dimension);
     record_set_real_at(p_peers, ATTR_PEER_GOAL_X, p_peer, net_word_real(l_words, 2));
     record_set_real_at(p_peers, ATTR_PEER_GOAL_Y, p_peer, net_word_real(l_words, 3));
     record_set_real_at(p_peers, ATTR_PEER_GOAL_Z, p_peer, net_word_real(l_words, 4));
@@ -533,8 +538,14 @@ void net_apply_line(Attributes &p_net, Attributes &p_peers, Integer p_peer, Text
       record_set_real_at(p_peers, ATTR_Z, p_peer, net_word_real(l_words, 4));
     }
   } else if (l_tag == "B" && l_count >= 5) {
-    world_apply_remote_block(p_events, net_word_integer(l_words, 2), net_word_integer(l_words, 3),
-                             net_word_integer(l_words, 4), net_word_integer(l_words, 5));
+    // only a change in the dimension you are in (older logs have no
+    // dimension: the overworld)
+    l_dimension = DIM_OVERWORLD;
+    if (l_count >= 6) l_dimension = net_word_integer(l_words, 6);
+    if (l_dimension == world_dimension()) {
+      world_apply_remote_block(p_events, net_word_integer(l_words, 2), net_word_integer(l_words, 3),
+                               net_word_integer(l_words, 4), net_word_integer(l_words, 5));
+    }
   } else if (l_tag == "C") {
     hud_chat(p_hud, "<" + l_name + "> " + net_rest_of_line(p_line), p_now);
   } else if (l_tag == "T" && l_count >= 2) {
@@ -603,6 +614,14 @@ Integer peer_here(Attributes &p_peers, Integer p_peer)
 // ----------------------------------------------------------------
 {
   return record_integer_at(p_peers, ATTR_PEER_HERE, p_peer) == TRUE;
+}
+
+Integer peer_dimension(Attributes &p_peers, Integer p_peer)
+// ----------------------------------------------------------------
+// DIM_* the player is in (they are only drawn in yours)
+// ----------------------------------------------------------------
+{
+  return record_integer_at(p_peers, ATTR_PEER_DIM, p_peer);
 }
 
 Text peer_name(Attributes &p_peers, Integer p_peer)

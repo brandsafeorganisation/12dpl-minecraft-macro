@@ -10,7 +10,9 @@
 // what the seed generates: the blocks that were changed and the
 // game records (player, inventory, furnaces, cows, drops, world
 // info). Loading regenerates the terrain from the seed, applies the
-// changes and reads the records back.
+// changes and reads the records back. A "dimension" line says which
+// dimension the player is in (that one is generated); "edits" lines
+// are its changes and "other_edits" lines the other dimension's.
 //
 // Records are written generically, one field per line:
 //   rec <record> <field> <i|r|t> <value>
@@ -70,6 +72,12 @@
   Integer g_edit_block[MAX_EDITS];
   Integer g_edit_overflow = 0;
 
+  // The block changes of the other dimension (the one not in g_world),
+  // kept while you are away and saved as "other_edits" lines
+  Integer g_other_edit_count = 0;
+  Integer g_other_edit_index[MAX_EDITS];
+  Integer g_other_edit_block[MAX_EDITS];
+
   // The picture of the world being played (red * 65536 + green * 256
   // + blue, row by row from the top), and those of the listed worlds
   Integer g_thumb_ready = 0;
@@ -79,6 +87,9 @@
 
 void    save_clear_edits  ();
 void    save_record_edit  (Integer p_index, Integer p_block);
+void    save_record_other_edit(Integer p_index, Integer p_block);
+void    save_swap_edits   ();
+void    save_apply_edits  ();
 void    save_on_event     (Attributes &p_event);
 Text    save_world_path   (Text p_name);
 Text    save_settings_path();

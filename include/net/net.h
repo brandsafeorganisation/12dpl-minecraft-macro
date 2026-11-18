@@ -84,6 +84,7 @@
 #define ATTR_PEER_NAME          ("name")
 #define ATTR_PEER_OFFSET        ("offset")       // bytes of its log already read
 #define ATTR_PEER_HERE          ("here")         // TRUE while playing
+#define ATTR_PEER_DIM        ("peer_dim")   // DIM_* the player is in
 #define ATTR_PEER_SEEN          ("seen")         // local time of its last line
 #define ATTR_PEER_GOAL_X        ("goal_x")       // last position it sent (ATTR_X.. is where it's drawn)
 #define ATTR_PEER_GOAL_Y        ("goal_y")
@@ -127,6 +128,7 @@ void    net_say                (Attributes &p_net, Text p_text);
 void    net_on_event           (Attributes &p_event, Attributes &p_net);
 Integer peers_count            (Attributes &p_peers);
 Integer peer_here              (Attributes &p_peers, Integer p_peer);
+Integer peer_dimension      (Attributes &p_peers, Integer p_peer);
 Text    peer_name              (Attributes &p_peers, Integer p_peer);
 void    peer_position          (Attributes &p_peers, Integer p_peer, Real &p_x, Real &p_y, Real &p_z);
 Real    peer_yaw               (Attributes &p_peers, Integer p_peer);

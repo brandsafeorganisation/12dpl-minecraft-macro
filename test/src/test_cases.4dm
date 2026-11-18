@@ -139,6 +139,10 @@ void test_cases_run(Attributes &p_results)
   Integer    l_h      = 0;
   Integer    l_over_x = 0;
   Integer    l_over_y = 0;
+  Integer    l_fx     = 0;
+  Integer    l_fy     = 0;
+  Integer    l_fz     = 0;
+  Integer    l_j      = 0;
   Text       l_bs     = " ";
   Text       l_ctrl_bs = " ";
 
@@ -452,6 +456,47 @@ void test_cases_run(Attributes &p_results)
   world_info_spawn(g_info, l_px, l_py, l_pz);
   test_expect_true   (p_results, "the spawn point is in the world",
                       l_px > 0.0 && l_px < WORLD_SIZE_X && l_pz > 0.0 && l_pz < WORLD_SIZE_Z && l_py > 0.0);
+
+  // ---------------------------------------------------- the Nether
+  test_group(p_results, "the Nether");
+  test_expect_true   (p_results, "lava is a liquid",                  block_is_liquid(BLOCK_LAVA));
+  test_expect_integer(p_results, "lava doesn't stop you",             block_is_solid(BLOCK_LAVA), FALSE);
+  test_expect_true   (p_results, "but hides what is behind it",       block_hides_faces(BLOCK_LAVA));
+  test_expect_integer(p_results, "obsidian is placed by its item",    item_places_block(ITEM_OBSIDIAN), BLOCK_OBSIDIAN);
+  test_expect_integer(p_results, "obsidian needs an iron pickaxe",    block_drop_item(BLOCK_OBSIDIAN, ITEM_STONE_PICKAXE), ITEM_NONE);
+  test_expect_integer(p_results, "and drops itself with one",         block_drop_item(BLOCK_OBSIDIAN, ITEM_IRON_PICKAXE), ITEM_OBSIDIAN);
+  test_expect_integer(p_results, "quartz ore drops nether quartz",    block_drop_item(BLOCK_QUARTZ_ORE, ITEM_WOODEN_PICKAXE), ITEM_NETHER_QUARTZ);
+  test_expect_integer(p_results, "glowstone gives light",             block_light_emission(BLOCK_GLOWSTONE), GLOWSTONE_LIGHT);
+  test_expect_integer(p_results, "a portal can't be broken by hand",  block_hand_hits(BLOCK_PORTAL), 0);
+  // an obsidian frame high in the air, 2 wide and 3 high inside,
+  // along x
+  l_x = 30;
+  l_y = WORLD_HEIGHT - 10;
+  l_z = 30;
+  for (l_i = -1; l_i <= 4; ++l_i) {
+    for (l_j = -1; l_j <= 5; ++l_j) world_set_block(l_x + l_i, l_y + l_j, l_z, BLOCK_AIR);
+  }
+  for (l_i = 0; l_i <= 3; ++l_i) {
+    for (l_j = 0; l_j <= 4; ++l_j) {
+      if (l_i == 0 || l_i == 3 || l_j == 0 || l_j == 4) world_set_block(l_x + l_i, l_y + l_j, l_z, BLOCK_OBSIDIAN);
+    }
+  }
+  test_expect_true   (p_results, "a frame is found from inside it",   world_portal_frame(l_x + 2, l_y + 3, l_z, TRUE, l_fx, l_fy, l_fz, l_w, l_h));
+  test_expect_integer(p_results, "its inside is 2 wide",              l_w, 2);
+  test_expect_integer(p_results, "and 3 high",                        l_h, 3);
+  test_expect_integer(p_results, "from its lowest cell",              l_fy, l_y + 1);
+  test_expect_integer(p_results, "not along z",                       world_portal_frame(l_x + 2, l_y + 3, l_z, FALSE, l_fx, l_fy, l_fz, l_w, l_h), FALSE);
+  world_set_block(l_x + 3, l_y + 2, l_z, BLOCK_AIR);
+  test_expect_integer(p_results, "a gap in the frame: no portal",     world_portal_frame(l_x + 1, l_y + 1, l_z, TRUE, l_fx, l_fy, l_fz, l_w, l_h), FALSE);
+  world_set_block(l_x + 3, l_y + 2, l_z, BLOCK_OBSIDIAN);
+  test_expect_true   (p_results, "flint and steel lights it",         world_light_portal(g_events, l_x + 1, l_y + 1, l_z));
+  test_expect_integer(p_results, "with portal inside",                world_get_block(l_x + 2, l_y + 3, l_z), BLOCK_PORTAL);
+  test_expect_true   (p_results, "and the portal is found",           world_find_portal(l_x, l_y, l_z, 3, l_fx, l_fy, l_fz));
+  test_expect_integer(p_results, "at its bottom",                     l_fy, l_y + 1);
+  for (l_i = 0; l_i <= 3; ++l_i) {
+    for (l_j = 0; l_j <= 4; ++l_j) world_set_block(l_x + l_i, l_y + l_j, l_z, BLOCK_AIR);
+  }
+  events_clear(g_events);
 }
 
 #endif

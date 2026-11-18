@@ -173,13 +173,19 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
       p_rule = "a cell height";  p_low = 0.0;  p_high = WORLD_HEIGHT - 1;  p_typical = 70.0;  return;
     }
     if (test_name_ends(p_name, "block")) {
-      p_rule = "a block";  p_low = 0.0;  p_high = BLOCK_BED_LAST;  p_typical = BLOCK_STONE;  return;
+      p_rule = "a block";  p_low = 0.0;  p_high = BLOCK_PORTAL;  p_typical = BLOCK_STONE;  return;
     }
     if (test_name_ends(p_name, "item") || p_name == "p_food") {
       p_rule = "an item";  p_low = 0.0;  p_high = MAX_ITEM_ID;  p_typical = ITEM_STONE;  return;
     }
     if (test_name_ends(p_name, "slot")) {
       p_rule = "an inventory slot";  p_low = 0.0;  p_high = PLAYER_SLOTS;  p_typical = 1.0;  return;
+    }
+    if (p_name == "p_dimension" || p_name == "p_to") {
+      p_rule = "a dimension";  p_low = DIM_OVERWORLD;  p_high = DIM_NETHER;  p_typical = DIM_OVERWORLD;  return;
+    }
+    if (p_name == "p_range") {
+      p_rule = "a search range";  p_low = 0.0;  p_high = PORTAL_SEARCH;  p_typical = 2.0;  return;
     }
     if (p_name == "p_selected") {
       p_rule = "a hotbar slot";  p_low = 1.0;  p_high = HOTBAR_SLOTS;  p_typical = 1.0;  return;

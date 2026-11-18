@@ -40,6 +40,11 @@
 #define SWIM_UP_SPEED        3.6
 #define SWIM_SINK_SPEED      2.5
 #define WATER_SPEED_FACTOR   0.55
+#define SOUL_SAND_SPEED      0.45     // walking on soul sand
+#define LAVA_DAMAGE          4        // lava burns this much ...
+#define LAVA_HURT_SECONDS    0.5      // ... this often
+#define PORTAL_SECONDS       4.0      // standing in a portal this long takes you through
+#define PORTAL_QUICK_SECONDS 1.0      // in creative and spectator
 #define FLY_SPEED_FACTOR     1.8      // horizontal speed while flying
 #define FLY_VERTICAL_SPEED   6.0      // blocks per second up (Space) or down (C)
 #define SPECTATOR_ABOVE_WORLD 32.0   // how far above the world a spectator can fly

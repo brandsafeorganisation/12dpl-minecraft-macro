@@ -135,6 +135,33 @@ static void register_hooks(){
   g_calls["mobs_calm"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ record_set_real_at(g_cows,ATTR_MOB_ATTACK,c,100.0); record_set_real_at(g_cows,ATTR_COW_FLASH,c,0.0); } };
   g_calls["body"]=[]{ double y=0,p=0; player_look(g_player,y,p); printf("[hook] yaw %.2f body %.2f stride %.2f crouch %d\n",y,player_body_yaw(g_player),player_stride(g_player),player_crouching(g_player)); };
   g_calls["no_mobs"]=[]{ cows_clear(g_cows); };
+  // the Nether (32_nether)
+  g_calls["obsidian_frame"]=[]{ // an unlit frame 3 ahead (+x), across z, its inside 2 x 3 in front of the player; aim at its inside's floor
+    int x0=(int)px(),y0=(int)py(),z0=(int)pz(); int fx=x0+3, fz=z0-1;
+    for(int dx=1;dx<=5;dx++) for(int dz=-3;dz<=3;dz++){ for(int dy=0;dy<=6;dy++) world_set_block(x0+dx,y0+dy,z0+dz,0); world_set_block(x0+dx,y0-1,z0+dz,BLOCK_STONE); }
+    world_finish_maps(); mesh_reset();
+    for(int dz=0;dz<=3;dz++) for(int dy=0;dy<=4;dy++) if(dz==0||dz==3||dy==0||dy==4) world_place_block(g_events,fx,y0+dy,fz+dz,BLOCK_OBSIDIAN);
+    double ex=px(),ey=py()+PLAYER_EYE_HEIGHT,ez=pz(); double tx=fx+0.5,ty=y0+1.0,tz=z0+0.5;
+    double dx=tx-ex,dy=ty-ey,dz=tz-ez; set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz)));
+    printf("[nether] frame at %d %d %d\n",fx,y0,fz); };
+  g_calls["hold_flint_and_steel"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_FLINT_AND_STEEL,1,0); };
+  g_calls["portals"]=[]{ int n=0,x0=(int)px(),z0=(int)pz(); for(int x=x0-12;x<=x0+12;x++) for(int z=z0-12;z<=z0+12;z++) for(int y=1;y<WORLD_HEIGHT-1;y++) if(world_get_block(x,y,z)==BLOCK_PORTAL) n++;
+    printf("[nether] dimension %d portal blocks near %d  pos %.1f %.1f %.1f  standing on %d  feet %d  travel %d portal time %.2f health %d  wear %d\n",world_dimension(),n,px(),py(),pz(),
+      world_get_block((int)px(),(int)(py()-0.1),(int)pz()),world_get_block((int)px(),(int)(py()+0.2),(int)pz()),player_wants_travel(g_player),player_portal_time(g_player),player_health(g_player),
+      slot_damage(g_inventory,player_selected(g_player))); };
+  g_calls["into_portal"]=[]{ int x,y,z; if(world_find_portal((int)px(),(int)py(),(int)pz(),8,x,y,z)){ player_set_position(g_player,x+0.5,y+0.01,z+0.5); printf("[nether] stepped into the portal at %d %d %d\n",x,y,z);} else printf("[nether] no portal near\n"); };
+  g_calls["out_of_portal"]=[]{ player_set_position(g_player,px()-2.0,py(),pz()); };
+  g_calls["nether_stats"]=[]{ int c[64]={0}; for(int x=0;x<WORLD_SIZE_X;x++) for(int z=0;z<WORLD_SIZE_Z;z++) for(int y=0;y<WORLD_HEIGHT;y++){ int b=world_get_block(x,y,z); if(b>=0&&b<64) c[b]++; }
+    printf("[nether] dimension %d: netherrack %d lava %d soul sand %d glowstone %d quartz %d obsidian %d bedrock %d air %d stone %d\n",world_dimension(),c[BLOCK_NETHERRACK],c[BLOCK_LAVA],c[BLOCK_SOUL_SAND],c[BLOCK_GLOWSTONE],c[BLOCK_QUARTZ_ORE],c[BLOCK_OBSIDIAN],c[BLOCK_BEDROCK],c[BLOCK_AIR],c[BLOCK_STONE]); };
+  g_calls["survival"]=[]{ player_set_game_mode(g_player,GAMEMODE_SURVIVAL); };
+  g_calls["creative"]=[]{ player_set_game_mode(g_player,GAMEMODE_CREATIVE); };
+  g_calls["into_lava"]=[]{ for(int x=4;x<WORLD_SIZE_X-4;x++) for(int z=4;z<WORLD_SIZE_Z-4;z++) if(world_get_block(x,NETHER_LAVA_LEVEL,z)==BLOCK_LAVA&&world_get_block(x,NETHER_LAVA_LEVEL+1,z)==BLOCK_AIR){ player_set_position(g_player,x+0.5,NETHER_LAVA_LEVEL+0.3,z+0.5); printf("[nether] into the lava at %d %d\n",x,z); return; } printf("[nether] no lava found\n"); };
+  g_calls["back_to_portal"]=[]{ int x,y,z; if(world_find_portal(64,60,64,64,x,y,z)){ player_set_position(g_player,x+0.5,y+0.01,z-1.5); set_look(HALF_PI,-0.2); printf("[nether] beside the portal at %d %d %d\n",x,y,z);} };
+  g_calls["break_frame"]=[]{ int x,y,z; if(world_find_portal((int)px(),(int)py(),(int)pz(),8,x,y,z)) world_break_block(g_events,x,y-1,z,ITEM_IRON_PICKAXE); };
+  g_calls["nether_look"]=[]{ set_look(0.6,-0.05); };
+  g_calls["nether_overlook"]=[]{ // the most open spot high over the lava sea, flying, looking out and a little down
+    int best=-1,bx=64,bz=64,by=50; for(int x=16;x<112;x+=4) for(int z=16;z<112;z+=4) for(int y=44;y<=60;y+=4){ int n=0; for(int d=1;d<=24;d+=3) for(int a=0;a<4;a++){ int ax=x+(a==0?d:a==1?-d:0), az=z+(a==2?d:a==3?-d:0); if(world_get_block(ax,y,az)==BLOCK_AIR) n++; } if(world_get_block(x,y,z)==BLOCK_AIR&&n>best){best=n;bx=x;bz=z;by=y;} }
+    player_set_flying(g_player,1); player_set_position(g_player,bx+0.5,by,bz+0.5); set_look(0.4,-0.35); printf("[nether] overlook at %d %d %d (%d open)\n",bx,by,bz,best); };
   // armour, the offhand and spawn eggs (31_armour_offhand_eggs)
   g_calls["give_armour"]=[]{ slot_set(g_inventory,19,ITEM_IRON_HELMET,1,0); slot_set(g_inventory,20,ITEM_IRON_CHESTPLATE,1,0); slot_set(g_inventory,21,ITEM_IRON_LEGGINGS,1,0);
     slot_set(g_inventory,22,ITEM_IRON_BOOTS,1,0); slot_set(g_inventory,23,ITEM_COW_SPAWN_EGG,2,0); slot_set(g_inventory,24,ITEM_TORCH,8,0); };

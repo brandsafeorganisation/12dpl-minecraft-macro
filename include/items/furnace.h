@@ -34,6 +34,7 @@ Real    furnace_burn_left     (Attributes &p_furnaces, Integer p_furnace);
 Real    furnace_burn_total    (Attributes &p_furnaces, Integer p_furnace);
 Real    furnace_progress      (Attributes &p_furnaces, Integer p_furnace);
 void    furnace_set_state     (Attributes &p_furnaces, Integer p_furnace, Real p_burn_left, Real p_burn_total, Real p_progress);
+Integer furnace_here          (Attributes &p_furnaces, Integer p_furnace);
 Integer furnace_find          (Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p_z);
 Integer furnace_get_or_create (Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p_z);
 void    furnace_remove        (Attributes &p_furnaces, Attributes &p_events, Integer p_furnace);

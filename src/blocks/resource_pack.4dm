@@ -298,6 +298,16 @@ Integer pack_map_entry(Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_na
   if (p_entry == 75) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ARMOUR_FULL        , "gui"  , "sprites/hud/armor_full" , PACK_TINT_NONE, "");
   if (p_entry == 76) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ARMOUR_HALF        , "gui"  , "sprites/hud/armor_half" , PACK_TINT_NONE, "");
   if (p_entry == 77) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ARMOUR_EMPTY       , "gui"  , "sprites/hud/armor_empty", PACK_TINT_NONE, "");
+  if (p_entry == 78) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_OBSIDIAN           , "block", "obsidian"           , PACK_TINT_NONE   , "");
+  if (p_entry == 79) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_NETHERRACK         , "block", "netherrack"         , PACK_TINT_NONE   , "");
+  if (p_entry == 80) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_SOUL_SAND          , "block", "soul_sand"          , PACK_TINT_NONE   , "");
+  if (p_entry == 81) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_GLOWSTONE          , "block", "glowstone"          , PACK_TINT_NONE   , "");
+  if (p_entry == 82) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_QUARTZ_ORE         , "block", "nether_quartz_ore"  , PACK_TINT_NONE   , "");
+  if (p_entry == 83) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_LAVA               , "block", "lava_still"         , PACK_TINT_NONE   , "");
+  if (p_entry == 84) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_PORTAL             , "block", "nether_portal"      , PACK_TINT_NONE   , "");
+  if (p_entry == 85) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_FLINT         , "item" , "flint"              , PACK_TINT_NONE   , "");
+  if (p_entry == 86) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_FLINT_AND_STEEL, "item", "flint_and_steel"    , PACK_TINT_NONE   , "");
+  if (p_entry == 87) return pack_entry(p_tex, p_kind, p_name, p_tint, p_overlay, TEX_ITEM_NETHER_QUARTZ , "item" , "quartz"             , PACK_TINT_NONE   , "");
   return FALSE;
 }
 

@@ -31,7 +31,15 @@ void furnaces_rebuild_index(Attributes &p_furnaces)
 // loaded)
 // ----------------------------------------------------------------
 {
+  Integer l_n = 0;
+
   slots_rebuild(SLOT_POOL_FURNACES, p_furnaces, MAX_FURNACES);
+  // only those in the dimension being played (the rest wait for the
+  // player to come back through a portal)
+  for (l_n = 1; l_n <= MAX_FURNACES; ++l_n) {
+    if (!slots_used(SLOT_POOL_FURNACES, l_n)) continue;
+    if (record_integer_at(p_furnaces, ATTR_DIM, l_n) != world_dimension()) slots_set(SLOT_POOL_FURNACES, l_n, FALSE);
+  }
 }
 
 void furnace_set_used(Attributes &p_furnaces, Integer p_furnace, Integer p_used)
@@ -41,6 +49,7 @@ void furnace_set_used(Attributes &p_furnaces, Integer p_furnace, Integer p_used)
 // ----------------------------------------------------------------
 {
   record_set_integer_at(p_furnaces, ATTR_USED, p_furnace, p_used);
+  if (p_used) record_set_integer_at(p_furnaces, ATTR_DIM, p_furnace, world_dimension());
   slots_set(SLOT_POOL_FURNACES, p_furnace, p_used);
 }
 
@@ -107,6 +116,16 @@ void furnace_set_state(Attributes &p_furnaces, Integer p_furnace, Real p_burn_le
 
 // ---------------------------------------------------------------- furnaces
 
+Integer furnace_here(Attributes &p_furnaces, Integer p_furnace)
+// ----------------------------------------------------------------
+// TRUE if furnace number p_furnace is used and in the dimension
+// being played
+// ----------------------------------------------------------------
+{
+  if (!furnace_used(p_furnaces, p_furnace)) return FALSE;
+  return record_integer_at(p_furnaces, ATTR_DIM, p_furnace) == world_dimension();
+}
+
 Integer furnace_find(Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p_z)
 // ----------------------------------------------------------------
 // Number of the furnace at a cell, 0 if there isn't one
@@ -118,7 +137,7 @@ Integer furnace_find(Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p
   Integer l_fz      = 0;
 
   for (l_furnace = 1; l_furnace <= MAX_FURNACES; ++l_furnace) {
-    if (!furnace_used(p_furnaces, l_furnace)) continue;
+    if (!furnace_here(p_furnaces, l_furnace)) continue;
     furnace_cell(p_furnaces, l_furnace, l_fx, l_fy, l_fz);
     if (l_fx == p_x && l_fy == p_y && l_fz == p_z) return l_furnace;
   }

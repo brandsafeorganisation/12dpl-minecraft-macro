@@ -19,6 +19,7 @@
 // ---------------------------------------------------------------- shared field names
 #define ATTR_DATATYPE      ("datatype")
 #define ATTR_USED          ("used")
+#define ATTR_DIM           ("dim")      // DIM_* a mob, drop, furnace or chest is in (0, the overworld, if missing)
 #define ATTR_X             ("x")
 #define ATTR_Y             ("y")
 #define ATTR_Z             ("z")

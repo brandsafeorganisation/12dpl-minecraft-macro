@@ -182,14 +182,15 @@ void physics_move_box(Real &p_x, Real &p_y, Real &p_z, Real p_half_width, Real p
 
 Integer physics_box_in_water(Real p_x, Real p_y, Real p_z, Real p_half_width, Real p_height)
 // ----------------------------------------------------------------
-// TRUE if the lower part of a box is in a water cell
+// TRUE if the lower part of a box is in a water (or lava) cell: it
+// swims
 // ----------------------------------------------------------------
 {
   Integer l_cell_x = Floor(p_x);
   Integer l_cell_y = Floor(p_y + p_height * 0.3);
   Integer l_cell_z = Floor(p_z);
 
-  if (world_get_block(l_cell_x, l_cell_y, l_cell_z) == BLOCK_WATER) return TRUE;
+  if (block_is_liquid(world_get_block(l_cell_x, l_cell_y, l_cell_z))) return TRUE;
   return FALSE;
 }
 
@@ -260,7 +261,7 @@ Integer physics_raycast_blocks(Real p_origin_x, Real p_origin_y, Real p_origin_z
     ++l_guard;
 
     l_block = world_get_block(l_cell_x, l_cell_y, l_cell_z);
-    if (l_block != BLOCK_AIR && l_block != BLOCK_WATER && world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) {
+    if (l_block != BLOCK_AIR && !block_is_liquid(l_block) && l_block != BLOCK_PORTAL && world_in_bounds(l_cell_x, l_cell_y, l_cell_z)) {
       // a block smaller than its cell is only hit inside its box
       l_along = l_travelled;
       if (block_box(l_block, l_min_x, l_min_y, l_min_z, l_max_x, l_max_y, l_max_z)) {

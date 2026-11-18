@@ -146,6 +146,16 @@ Things learned the hard way:
   after a drawing change. `render_set_colour` skips a colour that is
   already set, so draw things of one colour together.
 
+### Dimensions
+
+`g_world` holds one dimension at a time (`world_dimension()`). Going
+through a portal (`game_travel`) swaps the edit lists, regenerates the
+other dimension from the seed into a scratch record and applies its
+edits. Mobs, drops, furnaces and chests carry a `dim` field and their
+slot indexes only list the current dimension's, so loops over them need
+no dimension checks; anything new that lives in the world should do the
+same.
+
 ### The one panel
 
 The game has a single 12d panel (`app_run` in `menu_panel.4dm`): the

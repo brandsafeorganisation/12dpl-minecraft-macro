@@ -47,7 +47,18 @@
 #define BLOCK_BED_FIRST       49   // the two halves of a bed: 49 + facing * 2
 #define BLOCK_BED_LAST        56   // + head (facing points from foot to head);
                                    // BLOCK_BED is an older one block bed
-#define MAX_BLOCK_ID          28   // highest block that is also an item
+#define BLOCK_OBSIDIAN        57   // the Nether's blocks (and obsidian, round
+#define BLOCK_NETHERRACK      58   // deep lava pools in the overworld): the
+#define BLOCK_SOUL_SAND       59   // first five are items as well
+#define BLOCK_GLOWSTONE       60
+#define BLOCK_QUARTZ_ORE      61
+#define BLOCK_LAVA            62   // a liquid like water that burns; no item
+#define BLOCK_PORTAL          63   // a lit Nether portal's inside; no item
+#define MAX_BLOCK_ID          28   // highest of the first run of blocks that are also items
+#define FIRST_NETHER_ITEM     57   // blocks 57 .. LAST_NETHER_ITEM are items too
+#define LAST_NETHER_ITEM      61
+#define GLOWSTONE_LIGHT       15
+#define PORTAL_LIGHT          11
 #define TORCH_LIGHT           14
 #define FACING_PX             0    // directions a door or bed can face
 #define FACING_NX             1
@@ -110,7 +121,16 @@
 #define ITEM_COW_SPAWN_EGG    89   // spawn eggs (creative): right click a block
 #define ITEM_PIG_SPAWN_EGG    90   // to put the mob on it
 #define ITEM_ZOMBIE_SPAWN_EGG 91
-#define MAX_ITEM_ID           91
+#define ITEM_OBSIDIAN         57
+#define ITEM_NETHERRACK       58
+#define ITEM_SOUL_SAND        59
+#define ITEM_GLOWSTONE        60
+#define ITEM_QUARTZ_ORE       61
+#define ITEM_FLINT            92   // gravel drops it now and then
+#define ITEM_FLINT_AND_STEEL  93   // lights a Nether portal in an obsidian frame
+#define ITEM_NETHER_QUARTZ    94
+#define MAX_ITEM_ID           94
+#define FLINT_CHANCE          0.15 // a broken gravel block drops flint this often
 
 // Tool kinds and tiers
 #define TOOL_NONE             0
@@ -145,6 +165,7 @@
 #define DIR_WET_FLAG          8    // added to a face that touches water
 
 Integer block_is_solid       (Integer p_block);
+Integer block_is_liquid      (Integer p_block);
 Integer block_is_plant       (Integer p_block);
 Integer block_box            (Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z);
 Integer block_is_door        (Integer p_block);

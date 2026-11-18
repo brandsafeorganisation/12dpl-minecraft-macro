@@ -268,15 +268,99 @@ void game_build_nearby(Attributes &p_player, Integer p_range)
   }
 }
 
-void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_events)
+void game_switch_dimension(Attributes &p_info, Attributes &p_cows, Attributes &p_drops, Attributes &p_furnaces, Integer p_to)
 // ----------------------------------------------------------------
-// Back to the spawn point with full health (the inventory is kept)
+// Swap the blocks in g_world for the other dimension: this one's
+// changes are put away, the other is generated from the seed (into a
+// scratch record, so the world record keeps its spawn point and
+// clock) with its own changes put back, and only the mobs, drops and
+// furnaces there take part from now on
+// ----------------------------------------------------------------
+{
+  Attributes l_scratch;
+
+  if (p_to == world_dimension()) return;
+  save_swap_edits();
+  world_generate_dimension(l_scratch, world_info_seed(p_info), p_to);
+  record_set_integer(p_info, ATTR_WORLD_DIMENSION, p_to);
+  mesh_reset();
+  save_apply_edits();
+  mobs_rebuild_index    (p_cows);
+  drops_rebuild_index   (p_drops);
+  furnaces_rebuild_index(p_furnaces);
+}
+
+Integer game_travel(Attributes &p_info, Attributes &p_player, Attributes &p_cows, Attributes &p_drops,
+                    Attributes &p_furnaces, Attributes &p_events)
+// ----------------------------------------------------------------
+// Take the player through the portal they are standing in to the
+// other dimension, at the same place across (the world is too small
+// for the block game's 1 : 8). They come out in the portal there that
+// they last used, or the nearest one, or a new portal built for them.
+// Returns the dimension they are now in.
+// ----------------------------------------------------------------
+{
+  Integer l_from  = world_dimension();
+  Integer l_to    = DIM_NETHER;
+  Integer l_found = FALSE;
+  Integer l_px    = 0;
+  Integer l_py    = 0;
+  Integer l_pz    = 0;
+  Real    l_x     = 0.0;
+  Real    l_y     = 0.0;
+  Real    l_z     = 0.0;
+
+  if (l_from == DIM_NETHER) l_to = DIM_OVERWORLD;
+  player_position(p_player, l_x, l_y, l_z);
+
+  // remember this portal, to come back out of it
+  if (world_find_portal(floor_integer(l_x), floor_integer(l_y), floor_integer(l_z), 2, l_px, l_py, l_pz)) {
+    record_set_integer_at(p_info, ATTR_PORTAL_X,     l_from + 1, l_px);
+    record_set_integer_at(p_info, ATTR_PORTAL_Y,     l_from + 1, l_py);
+    record_set_integer_at(p_info, ATTR_PORTAL_Z,     l_from + 1, l_pz);
+    record_set_integer_at(p_info, ATTR_PORTAL_KNOWN, l_from + 1, TRUE);
+  }
+
+  game_switch_dimension(p_info, p_cows, p_drops, p_furnaces, l_to);
+
+  if (record_integer_at(p_info, ATTR_PORTAL_KNOWN, l_to + 1) == TRUE) {
+    l_found = world_find_portal(record_integer_at(p_info, ATTR_PORTAL_X, l_to + 1), record_integer_at(p_info, ATTR_PORTAL_Y, l_to + 1),
+                                record_integer_at(p_info, ATTR_PORTAL_Z, l_to + 1), 1, l_px, l_py, l_pz);
+  }
+  if (!l_found) l_found = world_find_portal(floor_integer(l_x), floor_integer(l_y), floor_integer(l_z), PORTAL_SEARCH, l_px, l_py, l_pz);
+  if (!l_found) {
+    // a new portal (its inside starts one cell along and up)
+    world_portal_spot (floor_integer(l_x), floor_integer(l_z), l_px, l_py, l_pz);
+    world_build_portal(p_events, l_px, l_py, l_pz);
+    l_px = l_px + 1;
+    l_py = l_py + 1;
+  }
+  player_set_position(p_player, l_px + 0.5, l_py + COLLISION_EPSILON, l_pz + 0.5);
+  player_arrived     (p_player);
+  // face out of the portal: across its frame
+  if (world_get_block(l_px + 1, l_py, l_pz) == BLOCK_PORTAL || world_get_block(l_px - 1, l_py, l_pz) == BLOCK_PORTAL) {
+    player_set_look(p_player, HALF_PI, 0.0);
+  } else {
+    player_set_look(p_player, 0.0, 0.0);
+  }
+  if (l_to == DIM_NETHER) {
+    emit_toast(p_events, "The Nether: mind the lava. Step back into the portal to go home.");
+  }
+  return l_to;
+}
+
+void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_cows, Attributes &p_drops, Attributes &p_furnaces,
+                  Attributes &p_events)
+// ----------------------------------------------------------------
+// Back to the spawn point with full health (the inventory is kept),
+// which is in the overworld
 // ----------------------------------------------------------------
 {
   Real l_x = 0.0;
   Real l_y = 0.0;
   Real l_z = 0.0;
 
+  game_switch_dimension(p_info, p_cows, p_drops, p_furnaces, DIM_OVERWORLD);
   world_info_spawn(p_info, l_x, l_y, l_z);
   player_reset    (p_player, l_x, l_y + COLLISION_EPSILON, l_z);
   player_set_look (p_player, HALF_PI * 3.0, -0.1);

@@ -87,6 +87,7 @@ void render_view_from(Attributes &p_player, Attributes &p_settings, Real p_time_
   g_view_time     = p_time_of_day;
   g_view_now      = p_now;
   g_view_daylight = world_daylight(p_time_of_day);
+  if (world_dimension() == DIM_NETHER) g_view_daylight = NETHER_DAYLIGHT;
 
   // Spread the squared distances out over the buckets
   g_bucket_scale = (MAX_BUCKETS - 1.0) / (g_render_distance * g_render_distance + 60.0);
@@ -1295,6 +1296,7 @@ void render_collect_peers(Attributes &p_peers)
 
   for (l_peer = 1; l_peer <= peers_count(p_peers); ++l_peer) {
     if (!peer_here(p_peers, l_peer)) continue;
+    if (peer_dimension(p_peers, l_peer) != world_dimension()) continue;
     peer_position(p_peers, l_peer, l_x, l_y, l_z);
     if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > (g_render_distance + 2.0) * (g_render_distance + 2.0)) continue;
     g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
@@ -1320,6 +1322,7 @@ void render_peer_names(Draw_Box p_box, Attributes &p_peers)
 
   for (l_peer = 1; l_peer <= peers_count(p_peers); ++l_peer) {
     if (!peer_here(p_peers, l_peer)) continue;
+    if (peer_dimension(p_peers, l_peer) != world_dimension()) continue;
     peer_position(p_peers, l_peer, l_x, l_y, l_z);
     if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > PEER_NAME_DISTANCE * PEER_NAME_DISTANCE) continue;
     render_to_camera(l_x - g_cam_x, l_y + 2.25 - g_cam_y, l_z - g_cam_z);
@@ -2061,7 +2064,7 @@ void render_sky_colours(Real p_time_of_day)
 // ----------------------------------------------------------------
 // Horizon (fog) and overhead sky colours for a time of day: blue by
 // day, dark navy at night, orange at the horizon around sunrise and
-// sunset
+// sunset; a red haze in the Nether
 // ----------------------------------------------------------------
 {
   Real l_day    = clamp_real((world_sun_height(p_time_of_day) + 0.15) / 0.45, 0.0, 1.0);
@@ -2078,6 +2081,16 @@ void render_sky_colours(Real p_time_of_day)
   g_fog_r = lerp_real(g_fog_r, 236.0, l_glow * 0.65);
   g_fog_g = lerp_real(g_fog_g, 140.0, l_glow * 0.65);
   g_fog_b = lerp_real(g_fog_b, 84.0 , l_glow * 0.65);
+
+  // the Nether: a dull red haze whatever the time
+  if (world_dimension() == DIM_NETHER) {
+    g_fog_r     = 74.0;
+    g_fog_g     = 20.0;
+    g_fog_b     = 16.0;
+    g_sky_top_r = 40.0;
+    g_sky_top_g = 10.0;
+    g_sky_top_b = 8.0;
+  }
 }
 
 void render_sky_disc(Draw_Box p_box, Real p_dir_x, Real p_dir_y, Real p_dir_z, Real p_size, Integer p_moon)
@@ -2169,7 +2182,8 @@ void render_sky(Draw_Box p_box)
   }
 
   // Stars at night, then the sun and moon, which cross the sky from
-  // east (+x) to west through the day
+  // east (+x) to west through the day (none in the Nether)
+  if (world_dimension() == DIM_NETHER) return;
   if (g_view_daylight < 0.6) render_stars(p_box, clamp_real((0.6 - g_view_daylight) / 0.4, 0.0, 1.0));
   l_sun_x = Cos(g_view_time * TWO_PI);
   l_sun_y = Sin(g_view_time * TWO_PI);

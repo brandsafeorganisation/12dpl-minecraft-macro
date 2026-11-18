@@ -6,6 +6,7 @@
 #include "../../include/core/records.h"
 #include "../../include/core/events.h"
 #include "../../include/blocks/blocks.h"
+#include "../../include/world/world.h"
 #include "../../include/items/inventory.h"
 #include "../../include/items/chest.h"
 
@@ -38,6 +39,7 @@ Integer chest_find(Attributes &p_store, Integer p_x, Integer p_y, Integer p_z)
     if (record_integer_at(p_store, ATTR_CHEST_X, l_chest) != p_x) continue;
     if (record_integer_at(p_store, ATTR_CHEST_Y, l_chest) != p_y) continue;
     if (record_integer_at(p_store, ATTR_CHEST_Z, l_chest) != p_z) continue;
+    if (record_integer_at(p_store, ATTR_CHEST_DIM, l_chest) != world_dimension()) continue;
     return l_chest;
   }
   return 0;
@@ -60,6 +62,7 @@ Integer chest_get_or_create(Attributes &p_store, Integer p_x, Integer p_y, Integ
     record_set_integer_at(p_store, ATTR_CHEST_X,    l_chest, p_x);
     record_set_integer_at(p_store, ATTR_CHEST_Y,    l_chest, p_y);
     record_set_integer_at(p_store, ATTR_CHEST_Z,    l_chest, p_z);
+    record_set_integer_at(p_store, ATTR_CHEST_DIM,  l_chest, world_dimension());
     for (l_which = 1; l_which <= CHEST_SLOTS; ++l_which) slot_clear(p_store, chest_slot(l_chest, l_which));
     return l_chest;
   }

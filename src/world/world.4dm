@@ -196,6 +196,8 @@ void world_update_column_top(Integer p_x, Integer p_z)
 {
   if (!world_in_bounds(p_x, 0, p_z)) return;
   g_column_top[world_column(p_x, p_z)] = world_top_opaque_y(p_x, p_z);
+  // the Nether has no sky: every cell gets its even light
+  if (g_world_dimension == DIM_NETHER) g_column_top[world_column(p_x, p_z)] = -1;
 }
 
 void world_break_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_tool_item)
@@ -369,13 +371,30 @@ void world_on_event(Attributes &p_event, Attributes &p_info, Attributes &p_event
 // EVT_FURNACE_LIT: a furnace started or stopped burning, so its
 // block becomes the lit (light giving) or unlit furnace.
 // EVT_SLEEP: a bed was used. At night the clock jumps to the next
-// morning; either way the bed becomes the place to respawn.
+// morning; either way the bed becomes the place to respawn (not in
+// the Nether).
+// EVT_BLOCK_BROKEN of obsidian or a portal: the portal goes out.
 // ----------------------------------------------------------------
 {
   Integer l_x     = event_integer(p_event, 1);
   Integer l_y     = event_integer(p_event, 2);
   Integer l_z     = event_integer(p_event, 3);
   Integer l_block = 0;
+
+  // A portal goes out when its frame is broken: a broken obsidian or
+  // portal block breaks the portal blocks beside it (which do the
+  // same in turn)
+  if (event_type(p_event) == EVT_BLOCK_BROKEN) {
+    l_block = event_integer(p_event, 4);
+    if (l_block != BLOCK_OBSIDIAN && l_block != BLOCK_PORTAL) return;
+    if (world_get_block(l_x + 1, l_y, l_z) == BLOCK_PORTAL) world_break_block(p_events, l_x + 1, l_y, l_z, ITEM_NONE);
+    if (world_get_block(l_x - 1, l_y, l_z) == BLOCK_PORTAL) world_break_block(p_events, l_x - 1, l_y, l_z, ITEM_NONE);
+    if (world_get_block(l_x, l_y + 1, l_z) == BLOCK_PORTAL) world_break_block(p_events, l_x, l_y + 1, l_z, ITEM_NONE);
+    if (world_get_block(l_x, l_y - 1, l_z) == BLOCK_PORTAL) world_break_block(p_events, l_x, l_y - 1, l_z, ITEM_NONE);
+    if (world_get_block(l_x, l_y, l_z + 1) == BLOCK_PORTAL) world_break_block(p_events, l_x, l_y, l_z + 1, ITEM_NONE);
+    if (world_get_block(l_x, l_y, l_z - 1) == BLOCK_PORTAL) world_break_block(p_events, l_x, l_y, l_z - 1, ITEM_NONE);
+    return;
+  }
 
   if (event_type(p_event) == EVT_FURNACE_LIT) {
     l_block = world_get_block(l_x, l_y, l_z);
@@ -386,6 +405,10 @@ void world_on_event(Attributes &p_event, Attributes &p_info, Attributes &p_event
   }
 
   if (event_type(p_event) != EVT_SLEEP) return;
+  if (g_world_dimension == DIM_NETHER) {
+    emit_toast(p_events, "You can't sleep in the Nether");
+    return;
+  }
 
   world_info_set_spawn(p_info, l_x + 0.5, l_y + 1.0 + COLLISION_EPSILON, l_z + 0.5);
   if (world_is_night(world_time_of_day(p_info))) {
@@ -861,10 +884,11 @@ void world_carve_caves(Attributes &p_random)
   }
 }
 
-void world_place_veins(Attributes &p_random, Integer p_block, Integer p_count, Integer p_length, Integer p_max_y)
+void world_place_veins(Attributes &p_random, Integer p_block, Integer p_inside, Integer p_count, Integer p_length, Integer p_max_y)
 // ----------------------------------------------------------------
-// Scatter count small veins of block through the stone below
-// max_y, each a short random walk of length cells
+// Scatter count small veins of block through the inside block
+// (stone, or netherrack in the Nether) below max_y, each a short
+// random walk of length cells
 // ----------------------------------------------------------------
 {
   Integer l_vein = 0;
@@ -880,7 +904,7 @@ void world_place_veins(Attributes &p_random, Integer p_block, Integer p_count, I
     l_y = random_range(p_random, 5, p_max_y);
 
     for (l_cell = 1; l_cell <= p_length; ++l_cell) {
-      if (world_get_block(l_x, l_y, l_z) == BLOCK_STONE) world_set_block(l_x, l_y, l_z, p_block);
+      if (world_get_block(l_x, l_y, l_z) == p_inside) world_set_block(l_x, l_y, l_z, p_block);
       l_axis = random_range(p_random, 1, 6);
       if (l_axis == 1) ++l_x;
       if (l_axis == 2) --l_x;
@@ -1267,6 +1291,8 @@ void world_finish_maps()
   for (l_x = 0; l_x < WORLD_SIZE_X; ++l_x) {
     for (l_z = 0; l_z < WORLD_SIZE_Z; ++l_z) {
       g_column_top[world_column(l_x, l_z)] = world_top_opaque_y(l_x, l_z);
+      // the Nether has no sky: every cell gets its even light
+      if (g_world_dimension == DIM_NETHER) g_column_top[world_column(l_x, l_z)] = -1;
     }
   }
 }
@@ -1288,15 +1314,20 @@ void world_generate(Attributes &p_info, Integer p_seed)
   world_info_clear (p_info, p_seed);
   world_seed_shifts(p_seed, l_shift_a, l_shift_b);
   random_seed      (l_random, p_seed);
+  g_world_dimension = DIM_OVERWORLD;
 
   world_fill_columns(l_shift_a, l_shift_b);
   world_carve_caves (l_random);
-  world_place_veins (l_random, BLOCK_COAL_ORE, COAL_VEINS, 6, 56);
-  world_place_veins (l_random, BLOCK_GRAVEL, GRAVEL_POCKETS, 10, 50);
-  world_place_veins (l_random, BLOCK_IRON_ORE, IRON_VEINS, 5, 44);
+  world_place_veins (l_random, BLOCK_COAL_ORE, BLOCK_STONE, COAL_VEINS, 6, 56);
+  world_place_veins (l_random, BLOCK_GRAVEL, BLOCK_STONE, GRAVEL_POCKETS, 10, 50);
+  world_place_veins (l_random, BLOCK_IRON_ORE, BLOCK_STONE, IRON_VEINS, 5, 44);
   world_add_ponds   (l_random);
   world_plant_trees (l_shift_a, l_shift_b);
   world_add_plants  (l_random, l_shift_a, l_shift_b);
+  // lava pools from a sequence of their own, so they leave the rest
+  // of a seed's world as it was before they were added
+  random_seed       (l_random, p_seed + 9931);
+  world_add_lava_pools(l_random);
 
   world_find_spawn      (l_spawn_x, l_spawn_y, l_spawn_z);
   world_info_set_spawn  (p_info, l_spawn_x, l_spawn_y, l_spawn_z);
@@ -1307,6 +1338,383 @@ void world_generate(Attributes &p_info, Integer p_seed)
   // The house torches light it (light is only worked out on changes)
   world_light_update(record_integer(p_info, ATTR_HOUSE_X) + 1, record_integer(p_info, ATTR_HOUSE_Y) + 1, record_integer(p_info, ATTR_HOUSE_Z) + 1);
   world_light_update(record_integer(p_info, ATTR_HOUSE_X) + 5, record_integer(p_info, ATTR_HOUSE_Y) + 1, record_integer(p_info, ATTR_HOUSE_Z) + 1);
+}
+
+// ---------------------------------------------------------------- dimensions
+
+Integer world_dimension()
+// ----------------------------------------------------------------
+// DIM_OVERWORLD or DIM_NETHER: which dimension's blocks are loaded
+// ----------------------------------------------------------------
+{
+  return g_world_dimension;
+}
+
+void world_generate_dimension(Attributes &p_info, Integer p_seed, Integer p_dimension)
+// ----------------------------------------------------------------
+// Generate one dimension of a seed's world and note which in the
+// world record (a portal passes a scratch record, so the real one
+// keeps its spawn point and clock)
+// ----------------------------------------------------------------
+{
+  if (p_dimension == DIM_NETHER) {
+    world_generate_nether(p_info, p_seed);
+  } else {
+    world_generate(p_info, p_seed);
+  }
+  record_set_integer(p_info, ATTR_WORLD_DIMENSION, p_dimension);
+}
+
+void world_generate_nether(Attributes &p_info, Integer p_seed)
+// ----------------------------------------------------------------
+// The Nether of a seed: netherrack between bedrock floor and roof,
+// one great cavern whose floor and roof rise and fall (with pillars
+// where they meet), a lava sea up to NETHER_LAVA_LEVEL, patches of
+// soul sand on the floor, glowstone hanging from the roof and quartz
+// in the rock
+// ----------------------------------------------------------------
+{
+  Attributes l_random;
+  Real       l_shift_a = 0.0;
+  Real       l_shift_b = 0.0;
+  Integer    l_x       = 0;
+  Integer    l_y       = 0;
+  Integer    l_z       = 0;
+  Integer    l_base    = 0;
+  Integer    l_column  = 0;
+  Integer    l_floor   = 0;
+  Integer    l_roof    = 0;
+  Integer    l_soul    = FALSE;
+  Integer    l_block   = 0;
+  Integer    l_cluster = 0;
+  Integer    l_step    = 0;
+  Integer    l_found   = FALSE;
+  Integer    l_spawn_x = 0;
+  Integer    l_spawn_y = 0;
+  Integer    l_spawn_z = 0;
+
+  world_info_clear (p_info, p_seed);
+  world_seed_shifts(p_seed + 4241, l_shift_a, l_shift_b);
+  random_seed      (l_random, p_seed + 4241);
+  g_world_dimension = DIM_NETHER;
+
+  for (l_x = 0; l_x < WORLD_SIZE_X; ++l_x) {
+    for (l_z = 0; l_z < WORLD_SIZE_Z; ++l_z) {
+      l_floor = NETHER_FLOOR_LOW + floor_integer((NETHER_FLOOR_HIGH - NETHER_FLOOR_LOW) * world_value_noise(l_x / 14.0, l_z / 14.0, 11, l_shift_a, l_shift_b))
+              + floor_integer(world_value_noise(l_x / 4.0, l_z / 4.0, 12, l_shift_a, l_shift_b) * 4.0) - 2;
+      l_roof  = NETHER_ROOF_LOW + floor_integer((NETHER_ROOF_HIGH - NETHER_ROOF_LOW) * world_value_noise(l_x / 12.0, l_z / 12.0, 13, l_shift_a, l_shift_b));
+      if (world_value_noise(l_x / 9.0, l_z / 9.0, 14, l_shift_a, l_shift_b) > 0.82) l_roof = l_floor;   // a pillar
+      l_soul  = world_value_noise(l_x / 7.0, l_z / 7.0, 15, l_shift_a, l_shift_b) > 0.68 && l_floor > NETHER_LAVA_LEVEL + 1;
+      l_base   = world_index (l_x, 0, l_z);
+      l_column = world_column(l_x, l_z);
+
+      for (l_y = 0; l_y < WORLD_HEIGHT; ++l_y) {
+        l_block = BLOCK_NETHERRACK;
+        if (l_y == 0 || l_y >= WORLD_HEIGHT - 1) {
+          l_block = BLOCK_BEDROCK;
+        } else if (l_y <= 3 && hash_real(l_x * 1.0, l_y * 1.0, l_z + l_shift_a) < 0.7 / l_y) {
+          l_block = BLOCK_BEDROCK;
+        } else if (l_y > NETHER_ROOF_SOLID && hash_real(l_x * 1.0, l_y * 1.0, l_z + l_shift_b) < 0.5) {
+          l_block = BLOCK_BEDROCK;
+        } else if (l_y >= l_floor && l_y < l_roof) {
+          l_block = BLOCK_AIR;
+          if (l_y <= NETHER_LAVA_LEVEL) l_block = BLOCK_LAVA;
+        } else if (l_soul && l_y < l_floor && l_y >= l_floor - 2) {
+          l_block = BLOCK_SOUL_SAND;
+        }
+        g_world[l_base + l_y] = l_block;
+      }
+      g_height_map [l_column] = l_floor - 1;
+      g_solid_below[l_column] = l_floor - 1;
+      g_biome_map  [l_column] = BIOME_PLAINS;
+    }
+  }
+
+  // Glowstone: short random walks down and about from the roof
+  for (l_cluster = 1; l_cluster <= NETHER_GLOWSTONE; ++l_cluster) {
+    l_x     = random_range(l_random, 4, WORLD_SIZE_X - 5);
+    l_z     = random_range(l_random, 4, WORLD_SIZE_Z - 5);
+    l_found = FALSE;
+    for (l_y = NETHER_ROOF_HIGH; l_y >= NETHER_FLOOR_LOW; --l_y) {
+      if (world_get_block(l_x, l_y, l_z) == BLOCK_AIR && world_get_block(l_x, l_y + 1, l_z) == BLOCK_NETHERRACK) {
+        l_found = TRUE;
+        break;
+      }
+    }
+    if (!l_found) continue;
+    for (l_step = 1; l_step <= 14; ++l_step) {
+      if (world_get_block(l_x, l_y, l_z) == BLOCK_AIR) world_set_block(l_x, l_y, l_z, BLOCK_GLOWSTONE);
+      l_block = random_range(l_random, 1, 6);
+      if (l_block <= 2) --l_y;
+      if (l_block == 3) ++l_x;
+      if (l_block == 4) --l_x;
+      if (l_block == 5) ++l_z;
+      if (l_block == 6) --l_z;
+    }
+  }
+  world_place_veins(l_random, BLOCK_QUARTZ_ORE, BLOCK_NETHERRACK, NETHER_QUARTZ_VEINS, 5, NETHER_ROOF_SOLID);
+
+  // Respawning still happens in the overworld; this is only a start
+  if (world_portal_spot(floor_divide(WORLD_SIZE_X, 2), floor_divide(WORLD_SIZE_Z, 2), l_spawn_x, l_spawn_y, l_spawn_z)) {
+    world_info_set_spawn(p_info, l_spawn_x + 0.5, l_spawn_y * 1.0, l_spawn_z + 0.5);
+  }
+  world_finish_maps();
+}
+
+Integer world_nether_floor(Integer p_x, Integer p_z)
+// ----------------------------------------------------------------
+// Lowest place to stand in a Nether column above the lava: a cell
+// on something solid (not lava) with two open cells over it. -1 if
+// the column has none.
+// ----------------------------------------------------------------
+{
+  Integer l_y = 0;
+
+  for (l_y = NETHER_LAVA_LEVEL + 1; l_y <= NETHER_ROOF_HIGH; ++l_y) {
+    if (!world_is_solid(p_x, l_y - 1, p_z)) continue;
+    if (world_get_block(p_x, l_y, p_z) != BLOCK_AIR) continue;
+    if (world_get_block(p_x, l_y + 1, p_z) != BLOCK_AIR) continue;
+    if (world_get_block(p_x, l_y + 2, p_z) != BLOCK_AIR) continue;
+    return l_y;
+  }
+  return -1;
+}
+
+void world_add_lava_pools(Attributes &p_random)
+// ----------------------------------------------------------------
+// Pools of lava deep underground, each in a small hollow, with a
+// rim of obsidian where the lava has cooled against the rock: where
+// obsidian comes from for a Nether portal
+// ----------------------------------------------------------------
+{
+  Integer l_pool   = 0;
+  Integer l_x      = 0;
+  Integer l_y      = 0;
+  Integer l_z      = 0;
+  Integer l_dx     = 0;
+  Integer l_dz     = 0;
+  Integer l_up     = 0;
+  Real    l_radius = 0.0;
+  Real    l_apart  = 0.0;
+
+  for (l_pool = 1; l_pool <= LAVA_POOLS; ++l_pool) {
+    l_x      = random_range(p_random, 8, WORLD_SIZE_X - 9);
+    l_z      = random_range(p_random, 8, WORLD_SIZE_Z - 9);
+    l_y      = random_range(p_random, 6, 14);
+    l_radius = random_between(p_random, 1.6, 2.8);
+    for (l_dx = -4; l_dx <= 4; ++l_dx) {
+      for (l_dz = -4; l_dz <= 4; ++l_dz) {
+        l_apart = Sqrt(l_dx * l_dx + l_dz * l_dz * 1.0);
+        if (l_apart <= l_radius) {
+          world_set_block (l_x + l_dx, l_y, l_z + l_dz, BLOCK_LAVA);
+          world_mark_carved(l_x + l_dx, l_y, l_z + l_dz);
+        } else if (l_apart <= l_radius + 1.3) {
+          if (world_is_solid(l_x + l_dx, l_y, l_z + l_dz)) world_set_block(l_x + l_dx, l_y, l_z + l_dz, BLOCK_OBSIDIAN);
+        }
+        // a hollow over the pool and its rim
+        if (l_apart <= l_radius + 1.8) {
+          for (l_up = 1; l_up <= 3; ++l_up) {
+            if (l_up == 3 && l_apart > l_radius) continue;
+            if (world_get_block(l_x + l_dx, l_y + l_up, l_z + l_dz) == BLOCK_BEDROCK) continue;
+            world_set_block  (l_x + l_dx, l_y + l_up, l_z + l_dz, BLOCK_AIR);
+            world_mark_carved(l_x + l_dx, l_y + l_up, l_z + l_dz);
+          }
+        }
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------- portals
+
+Integer world_portal_frame(Integer p_x, Integer p_y, Integer p_z, Integer p_along_x,
+                           Integer &p_x0, Integer &p_y0, Integer &p_z0, Integer &p_width, Integer &p_height)
+// ----------------------------------------------------------------
+// Is the open cell (x, y, z) inside an obsidian frame standing along
+// x (along_x TRUE) or along z? The inside must be open, 2 to 10
+// cells wide and 3 to 10 high, with obsidian all round it (the
+// corners don't matter). Gives the inside's lowest cell nearest the
+// start of the axis and its size.
+// ----------------------------------------------------------------
+{
+  Integer l_dx = 0;
+  Integer l_dz = 1;
+  Integer l_x  = p_x;
+  Integer l_y  = p_y;
+  Integer l_z  = p_z;
+  Integer l_i  = 0;
+  Integer l_j  = 0;
+
+  if (p_along_x) {
+    l_dx = 1;
+    l_dz = 0;
+  }
+  if (world_get_block(l_x, l_y, l_z) != BLOCK_AIR) return FALSE;
+  // down to the bottom of the inside, then back along the axis
+  for (l_i = 1; l_i <= PORTAL_MAX_HEIGHT; ++l_i) {
+    if (world_get_block(l_x, l_y - 1, l_z) != BLOCK_AIR) break;
+    --l_y;
+  }
+  if (world_get_block(l_x, l_y - 1, l_z) != BLOCK_OBSIDIAN) return FALSE;
+  for (l_i = 1; l_i <= PORTAL_MAX_WIDTH; ++l_i) {
+    if (world_get_block(l_x - l_dx, l_y, l_z - l_dz) != BLOCK_AIR) break;
+    l_x = l_x - l_dx;
+    l_z = l_z - l_dz;
+  }
+  if (world_get_block(l_x - l_dx, l_y, l_z - l_dz) != BLOCK_OBSIDIAN) return FALSE;
+
+  p_width = 0;
+  while (p_width <= PORTAL_MAX_WIDTH && world_get_block(l_x + p_width * l_dx, l_y, l_z + p_width * l_dz) == BLOCK_AIR) ++p_width;
+  p_height = 0;
+  while (p_height <= PORTAL_MAX_HEIGHT && world_get_block(l_x, l_y + p_height, l_z) == BLOCK_AIR) ++p_height;
+  if (p_width < PORTAL_MIN_WIDTH || p_width > PORTAL_MAX_WIDTH) return FALSE;
+  if (p_height < PORTAL_MIN_HEIGHT || p_height > PORTAL_MAX_HEIGHT) return FALSE;
+
+  for (l_i = 0; l_i < p_width; ++l_i) {
+    if (world_get_block(l_x + l_i * l_dx, l_y - 1, l_z + l_i * l_dz) != BLOCK_OBSIDIAN) return FALSE;
+    if (world_get_block(l_x + l_i * l_dx, l_y + p_height, l_z + l_i * l_dz) != BLOCK_OBSIDIAN) return FALSE;
+    for (l_j = 0; l_j < p_height; ++l_j) {
+      if (world_get_block(l_x + l_i * l_dx, l_y + l_j, l_z + l_i * l_dz) != BLOCK_AIR) return FALSE;
+    }
+  }
+  for (l_j = 0; l_j < p_height; ++l_j) {
+    if (world_get_block(l_x - l_dx, l_y + l_j, l_z - l_dz) != BLOCK_OBSIDIAN) return FALSE;
+    if (world_get_block(l_x + p_width * l_dx, l_y + l_j, l_z + p_width * l_dz) != BLOCK_OBSIDIAN) return FALSE;
+  }
+  p_x0 = l_x;
+  p_y0 = l_y;
+  p_z0 = l_z;
+  return TRUE;
+}
+
+Integer world_light_portal(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// Flint and steel on the open cell (x, y, z): if it is inside an
+// obsidian frame, fill the frame with portal. Returns TRUE if lit.
+// ----------------------------------------------------------------
+{
+  Integer l_along = 0;
+  Integer l_x0    = 0;
+  Integer l_y0    = 0;
+  Integer l_z0    = 0;
+  Integer l_w     = 0;
+  Integer l_h     = 0;
+  Integer l_i     = 0;
+  Integer l_j     = 0;
+
+  for (l_along = 0; l_along <= 1; ++l_along) {
+    if (!world_portal_frame(p_x, p_y, p_z, l_along == 1, l_x0, l_y0, l_z0, l_w, l_h)) continue;
+    for (l_i = 0; l_i < l_w; ++l_i) {
+      for (l_j = 0; l_j < l_h; ++l_j) {
+        world_place_block(p_events, l_x0 + l_i * l_along, l_y0 + l_j, l_z0 + l_i * (1 - l_along), BLOCK_PORTAL);
+      }
+    }
+    return TRUE;
+  }
+  return FALSE;
+}
+
+Integer world_find_portal(Integer p_x, Integer p_y, Integer p_z, Integer p_range, Integer &p_px, Integer &p_py, Integer &p_pz)
+// ----------------------------------------------------------------
+// The portal cell nearest (x, y, z) within range across (any
+// height), and of its column the lowest. FALSE if there is none.
+// ----------------------------------------------------------------
+{
+  Integer l_x    = 0;
+  Integer l_y    = 0;
+  Integer l_z    = 0;
+  Integer l_best = -1;
+  Integer l_far  = 0;
+
+  for (l_x = max_integer(0, p_x - p_range); l_x <= min_integer(WORLD_SIZE_X - 1, p_x + p_range); ++l_x) {
+    for (l_z = max_integer(0, p_z - p_range); l_z <= min_integer(WORLD_SIZE_Z - 1, p_z + p_range); ++l_z) {
+      for (l_y = 1; l_y < WORLD_HEIGHT - 1; ++l_y) {
+        if (world_get_block(l_x, l_y, l_z) != BLOCK_PORTAL) continue;
+        if (world_get_block(l_x, l_y - 1, l_z) == BLOCK_PORTAL) continue;
+        l_far = (l_x - p_x) * (l_x - p_x) + (l_z - p_z) * (l_z - p_z) + (l_y - p_y) * (l_y - p_y);
+        if (l_best >= 0 && l_far >= l_best) continue;
+        l_best = l_far;
+        p_px   = l_x;
+        p_py   = l_y;
+        p_pz   = l_z;
+      }
+    }
+  }
+  return l_best >= 0;
+}
+
+Integer world_portal_spot(Integer p_x, Integer p_z, Integer &p_sx, Integer &p_sy, Integer &p_sz)
+// ----------------------------------------------------------------
+// Somewhere to stand near column (x, z), searching outwards: on dry
+// land in the overworld, on the cavern floor above the lava in the
+// Nether. FALSE (and the column itself) if nowhere is found.
+// ----------------------------------------------------------------
+{
+  Integer l_radius = 0;
+  Integer l_x      = 0;
+  Integer l_z      = 0;
+  Integer l_y      = 0;
+  Integer l_below  = 0;
+
+  for (l_radius = 0; l_radius <= 24; ++l_radius) {
+    for (l_x = p_x - l_radius; l_x <= p_x + l_radius; ++l_x) {
+      for (l_z = p_z - l_radius; l_z <= p_z + l_radius; ++l_z) {
+        if (Absolute(l_x - p_x) != l_radius && Absolute(l_z - p_z) != l_radius) continue;
+        if (l_x < 3 || l_z < 3 || l_x > WORLD_SIZE_X - 7 || l_z > WORLD_SIZE_Z - 4) continue;
+        if (g_world_dimension == DIM_NETHER) {
+          l_y = world_nether_floor(l_x, l_z);
+          if (l_y < 0) continue;
+        } else {
+          l_y = world_top_solid_y(l_x, l_z) + 1;
+          l_below = world_get_block(l_x, l_y - 1, l_z);
+          if (l_y < SEA_LEVEL || l_y > WORLD_HEIGHT - 7) continue;
+          if (block_is_liquid(l_below) || l_below == BLOCK_LEAVES) continue;
+        }
+        p_sx = l_x;
+        p_sy = l_y;
+        p_sz = l_z;
+        return TRUE;
+      }
+    }
+  }
+  p_sx = clamp_integer(p_x, 3, WORLD_SIZE_X - 7);
+  p_sz = clamp_integer(p_z, 3, WORLD_SIZE_Z - 4);
+  p_sy = NETHER_LAVA_LEVEL + 4;
+  if (g_world_dimension != DIM_NETHER) p_sy = max_integer(SEA_LEVEL, world_top_solid_y(p_sx, p_sz) + 1);
+  return FALSE;
+}
+
+void world_build_portal(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// Build a lit portal for someone arriving at (x, y, z): an obsidian
+// frame 4 wide and 5 high along x from (x, y, z), on an obsidian
+// floor where the ground falls away, in a cleared space with room to
+// step out of it at z + 1
+// ----------------------------------------------------------------
+{
+  Integer l_dx = 0;
+  Integer l_dy = 0;
+  Integer l_dz = 0;
+  Integer l_block = 0;
+
+  for (l_dx = -1; l_dx <= 4; ++l_dx) {
+    for (l_dz = -1; l_dz <= 1; ++l_dz) {
+      for (l_dy = 0; l_dy <= 4; ++l_dy) {
+        l_block = world_get_block(p_x + l_dx, p_y + l_dy, p_z + l_dz);
+        if (l_block != BLOCK_AIR && l_block != BLOCK_BEDROCK) world_place_block(p_events, p_x + l_dx, p_y + l_dy, p_z + l_dz, BLOCK_AIR);
+      }
+      if (!world_is_solid(p_x + l_dx, p_y - 1, p_z + l_dz)) world_place_block(p_events, p_x + l_dx, p_y - 1, p_z + l_dz, BLOCK_OBSIDIAN);
+    }
+  }
+  for (l_dx = 0; l_dx <= 3; ++l_dx) {
+    for (l_dy = 0; l_dy <= 4; ++l_dy) {
+      if (l_dx == 0 || l_dx == 3 || l_dy == 0 || l_dy == 4) {
+        world_place_block(p_events, p_x + l_dx, p_y + l_dy, p_z, BLOCK_OBSIDIAN);
+      } else {
+        world_place_block(p_events, p_x + l_dx, p_y + l_dy, p_z, BLOCK_PORTAL);
+      }
+    }
+  }
 }
 
 #endif

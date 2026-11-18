@@ -54,6 +54,32 @@
 #define ATTR_WORLD_DAYS     ("days")
 #define ATTR_WORLD_NO_CYCLE ("daylight_cycle_off")   // TRUE after /gamerule doDaylightCycle false
 
+// Dimensions: one is in g_world at a time (world_dimension); going
+// through a portal saves this one's block changes and generates the
+// other from the seed (game_travel)
+#define DIM_OVERWORLD       0
+#define DIM_NETHER          1
+#define ATTR_WORLD_DIMENSION ("dimension")
+#define ATTR_PORTAL_X       ("portal_x")      // "portal_x_1" overworld, "_2" Nether: the last portal used there
+#define ATTR_PORTAL_Y       ("portal_y")
+#define ATTR_PORTAL_Z       ("portal_z")
+#define ATTR_PORTAL_KNOWN   ("portal_known")
+#define NETHER_LAVA_LEVEL   31       // open cells up to here are a lava sea
+#define NETHER_FLOOR_LOW    24       // the cavern floor lies between these
+#define NETHER_FLOOR_HIGH   46
+#define NETHER_ROOF_LOW     66       // and its roof between these
+#define NETHER_ROOF_HIGH    86
+#define NETHER_ROOF_SOLID   90       // netherrack up to here, then bedrock
+#define NETHER_GLOWSTONE    46       // clusters hanging from the roof
+#define NETHER_QUARTZ_VEINS 80
+#define NETHER_DAYLIGHT     0.62     // the Nether's even, dim light
+#define LAVA_POOLS          9        // deep overworld pools with obsidian rims
+#define PORTAL_MIN_WIDTH    2        // the inside of a portal frame
+#define PORTAL_MAX_WIDTH    10
+#define PORTAL_MIN_HEIGHT   3
+#define PORTAL_MAX_HEIGHT   10
+#define PORTAL_SEARCH       12       // a portal this close to where you come out is used
+
 // Day and night
 #define DAY_SECONDS         1200.0   // one whole day, in seconds of play
 #define WORLD_START_TIME    0.04     // new worlds start just after sunrise
@@ -73,6 +99,7 @@
   Integer g_light_qy   [LIGHT_QUEUE_SIZE];
   Integer g_light_qz   [LIGHT_QUEUE_SIZE];
   Integer g_light_steps = 0;              // cells lit by the last update (statistics)
+  Integer g_world_dimension = 0;          // DIM_* of the blocks in g_world
 }
 
 // ---------------------------------------------------------------- grid access
@@ -107,6 +134,19 @@ void    world_break_block   (Attributes &p_events, Integer p_x, Integer p_y, Int
 void    world_place_block   (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 void    world_apply_remote_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 
+// ---------------------------------------------------------------- dimensions and portals
+Integer world_dimension     ();
+void    world_generate_dimension(Attributes &p_info, Integer p_seed, Integer p_dimension);
+void    world_generate_nether(Attributes &p_info, Integer p_seed);
+Integer world_nether_floor  (Integer p_x, Integer p_z);
+void    world_add_lava_pools(Attributes &p_random);
+Integer world_portal_frame  (Integer p_x, Integer p_y, Integer p_z, Integer p_along_x,
+                             Integer &p_x0, Integer &p_y0, Integer &p_z0, Integer &p_width, Integer &p_height);
+Integer world_light_portal  (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z);
+Integer world_find_portal   (Integer p_x, Integer p_y, Integer p_z, Integer p_range, Integer &p_px, Integer &p_py, Integer &p_pz);
+void    world_build_portal  (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z);
+Integer world_portal_spot   (Integer p_x, Integer p_z, Integer &p_sx, Integer &p_sy, Integer &p_sz);
+
 // ---------------------------------------------------------------- world record
 void    world_info_clear    (Attributes &p_info, Integer p_seed);
 Integer world_info_seed     (Attributes &p_info);
@@ -123,7 +163,7 @@ void    world_generate      (Attributes &p_info, Integer p_seed);
 void    world_fill_columns  (Real p_shift_a, Real p_shift_b);
 void    world_carve_sphere  (Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_radius);
 void    world_carve_caves   (Attributes &p_random);
-void    world_place_veins   (Attributes &p_random, Integer p_block, Integer p_count, Integer p_length, Integer p_max_y);
+void    world_place_veins   (Attributes &p_random, Integer p_block, Integer p_inside, Integer p_count, Integer p_length, Integer p_max_y);
 void    world_plant_tree    (Integer p_x, Integer p_ground_y, Integer p_z, Real p_shift_a, Real p_shift_b);
 void    world_plant_trees   (Real p_shift_a, Real p_shift_b);
 void    world_plant_cactus  (Integer p_x, Integer p_ground_y, Integer p_z, Integer p_tall);

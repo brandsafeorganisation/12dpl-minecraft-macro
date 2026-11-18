@@ -1928,12 +1928,198 @@ void make_texture_armour_worn(Integer p_tex, Integer p_helmet_front)
   }
 }
 
+void make_texture_obsidian(Integer p_tex)
+// ----------------------------------------------------------------
+// Obsidian: purple-black glass with a few lighter purple streaks
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 20 , 16 , 32 );
+  texture_set_palette(p_tex, 2, 38 , 26 , 60 );
+  texture_set_palette(p_tex, 3, 86 , 62 , 130);
+  texture_fill   (p_tex, 1);
+  texture_blotch (p_tex, 2, 6, 0.62, 1.0, 101);
+  texture_speckle(p_tex, 3, 0.04, 103);
+}
+
+void make_texture_netherrack(Integer p_tex)
+// ----------------------------------------------------------------
+// Netherrack: dull red rock with darker patches (kept plain: it is
+// most of the Nether, and every patch is another polygon)
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 112, 44 , 42 );
+  texture_set_palette(p_tex, 2, 82 , 28 , 28 );
+  texture_set_palette(p_tex, 3, 140, 66 , 62 );
+  texture_fill   (p_tex, 1);
+  texture_blotch (p_tex, 2, 5, 0.0, 0.28, 105);
+  texture_blotch (p_tex, 3, 5, 0.80, 1.0, 107);
+}
+
+void make_texture_soul_sand(Integer p_tex)
+// ----------------------------------------------------------------
+// Soul sand: dark brown sand with faint faces in it
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 84 , 64 , 50 );
+  texture_set_palette(p_tex, 2, 60 , 44 , 34 );
+  texture_set_palette(p_tex, 3, 42 , 30 , 24 );
+  texture_fill     (p_tex, 1);
+  texture_blotch   (p_tex, 2, 4, 0.0, 0.3, 109);
+  texture_fill_rect(p_tex, 3 , 4 , 4 , 5 , 3);    // eyes and a mouth
+  texture_fill_rect(p_tex, 7 , 4 , 8 , 5 , 3);
+  texture_fill_rect(p_tex, 4 , 8 , 7 , 9 , 3);
+  texture_fill_rect(p_tex, 10, 10, 11, 11, 3);
+  texture_fill_rect(p_tex, 13, 10, 14, 11, 3);
+  texture_fill_rect(p_tex, 11, 14, 13, 15, 3);
+}
+
+void make_texture_glowstone(Integer p_tex)
+// ----------------------------------------------------------------
+// Glowstone: bright yellow crystals with orange between them
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 250, 210, 110);
+  texture_set_palette(p_tex, 2, 196, 132, 60 );
+  texture_set_palette(p_tex, 3, 255, 244, 196);
+  texture_fill   (p_tex, 1);
+  texture_blotch (p_tex, 2, 4, 0.0, 0.3, 111);
+  texture_speckle(p_tex, 3, 0.08, 113);
+}
+
+void make_texture_quartz_ore(Integer p_tex)
+// ----------------------------------------------------------------
+// Netherrack with white crystals of quartz
+// ----------------------------------------------------------------
+{
+  make_texture_netherrack(p_tex);
+  texture_set_palette(p_tex, 4, 236, 230, 220);
+  texture_set_palette(p_tex, 5, 196, 182, 170);
+  texture_fill_rect(p_tex, 3 , 3 , 5 , 3 , 4);
+  texture_fill_rect(p_tex, 4 , 4 , 4 , 5 , 5);
+  texture_fill_rect(p_tex, 10, 5 , 13, 5 , 4);
+  texture_fill_rect(p_tex, 11, 6 , 12, 6 , 5);
+  texture_fill_rect(p_tex, 5 , 11, 8 , 11, 4);
+  texture_fill_rect(p_tex, 6 , 12, 7 , 12, 5);
+  texture_fill_rect(p_tex, 12, 12, 14, 13, 4);
+}
+
+void make_texture_lava(Integer p_tex)
+// ----------------------------------------------------------------
+// Lava: orange with yellow-hot and darker red swirls
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 226, 104, 24 );
+  texture_set_palette(p_tex, 2, 252, 176, 52 );
+  texture_set_palette(p_tex, 3, 178, 52 , 14 );
+  texture_fill  (p_tex, 1);
+  texture_blotch(p_tex, 2, 5, 0.66, 1.0, 115);
+  texture_blotch(p_tex, 3, 5, 0.0, 0.2, 117);
+}
+
+void make_texture_portal(Integer p_tex)
+// ----------------------------------------------------------------
+// The inside of a lit Nether portal: purple swirls you can partly
+// see through
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 110, 40 , 200);
+  texture_set_palette(p_tex, 2, 160, 90 , 240);
+  texture_set_palette(p_tex, 3, 70 , 18 , 150);
+  texture_fill  (p_tex, 1);
+  texture_blotch(p_tex, 2, 4, 0.62, 1.0, 119);
+  texture_blotch(p_tex, 3, 4, 0.0, 0.22, 121);
+  texture_blotch(p_tex, TEX_TRANSPARENT, 3, 0.40, 0.52, 123);
+}
+
+void make_texture_item_flint(Integer p_tex)
+// ----------------------------------------------------------------
+// Item picture: a chip of flint
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 20 , 20 , 22 );
+  texture_set_palette(p_tex, 2, 64 , 62 , 66 );
+  texture_set_palette(p_tex, 3, 118, 116, 120);
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "................");
+  texture_row(p_tex,  4, "......111.......");
+  texture_row(p_tex,  5, ".....12221......");
+  texture_row(p_tex,  6, "....1223321.....");
+  texture_row(p_tex,  7, "....12233321....");
+  texture_row(p_tex,  8, "...122223321....");
+  texture_row(p_tex,  9, "...122222221....");
+  texture_row(p_tex, 10, "...12222221.....");
+  texture_row(p_tex, 11, "....1222221.....");
+  texture_row(p_tex, 12, "....112221......");
+  texture_row(p_tex, 13, ".....11111......");
+  texture_row(p_tex, 14, "................");
+  texture_row(p_tex, 15, "................");
+  texture_row(p_tex, 16, "................");
+}
+
+void make_texture_item_flint_and_steel(Integer p_tex)
+// ----------------------------------------------------------------
+// Item picture: a steel ring with a flint
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 30 , 30 , 34 );
+  texture_set_palette(p_tex, 2, 200, 200, 206);
+  texture_set_palette(p_tex, 3, 70 , 68 , 72 );
+  texture_set_palette(p_tex, 4, 120, 118, 124);
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "..........1111..");
+  texture_row(p_tex,  4, "........11222211");
+  texture_row(p_tex,  5, "........12111121");
+  texture_row(p_tex,  6, "........121..121");
+  texture_row(p_tex,  7, "......1..1....11");
+  texture_row(p_tex,  8, ".....131.11111..");
+  texture_row(p_tex,  9, "....13331.......");
+  texture_row(p_tex, 10, "...1344331......");
+  texture_row(p_tex, 11, "..13444431......");
+  texture_row(p_tex, 12, "..1344431.......");
+  texture_row(p_tex, 13, "...13431........");
+  texture_row(p_tex, 14, "....131.........");
+  texture_row(p_tex, 15, ".....1..........");
+  texture_row(p_tex, 16, "................");
+}
+
+void make_texture_item_nether_quartz(Integer p_tex)
+// ----------------------------------------------------------------
+// Item picture: white crystals of nether quartz
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 120, 104, 96 );
+  texture_set_palette(p_tex, 2, 226, 220, 210);
+  texture_set_palette(p_tex, 3, 255, 255, 252);
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "................");
+  texture_row(p_tex,  4, ".......1........");
+  texture_row(p_tex,  5, "......121.......");
+  texture_row(p_tex,  6, ".....12321......");
+  texture_row(p_tex,  7, ".....12321...1..");
+  texture_row(p_tex,  8, "....123321..121.");
+  texture_row(p_tex,  9, "....122221.12321");
+  texture_row(p_tex, 10, "...12322221.1221");
+  texture_row(p_tex, 11, "...1222221..121.");
+  texture_row(p_tex, 12, "..1222221....1..");
+  texture_row(p_tex, 13, "...111111.......");
+  texture_row(p_tex, 14, "................");
+  texture_row(p_tex, 15, "................");
+  texture_row(p_tex, 16, "................");
+}
+
 Integer texture_is_sprite(Integer p_tex)
 // ----------------------------------------------------------------
 // TRUE for the textures drawn as pictures with see-through pixels
 // (plants and items) rather than block faces
 // ----------------------------------------------------------------
 {
+  // the block faces numbered after the sprites (worn armour and the
+  // Nether's blocks) are not sprites; the portal is one
+  if (p_tex == TEX_ARMOUR_IRON) return FALSE;
+  if (p_tex >= TEX_OBSIDIAN && p_tex <= TEX_LAVA) return FALSE;
   if (p_tex >= TEX_FIRST_SPRITE) return TRUE;
   return FALSE;
 }
@@ -2081,6 +2267,16 @@ void textures_generate()
   make_texture_armour_icon   (TEX_ARMOUR_EMPTY, 0);
   make_texture_armour_worn   (TEX_ARMOUR_IRON,         FALSE);
   make_texture_armour_worn   (TEX_ARMOUR_HELMET_FRONT, TRUE);
+  make_texture_obsidian      (TEX_OBSIDIAN);
+  make_texture_netherrack    (TEX_NETHERRACK);
+  make_texture_soul_sand     (TEX_SOUL_SAND);
+  make_texture_glowstone     (TEX_GLOWSTONE);
+  make_texture_quartz_ore    (TEX_QUARTZ_ORE);
+  make_texture_lava          (TEX_LAVA);
+  make_texture_portal        (TEX_PORTAL);
+  make_texture_item_flint    (TEX_ITEM_FLINT);
+  make_texture_item_flint_and_steel(TEX_ITEM_FLINT_AND_STEEL);
+  make_texture_item_nether_quartz  (TEX_ITEM_NETHER_QUARTZ);
 }
 
 #endif

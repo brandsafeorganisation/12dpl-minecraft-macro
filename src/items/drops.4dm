@@ -8,6 +8,7 @@
 #include "../../include/core/events.h"
 #include "../../include/blocks/blocks.h"
 #include "../../include/world/physics.h"
+#include "../../include/world/world.h"
 #include "../../include/items/inventory.h"
 #include "../../include/mobs/cows.h"
 #include "../../include/core/slots.h"
@@ -33,7 +34,15 @@ void drops_rebuild_index(Attributes &p_drops)
 // world is loaded)
 // ----------------------------------------------------------------
 {
+  Integer l_n = 0;
+
   slots_rebuild(SLOT_POOL_DROPS, p_drops, MAX_DROPS);
+  // only those in the dimension being played (the rest wait for the
+  // player to come back through a portal)
+  for (l_n = 1; l_n <= MAX_DROPS; ++l_n) {
+    if (!slots_used(SLOT_POOL_DROPS, l_n)) continue;
+    if (record_integer_at(p_drops, ATTR_DIM, l_n) != world_dimension()) slots_set(SLOT_POOL_DROPS, l_n, FALSE);
+  }
 }
 
 void drop_set_used(Attributes &p_drops, Integer p_drop, Integer p_used)
@@ -43,6 +52,7 @@ void drop_set_used(Attributes &p_drops, Integer p_drop, Integer p_used)
 // ----------------------------------------------------------------
 {
   record_set_integer_at(p_drops, ATTR_USED, p_drop, p_used);
+  if (p_used) record_set_integer_at(p_drops, ATTR_DIM, p_drop, world_dimension());
   slots_set(SLOT_POOL_DROPS, p_drop, p_used);
 }
 
@@ -265,8 +275,9 @@ void drops_update(Attributes &p_drops, Attributes &p_inventory, Attributes &p_ev
 
 void drops_on_event(Attributes &p_event, Attributes &p_drops, Attributes &p_random)
 // ----------------------------------------------------------------
-// Event handler: broken blocks (depending on the tool used) and
-// killed cows leave items behind, and anyone can ask for a drop
+// Event handler: broken blocks (depending on the tool used; gravel
+// sometimes gives flint) and killed cows leave items behind, and
+// anyone can ask for a drop
 // with EVT_SPAWN_DROP
 // ----------------------------------------------------------------
 {
@@ -278,6 +289,10 @@ void drops_on_event(Attributes &p_event, Attributes &p_drops, Attributes &p_rand
     if (event_is_remote(p_event)) return;   // it dropped on the other player's machine
     l_tool = floor_integer(event_real(p_event, 1) + 0.5);
     l_item = block_drop_item(event_integer(p_event, 4), l_tool);
+    // gravel now and then gives flint instead
+    if (l_item == ITEM_GRAVEL) {
+      if (random_between(p_random, 0.0, 1.0) < FLINT_CHANCE) l_item = ITEM_FLINT;
+    }
     if (l_item != ITEM_NONE) {
       drops_spawn(p_drops, p_random, l_item, 1, 0, event_integer(p_event, 1) + 0.5, event_integer(p_event, 2) + 0.5, event_integer(p_event, 3) + 0.5);
     }

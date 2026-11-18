@@ -33,7 +33,15 @@ void mobs_rebuild_index(Attributes &p_cows)
 // world is loaded)
 // ----------------------------------------------------------------
 {
+  Integer l_n = 0;
+
   slots_rebuild(SLOT_POOL_MOBS, p_cows, MAX_COWS);
+  // only those in the dimension being played (the rest wait for the
+  // player to come back through a portal)
+  for (l_n = 1; l_n <= MAX_COWS; ++l_n) {
+    if (!slots_used(SLOT_POOL_MOBS, l_n)) continue;
+    if (record_integer_at(p_cows, ATTR_DIM, l_n) != world_dimension()) slots_set(SLOT_POOL_MOBS, l_n, FALSE);
+  }
 }
 
 void mob_set_used(Attributes &p_cows, Integer p_cow, Integer p_used)
@@ -43,6 +51,7 @@ void mob_set_used(Attributes &p_cows, Integer p_cow, Integer p_used)
 // ----------------------------------------------------------------
 {
   record_set_integer_at(p_cows, ATTR_USED, p_cow, p_used);
+  if (p_used) record_set_integer_at(p_cows, ATTR_DIM, p_cow, world_dimension());
   slots_set(SLOT_POOL_MOBS, p_cow, p_used);
 }
 
@@ -466,7 +475,8 @@ void cows_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events,
 // ----------------------------------------------------------------
 // Move every cow and zombie near the player, top the herd back up
 // now and then away from where the player can see it happen, bring
-// zombies out at night and burn them in the day
+// zombies out at night and burn them in the day (none of which
+// happens in the Nether)
 // ----------------------------------------------------------------
 {
   Integer l_cow     = 0;
@@ -496,16 +506,19 @@ void cows_update(Attributes &p_cows, Attributes &p_random, Attributes &p_events,
     cow_position(p_cows, l_cow, l_x, l_y, l_z);
     if ((l_x - p_player_x) * (l_x - p_player_x) + (l_z - p_player_z) * (l_z - p_player_z) > COW_ACTIVE_DISTANCE * COW_ACTIVE_DISTANCE) continue;
     cow_update(p_cows, p_random, p_events, l_cow, l_target_x, p_player_y, l_target_z, p_dt);
-    if (mob_kind(p_cows, l_cow) == MOB_ZOMBIE && !p_night) zombie_sunlight(p_cows, p_events, l_cow, p_dt);
+    if (mob_kind(p_cows, l_cow) == MOB_ZOMBIE && !p_night && world_dimension() == DIM_OVERWORLD) zombie_sunlight(p_cows, p_events, l_cow, p_dt);
   }
 
   if (l_zombies > ZOMBIE_SPAWN_SECONDS) {
     l_zombies = 0.0;
-    if (p_night && !p_leave_player && mobs_count_kind(p_cows, MOB_ZOMBIE) < MAX_ZOMBIES) zombies_spawn_near(p_cows, p_random, p_player_x, p_player_z);
+    if (p_night && !p_leave_player && mobs_count_kind(p_cows, MOB_ZOMBIE) < MAX_ZOMBIES && world_dimension() == DIM_OVERWORLD) {
+      zombies_spawn_near(p_cows, p_random, p_player_x, p_player_z);
+    }
   }
   record_set_real(p_cows, ATTR_ZOMBIE_SPAWN, l_zombies);
 
-  if (l_respawn > COW_RESPAWN_SECONDS) {
+  // animals only come back in the overworld
+  if (l_respawn > COW_RESPAWN_SECONDS && world_dimension() == DIM_OVERWORLD) {
     l_respawn = 0.0;
     if (cows_alive_count(p_cows) < COW_TARGET_COUNT) {
       cows_spawn_random(p_cows, p_random, 1, p_player_x, p_player_z, 24.0);
