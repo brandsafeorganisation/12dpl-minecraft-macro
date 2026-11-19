@@ -809,13 +809,18 @@ void render_collect_blocks()
   }
 }
 
-Real render_side_shade(Real p_normal_x, Real p_normal_z)
+Real render_face_shade(Real p_normal_x, Real p_normal_y, Real p_normal_z)
 // ----------------------------------------------------------------
-// Light level of an upright face of an entity box from its normal,
-// matching block_face_shade for faces that line up with the grid
+// Light level of a face of an entity box from its (unit) normal,
+// matching block_face_shade for faces that line up with the grid:
+// a face tipped up or down blends towards the top's or the
+// bottom's shade, so a head looking straight up stays lit
 // ----------------------------------------------------------------
 {
-  return 0.70 * p_normal_x * p_normal_x + 0.84 * p_normal_z * p_normal_z;
+  Real l_up = 1.0;
+
+  if (p_normal_y < 0.0) l_up = 0.55;
+  return 0.70 * p_normal_x * p_normal_x + 0.84 * p_normal_z * p_normal_z + l_up * p_normal_y * p_normal_y;
 }
 
 void render_add_box(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_yaw, Real p_pitch, Real p_half_f, Real p_half_y, Real p_half_s,
@@ -897,27 +902,27 @@ void render_add_box(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_ya
 
   if (l_eye_f > p_half_f) {
     render_add_face(l_m_x + l_f_x + l_s_x, l_m_y + l_f_y + l_s_y, l_m_z + l_f_z + l_s_z, -l_s_x, -l_s_y, -l_s_z, l_u_x, l_u_y, l_u_z,
-                    p_tex_front, g_box_light * render_side_shade(l_fw_x, l_fw_z), l_sort_sq, l_size, p_tint, 0);
+                    p_tex_front, g_box_light * render_face_shade(l_fw_x, l_fw_y, l_fw_z), l_sort_sq, l_size, p_tint, 0);
   }
   if (l_eye_f < -p_half_f) {
     render_add_face(l_m_x, l_m_y, l_m_z, l_s_x, l_s_y, l_s_z, l_u_x, l_u_y, l_u_z,
-                    p_tex_back, g_box_light * render_side_shade(l_fw_x, l_fw_z), l_sort_sq, l_size, p_tint, 0);
+                    p_tex_back, g_box_light * render_face_shade(-l_fw_x, -l_fw_y, -l_fw_z), l_sort_sq, l_size, p_tint, 0);
   }
   if (l_eye_s > p_half_s) {
     render_add_face(l_m_x + l_s_x, l_m_y + l_s_y, l_m_z + l_s_z, l_f_x, l_f_y, l_f_z, l_u_x, l_u_y, l_u_z,
-                    p_tex_side, g_box_light * render_side_shade(l_side_x, l_side_z), l_sort_sq, l_size, p_tint, 0);
+                    p_tex_side, g_box_light * render_face_shade(l_side_x, 0.0, l_side_z), l_sort_sq, l_size, p_tint, 0);
   }
   if (l_eye_s < -p_half_s) {
     render_add_face(l_m_x, l_m_y, l_m_z, l_f_x, l_f_y, l_f_z, l_u_x, l_u_y, l_u_z,
-                    p_tex_side, g_box_light * render_side_shade(l_side_x, l_side_z), l_sort_sq, l_size, p_tint, 0);
+                    p_tex_side, g_box_light * render_face_shade(l_side_x, 0.0, l_side_z), l_sort_sq, l_size, p_tint, 0);
   }
   if (l_eye_u > p_half_y) {
     render_add_face(l_m_x + l_u_x, l_m_y + l_u_y, l_m_z + l_u_z, l_f_x, l_f_y, l_f_z, l_s_x, l_s_y, l_s_z,
-                    p_tex_top, g_box_light, l_sort_sq, l_size, p_tint, 0);
+                    p_tex_top, g_box_light * render_face_shade(l_up_x, l_up_y, l_up_z), l_sort_sq, l_size, p_tint, 0);
   }
   if (l_eye_u < -p_half_y) {
     render_add_face(l_m_x + l_s_x, l_m_y + l_s_y, l_m_z + l_s_z, l_f_x, l_f_y, l_f_z, -l_s_x, -l_s_y, -l_s_z,
-                    p_tex_top, 0.55 * g_box_light, l_sort_sq, l_size, p_tint, 0);
+                    p_tex_top, g_box_light * render_face_shade(-l_up_x, -l_up_y, -l_up_z), l_sort_sq, l_size, p_tint, 0);
   }
 }
 
@@ -1158,16 +1163,21 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
 // from it and looks up or down by pitch; legs and arms swing by
 // swing. Crouching, the body leans forward from the neck, the legs
 // step back under it and the head and arms come down with it.
-// Armour worn (TRUE for each piece) is a slightly bigger box round
-// the part it covers, queued before it so it is painted over it.
+// Armour worn (the item in each armour slot, ITEM_NONE for none) is
+// a slightly bigger box round the part it covers in that armour's
+// textures, queued before it so it is painted over it.
 // ----------------------------------------------------------------
 {
-  Real l_neck      = 1.5;    // where the head sits on the body
-  Real l_lean      = 0.0;    // the body tips forward this much (radians)
-  Real l_legs_back = 0.0;
-  Real l_arm_tip   = 0.0;
-  Real l_a         = PERSON_ARMOUR_GAP;
-  Real l_foot      = 0.625;  // from the hip to the middle of a boot
+  Real    l_neck      = 1.5;    // where the head sits on the body
+  Real    l_lean      = 0.0;    // the body tips forward this much (radians)
+  Real    l_legs_back = 0.0;
+  Real    l_arm_tip   = 0.0;
+  Real    l_a         = PERSON_ARMOUR_GAP;
+  Real    l_foot      = 0.625;  // from the hip to the middle of a boot
+  Integer l_h         = 0;      // first worn texture of each piece
+  Integer l_c         = 0;
+  Integer l_l         = 0;
+  Integer l_b         = 0;
 
   if (p_crouch) {
     l_neck      = 1.3;
@@ -1175,24 +1185,28 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
     l_legs_back = -0.25;
     l_arm_tip   = 0.4;
   }
+  l_h = item_worn_texture(p_helmet,     0);
+  l_c = item_worn_texture(p_chestplate, 0);
+  l_l = item_worn_texture(p_leggings,   0);
+  l_b = item_worn_texture(p_boots,      0);
   render_mob_begin(p_x, p_y, p_z, p_yaw, 0.0);
-  //                along                               up                                    across   half f        half y          half s        turn         pitch                 hip    side             top              front                    back
-  if (p_helmet) {
-    render_mob_part(0.0                               , l_neck + 0.25                       ,  0.0   , 0.25 + l_a    , 0.25 + l_a    , 0.25 + l_a  , p_head_turn,  p_pitch            , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_HELMET_FRONT, TEX_ARMOUR_IRON);
+  //                along                               up                                    across   half f        half y          half s        turn         pitch                 hip    side                      top                       front                      back
+  if (l_h > 0) {
+    render_mob_part(0.0                               , l_neck + 0.25                       ,  0.0   , 0.25 + l_a    , 0.25 + l_a    , 0.25 + l_a  , p_head_turn,  p_pitch            , FALSE, l_h + WORN_HELMET_SIDE, l_h + WORN_HELMET_TOP , l_h + WORN_HELMET_FRONT, l_h + WORN_HELMET_BACK);
   }
-  if (p_chestplate) {
-    render_mob_part(-0.375 * Sin(l_lean)              , l_neck - 0.375 * Cos(l_lean)        ,  0.0   , 0.125 + l_a   , 0.375 + l_a   , 0.25 + l_a  , 0.0        , -l_lean             , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
-    render_mob_part(0.0                               , l_neck - 0.375                      ,  0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip - p_swing , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
-    render_mob_part(0.0                               , l_neck - 0.375                      , -0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip + p_swing , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+  if (l_c > 0) {
+    render_mob_part(-0.375 * Sin(l_lean)              , l_neck - 0.375 * Cos(l_lean)        ,  0.0   , 0.125 + l_a   , 0.375 + l_a   , 0.25 + l_a  , 0.0        , -l_lean             , FALSE, l_c + WORN_BODY_SIDE  , l_c + WORN_BODY_SIDE  , l_c + WORN_BODY_FRONT  , l_c + WORN_BODY_BACK  );
+    render_mob_part(0.0                               , l_neck - 0.375                      ,  0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip - p_swing , TRUE , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_FRONT   , l_c + WORN_ARM_SIDE   );
+    render_mob_part(0.0                               , l_neck - 0.375                      , -0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip + p_swing , TRUE , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_FRONT   , l_c + WORN_ARM_SIDE   );
   }
   // boots hang from the hip like the legs, a little bigger than the leggings
-  if (p_boots) {
-    render_mob_part(l_legs_back + l_foot * Sin(p_swing) , 0.75 - l_foot * Cos(p_swing)      ,  0.125 , 0.125 + 2.0 * l_a, 0.125 + l_a, 0.125 + 2.0 * l_a, 0.0  ,  p_swing            , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
-    render_mob_part(l_legs_back - l_foot * Sin(p_swing) , 0.75 - l_foot * Cos(p_swing)      , -0.125 , 0.125 + 2.0 * l_a, 0.125 + l_a, 0.125 + 2.0 * l_a, 0.0  , -p_swing            , FALSE, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+  if (l_b > 0) {
+    render_mob_part(l_legs_back + l_foot * Sin(p_swing) , 0.75 - l_foot * Cos(p_swing)      ,  0.125 , 0.125 + 2.0 * l_a, 0.125 + l_a, 0.125 + 2.0 * l_a, 0.0  ,  p_swing            , FALSE, l_b + WORN_BOOT_SIDE  , l_b + WORN_BOOT_SIDE  , l_b + WORN_BOOT_FRONT  , l_b + WORN_BOOT_SIDE  );
+    render_mob_part(l_legs_back - l_foot * Sin(p_swing) , 0.75 - l_foot * Cos(p_swing)      , -0.125 , 0.125 + 2.0 * l_a, 0.125 + l_a, 0.125 + 2.0 * l_a, 0.0  , -p_swing            , FALSE, l_b + WORN_BOOT_SIDE  , l_b + WORN_BOOT_SIDE  , l_b + WORN_BOOT_FRONT  , l_b + WORN_BOOT_SIDE  );
   }
-  if (p_leggings) {
-    render_mob_part(l_legs_back                       , 0.375                               ,  0.125 , 0.125 + l_a   , 0.375         , 0.125 + l_a , 0.0        ,  p_swing            , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
-    render_mob_part(l_legs_back                       , 0.375                               , -0.125 , 0.125 + l_a   , 0.375         , 0.125 + l_a , 0.0        , -p_swing            , TRUE , TEX_ARMOUR_IRON, TEX_ARMOUR_IRON, TEX_ARMOUR_IRON        , TEX_ARMOUR_IRON);
+  if (l_l > 0) {
+    render_mob_part(l_legs_back                       , 0.375                               ,  0.125 , 0.125 + l_a   , 0.375         , 0.125 + l_a , 0.0        ,  p_swing            , TRUE , l_l + WORN_LEG_SIDE   , l_l + WORN_LEG_SIDE   , l_l + WORN_LEG_FRONT   , l_l + WORN_LEG_SIDE   );
+    render_mob_part(l_legs_back                       , 0.375                               , -0.125 , 0.125 + l_a   , 0.375         , 0.125 + l_a , 0.0        , -p_swing            , TRUE , l_l + WORN_LEG_SIDE   , l_l + WORN_LEG_SIDE   , l_l + WORN_LEG_FRONT   , l_l + WORN_LEG_SIDE   );
   }
   // sized like the block game's player (1 pixel of the skin is 1/16
   // block): 4 x 12 x 4 legs and arms, an 8 x 12 x 4 body, an 8 x 8 x 8
@@ -1278,10 +1292,10 @@ void render_collect_self(Attributes &p_player, Attributes &p_inventory)
   player_position(p_player, l_x, l_y, l_z);
   player_look    (p_player, l_yaw, l_pitch);
   g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
-  render_person(l_x, l_y, l_z, player_body_yaw(p_player), wrap_angle(l_yaw - player_body_yaw(p_player)), l_pitch,
-                Sin(player_bob(p_player)) * MOB_LEG_SWING * player_stride(p_player), player_crouching(p_player),
-                !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_HEAD)), !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_CHEST)),
-                !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_LEGS)), !slot_is_empty(p_inventory, inventory_armour_slot(ARMOUR_FEET)));
+  render_person(l_x, l_y, l_z, player_body_yaw(p_player), angle_difference(player_body_yaw(p_player), l_yaw), l_pitch,
+                Sin(player_step(p_player)) * MOB_LEG_SWING * player_stride(p_player), player_crouching(p_player),
+                slot_item(p_inventory, inventory_armour_slot(ARMOUR_HEAD)), slot_item(p_inventory, inventory_armour_slot(ARMOUR_CHEST)),
+                slot_item(p_inventory, inventory_armour_slot(ARMOUR_LEGS)), slot_item(p_inventory, inventory_armour_slot(ARMOUR_FEET)));
 }
 
 void render_collect_peers(Attributes &p_peers)
@@ -1301,7 +1315,7 @@ void render_collect_peers(Attributes &p_peers)
     if ((l_x - g_cam_x) * (l_x - g_cam_x) + (l_z - g_cam_z) * (l_z - g_cam_z) > (g_render_distance + 2.0) * (g_render_distance + 2.0)) continue;
     g_box_light = render_light_at(l_x, l_y + 1.0, l_z);
     render_person(l_x, l_y, l_z, peer_yaw(p_peers, l_peer), 0.0, peer_pitch(p_peers, l_peer), Sin(peer_step(p_peers, l_peer)) * MOB_LEG_SWING, FALSE,
-                  FALSE, FALSE, FALSE, FALSE);
+                  ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE);
   }
 }
 
@@ -1670,13 +1684,31 @@ void render_draw_crack(Draw_Box p_box, Integer p_tex)
   }
 }
 
+Integer render_animated_texture(Integer p_tex)
+// ----------------------------------------------------------------
+// The frame of an animated texture to draw now (the portal's swirl
+// and fire's flicker); other textures are drawn as they are
+// ----------------------------------------------------------------
+{
+  Integer l_frame = 0;
+
+  if (p_tex == TEX_PORTAL) {
+    // frame 0 is TEX_PORTAL itself, the others follow TEX_PORTAL_2
+    l_frame = positive_mod(floor_integer(g_view_now / PORTAL_FRAME_SECONDS), PORTAL_FRAMES);
+    if (l_frame == 0) return TEX_PORTAL;
+    return TEX_PORTAL_2 + l_frame - 1;
+  }
+  if (p_tex == TEX_FIRE  ) return TEX_FIRE + positive_mod(floor_integer(g_view_now / FIRE_FRAME_SECONDS), 2);
+  return p_tex;
+}
+
 void render_draw_face(Draw_Box p_box, Integer p_face)
 // ----------------------------------------------------------------
 // Paint one queued face: the base colour over the whole face, then
 // (when close enough) the rectangles of the texture's other colours
 // ----------------------------------------------------------------
 {
-  Integer l_tex     = g_df_tex[p_face];
+  Integer l_tex     = render_animated_texture(g_df_tex[p_face]);
   Integer l_detail  = g_df_detail[p_face];
   Real    l_fog     = g_df_fog[p_face];
   Real    l_tint    = g_df_tint[p_face];
@@ -2567,10 +2599,14 @@ void render_world(Draw_Box p_box, Real p_w, Real p_h, Real p_view_bottom, Attrib
   Real    l_z      = 0.0;
   Real    l_yaw    = 0.0;
   Real    l_pitch  = 0.0;
+  Real    l_warp   = 0.0;
 
   render_view_from(p_player, p_settings, p_time_of_day, p_now);
   render_camera_place(p_player, l_x, l_y, l_z, l_yaw, l_pitch);
-  render_setup_camera(p_w, p_h, p_view_bottom, l_x, l_y, l_z, l_yaw, l_pitch, settings_fov_radians(p_settings));
+  // standing in a portal makes the view swim, more as it builds up
+  l_warp = clamp_real(player_portal_time(p_player) / PORTAL_SECONDS, 0.0, 1.0);
+  render_setup_camera(p_w, p_h, p_view_bottom, l_x, l_y, l_z, l_yaw, l_pitch,
+                      settings_fov_radians(p_settings) * (1.0 + 0.25 * l_warp * Sin(p_now * 4.0)));
 
   g_face_total     = 0;
   g_stat_faces     = 0;

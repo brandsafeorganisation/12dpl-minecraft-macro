@@ -87,6 +87,7 @@
 // Records
 #define DATATYPE_PACK_INDEX   ("pack_index")
 #define DATATYPE_PACK_WANTED  ("pack_wanted")
+#define ATTR_PACK_PART        ("part")   // in a record of which part textures loaded: part_<tex>
 #define ATTR_PACK_OFFSET      ("_offset")      // suffixes added to an image key
 #define ATTR_PACK_SIZE        ("_size")
 #define ATTR_PACK_METHOD      ("_method")
@@ -173,7 +174,7 @@ Integer pack_apply_skin       (Text p_path, Text &p_report);
 // Honest helpers
 Integer pack_is_zip           (Text p_path);
 Integer pack_map_entry        (Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_name, Integer &p_tint, Text &p_overlay);
-Integer pack_map_part         (Integer p_entry, Integer &p_tex, Text &p_name, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h,
+Integer pack_map_part         (Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_name, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h,
                                Integer &p_turn);
 Text    pack_replace          (Text p_text, Text p_find, Text p_with);
 Text    pack_key              (Text p_kind, Text p_name);

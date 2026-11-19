@@ -173,7 +173,7 @@ void test_number_rule(Text p_function, Integer p_kind, Text p_name, Real &p_low,
       p_rule = "a cell height";  p_low = 0.0;  p_high = WORLD_HEIGHT - 1;  p_typical = 70.0;  return;
     }
     if (test_name_ends(p_name, "block")) {
-      p_rule = "a block";  p_low = 0.0;  p_high = BLOCK_PORTAL;  p_typical = BLOCK_STONE;  return;
+      p_rule = "a block";  p_low = 0.0;  p_high = MAX_BLOCK;  p_typical = BLOCK_STONE;  return;
     }
     if (test_name_ends(p_name, "item") || p_name == "p_food") {
       p_rule = "an item";  p_low = 0.0;  p_high = MAX_ITEM_ID;  p_typical = ITEM_STONE;  return;

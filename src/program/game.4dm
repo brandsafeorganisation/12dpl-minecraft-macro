@@ -431,6 +431,7 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
     cows_update (p_cows, p_random, p_events, l_x, l_y, l_z, world_is_night(world_time_of_day(p_info)),
                  player_is_dead(p_player) || !player_survival(p_player), p_dt);
     drops_update(p_drops, p_inventory, p_events, l_x, l_y, l_z, player_is_dead(p_player) || player_spectator(p_player), p_dt);
+    world_fire_ticks(p_events, p_random, l_x, l_y, l_z, p_dt);
 
     l_autosave = l_autosave + p_dt;
     if (l_autosave > AUTOSAVE_SECONDS) {

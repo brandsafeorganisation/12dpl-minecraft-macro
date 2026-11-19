@@ -54,9 +54,23 @@
 #define BLOCK_QUARTZ_ORE      61
 #define BLOCK_LAVA            62   // a liquid like water that burns; no item
 #define BLOCK_PORTAL          63   // a lit Nether portal's inside; no item
+#define BLOCK_DIAMOND_ORE     95   // blocks added after the items 64 .. 94 (so
+#define BLOCK_JUKEBOX         96   // their item can share their number)
+#define BLOCK_FIRE            97   // burns on a block; no item
+#define MAX_BLOCK             97   // the highest block number
 #define MAX_BLOCK_ID          28   // highest of the first run of blocks that are also items
 #define FIRST_NETHER_ITEM     57   // blocks 57 .. LAST_NETHER_ITEM are items too
 #define LAST_NETHER_ITEM      61
+#define FIRST_LATE_BLOCK_ITEM 95   // blocks 95 .. LAST_LATE_BLOCK_ITEM are items too
+#define LAST_LATE_BLOCK_ITEM  96
+#define FIRE_LIGHT            15
+#define FIRE_DAMAGE           1    // standing in fire burns this much ...
+#define FIRE_HURT_SECONDS     1.0  // ... this often
+#define FIRE_TICKS_PER_SECOND 4500 // cells near the player checked for fire each second
+#define FIRE_TICK_RADIUS      8    // how far from the player fire burns and spreads
+#define FIRE_GO_OUT_CHANCE    0.35 // a fire checked goes out this often (never on netherrack) ...
+#define FIRE_FED_GO_OUT_CHANCE 0.08 // ... or this often with something flammable next to it
+#define FIRE_SPREAD_CHANCE    0.4  // and sets each flammable block next to it alight this often
 #define GLOWSTONE_LIGHT       15
 #define PORTAL_LIGHT          11
 #define TORCH_LIGHT           14
@@ -129,7 +143,18 @@
 #define ITEM_FLINT            92   // gravel drops it now and then
 #define ITEM_FLINT_AND_STEEL  93   // lights a Nether portal in an obsidian frame
 #define ITEM_NETHER_QUARTZ    94
-#define MAX_ITEM_ID           94
+#define ITEM_DIAMOND_ORE      95
+#define ITEM_JUKEBOX          96
+#define ITEM_DIAMOND          98
+#define ITEM_DIAMOND_PICKAXE  99
+#define ITEM_DIAMOND_AXE      100
+#define ITEM_DIAMOND_SHOVEL   101
+#define ITEM_DIAMOND_SWORD    102
+#define ITEM_DIAMOND_HELMET   103
+#define ITEM_DIAMOND_CHESTPLATE 104
+#define ITEM_DIAMOND_LEGGINGS 105
+#define ITEM_DIAMOND_BOOTS    106
+#define MAX_ITEM_ID           106
 #define FLINT_CHANCE          0.15 // a broken gravel block drops flint this often
 
 // Tool kinds and tiers
@@ -142,6 +167,7 @@
 #define TIER_WOOD             1
 #define TIER_STONE            2
 #define TIER_IRON             3
+#define TIER_DIAMOND          4
 
 // Where a piece of armour is worn (item_armour_place)
 #define ARMOUR_NONE           0
@@ -167,6 +193,7 @@
 Integer block_is_solid       (Integer p_block);
 Integer block_is_liquid      (Integer p_block);
 Integer block_is_plant       (Integer p_block);
+Integer block_is_flammable   (Integer p_block);
 Integer block_box            (Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, Real &p_max_x, Real &p_max_y, Real &p_max_z);
 Integer block_is_door        (Integer p_block);
 Integer block_is_bed         (Integer p_block);
@@ -208,6 +235,7 @@ Integer item_attack_damage   (Integer p_item);
 Integer item_food_value      (Integer p_item);
 Integer item_armour_place    (Integer p_item);
 Integer item_armour_points   (Integer p_item);
+Integer item_worn_texture    (Integer p_item, Integer p_part);
 Integer item_spawn_egg_mob   (Integer p_item);
 Integer item_fuel_seconds    (Integer p_item);
 Integer item_smelt_result    (Integer p_item);

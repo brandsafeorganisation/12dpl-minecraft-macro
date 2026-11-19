@@ -7,17 +7,6 @@ item to "Done" (with the commit) when it is finished and tested.
 
 ### Rendering and models
 
-- **Looking straight up darkens the player's head.** Looking directly
-  up makes the player's head go dark.
-- **Animate the portal.** The Nether portal is a still purple face; it
-  should swirl like the block game's.
-- **Worn armour should use the resource pack.** Armour on the player
-  model is drawn in built-in colours; use the pack's armour layer
-  textures (`textures/models/armor/iron_layer_1.png` and `_2`).
-- **The player can't look over their left shoulder.** The head turns
-  further to one side than the other.
-- **Flying in creative should still walk.** Flying should still show
-  the walking animation, as in the block game.
 - **The first-person arm should match the player model.** It should
   use the skin's arm (slim or wide) and sleeve, not a stand-in.
 - **Hold tools like tools.** A pickaxe or sword should be held at an
@@ -38,27 +27,17 @@ item to "Done" (with the commit) when it is finished and tested.
   keep each dimension's things in a store of their own, and save each
   dimension to a folder of its own, as the block game does (`DIM-1`
   for the Nether).
-- **Portal timing and effect:**
-  - creative: travel instantly;
-  - survival: travel after 5 seconds, with the
-    whole screen covered by a warping purple portal overlay that
-    builds up while you stand in it.
-- **Flint and steel lights fires anywhere.** It should start a fire on
-  any solid block's face (not in water or lava), not only light a
-  portal. Fire burns, spreads to flammable blocks and hurts.
-
-### Items and blocks
-
-- **Diamonds and the jukebox:**
-  - diamond ore, deep underground (iron pickaxe or better);
-  - the diamond item;
-  - diamond tools: pickaxe, axe, shovel, sword and hoe if hoes exist;
-  - diamond armour;
-  - a jukebox, crafted like a chest (planks all round) with a diamond
-    in the centre.
 
 ## Done
 
+- The head stays lit looking straight up; it turns as far left as
+  right; flying shows the walking legs; the portal swirls (8 frames,
+  the pack's animation strip if it has one); a survival portal takes
+  5 seconds with a swirling purple overlay closing in and the view
+  swimming, a creative one is instant; flint and steel lights fires on
+  any block, which spread, burn wood away and hurt; diamond ore,
+  diamonds, diamond tools and armour, the jukebox; worn armour uses
+  the pack's armour layers (old or new layout).
 - Key Binds screen in the block game's style, with every key
   changeable; the old help panel removed; Q drops the held item (Ctrl+Q
   the stack); C no longer crouches; Ctrl+W sprints.

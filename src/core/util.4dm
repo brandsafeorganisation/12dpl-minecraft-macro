@@ -173,6 +173,15 @@ Real wrap_angle(Real p_angle)
   return p_angle - Floor(p_angle / TWO_PI) * TWO_PI;
 }
 
+Real angle_difference(Real p_from, Real p_to)
+// ----------------------------------------------------------------
+// The turn from angle from to angle to the short way round, in
+// [-pi, pi): negative turns one way, positive the other
+// ----------------------------------------------------------------
+{
+  return wrap_angle(p_to - p_from + PI) - PI;
+}
+
 Integer text_to_seed(Text p_text)
 // ----------------------------------------------------------------
 // Turn the seed typed by the player into an Integer seed

@@ -26,6 +26,8 @@
 #define CAVE_WORM_STEPS     90
 #define COAL_VEINS          110
 #define IRON_VEINS          60
+#define DIAMOND_VEINS       14      // small veins of diamond ore deep down (below DIAMOND_MAX_Y)
+#define DIAMOND_MAX_Y       16
 #define GRAVEL_POCKETS      40
 #define MAX_PONDS           4
 
@@ -34,7 +36,7 @@
 // reads as its plain block number. Light spreads one level less per
 // step through cells that don't hide faces (air, water, plants,
 // glass) and is worked out again in a box around every change.
-#define LIGHT_SHIFT         64
+#define LIGHT_SHIFT         128
 #define LIGHT_MAX_LEVEL     15
 #define LIGHT_RADIUS        15
 #define LIGHT_QUEUE_SIZE    65536
@@ -143,6 +145,10 @@ void    world_add_lava_pools(Attributes &p_random);
 Integer world_portal_frame  (Integer p_x, Integer p_y, Integer p_z, Integer p_along_x,
                              Integer &p_x0, Integer &p_y0, Integer &p_z0, Integer &p_width, Integer &p_height);
 Integer world_light_portal  (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z);
+Integer world_next_to_flammable(Integer p_x, Integer p_y, Integer p_z);
+Integer world_light_fire    (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z);
+void    world_burn_cell     (Attributes &p_events, Attributes &p_random, Integer p_x, Integer p_y, Integer p_z);
+void    world_fire_ticks    (Attributes &p_events, Attributes &p_random, Real p_x, Real p_y, Real p_z, Real p_dt);
 Integer world_find_portal   (Integer p_x, Integer p_y, Integer p_z, Integer p_range, Integer &p_px, Integer &p_py, Integer &p_pz);
 void    world_build_portal  (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z);
 Integer world_portal_spot   (Integer p_x, Integer p_z, Integer &p_sx, Integer &p_sy, Integer &p_sz);

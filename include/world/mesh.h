@@ -37,7 +37,7 @@
 
 // What a g_world cell value (block + LIGHT_SHIFT * light) is to the
 // mesh builder, looked up in g_cell_kind instead of asking blocks.4dm
-#define CELL_VALUES        1024   // every possible cell value (LIGHT_SHIFT * (LIGHT_MAX_LEVEL + 1))
+#define CELL_VALUES        2048   // every possible cell value (LIGHT_SHIFT * (LIGHT_MAX_LEVEL + 1))
 #define CELL_AIR           0
 #define CELL_HIDES         1      // hides its neighbours' faces (solid, not see-through)
 #define CELL_SEE_THROUGH   2      // glass

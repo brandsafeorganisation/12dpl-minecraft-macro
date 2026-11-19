@@ -1300,7 +1300,7 @@ void world_finish_maps()
 void world_generate(Attributes &p_info, Integer p_seed)
 // ----------------------------------------------------------------
 // Make the whole world from a seed: terrain and biomes, caves,
-// coal and gravel, ponds, trees, plants, then the starter house
+// coal, iron, gravel and diamonds, ponds, trees, plants, then the starter house
 // near the middle where the player spawns
 // ----------------------------------------------------------------
 {
@@ -1328,6 +1328,9 @@ void world_generate(Attributes &p_info, Integer p_seed)
   // of a seed's world as it was before they were added
   random_seed       (l_random, p_seed + 9931);
   world_add_lava_pools(l_random);
+  // and so do the diamonds
+  random_seed       (l_random, p_seed + 7717);
+  world_place_veins (l_random, BLOCK_DIAMOND_ORE, BLOCK_STONE, DIAMOND_VEINS, 4, DIAMOND_MAX_Y);
 
   world_find_spawn      (l_spawn_x, l_spawn_y, l_spawn_z);
   world_info_set_spawn  (p_info, l_spawn_x, l_spawn_y, l_spawn_z);
@@ -1522,6 +1525,127 @@ void world_add_lava_pools(Attributes &p_random)
         }
       }
     }
+  }
+}
+
+// ---------------------------------------------------------------- fire
+
+Integer world_next_to_flammable(Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// TRUE if any of the six cells round (x, y, z) holds a flammable
+// block
+// ----------------------------------------------------------------
+{
+  if (block_is_flammable(world_get_block(p_x + 1, p_y, p_z)) || block_is_flammable(world_get_block(p_x - 1, p_y, p_z))) return TRUE;
+  if (block_is_flammable(world_get_block(p_x, p_y + 1, p_z)) || block_is_flammable(world_get_block(p_x, p_y - 1, p_z))) return TRUE;
+  if (block_is_flammable(world_get_block(p_x, p_y, p_z + 1)) || block_is_flammable(world_get_block(p_x, p_y, p_z - 1))) return TRUE;
+  return FALSE;
+}
+
+Integer world_light_fire(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// Start a fire in cell (x, y, z) if it is air (or a plant) with a
+// solid block under it or a flammable block beside it, and no water
+// or lava next to it. Returns TRUE if a fire was lit.
+// ----------------------------------------------------------------
+{
+  Integer l_block = world_get_block(p_x, p_y, p_z);
+  Integer l_fuel  = FALSE;
+
+  if (!world_in_bounds(p_x, p_y, p_z)) return FALSE;
+  if (l_block != BLOCK_AIR && !block_is_plant(l_block)) return FALSE;
+  if (l_block == BLOCK_FIRE || l_block == BLOCK_TORCH) return FALSE;
+  if (block_is_liquid(world_get_block(p_x + 1, p_y, p_z)) || block_is_liquid(world_get_block(p_x - 1, p_y, p_z))) return FALSE;
+  if (block_is_liquid(world_get_block(p_x, p_y + 1, p_z)) || block_is_liquid(world_get_block(p_x, p_y - 1, p_z))) return FALSE;
+  if (block_is_liquid(world_get_block(p_x, p_y, p_z + 1)) || block_is_liquid(world_get_block(p_x, p_y, p_z - 1))) return FALSE;
+  if (world_is_solid(p_x, p_y - 1, p_z)) l_fuel = TRUE;
+  if (world_next_to_flammable(p_x, p_y, p_z)) l_fuel = TRUE;
+  if (!l_fuel) return FALSE;
+  world_place_block(p_events, p_x, p_y, p_z, BLOCK_FIRE);
+  return TRUE;
+}
+
+Integer world_fire_catches(Attributes &p_events, Attributes &p_random, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// A fire next to cell (x, y, z) may set it alight: a flammable
+// block there burns away into fire FIRE_SPREAD_CHANCE of the time
+// (a door's or bed's other half goes with it), and air there that
+// next to something flammable half as often. Returns TRUE
+// if it caught.
+// ----------------------------------------------------------------
+{
+  Integer l_block = world_get_block(p_x, p_y, p_z);
+  Integer l_px    = 0;
+  Integer l_py    = 0;
+  Integer l_pz    = 0;
+
+  // air beside something flammable catches too (fire creeps along
+  // a wooden wall)
+  if (l_block == BLOCK_AIR) {
+    if (!world_next_to_flammable(p_x, p_y, p_z)) return FALSE;
+    if (random_next(p_random) >= FIRE_SPREAD_CHANCE * 0.5) return FALSE;
+    return world_light_fire(p_events, p_x, p_y, p_z);
+  }
+  if (!block_is_flammable(l_block)) return FALSE;
+  if (random_next(p_random) >= FIRE_SPREAD_CHANCE) return FALSE;
+  if (block_partner(l_block, p_x, p_y, p_z, l_px, l_py, l_pz)) {
+    if (block_is_shaped(world_get_block(l_px, l_py, l_pz))) world_place_block(p_events, l_px, l_py, l_pz, BLOCK_FIRE);
+  }
+  world_place_block(p_events, p_x, p_y, p_z, BLOCK_FIRE);
+  return TRUE;
+}
+
+void world_burn_cell(Attributes &p_events, Attributes &p_random, Integer p_x, Integer p_y, Integer p_z)
+// ----------------------------------------------------------------
+// One tick of the fire in cell (x, y, z), if there is one: it sets
+// the flammable blocks round it alight now and then, and goes out
+// FIRE_GO_OUT_CHANCE of the time (less often while it has something
+// flammable next to it), or at once with nothing under it to burn
+// on or flammable beside it. It creeps into air next to flammable
+// blocks as well. Fire on netherrack never goes out by itself.
+// ----------------------------------------------------------------
+{
+  Integer l_below = world_get_block(p_x, p_y - 1, p_z);
+  Integer l_dummy = FALSE;
+  Real    l_out   = FIRE_GO_OUT_CHANCE;
+
+  if (world_get_block(p_x, p_y, p_z) != BLOCK_FIRE) return;
+  if (world_next_to_flammable(p_x, p_y, p_z)) l_out = FIRE_FED_GO_OUT_CHANCE;
+  l_dummy = world_fire_catches(p_events, p_random, p_x + 1, p_y, p_z);
+  l_dummy = world_fire_catches(p_events, p_random, p_x - 1, p_y, p_z);
+  l_dummy = world_fire_catches(p_events, p_random, p_x, p_y + 1, p_z);
+  l_dummy = world_fire_catches(p_events, p_random, p_x, p_y - 1, p_z);
+  l_dummy = world_fire_catches(p_events, p_random, p_x, p_y, p_z + 1);
+  l_dummy = world_fire_catches(p_events, p_random, p_x, p_y, p_z - 1);
+
+  l_below = world_get_block(p_x, p_y - 1, p_z);
+  if (l_below == BLOCK_NETHERRACK) return;
+  // with nothing under it, it only keeps burning while it clings to
+  // something flammable
+  if (((!block_is_solid(l_below) || block_is_plant(l_below)) && l_out == FIRE_GO_OUT_CHANCE) || random_next(p_random) < l_out) {
+    world_break_block(p_events, p_x, p_y, p_z, ITEM_NONE);
+  }
+}
+
+void world_fire_ticks(Attributes &p_events, Attributes &p_random, Real p_x, Real p_y, Real p_z, Real p_dt)
+// ----------------------------------------------------------------
+// Fire burns and spreads near the player at (x, y, z): about
+// FIRE_TICKS_PER_SECOND random cells within FIRE_TICK_RADIUS are
+// looked at each second, and a fire found there takes a turn
+// (world_burn_cell). Fires further away wait until you come back.
+// ----------------------------------------------------------------
+{
+  Integer l_count = floor_integer(FIRE_TICKS_PER_SECOND * min_real(p_dt, 0.25) + random_next(p_random));
+  Integer l_i     = 0;
+  Integer l_x     = 0;
+  Integer l_y     = 0;
+  Integer l_z     = 0;
+
+  for (l_i = 1; l_i <= l_count; ++l_i) {
+    l_x = floor_integer(p_x) + random_range(p_random, -FIRE_TICK_RADIUS, FIRE_TICK_RADIUS);
+    l_y = floor_integer(p_y) + random_range(p_random, -FIRE_TICK_RADIUS, FIRE_TICK_RADIUS);
+    l_z = floor_integer(p_z) + random_range(p_random, -FIRE_TICK_RADIUS, FIRE_TICK_RADIUS);
+    if (world_get_block(l_x, l_y, l_z) == BLOCK_FIRE) world_burn_cell(p_events, p_random, l_x, l_y, l_z);
   }
 }
 

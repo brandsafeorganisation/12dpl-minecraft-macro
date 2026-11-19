@@ -156,14 +156,16 @@ roof and nether quartz ore.
 
 1. **Obsidian.** Deep underground (y 6 to 14) there are pools of lava
    in small hollows, with a rim of obsidian where the lava has cooled.
-   Obsidian takes 20 hits with an iron pickaxe (nothing less collects
+   Obsidian takes 15 hits with a diamond pickaxe (nothing less collects
    it).
 2. **Flint and steel.** Gravel sometimes drops flint (about 1 in 7);
    craft it with an iron ingot.
 3. **The portal.** Build an obsidian frame standing up, its inside 2 x 3
    (up to 10 x 10; the corners can be left out), and right-click its
-   inside with flint and steel. Stand in the purple portal for 4
-   seconds (1 in creative) to go through.
+   inside with flint and steel. The portal swirls. In survival, stand
+   in it for 5 seconds while the view swims and purple closes in from
+   the edges until it covers everything; in creative you go through at
+   once.
 
 You come out at the same place across (the world is too small for the
 block game's 1 : 8), in the portal you last used there, the nearest
@@ -304,8 +306,8 @@ it: it loads the chosen file for itself, then and every time it starts.
 - **Terrain:** generated from the seed. Rolling hills with the odd steep
   area, forests with open clearings between them, sandy deserts with
   cacti, beaches and oceans (water fills every open cell below y 62).
-  Underground there are winding caves, coal ore, iron ore (below y 44) and
-  gravel. Some worlds
+  Underground there are winding caves, coal ore, iron ore (below y 44),
+  diamond ore (deep down, below y 17) and gravel. Some worlds
   get small ponds. A starter house is built near the middle of the world:
   cobblestone floor, log corners, plank walls with an open door and
   windows, a crafting table, a furnace, a bed and a chest.
@@ -343,12 +345,13 @@ it: it loads the chosen file for itself, then and every time it starts.
   stages (the resource pack's `destroy_stage` images if it has them).
   Broken blocks drop as items that are picked up when you walk near them.
   Furnaces turn to face you when placed.
-- **Tools:** wooden, stone and iron pickaxes, axes, shovels and swords. The
-  right tool breaks a block in fewer hits. **Stone, cobblestone, sandstone,
-  coal ore and furnaces drop nothing unless mined with a pickaxe, and iron
-  ore needs a stone or iron pickaxe.** Swords and axes hit cows harder.
+- **Tools:** wooden, stone, iron and diamond pickaxes, axes, shovels and
+  swords. The right tool breaks a block in fewer hits. **Stone,
+  cobblestone, sandstone, coal ore and furnaces drop nothing unless mined
+  with a pickaxe; iron ore needs a stone pickaxe or better, diamond ore an
+  iron one and obsidian a diamond one.** Swords and axes hit cows harder.
   Tools wear out (a bar under the icon shows how much) and break after 60
-  (wood), 132 (stone) or 251 (iron) uses.
+  (wood), 132 (stone), 251 (iron) or 1562 (diamond) uses.
 - **Inventory:** a 9-slot hotbar and a 27-slot (9 x 3) inventory. Click to pick
   up, drop or swap a stack. Right-click to split a stack or place one item.
   Every item that isn't a block has its own 16 x 16 pixel-art icon. The
@@ -358,12 +361,22 @@ it: it loads the chosen file for itself, then and every time it starts.
   inventory, or press X). It shows in the lower left and beside the hotbar.
   Right-click uses the main hand's item, or the offhand's if that one does
   nothing: hold a pickaxe and keep torches in the offhand to light a cave.
-- **Armour:** an iron helmet, chestplate, leggings and boots. Wear them in
-  the armour slots (each slot only takes its own piece) or right-click with
-  one in your hand. A full set gives 15 armour points, shown above the
-  hearts; each point takes 1/25 off a zombie's hit, so a full set turns 3
-  damage into 1. Every hit wears every piece (165, 240, 225 and 195 hits).
-  You wear it on your model too (V).
+- **Armour:** iron and diamond helmets, chestplates, leggings and boots.
+  Wear them in the armour slots (each slot only takes its own piece) or
+  right-click with one in your hand. A full iron set gives 15 armour
+  points and a diamond one 20, shown above the hearts; each point takes
+  1/25 off a zombie's hit. Every hit wears every piece (iron 165, 240, 225
+  and 195 hits; diamond 363, 528, 495 and 429). You wear it on your model
+  too (V), in the resource pack's armour pictures if it has them.
+- **Diamonds:** diamond ore deep underground drops a diamond (with an
+  iron pickaxe or better), for diamond tools, armour and a jukebox.
+- **Fire:** flint and steel lights a portal in an obsidian frame, or else
+  a fire on the block face you click (not in or beside water or lava).
+  Fire flickers and gives light, spreads to wood, leaves, plants, beds,
+  doors and jukeboxes next to it and burns them away, creeps along
+  wooden walls, and goes out by itself before long (on netherrack it
+  burns for ever). Standing in it burns 1 a second in survival; punch it
+  to put it out.
 - **The Nether:** obsidian, flint and steel and a portal take you
   there (see The Nether below).
 - **Spawn eggs:** a cow, pig and zombie egg in the creative inventory.
@@ -393,6 +406,8 @@ it: it loads the chosen file for itself, then and every time it starts.
   | iron leggings     | 7 iron ingots: the 3 x 3 grid without the middle and bottom middle |
   | iron boots        | 4 iron ingots: 2 under each other at each side   |
   | flint and steel   | an iron ingot beside a flint                     |
+  | diamond tools and armour | as the iron ones, with diamonds           |
+  | jukebox           | 8 planks round a diamond                         |
 
 - **Furnace:** has input, fuel and output slots. It cooks beef, bakes
   cobblestone into stone and sand into glass, smelts iron ore into iron

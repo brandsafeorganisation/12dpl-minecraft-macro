@@ -48,6 +48,7 @@ void player_reset(Attributes &p_player, Real p_x, Real p_y, Real p_z)
   record_set_real   (p_player, ATTR_PLAYER_BOB,          0.0);
   record_set_real   (p_player, ATTR_PLAYER_BODY_YAW,     l_yaw);
   record_set_real   (p_player, ATTR_PLAYER_STRIDE,       0.0);
+  record_set_real   (p_player, ATTR_PLAYER_STEP,         0.0);
   record_set_text   (p_player, ATTR_MOVE_KEY,            "");
   record_set_real   (p_player, ATTR_MOVE_UNTIL,          0.0);
   record_set_real   (p_player, ATTR_MOVE_LAST,           0.0);
@@ -251,6 +252,15 @@ Real player_stride(Attributes &p_player)
   return record_real(p_player, ATTR_PLAYER_STRIDE);
 }
 
+Real player_step(Attributes &p_player)
+// ----------------------------------------------------------------
+// Walking phase of the legs as seen from outside: it moves on
+// whenever the body walks, on the ground, swimming or flying
+// ----------------------------------------------------------------
+{
+  return record_real(p_player, ATTR_PLAYER_STEP);
+}
+
 void player_update_body(Attributes &p_player, Integer p_walking, Real p_dt)
 // ----------------------------------------------------------------
 // Turn the body after the head: standing, it only turns when the
@@ -267,14 +277,17 @@ void player_update_body(Attributes &p_player, Integer p_walking, Real p_dt)
   Real l_target = 0.0;
 
   player_look(p_player, l_yaw, l_pitch);
-  l_diff = wrap_angle(l_yaw - l_body);
+  l_diff = angle_difference(l_body, l_yaw);
   if (p_walking) l_body = l_body + l_diff * min_real(1.0, p_dt * BODY_TURN_RATE);
-  l_diff = wrap_angle(l_yaw - l_body);
+  l_diff = angle_difference(l_body, l_yaw);
   if (l_diff >  HEAD_TURN_LIMIT) l_body = l_yaw - HEAD_TURN_LIMIT;
   if (l_diff < -HEAD_TURN_LIMIT) l_body = l_yaw + HEAD_TURN_LIMIT;
   record_set_real(p_player, ATTR_PLAYER_BODY_YAW, wrap_angle(l_body));
 
-  if (p_walking) l_target = 1.0;
+  if (p_walking) {
+    l_target = 1.0;
+    record_set_real(p_player, ATTR_PLAYER_STEP, record_real(p_player, ATTR_PLAYER_STEP) + p_dt * 9.0);
+  }
   l_stride = l_stride + (l_target - l_stride) * min_real(1.0, p_dt * STRIDE_RATE);
   record_set_real(p_player, ATTR_PLAYER_STRIDE, l_stride);
 }
@@ -760,9 +773,10 @@ void player_arrived(Attributes &p_player)
 void player_lava_and_portal(Attributes &p_player, Attributes &p_events, Real p_x, Real p_y, Real p_z, Real p_dt)
 // ----------------------------------------------------------------
 // Lava at the feet or body burns LAVA_DAMAGE every
-// LAVA_HURT_SECONDS (survival only, see player_damage). Standing in
-// a portal for PORTAL_SECONDS (PORTAL_QUICK_SECONDS outside survival)
-// asks to go through, once until the player steps out of it.
+// LAVA_HURT_SECONDS and fire FIRE_DAMAGE every FIRE_HURT_SECONDS
+// (survival only, see player_damage). Standing in a portal for
+// PORTAL_SECONDS (at once outside survival) asks to go through, once
+// until the player steps out of it.
 // ----------------------------------------------------------------
 {
   Integer l_cell_x  = floor_integer(p_x);
@@ -771,7 +785,9 @@ void player_lava_and_portal(Attributes &p_player, Attributes &p_events, Real p_x
   Integer l_body    = world_get_block(l_cell_x, floor_integer(p_y + 1.2), l_cell_z);
   Integer l_lava    = (l_feet == BLOCK_LAVA || l_body == BLOCK_LAVA) && !player_spectator(p_player);
   Integer l_portal  = l_feet == BLOCK_PORTAL || l_body == BLOCK_PORTAL;
+  Integer l_fire    = (l_feet == BLOCK_FIRE || l_body == BLOCK_FIRE) && !player_spectator(p_player);
   Real    l_timer   = record_real(p_player, ATTR_PLAYER_LAVA_TIMER) - p_dt;
+  Real    l_burn    = record_real(p_player, ATTR_PLAYER_FIRE_TIMER) - p_dt;
   Real    l_time    = player_portal_time(p_player);
   Real    l_wait    = PORTAL_SECONDS;
 
@@ -782,6 +798,12 @@ void player_lava_and_portal(Attributes &p_player, Attributes &p_events, Real p_x
   }
   if (!l_lava) l_timer = 0.0;
   record_set_real(p_player, ATTR_PLAYER_LAVA_TIMER, l_timer);
+  if (l_fire && l_burn <= 0.0) {
+    l_burn = FIRE_HURT_SECONDS;
+    player_damage(p_player, p_events, FIRE_DAMAGE);
+  }
+  if (!l_fire) l_burn = 0.0;
+  record_set_real(p_player, ATTR_PLAYER_FIRE_TIMER, l_burn);
 
   if (!l_portal) {
     record_set_real   (p_player, ATTR_PLAYER_PORTAL_TIME, 0.0);
@@ -789,7 +811,7 @@ void player_lava_and_portal(Attributes &p_player, Attributes &p_events, Real p_x
     return;
   }
   if (record_integer(p_player, ATTR_PLAYER_PORTAL_DONE) == TRUE) return;
-  if (!player_survival(p_player)) l_wait = PORTAL_QUICK_SECONDS;
+  if (!player_survival(p_player)) l_wait = 0.0;
   l_time = l_time + p_dt;
   record_set_real(p_player, ATTR_PLAYER_PORTAL_TIME, l_time);
   if (l_time >= l_wait) record_set_integer(p_player, ATTR_PLAYER_TRAVEL, TRUE);
@@ -1029,7 +1051,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   player_set_fall_peak(p_player, l_fall_peak);
 
   if (l_on_ground && l_moving) record_set_real(p_player, ATTR_PLAYER_BOB, player_bob(p_player) + p_dt * 9.0 * l_ease);
-  player_update_body(p_player, l_moving && (l_on_ground || l_in_water), p_dt);
+  player_update_body(p_player, l_moving && (l_on_ground || l_in_water || l_flying), p_dt);
 
   // Slow healing
   l_health = player_health(p_player);
@@ -1336,14 +1358,16 @@ Integer player_use_slot(Attributes &p_player, Attributes &p_inventory, Attribute
   player_target_cell  (p_player, l_x, l_y, l_z);
   player_target_normal(p_player, l_normal_x, l_normal_y, l_normal_z);
 
-  // Flint and steel lights a portal in an obsidian frame
+  // Flint and steel lights a portal in an obsidian frame, or else a
+  // fire against the face clicked
   if (l_held == ITEM_FLINT_AND_STEEL) {
     if (player_target_kind(p_player) != TARGET_BLOCK) return FALSE;
     record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
-    if (world_light_portal(p_events, l_x + l_normal_x, l_y + l_normal_y, l_z + l_normal_z)) {
-      if (slot_wear(p_inventory, p_slot)) emit_toast(p_events, item_name(l_held) + " broke");
-    } else {
-      emit_toast(p_events, "Flint and steel lights the inside of an obsidian frame (2 x 3 to 10 x 10)");
+    if (world_light_portal(p_events, l_x + l_normal_x, l_y + l_normal_y, l_z + l_normal_z) ||
+        world_light_fire  (p_events, l_x + l_normal_x, l_y + l_normal_y, l_z + l_normal_z)) {
+      if (!player_creative(p_player)) {
+        if (slot_wear(p_inventory, p_slot)) emit_toast(p_events, item_name(l_held) + " broke");
+      }
     }
     return TRUE;
   }

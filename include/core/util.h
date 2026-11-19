@@ -38,6 +38,7 @@ Real    lerp_real           (Real p_from, Real p_to, Real p_amount);
 Real    smooth_curve        (Real p_amount);
 Real    hash_real           (Real p_first, Real p_second, Real p_third);
 Real    wrap_angle          (Real p_angle);
+Real    angle_difference    (Real p_from, Real p_to);
 Integer text_to_seed        (Text p_text);
 Text    file_title_from_path(Text p_path);
 Integer text_is_safe_name   (Text p_name);

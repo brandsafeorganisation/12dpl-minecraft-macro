@@ -1,0 +1,88 @@
+# Diamonds, the jukebox and fire: a world has diamond ore deep down;
+# diamond armour and a sword are worn and held (seen from in front);
+# flint and steel lights a fire on a stone floor by a planks wall with
+# a jukebox in it, the fire flickers, spreads to the planks and burns
+# them away, standing in it hurts in survival; in survival a portal
+# takes 5 seconds and covers the view in swirling purple, in creative
+# it is instant; the head stays lit looking straight up and turns
+# as far left as right before the body follows
+ui Singleplayer
+ui Create New World
+field World Name|Diamonds
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call diamond_stats
+call to_meadow
+call noon
+call no_mobs
+call look_level
+call wear_diamond
+key v
+key v
+wait 3
+snap 340_diamond_armour_front
+wait 2
+call look_up
+wait 2
+snap 345_looking_up_lit
+wait 2
+call look_level
+wait 2
+call head_left
+wait 2
+call body
+snap 346_head_turned_left
+wait 2
+call head_right
+call head_right
+wait 2
+call body
+snap 347_head_turned_right
+wait 2
+call look_level
+key v
+wait 2
+call fire_hut
+call hold_flint_and_steel
+caprclick
+wait 2
+call fires
+snap 341_fire_lit
+wait 1
+snap 342_fire_flicker
+wait 2
+wait 150
+call fires
+snap 343_fire_spread
+wait 2
+wait 400
+call fires
+call survival
+call light_fire_here
+call into_fire
+wait 70
+call fires
+call creative
+call look_level
+call obsidian_frame
+wait 2
+call hold_flint_and_steel
+caprclick
+wait 2
+call survival
+call into_portal
+wait 45
+call portals
+snap 344_portal_overlay_half
+wait 2
+wait 110
+call portals
+call nether_stats
+wait 3
+call creative
+call into_portal
+wait 3
+call portals

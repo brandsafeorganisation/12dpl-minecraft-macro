@@ -337,7 +337,7 @@ void test_cases_run(Attributes &p_results)
   test_group(p_results, "commands");
   test_expect_integer(p_results, "command_find_item(stone)",          command_find_item("stone"), ITEM_STONE);
   test_expect_integer(p_results, "command_find_item(minecraft:torch)", command_find_item("minecraft:torch"), ITEM_TORCH);
-  test_expect_integer(p_results, "command_find_item(diamond)",        command_find_item("diamond"), ITEM_NONE);
+  test_expect_integer(p_results, "command_find_item(emerald)",        command_find_item("emerald"), ITEM_NONE);
   inventory_clear(g_inventory);
   l_reply = command_run("/give @p cobblestone 5", g_info, g_player, g_inventory);
   test_expect_integer(p_results, "/give adds the items",              inventory_count_item(g_inventory, ITEM_COBBLESTONE), 5);
@@ -517,8 +517,8 @@ void test_cases_run(Attributes &p_results)
   test_expect_integer(p_results, "lava doesn't stop you",             block_is_solid(BLOCK_LAVA), FALSE);
   test_expect_true   (p_results, "but hides what is behind it",       block_hides_faces(BLOCK_LAVA));
   test_expect_integer(p_results, "obsidian is placed by its item",    item_places_block(ITEM_OBSIDIAN), BLOCK_OBSIDIAN);
-  test_expect_integer(p_results, "obsidian needs an iron pickaxe",    block_drop_item(BLOCK_OBSIDIAN, ITEM_STONE_PICKAXE), ITEM_NONE);
-  test_expect_integer(p_results, "and drops itself with one",         block_drop_item(BLOCK_OBSIDIAN, ITEM_IRON_PICKAXE), ITEM_OBSIDIAN);
+  test_expect_integer(p_results, "obsidian needs a diamond pickaxe",  block_drop_item(BLOCK_OBSIDIAN, ITEM_IRON_PICKAXE), ITEM_NONE);
+  test_expect_integer(p_results, "and drops itself with one",         block_drop_item(BLOCK_OBSIDIAN, ITEM_DIAMOND_PICKAXE), ITEM_OBSIDIAN);
   test_expect_integer(p_results, "quartz ore drops nether quartz",    block_drop_item(BLOCK_QUARTZ_ORE, ITEM_WOODEN_PICKAXE), ITEM_NETHER_QUARTZ);
   test_expect_integer(p_results, "glowstone gives light",             block_light_emission(BLOCK_GLOWSTONE), GLOWSTONE_LIGHT);
   test_expect_integer(p_results, "a portal can't be broken by hand",  block_hand_hits(BLOCK_PORTAL), 0);
@@ -550,6 +550,45 @@ void test_cases_run(Attributes &p_results)
   for (l_i = 0; l_i <= 3; ++l_i) {
     for (l_j = 0; l_j <= 4; ++l_j) world_set_block(l_x + l_i, l_y + l_j, l_z, BLOCK_AIR);
   }
+  events_clear(g_events);
+
+  test_group(p_results, "diamonds, jukebox and fire");
+  test_expect_real   (p_results, "angle_difference the short way",    angle_difference(0.1, TWO_PI - 0.1), -0.2, 0.0001);
+  test_expect_real   (p_results, "and the other way",                 angle_difference(TWO_PI - 0.1, 0.1), 0.2, 0.0001);
+  test_expect_integer(p_results, "diamond ore needs an iron pickaxe", block_drop_item(BLOCK_DIAMOND_ORE, ITEM_STONE_PICKAXE), ITEM_NONE);
+  test_expect_integer(p_results, "and drops a diamond",               block_drop_item(BLOCK_DIAMOND_ORE, ITEM_IRON_PICKAXE), ITEM_DIAMOND);
+  test_expect_integer(p_results, "a diamond pickaxe is diamond tier", item_tool_tier(ITEM_DIAMOND_PICKAXE), TIER_DIAMOND);
+  test_expect_true   (p_results, "and digs faster than iron",         block_hits_with(BLOCK_STONE, ITEM_DIAMOND_PICKAXE) < block_hits_with(BLOCK_STONE, ITEM_IRON_PICKAXE) || block_hits_with(BLOCK_STONE, ITEM_DIAMOND_PICKAXE) == 1);
+  test_expect_integer(p_results, "diamond armour goes on the chest",  item_armour_place(ITEM_DIAMOND_CHESTPLATE), ARMOUR_CHEST);
+  test_expect_integer(p_results, "and is worn in diamond",            item_worn_texture(ITEM_DIAMOND_HELMET, WORN_HELMET_FRONT), TEX_WORN_DIAMOND + WORN_HELMET_FRONT);
+  test_expect_integer(p_results, "iron in iron",                      item_worn_texture(ITEM_IRON_BOOTS, WORN_BOOT_SIDE), TEX_WORN_IRON + WORN_BOOT_SIDE);
+  test_expect_integer(p_results, "a jukebox is placed by its item",   item_places_block(ITEM_JUKEBOX), BLOCK_JUKEBOX);
+  test_expect_integer(p_results, "fire has no item",                  block_drop_item(BLOCK_FIRE, ITEM_NONE), ITEM_NONE);
+  test_expect_true   (p_results, "fire gives light",                  block_light_emission(BLOCK_FIRE) > 0);
+  test_expect_true   (p_results, "planks burn",                       block_is_flammable(BLOCK_PLANKS));
+  test_expect_integer(p_results, "stone doesn't",                     block_is_flammable(BLOCK_STONE), FALSE);
+  // a stone slab high in the air to light fires on
+  l_x = 40;
+  l_y = WORLD_HEIGHT - 12;
+  l_z = 40;
+  for (l_i = -1; l_i <= 1; ++l_i) {
+    for (l_j = 0; l_j <= 2; ++l_j) world_set_block(l_x + l_i, l_y + l_j, l_z, BLOCK_AIR);
+  }
+  world_set_block(l_x, l_y, l_z, BLOCK_STONE);
+  test_expect_integer(p_results, "no fire in the air",                world_light_fire(g_events, l_x + 1, l_y + 2, l_z), FALSE);
+  test_expect_true   (p_results, "fire is lit on a block",            world_light_fire(g_events, l_x, l_y + 1, l_z));
+  test_expect_integer(p_results, "and burns there",                   world_get_block(l_x, l_y + 1, l_z), BLOCK_FIRE);
+  world_set_block(l_x, l_y, l_z, BLOCK_NETHERRACK);
+  random_seed(l_random, 77);
+  for (l_i = 1; l_i <= 30; ++l_i) world_burn_cell(g_events, l_random, l_x, l_y + 1, l_z);
+  test_expect_integer(p_results, "fire on netherrack never goes out", world_get_block(l_x, l_y + 1, l_z), BLOCK_FIRE);
+  world_set_block(l_x, l_y, l_z, BLOCK_STONE);
+  for (l_i = 1; l_i <= 60; ++l_i) world_burn_cell(g_events, l_random, l_x, l_y + 1, l_z);
+  test_expect_integer(p_results, "but on stone it does",              world_get_block(l_x, l_y + 1, l_z), BLOCK_AIR);
+  world_set_block(l_x - 1, l_y + 1, l_z, BLOCK_WATER);
+  test_expect_integer(p_results, "no fire next to water",             world_light_fire(g_events, l_x, l_y + 1, l_z), FALSE);
+  world_set_block(l_x - 1, l_y + 1, l_z, BLOCK_AIR);
+  world_set_block(l_x, l_y, l_z, BLOCK_AIR);
   events_clear(g_events);
 }
 

@@ -141,13 +141,50 @@
 #define TEX_ITEM_FLINT         129
 #define TEX_ITEM_FLINT_AND_STEEL 130
 #define TEX_ITEM_NETHER_QUARTZ 131
-#define NUM_TEXTURES           131
+#define TEX_PORTAL_2           132    // the portal swirl's other frames: TEX_PORTAL, then
+#define TEX_PORTAL_LAST        138    // TEX_PORTAL_2 .. TEX_PORTAL_LAST
+#define TEX_DIAMOND_ORE        139    // block faces (not sprites)
+#define TEX_JUKEBOX_SIDE       140
+#define TEX_JUKEBOX_TOP        141
+#define TEX_FIRE               142    // sprites: fire's two frames
+#define TEX_FIRE_2             143
+#define TEX_ITEM_DIAMOND       144
+#define TEX_ITEM_DIAMOND_PICKAXE 145
+#define TEX_ITEM_DIAMOND_AXE   146
+#define TEX_ITEM_DIAMOND_SHOVEL 147
+#define TEX_ITEM_DIAMOND_SWORD 148
+#define TEX_ITEM_DIAMOND_HELMET 149
+#define TEX_ITEM_DIAMOND_CHESTPLATE 150
+#define TEX_ITEM_DIAMOND_LEGGINGS 151
+#define TEX_ITEM_DIAMOND_BOOTS 152
+#define TEX_WORN_IRON          153    // worn armour on the player model, WORN_PARTS
+#define TEX_WORN_DIAMOND       166    // textures for each material (WORN_* below)
+#define NUM_TEXTURES           178
+#define PORTAL_FRAMES          8
+// The faces of worn armour, added to TEX_WORN_IRON or TEX_WORN_DIAMOND
+// (from the pack's armour layers, laid out like a player skin)
+#define WORN_HELMET_FRONT      0
+#define WORN_HELMET_SIDE       1
+#define WORN_HELMET_TOP        2
+#define WORN_HELMET_BACK       3
+#define WORN_BODY_FRONT        4
+#define WORN_BODY_SIDE         5
+#define WORN_BODY_BACK         6
+#define WORN_ARM_FRONT         7
+#define WORN_ARM_SIDE          8
+#define WORN_LEG_FRONT         9
+#define WORN_LEG_SIDE          10
+#define WORN_BOOT_FRONT        11
+#define WORN_BOOT_SIDE         12
+#define WORN_PARTS             13
+#define PORTAL_FRAME_SECONDS   0.1
+#define FIRE_FRAME_SECONDS     0.15
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         33536  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         45568  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       1048   // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      524    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       1424   // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      712    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

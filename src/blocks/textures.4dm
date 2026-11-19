@@ -1375,7 +1375,10 @@ void make_tool_palette(Integer p_tex, Integer p_tier)
   texture_set_palette(p_tex, 1, 40 , 28 , 12 );
   texture_set_palette(p_tex, 4, 104, 76 , 44 );
   texture_set_palette(p_tex, 5, 150, 112, 66 );
-  if (p_tier == TIER_IRON) {
+  if (p_tier == TIER_DIAMOND) {
+    texture_set_palette(p_tex, 2, 40 , 180, 176);
+    texture_set_palette(p_tex, 3, 130, 236, 232);
+  } else if (p_tier == TIER_IRON) {
     texture_set_palette(p_tex, 2, 196, 196, 196);
     texture_set_palette(p_tex, 3, 236, 236, 236);
   } else if (p_tier == TIER_STONE) {
@@ -2016,19 +2019,177 @@ void make_texture_lava(Integer p_tex)
   texture_blotch(p_tex, 3, 5, 0.0, 0.2, 117);
 }
 
-void make_texture_portal(Integer p_tex)
+void make_texture_portal(Integer p_tex, Integer p_frame)
 // ----------------------------------------------------------------
-// The inside of a lit Nether portal: purple swirls you can partly
-// see through
+// One frame (0 .. PORTAL_FRAMES - 1) of the inside of a lit Nether
+// portal: purple arms swirling round the middle, with gaps you can
+// see through; each frame turns the swirl a little further
 // ----------------------------------------------------------------
 {
+  Integer l_u     = 0;
+  Integer l_v     = 0;
+  Real    l_x     = 0.0;
+  Real    l_y     = 0.0;
+  Real    l_wave  = 0.0;
+  Real    l_phase = TWO_PI * p_frame / PORTAL_FRAMES;
+
   texture_set_palette(p_tex, 1, 110, 40 , 200);
   texture_set_palette(p_tex, 2, 160, 90 , 240);
   texture_set_palette(p_tex, 3, 70 , 18 , 150);
-  texture_fill  (p_tex, 1);
-  texture_blotch(p_tex, 2, 4, 0.62, 1.0, 119);
-  texture_blotch(p_tex, 3, 4, 0.0, 0.22, 121);
-  texture_blotch(p_tex, TEX_TRANSPARENT, 3, 0.40, 0.52, 123);
+  texture_set_palette(p_tex, 4, 200, 150, 255);
+  for (l_v = 1; l_v <= TEX_SIZE; ++l_v) {
+    for (l_u = 1; l_u <= TEX_SIZE; ++l_u) {
+      l_x    = l_u - 8.5;
+      l_y    = l_v - 8.5;
+      l_wave = Sin(2.0 * angle_of(l_y, l_x) + 0.8 * Sqrt(l_x * l_x + l_y * l_y) - l_phase)
+             + 0.35 * Sin(l_u * 1.3 + l_v * 0.7 + l_phase);
+      if (l_wave > 1.05) {
+        texture_set(p_tex, l_u, l_v, 4);
+      } else if (l_wave > 0.45) {
+        texture_set(p_tex, l_u, l_v, 2);
+      } else if (l_wave > -0.2) {
+        texture_set(p_tex, l_u, l_v, 1);
+      } else if (l_wave > -0.75) {
+        texture_set(p_tex, l_u, l_v, 3);
+      } else {
+        texture_set(p_tex, l_u, l_v, TEX_TRANSPARENT);
+      }
+    }
+  }
+}
+
+void make_texture_fire(Integer p_tex, Integer p_frame)
+// ----------------------------------------------------------------
+// Fire, drawn like a plant: tongues of flame, yellow at the root
+// and red at the tips (two frames that flicker)
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 200, 50 , 10 );
+  texture_set_palette(p_tex, 2, 240, 120, 20 );
+  texture_set_palette(p_tex, 3, 255, 200, 60 );
+  texture_set_palette(p_tex, 4, 255, 240, 160);
+  if (p_frame == 0) {
+    texture_row(p_tex,  1, "................");
+    texture_row(p_tex,  2, ".....1..........");
+    texture_row(p_tex,  3, ".....1.....1....");
+    texture_row(p_tex,  4, "....11.....11...");
+    texture_row(p_tex,  5, "....121...121...");
+    texture_row(p_tex,  6, ".1..121..1221...");
+    texture_row(p_tex,  7, ".1.1221..1221.1.");
+    texture_row(p_tex,  8, ".1112321.12321.1");
+    texture_row(p_tex,  9, "1122332112332111");
+    texture_row(p_tex, 10, "1223332223332211");
+    texture_row(p_tex, 11, "1233433233433321");
+    texture_row(p_tex, 12, "2334443334443332");
+    texture_row(p_tex, 13, "2344444344444432");
+    texture_row(p_tex, 14, "3344444444444443");
+    texture_row(p_tex, 15, "3444444444444443");
+    texture_row(p_tex, 16, "3444444444444444");
+    return;
+  }
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "..........1.....");
+  texture_row(p_tex,  3, "...1......1.....");
+  texture_row(p_tex,  4, "...11....11.....");
+  texture_row(p_tex,  5, "...121...121..1.");
+  texture_row(p_tex,  6, "..1221...121..1.");
+  texture_row(p_tex,  7, "1.1221..1221.11.");
+  texture_row(p_tex,  8, "1112321.12321121");
+  texture_row(p_tex,  9, "1123321123321121");
+  texture_row(p_tex, 10, "1233322233332221");
+  texture_row(p_tex, 11, "2334332334333321");
+  texture_row(p_tex, 12, "2344433344433332");
+  texture_row(p_tex, 13, "3344443444444432");
+  texture_row(p_tex, 14, "3444444444444443");
+  texture_row(p_tex, 15, "3444444444444444");
+  texture_row(p_tex, 16, "4444444444444444");
+}
+
+void make_texture_diamond_ore(Integer p_tex)
+// ----------------------------------------------------------------
+// Stone with pale blue diamond flecks
+// ----------------------------------------------------------------
+{
+  make_texture_stone(p_tex);
+  texture_set_palette(p_tex, 4, 120, 230, 228);
+  texture_set_palette(p_tex, 5, 40 , 170, 170);
+  texture_set_palette(p_tex, 6, 220, 255, 255);
+  texture_fill_rect(p_tex, 3 , 3 , 4 , 4 , 4);
+  texture_fill_rect(p_tex, 4 , 4 , 4 , 4 , 6);
+  texture_fill_rect(p_tex, 5 , 5 , 5 , 5 , 5);
+  texture_fill_rect(p_tex, 11, 3 , 12, 4 , 4);
+  texture_fill_rect(p_tex, 12, 5 , 13, 5 , 5);
+  texture_fill_rect(p_tex, 7 , 8 , 8 , 9 , 4);
+  texture_fill_rect(p_tex, 8 , 8 , 8 , 8 , 6);
+  texture_fill_rect(p_tex, 9 , 10, 9 , 10, 5);
+  texture_fill_rect(p_tex, 2 , 11, 3 , 12, 4);
+  texture_fill_rect(p_tex, 12, 12, 13, 13, 4);
+  texture_fill_rect(p_tex, 13, 13, 13, 13, 6);
+  texture_fill_rect(p_tex, 11, 14, 11, 14, 5);
+}
+
+void make_texture_jukebox(Integer p_tex, Integer p_top)
+// ----------------------------------------------------------------
+// A jukebox: dark wood with a lighter frame round each side, and a
+// record slot across the top
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 96 , 64 , 46 );
+  texture_set_palette(p_tex, 2, 128, 88 , 62 );
+  texture_set_palette(p_tex, 3, 62 , 40 , 28 );
+  texture_set_palette(p_tex, 4, 24 , 16 , 12 );
+  texture_fill     (p_tex, 1);
+  texture_blotch   (p_tex, 3, 3, 0.0, 0.25, 125);
+  texture_fill_rect(p_tex, 1 , 1 , 16, 2 , 2);
+  texture_fill_rect(p_tex, 1 , 15, 16, 16, 2);
+  texture_fill_rect(p_tex, 1 , 1 , 2 , 16, 2);
+  texture_fill_rect(p_tex, 15, 1 , 16, 16, 2);
+  if (p_top) {
+    texture_fill_rect(p_tex, 3, 7, 14, 10, 3);
+    texture_fill_rect(p_tex, 4, 8, 13, 9 , 4);
+  } else {
+    texture_fill_rect(p_tex, 3, 3, 14, 3 , 3);
+    texture_fill_rect(p_tex, 3, 14, 14, 14, 3);
+  }
+}
+
+void make_texture_item_diamond(Integer p_tex)
+// ----------------------------------------------------------------
+// Item picture: a cut diamond
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 14 , 60 , 64 );
+  texture_set_palette(p_tex, 2, 40 , 170, 170);
+  texture_set_palette(p_tex, 3, 120, 230, 228);
+  texture_set_palette(p_tex, 4, 230, 255, 255);
+  texture_row(p_tex,  1, "................");
+  texture_row(p_tex,  2, "................");
+  texture_row(p_tex,  3, "....11111111....");
+  texture_row(p_tex,  4, "...1343334331...");
+  texture_row(p_tex,  5, "..134333334331..");
+  texture_row(p_tex,  6, ".11111111111111.");
+  texture_row(p_tex,  7, ".13332233322331.");
+  texture_row(p_tex,  8, "..133223332231..");
+  texture_row(p_tex,  9, "...1332332231...");
+  texture_row(p_tex, 10, "....13323221....");
+  texture_row(p_tex, 11, ".....133221.....");
+  texture_row(p_tex, 12, "......1321......");
+  texture_row(p_tex, 13, ".......11.......");
+  texture_row(p_tex, 14, "................");
+  texture_row(p_tex, 15, "................");
+  texture_row(p_tex, 16, "................");
+}
+
+void make_diamond_armour_palette(Integer p_tex)
+// ----------------------------------------------------------------
+// Recolour an iron armour picture as diamond (the same indexes as
+// make_armour_palette: 1 outline, 2 shadow, 3 diamond, 4 shine)
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 14 , 70 , 74 );
+  texture_set_palette(p_tex, 2, 40 , 170, 170);
+  texture_set_palette(p_tex, 3, 100, 220, 216);
+  texture_set_palette(p_tex, 4, 210, 255, 252);
 }
 
 void make_texture_item_flint(Integer p_tex)
@@ -2116,10 +2277,12 @@ Integer texture_is_sprite(Integer p_tex)
 // (plants and items) rather than block faces
 // ----------------------------------------------------------------
 {
-  // the block faces numbered after the sprites (worn armour and the
-  // Nether's blocks) are not sprites; the portal is one
+  // the block faces numbered after the sprites (worn armour, the
+  // Nether's blocks, diamond ore and the jukebox) are not sprites;
+  // the portal and fire are
   if (p_tex == TEX_ARMOUR_IRON) return FALSE;
   if (p_tex >= TEX_OBSIDIAN && p_tex <= TEX_LAVA) return FALSE;
+  if (p_tex >= TEX_DIAMOND_ORE && p_tex <= TEX_JUKEBOX_TOP) return FALSE;
   if (p_tex >= TEX_FIRST_SPRITE) return TRUE;
   return FALSE;
 }
@@ -2155,7 +2318,8 @@ void textures_generate()
 // Order matters where one texture starts as a copy of another
 // ----------------------------------------------------------------
 {
-  Integer l_tex = 0;
+  Integer l_tex   = 0;
+  Integer l_frame = 0;
 
   make_texture_bedrock      (TEX_BEDROCK);
   make_texture_stone        (TEX_STONE);
@@ -2273,10 +2437,31 @@ void textures_generate()
   make_texture_glowstone     (TEX_GLOWSTONE);
   make_texture_quartz_ore    (TEX_QUARTZ_ORE);
   make_texture_lava          (TEX_LAVA);
-  make_texture_portal        (TEX_PORTAL);
+  make_texture_portal        (TEX_PORTAL, 0);
   make_texture_item_flint    (TEX_ITEM_FLINT);
   make_texture_item_flint_and_steel(TEX_ITEM_FLINT_AND_STEEL);
   make_texture_item_nether_quartz  (TEX_ITEM_NETHER_QUARTZ);
+  for (l_frame = 1; l_frame < PORTAL_FRAMES; ++l_frame) make_texture_portal(TEX_PORTAL_2 + l_frame - 1, l_frame);
+  make_texture_diamond_ore   (TEX_DIAMOND_ORE);
+  make_texture_jukebox       (TEX_JUKEBOX_SIDE, FALSE);
+  make_texture_jukebox       (TEX_JUKEBOX_TOP,  TRUE);
+  make_texture_fire          (TEX_FIRE,   0);
+  make_texture_fire          (TEX_FIRE_2, 1);
+  make_texture_item_diamond  (TEX_ITEM_DIAMOND);
+  make_texture_item_pickaxe  (TEX_ITEM_DIAMOND_PICKAXE, TIER_DIAMOND);
+  make_texture_item_axe      (TEX_ITEM_DIAMOND_AXE,     TIER_DIAMOND);
+  make_texture_item_shovel   (TEX_ITEM_DIAMOND_SHOVEL,  TIER_DIAMOND);
+  make_texture_item_sword    (TEX_ITEM_DIAMOND_SWORD,   TIER_DIAMOND);
+  make_texture_item_armour   (TEX_ITEM_DIAMOND_HELMET,     ARMOUR_HEAD);
+  make_texture_item_armour   (TEX_ITEM_DIAMOND_CHESTPLATE, ARMOUR_CHEST);
+  make_texture_item_armour   (TEX_ITEM_DIAMOND_LEGGINGS,   ARMOUR_LEGS);
+  make_texture_item_armour   (TEX_ITEM_DIAMOND_BOOTS,      ARMOUR_FEET);
+  for (l_tex = TEX_ITEM_DIAMOND_HELMET; l_tex <= TEX_ITEM_DIAMOND_BOOTS; ++l_tex) make_diamond_armour_palette(l_tex);
+  for (l_frame = 0; l_frame < WORN_PARTS; ++l_frame) {
+    make_texture_armour_worn(TEX_WORN_IRON    + l_frame, l_frame == WORN_HELMET_FRONT);
+    make_texture_armour_worn(TEX_WORN_DIAMOND + l_frame, l_frame == WORN_HELMET_FRONT);
+    make_diamond_armour_palette(TEX_WORN_DIAMOND + l_frame);
+  }
 }
 
 #endif

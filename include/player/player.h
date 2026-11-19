@@ -60,8 +60,10 @@
 #define ATTR_CROUCHING           ("crouching")         // crouched this frame
 #define ATTR_PLAYER_BODY_YAW     ("body_yaw")          // which way the body faces (the head turns first)
 #define ATTR_PLAYER_STRIDE       ("stride")            // 0 standing .. 1 walking: how far the legs swing
+#define ATTR_PLAYER_STEP         ("step")              // walking phase of the legs (also while flying or swimming)
 #define ATTR_PLAYER_IN_LAVA      ("in_lava")
 #define ATTR_PLAYER_LAVA_TIMER   ("lava_timer")        // time to the next burn
+#define ATTR_PLAYER_FIRE_TIMER   ("fire_timer")        // seconds until standing in fire burns again
 #define ATTR_PLAYER_PORTAL_TIME  ("portal_time")       // seconds stood in a portal
 #define ATTR_PLAYER_PORTAL_DONE  ("portal_done")       // TRUE after going through, until out of the portal
 #define ATTR_PLAYER_TRAVEL       ("travel")            // TRUE: take the player through (game_travel)
@@ -107,6 +109,7 @@ Real    player_swing_time      (Attributes &p_player);
 Real    player_bob             (Attributes &p_player);
 Real    player_body_yaw        (Attributes &p_player);
 Real    player_stride          (Attributes &p_player);
+Real    player_step            (Attributes &p_player);
 void    player_update_body     (Attributes &p_player, Integer p_walking, Real p_dt);
 Real    player_fall_peak       (Attributes &p_player);
 void    player_set_fall_peak   (Attributes &p_player, Real p_peak);

@@ -142,13 +142,15 @@ Text pack_replace(Text p_text, Text p_find, Text p_with)
   return l_out;
 }
 
-Integer pack_part(Integer &p_tex, Text &p_name, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h, Integer &p_turn,
-                  Integer p_set_tex, Text p_set_name, Integer p_set_x, Integer p_set_y, Integer p_set_w, Integer p_set_h, Integer p_set_turn)
+Integer pack_part(Integer &p_tex, Text &p_kind, Text &p_name, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h, Integer &p_turn,
+                  Integer p_set_tex, Text p_set_kind, Text p_set_name, Integer p_set_x, Integer p_set_y, Integer p_set_w, Integer p_set_h,
+                  Integer p_set_turn)
 // ----------------------------------------------------------------
-// Fill in one entry of the mob part map (helper for pack_map_part)
+// Fill in one entry of the part map (helper for pack_map_part)
 // ----------------------------------------------------------------
 {
   p_tex  = p_set_tex;
+  p_kind = p_set_kind;
   p_name = p_set_name;
   p_x    = p_set_x;
   p_y    = p_set_y;
@@ -158,11 +160,13 @@ Integer pack_part(Integer &p_tex, Text &p_name, Integer &p_x, Integer &p_y, Inte
   return TRUE;
 }
 
-Integer pack_map_part(Integer p_entry, Integer &p_tex, Text &p_name, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h,
+Integer pack_map_part(Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_name, Integer &p_x, Integer &p_y, Integer &p_w, Integer &p_h,
                       Integer &p_turn)
 // ----------------------------------------------------------------
-// Entry number p_entry of the map from our mob part textures to
-// rectangles of the pack's mob skins (images under entity/). The
+// Entry number p_entry of the map from our textures to rectangles
+// of the pack's bigger images: mob skins (under entity/), worn
+// armour and the frames of animation strips (kind is the folder
+// under textures/). The
 // rectangles follow the classic skin layout: a box of the model
 // with its corner of the skin at (u, v) and size w x h x d keeps
 // its top at (u + d, v), its sides at (u, v + d) and
@@ -172,29 +176,91 @@ Integer pack_map_part(Integer p_entry, Integer &p_tex, Text &p_name, Integer &p_
 // ----------------------------------------------------------------
 {
   //                                                                                    x   y   w   h   turn
-  if (p_entry == 1 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_FACE         , "cow/cow"      , 6 , 6 , 8 , 8 , PACK_TURN_NONE );
-  if (p_entry == 2 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HEAD_SIDE    , "cow/cow"      , 0 , 6 , 6 , 8 , PACK_TURN_NONE );
-  if (p_entry == 3 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HEAD_TOP     , "cow/cow"      , 6 , 0 , 8 , 6 , PACK_TURN_NONE );
-  if (p_entry == 4 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HIDE         , "cow/cow"      , 18, 14, 10, 18, PACK_TURN_RIGHT);
-  if (p_entry == 5 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_BODY_TOP     , "cow/cow"      , 50, 14, 12, 18, PACK_TURN_RIGHT);
-  if (p_entry == 6 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_BODY_END     , "cow/cow"      , 28, 4 , 12, 10, PACK_TURN_NONE );
-  if (p_entry == 7 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_LEG          , "cow/cow"      , 4 , 20, 4 , 12, PACK_TURN_NONE );
-  if (p_entry == 8 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HORN         , "cow/cow"      , 22, 1 , 1 , 3 , PACK_TURN_NONE );
-  if (p_entry == 9 ) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_FACE      , "zombie/zombie", 8 , 8 , 8 , 8 , PACK_TURN_NONE );
-  if (p_entry == 10) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_HEAD_SIDE , "zombie/zombie", 0 , 8 , 8 , 8 , PACK_TURN_NONE );
-  if (p_entry == 11) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_HEAD_TOP  , "zombie/zombie", 8 , 0 , 8 , 8 , PACK_TURN_NONE );
-  if (p_entry == 12) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_SHIRT     , "zombie/zombie", 20, 20, 8 , 12, PACK_TURN_NONE );
-  if (p_entry == 13) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_SHIRT_SIDE, "zombie/zombie", 16, 20, 4 , 12, PACK_TURN_NONE );
-  if (p_entry == 14) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_PANTS     , "zombie/zombie", 4 , 20, 4 , 12, PACK_TURN_NONE );
-  if (p_entry == 15) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_ARM       , "zombie/zombie", 40, 20, 4 , 12, PACK_TURN_LEFT );
-  if (p_entry == 16) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_SKIN      , "zombie/zombie", 48, 16, 4 , 4 , PACK_TURN_NONE );
-  if (p_entry == 17) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_FACE         , "pig/pig"      , 8 , 8 , 8 , 8 , PACK_TURN_NONE );
-  if (p_entry == 18) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_HEAD_SIDE    , "pig/pig"      , 0 , 8 , 8 , 8 , PACK_TURN_NONE );
-  if (p_entry == 19) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_BODY_SIDE    , "pig/pig"      , 28, 16, 8 , 16, PACK_TURN_RIGHT);
-  if (p_entry == 20) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_BODY_TOP     , "pig/pig"      , 54, 16, 10, 16, PACK_TURN_RIGHT);
-  if (p_entry == 21) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_BODY_END     , "pig/pig"      , 46, 8 , 10, 8 , PACK_TURN_NONE );
-  if (p_entry == 22) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_LEG          , "pig/pig"      , 4 , 20, 4 , 6 , PACK_TURN_NONE );
-  if (p_entry == 23) return pack_part(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_SNOUT        , "pig/pig"      , 17, 17, 4 , 3 , PACK_TURN_NONE );
+  if (p_entry == 1 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_FACE         , "entity", "cow/cow"      , 6 , 6 , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 2 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HEAD_SIDE    , "entity", "cow/cow"      , 0 , 6 , 6 , 8 , PACK_TURN_NONE );
+  if (p_entry == 3 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HEAD_TOP     , "entity", "cow/cow"      , 6 , 0 , 8 , 6 , PACK_TURN_NONE );
+  if (p_entry == 4 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HIDE         , "entity", "cow/cow"      , 18, 14, 10, 18, PACK_TURN_RIGHT);
+  if (p_entry == 5 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_BODY_TOP     , "entity", "cow/cow"      , 50, 14, 12, 18, PACK_TURN_RIGHT);
+  if (p_entry == 6 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_BODY_END     , "entity", "cow/cow"      , 28, 4 , 12, 10, PACK_TURN_NONE );
+  if (p_entry == 7 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_LEG          , "entity", "cow/cow"      , 4 , 20, 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 8 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_COW_HORN         , "entity", "cow/cow"      , 22, 1 , 1 , 3 , PACK_TURN_NONE );
+  if (p_entry == 9 ) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_FACE      , "entity", "zombie/zombie", 8 , 8 , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 10) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_HEAD_SIDE , "entity", "zombie/zombie", 0 , 8 , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 11) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_HEAD_TOP  , "entity", "zombie/zombie", 8 , 0 , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 12) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_SHIRT     , "entity", "zombie/zombie", 20, 20, 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 13) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_SHIRT_SIDE, "entity", "zombie/zombie", 16, 20, 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 14) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_PANTS     , "entity", "zombie/zombie", 4 , 20, 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 15) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_ARM       , "entity", "zombie/zombie", 40, 20, 4 , 12, PACK_TURN_LEFT );
+  if (p_entry == 16) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_ZOMBIE_SKIN      , "entity", "zombie/zombie", 48, 16, 4 , 4 , PACK_TURN_NONE );
+  if (p_entry == 17) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_FACE         , "entity", "pig/pig"      , 8 , 8 , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 18) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_HEAD_SIDE    , "entity", "pig/pig"      , 0 , 8 , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 19) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_BODY_SIDE    , "entity", "pig/pig"      , 28, 16, 8 , 16, PACK_TURN_RIGHT);
+  if (p_entry == 20) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_BODY_TOP     , "entity", "pig/pig"      , 54, 16, 10, 16, PACK_TURN_RIGHT);
+  if (p_entry == 21) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_BODY_END     , "entity", "pig/pig"      , 46, 8 , 10, 8 , PACK_TURN_NONE );
+  if (p_entry == 22) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_LEG          , "entity", "pig/pig"      , 4 , 20, 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 23) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PIG_SNOUT        , "entity", "pig/pig"      , 17, 17, 4 , 3 , PACK_TURN_NONE );
+  // worn armour: the old armour layers, then the newer equipment
+  // images (a pack has one or the other), in the player skin layout
+  if (p_entry == 24) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_FRONT, "models", "armor/iron_layer_1"                , 8 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 25) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_SIDE, "models", "armor/iron_layer_1"                , 0 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 26) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_TOP, "models", "armor/iron_layer_1"                , 8 , 0  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 27) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_BACK, "models", "armor/iron_layer_1"                , 24, 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 28) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BODY_FRONT, "models", "armor/iron_layer_1"                , 20, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 29) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BODY_SIDE, "models", "armor/iron_layer_1"                , 16, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 30) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BODY_BACK, "models", "armor/iron_layer_1"                , 32, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 31) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_ARM_FRONT, "models", "armor/iron_layer_1"                , 44, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 32) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_ARM_SIDE , "models", "armor/iron_layer_1"                , 40, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 33) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BOOT_FRONT, "models", "armor/iron_layer_1"                , 4 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 34) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BOOT_SIDE, "models", "armor/iron_layer_1"                , 0 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 35) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_LEG_FRONT, "models", "armor/iron_layer_2"                , 4 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 36) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_LEG_SIDE , "models", "armor/iron_layer_2"                , 0 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 37) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_FRONT, "entity", "equipment/humanoid/iron"           , 8 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 38) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_SIDE, "entity", "equipment/humanoid/iron"           , 0 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 39) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_TOP, "entity", "equipment/humanoid/iron"           , 8 , 0  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 40) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_HELMET_BACK, "entity", "equipment/humanoid/iron"           , 24, 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 41) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BODY_FRONT, "entity", "equipment/humanoid/iron"           , 20, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 42) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BODY_SIDE, "entity", "equipment/humanoid/iron"           , 16, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 43) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BODY_BACK, "entity", "equipment/humanoid/iron"           , 32, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 44) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_ARM_FRONT, "entity", "equipment/humanoid/iron"           , 44, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 45) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_ARM_SIDE , "entity", "equipment/humanoid/iron"           , 40, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 46) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BOOT_FRONT, "entity", "equipment/humanoid/iron"           , 4 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 47) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_BOOT_SIDE, "entity", "equipment/humanoid/iron"           , 0 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 48) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_LEG_FRONT, "entity", "equipment/humanoid_leggings/iron"  , 4 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 49) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_IRON + WORN_LEG_SIDE , "entity", "equipment/humanoid_leggings/iron"  , 0 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 50) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_FRONT, "models", "armor/diamond_layer_1"             , 8 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 51) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_SIDE, "models", "armor/diamond_layer_1"             , 0 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 52) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_TOP, "models", "armor/diamond_layer_1"             , 8 , 0  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 53) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_BACK, "models", "armor/diamond_layer_1"             , 24, 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 54) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BODY_FRONT, "models", "armor/diamond_layer_1"             , 20, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 55) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BODY_SIDE, "models", "armor/diamond_layer_1"             , 16, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 56) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BODY_BACK, "models", "armor/diamond_layer_1"             , 32, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 57) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_ARM_FRONT, "models", "armor/diamond_layer_1"             , 44, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 58) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_ARM_SIDE, "models", "armor/diamond_layer_1"             , 40, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 59) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BOOT_FRONT, "models", "armor/diamond_layer_1"             , 4 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 60) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BOOT_SIDE, "models", "armor/diamond_layer_1"             , 0 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 61) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_LEG_FRONT, "models", "armor/diamond_layer_2"             , 4 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 62) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_LEG_SIDE, "models", "armor/diamond_layer_2"             , 0 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 63) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_FRONT, "entity", "equipment/humanoid/diamond"        , 8 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 64) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_SIDE, "entity", "equipment/humanoid/diamond"        , 0 , 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 65) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_TOP, "entity", "equipment/humanoid/diamond"        , 8 , 0  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 66) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_HELMET_BACK, "entity", "equipment/humanoid/diamond"        , 24, 8  , 8 , 8 , PACK_TURN_NONE );
+  if (p_entry == 67) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BODY_FRONT, "entity", "equipment/humanoid/diamond"        , 20, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 68) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BODY_SIDE, "entity", "equipment/humanoid/diamond"        , 16, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 69) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BODY_BACK, "entity", "equipment/humanoid/diamond"        , 32, 20 , 8 , 12, PACK_TURN_NONE );
+  if (p_entry == 70) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_ARM_FRONT, "entity", "equipment/humanoid/diamond"        , 44, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 71) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_ARM_SIDE, "entity", "equipment/humanoid/diamond"        , 40, 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 72) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BOOT_FRONT, "entity", "equipment/humanoid/diamond"        , 4 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 73) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_BOOT_SIDE, "entity", "equipment/humanoid/diamond"        , 0 , 26 , 4 , 6 , PACK_TURN_NONE );
+  if (p_entry == 74) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_LEG_FRONT, "entity", "equipment/humanoid_leggings/diamond", 4 , 20 , 4 , 12, PACK_TURN_NONE );
+  if (p_entry == 75) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_WORN_DIAMOND + WORN_LEG_SIDE, "entity", "equipment/humanoid_leggings/diamond", 0 , 20 , 4 , 12, PACK_TURN_NONE );
+  // the portal swirl: every fourth frame of the animation strip
+  if (p_entry == 76) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 0              , "block" , "nether_portal"                     , 0 , 256, 64, 64, PACK_TURN_NONE );
+  if (p_entry == 77) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 1              , "block" , "nether_portal"                     , 0 , 512, 64, 64, PACK_TURN_NONE );
+  if (p_entry == 78) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 2              , "block" , "nether_portal"                     , 0 , 768, 64, 64, PACK_TURN_NONE );
+  if (p_entry == 79) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 3              , "block" , "nether_portal"                     , 0 , 1024, 64, 64, PACK_TURN_NONE );
+  if (p_entry == 80) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 4              , "block" , "nether_portal"                     , 0 , 1280, 64, 64, PACK_TURN_NONE );
+  if (p_entry == 81) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 5              , "block" , "nether_portal"                     , 0 , 1536, 64, 64, PACK_TURN_NONE );
+  if (p_entry == 82) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 6              , "block" , "nether_portal"                     , 0 , 1792, 64, 64, PACK_TURN_NONE );
   return FALSE;
 }
 
@@ -1398,6 +1464,7 @@ Integer pack_apply(Text p_path, Text &p_report)
 {
   Attributes l_wanted;
   Attributes l_index;
+  Attributes l_parts;
   Integer    l_zip        = pack_is_zip(p_path);
   Integer    l_entry      = 1;
   Integer    l_tex        = 0;
@@ -1441,8 +1508,8 @@ Integer pack_apply(Text p_path, Text &p_report)
       ++l_entry;
     }
     l_entry = 1;
-    while (pack_map_part(l_entry, l_tex, l_name, l_x, l_y, l_w, l_h, l_turn)) {
-      record_set_integer(l_wanted, pack_key("entity", l_name), TRUE);
+    while (pack_map_part(l_entry, l_tex, l_kind, l_name, l_x, l_y, l_w, l_h, l_turn)) {
+      record_set_integer(l_wanted, pack_key(l_kind, l_name), TRUE);
       ++l_entry;
     }
     if (pack_zip_index(p_path, l_wanted, l_index, l_problem) == 0) {
@@ -1494,23 +1561,37 @@ Integer pack_apply(Text p_path, Text &p_report)
     ++l_loaded;
   }
 
-  // Mob textures: each one is a rectangle of a mob skin
+  // Mob textures, worn armour and animation frames: each one is a
+  // rectangle of a bigger image. Some textures have two entries (an
+  // older and a newer place in a pack), so a texture is only missing
+  // if none of its entries loaded. The ones numbered from
+  // TEX_PORTAL_2 keep their see-through pixels.
+  record_clear(l_parts, DATATYPE_PACK_WANTED);
   l_entry = 1;
-  while (pack_map_part(l_entry, l_tex, l_name, l_x, l_y, l_w, l_h, l_turn)) {
+  while (pack_map_part(l_entry, l_tex, l_kind, l_name, l_x, l_y, l_w, l_h, l_turn)) {
     ++l_entry;
     g_pack_region_x    = l_x;
     g_pack_region_y    = l_y;
     g_pack_region_w    = l_w;
     g_pack_region_h    = l_h;
     g_pack_region_turn = l_turn;
-    l_result = pack_load_image(p_path, l_zip, l_index, "entity", l_name, -1, 0);
+    l_result = pack_load_image(p_path, l_zip, l_index, l_kind, l_name, -1, 0);
     g_pack_region_w = 0;
-    if (l_result != SUCCESS) {
-      ++l_missing;
-      continue;
+    if (record_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex)) != TRUE) {
+      record_set_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex), FALSE);
     }
-    pack_to_texture(l_tex, FALSE);
+    if (l_result != SUCCESS) continue;
+    pack_to_texture(l_tex, l_tex >= TEX_PORTAL_2);
+    record_set_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex), TRUE);
     ++l_loaded;
+  }
+  l_entry = 1;
+  while (pack_map_part(l_entry, l_tex, l_kind, l_name, l_x, l_y, l_w, l_h, l_turn)) {
+    ++l_entry;
+    if (record_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex)) == FALSE) {
+      ++l_missing;
+      record_set_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex), TRUE);
+    }
   }
 
   p_report = "Resource pack: " + To_text(l_loaded) + " textures loaded";

@@ -34,13 +34,35 @@ Integer block_is_liquid(Integer p_block)
 
 Integer block_is_plant(Integer p_block)
 // ----------------------------------------------------------------
-// TRUE for grass tufts, flowers, dead bushes and torches: two
+// TRUE for grass tufts, flowers, dead bushes, torches and fire: two
 // pictures crossed in an X, that nothing collides with and that break
 // with one hit
 // ----------------------------------------------------------------
 {
   if (p_block >= BLOCK_TALL_GRASS && p_block <= BLOCK_DEAD_BUSH) return TRUE;
   if (p_block == BLOCK_TORCH) return TRUE;
+  if (p_block == BLOCK_FIRE) return TRUE;
+  return FALSE;
+}
+
+Integer block_is_flammable(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for blocks fire spreads to and burns away (wood, leaves,
+// plants and what is made of wood)
+// ----------------------------------------------------------------
+{
+  if (p_block == BLOCK_OAK_LOG       ) return TRUE;
+  if (p_block == BLOCK_PLANKS        ) return TRUE;
+  if (p_block == BLOCK_LEAVES        ) return TRUE;
+  if (p_block == BLOCK_CRAFTING_TABLE) return TRUE;
+  if (p_block == BLOCK_BED           ) return TRUE;
+  if (p_block == BLOCK_TALL_GRASS    ) return TRUE;
+  if (p_block == BLOCK_DEAD_BUSH     ) return TRUE;
+  if (p_block == BLOCK_POPPY         ) return TRUE;
+  if (p_block == BLOCK_DANDELION     ) return TRUE;
+  if (p_block == BLOCK_JUKEBOX       ) return TRUE;
+  if (block_is_bed(p_block)          ) return TRUE;
+  if (block_is_door(p_block)         ) return TRUE;
   return FALSE;
 }
 
@@ -252,6 +274,7 @@ Integer block_light_emission(Integer p_block)
   if (block_furnace_is_lit(p_block)) return FURNACE_LIGHT;
   if (p_block == BLOCK_GLOWSTONE) return GLOWSTONE_LIGHT;
   if (p_block == BLOCK_PORTAL) return PORTAL_LIGHT;
+  if (p_block == BLOCK_FIRE) return FIRE_LIGHT;
   return 0;
 }
 
@@ -291,6 +314,7 @@ Integer block_plant_texture(Integer p_block)
   if (p_block == BLOCK_DANDELION ) return TEX_PLANT_DANDELION;
   if (p_block == BLOCK_DEAD_BUSH ) return TEX_PLANT_DEAD_BUSH;
   if (p_block == BLOCK_TORCH     ) return TEX_TORCH;
+  if (p_block == BLOCK_FIRE      ) return TEX_FIRE;
   return 0;
 }
 
@@ -383,6 +407,8 @@ Integer block_hand_hits(Integer p_block)
   if (p_block == BLOCK_SOUL_SAND     ) return 3;
   if (p_block == BLOCK_GLOWSTONE     ) return 2;
   if (p_block == BLOCK_QUARTZ_ORE    ) return 10;
+  if (p_block == BLOCK_DIAMOND_ORE   ) return 14;
+  if (p_block == BLOCK_JUKEBOX       ) return 8;
   if (p_block == BLOCK_OBSIDIAN      ) return 120;   // 20 hits with an iron pickaxe
   return 8;
 }
@@ -403,6 +429,8 @@ Integer block_tool_kind(Integer p_block)
   if (block_is_bed(p_block)          ) return TOOL_AXE;
   if (block_is_door(p_block)         ) return TOOL_AXE;
   if (p_block == BLOCK_CHEST         ) return TOOL_AXE;
+  if (p_block == BLOCK_JUKEBOX       ) return TOOL_AXE;
+  if (p_block == BLOCK_DIAMOND_ORE   ) return TOOL_PICKAXE;
   if (p_block == BLOCK_STONE         ) return TOOL_PICKAXE;
   if (p_block == BLOCK_COBBLESTONE   ) return TOOL_PICKAXE;
   if (p_block == BLOCK_SANDSTONE     ) return TOOL_PICKAXE;
@@ -429,20 +457,21 @@ Integer block_needs_tool(Integer p_block)
 Integer block_tier_needed(Integer p_block)
 // ----------------------------------------------------------------
 // The lowest tool tier that collects a block: iron ore needs a stone
-// pickaxe or better, obsidian an iron one (there are no diamonds),
-// everything else any tier of its tool
+// pickaxe or better, diamond ore an iron one, obsidian a diamond
+// one, everything else any tier of its tool
 // ----------------------------------------------------------------
 {
-  if (p_block == BLOCK_IRON_ORE) return TIER_STONE;
-  if (p_block == BLOCK_OBSIDIAN) return TIER_IRON;
+  if (p_block == BLOCK_IRON_ORE   ) return TIER_STONE;
+  if (p_block == BLOCK_DIAMOND_ORE) return TIER_IRON;
+  if (p_block == BLOCK_OBSIDIAN   ) return TIER_DIAMOND;
   return TIER_WOOD;
 }
 
 Integer block_hits_with(Integer p_block, Integer p_tool_item)
 // ----------------------------------------------------------------
 // Number of hits to break a block holding tool_item
-// The right tool divides the hand hits by 3 (wood), 4 (stone) or 6
-// (iron)
+// The right tool divides the hand hits by 3 (wood), 4 (stone), 6
+// (iron) or 8 (diamond)
 // ----------------------------------------------------------------
 {
   Integer l_hits  = block_hand_hits(p_block);
@@ -454,6 +483,7 @@ Integer block_hits_with(Integer p_block, Integer p_tool_item)
     if (item_tool_tier(p_tool_item) == TIER_WOOD ) l_speed = 3;
     if (item_tool_tier(p_tool_item) == TIER_STONE) l_speed = 4;
     if (item_tool_tier(p_tool_item) == TIER_IRON ) l_speed = 6;
+    if (item_tool_tier(p_tool_item) == TIER_DIAMOND) l_speed = 8;
   }
 
   l_hits = Floor((l_hits + l_speed - 1.0) / l_speed);
@@ -483,6 +513,8 @@ Integer block_drop_item(Integer p_block, Integer p_tool_item)
   if (p_block == BLOCK_LAVA    ) return ITEM_NONE;
   if (p_block == BLOCK_PORTAL  ) return ITEM_NONE;
   if (p_block == BLOCK_QUARTZ_ORE) return ITEM_NETHER_QUARTZ;
+  if (p_block == BLOCK_DIAMOND_ORE) return ITEM_DIAMOND;
+  if (p_block == BLOCK_FIRE    ) return ITEM_NONE;
   if (p_block == BLOCK_AIR     ) return ITEM_NONE;
   if (p_block == BLOCK_BEDROCK ) return ITEM_NONE;
   if (block_is_furnace(p_block)) return ITEM_FURNACE;
@@ -537,6 +569,12 @@ Integer block_face_texture(Integer p_block, Integer p_direction)
   if (p_block == BLOCK_QUARTZ_ORE ) return TEX_QUARTZ_ORE;
   if (p_block == BLOCK_LAVA       ) return TEX_LAVA;
   if (p_block == BLOCK_PORTAL     ) return TEX_PORTAL;
+  if (p_block == BLOCK_DIAMOND_ORE) return TEX_DIAMOND_ORE;
+  if (p_block == BLOCK_FIRE       ) return TEX_FIRE;
+  if (p_block == BLOCK_JUKEBOX) {
+    if (p_direction == DIR_PY) return TEX_JUKEBOX_TOP;
+    return TEX_JUKEBOX_SIDE;
+  }
 
   if (p_block == BLOCK_CHEST) {
     if (p_direction == DIR_PY || p_direction == DIR_NY) return TEX_CHEST_TOP;
@@ -659,6 +697,17 @@ Text item_name(Integer p_item)
   if (p_item == ITEM_FLINT          ) return "Flint";
   if (p_item == ITEM_FLINT_AND_STEEL) return "Flint and Steel";
   if (p_item == ITEM_NETHER_QUARTZ  ) return "Nether Quartz";
+  if (p_item == ITEM_DIAMOND_ORE    ) return "Diamond Ore";
+  if (p_item == ITEM_JUKEBOX        ) return "Jukebox";
+  if (p_item == ITEM_DIAMOND        ) return "Diamond";
+  if (p_item == ITEM_DIAMOND_PICKAXE) return "Diamond Pickaxe";
+  if (p_item == ITEM_DIAMOND_AXE    ) return "Diamond Axe";
+  if (p_item == ITEM_DIAMOND_SHOVEL ) return "Diamond Shovel";
+  if (p_item == ITEM_DIAMOND_SWORD  ) return "Diamond Sword";
+  if (p_item == ITEM_DIAMOND_HELMET ) return "Diamond Helmet";
+  if (p_item == ITEM_DIAMOND_CHESTPLATE) return "Diamond Chestplate";
+  if (p_item == ITEM_DIAMOND_LEGGINGS) return "Diamond Leggings";
+  if (p_item == ITEM_DIAMOND_BOOTS  ) return "Diamond Boots";
   return "";
 }
 
@@ -669,6 +718,7 @@ Integer item_places_block(Integer p_item)
 // ----------------------------------------------------------------
 {
   if (p_item >= FIRST_NETHER_ITEM && p_item <= LAST_NETHER_ITEM) return p_item;
+  if (p_item >= FIRST_LATE_BLOCK_ITEM && p_item <= LAST_LATE_BLOCK_ITEM) return p_item;
   if (p_item < ITEM_BEDROCK   ) return BLOCK_AIR;
   if (p_item > MAX_BLOCK_ID   ) return BLOCK_AIR;
   if (p_item == BLOCK_WATER   ) return BLOCK_AIR;
@@ -708,12 +758,17 @@ Integer item_tool_kind(Integer p_item)
   if (p_item == ITEM_WOODEN_AXE     || p_item == ITEM_STONE_AXE     || p_item == ITEM_IRON_AXE    ) return TOOL_AXE;
   if (p_item == ITEM_WOODEN_SHOVEL  || p_item == ITEM_STONE_SHOVEL  || p_item == ITEM_IRON_SHOVEL ) return TOOL_SHOVEL;
   if (p_item == ITEM_WOODEN_SWORD   || p_item == ITEM_STONE_SWORD   || p_item == ITEM_IRON_SWORD  ) return TOOL_SWORD;
+  if (p_item == ITEM_DIAMOND_PICKAXE) return TOOL_PICKAXE;
+  if (p_item == ITEM_DIAMOND_AXE    ) return TOOL_AXE;
+  if (p_item == ITEM_DIAMOND_SHOVEL ) return TOOL_SHOVEL;
+  if (p_item == ITEM_DIAMOND_SWORD  ) return TOOL_SWORD;
   return TOOL_NONE;
 }
 
 Integer item_tool_tier(Integer p_item)
 // ----------------------------------------------------------------
-// TIER_WOOD, TIER_STONE or TIER_IRON for tools, TIER_NONE otherwise
+// TIER_WOOD, TIER_STONE, TIER_IRON or TIER_DIAMOND for tools,
+// TIER_NONE otherwise
 // ----------------------------------------------------------------
 {
   if (p_item == ITEM_WOODEN_PICKAXE || p_item == ITEM_WOODEN_AXE ) return TIER_WOOD;
@@ -722,6 +777,8 @@ Integer item_tool_tier(Integer p_item)
   if (p_item == ITEM_STONE_SHOVEL   || p_item == ITEM_STONE_SWORD ) return TIER_STONE;
   if (p_item == ITEM_IRON_PICKAXE   || p_item == ITEM_IRON_AXE   ) return TIER_IRON;
   if (p_item == ITEM_IRON_SHOVEL    || p_item == ITEM_IRON_SWORD  ) return TIER_IRON;
+  if (p_item == ITEM_DIAMOND_PICKAXE || p_item == ITEM_DIAMOND_AXE ) return TIER_DIAMOND;
+  if (p_item == ITEM_DIAMOND_SHOVEL || p_item == ITEM_DIAMOND_SWORD) return TIER_DIAMOND;
   return TIER_NONE;
 }
 
@@ -736,9 +793,14 @@ Integer item_max_uses(Integer p_item)
   if (p_item == ITEM_IRON_CHESTPLATE) return 240;
   if (p_item == ITEM_IRON_LEGGINGS  ) return 225;
   if (p_item == ITEM_IRON_BOOTS     ) return 195;
+  if (p_item == ITEM_DIAMOND_HELMET ) return 363;
+  if (p_item == ITEM_DIAMOND_CHESTPLATE) return 528;
+  if (p_item == ITEM_DIAMOND_LEGGINGS) return 495;
+  if (p_item == ITEM_DIAMOND_BOOTS  ) return 429;
   if (item_tool_tier(p_item) == TIER_WOOD ) return 60;
   if (item_tool_tier(p_item) == TIER_STONE) return 132;
   if (item_tool_tier(p_item) == TIER_IRON ) return 251;
+  if (item_tool_tier(p_item) == TIER_DIAMOND) return 1562;
   return 0;
 }
 
@@ -779,18 +841,38 @@ Integer item_armour_place(Integer p_item)
   if (p_item == ITEM_IRON_CHESTPLATE) return ARMOUR_CHEST;
   if (p_item == ITEM_IRON_LEGGINGS  ) return ARMOUR_LEGS;
   if (p_item == ITEM_IRON_BOOTS     ) return ARMOUR_FEET;
+  if (p_item == ITEM_DIAMOND_HELMET ) return ARMOUR_HEAD;
+  if (p_item == ITEM_DIAMOND_CHESTPLATE) return ARMOUR_CHEST;
+  if (p_item == ITEM_DIAMOND_LEGGINGS) return ARMOUR_LEGS;
+  if (p_item == ITEM_DIAMOND_BOOTS  ) return ARMOUR_FEET;
   return ARMOUR_NONE;
 }
 
 Integer item_armour_points(Integer p_item)
 // ----------------------------------------------------------------
-// Armour points a worn piece gives (a full iron set gives 15)
+// Armour points a worn piece gives (a full iron set gives 15, a
+// diamond one 20)
 // ----------------------------------------------------------------
 {
   if (p_item == ITEM_IRON_HELMET    ) return 2;
   if (p_item == ITEM_IRON_CHESTPLATE) return 6;
   if (p_item == ITEM_IRON_LEGGINGS  ) return 5;
   if (p_item == ITEM_IRON_BOOTS     ) return 2;
+  if (p_item == ITEM_DIAMOND_HELMET ) return 3;
+  if (p_item == ITEM_DIAMOND_CHESTPLATE) return 8;
+  if (p_item == ITEM_DIAMOND_LEGGINGS) return 6;
+  if (p_item == ITEM_DIAMOND_BOOTS  ) return 3;
+  return 0;
+}
+
+Integer item_worn_texture(Integer p_item, Integer p_part)
+// ----------------------------------------------------------------
+// Texture of one face (WORN_*) of a piece of armour as worn on the
+// player model, 0 for items that aren't armour
+// ----------------------------------------------------------------
+{
+  if (p_item >= ITEM_IRON_HELMET && p_item <= ITEM_IRON_BOOTS) return TEX_WORN_IRON + p_part;
+  if (p_item >= ITEM_DIAMOND_HELMET && p_item <= ITEM_DIAMOND_BOOTS) return TEX_WORN_DIAMOND + p_part;
   return 0;
 }
 
@@ -890,6 +972,15 @@ Integer item_sprite_texture(Integer p_item)
   if (p_item == ITEM_FLINT          ) return TEX_ITEM_FLINT;
   if (p_item == ITEM_FLINT_AND_STEEL) return TEX_ITEM_FLINT_AND_STEEL;
   if (p_item == ITEM_NETHER_QUARTZ  ) return TEX_ITEM_NETHER_QUARTZ;
+  if (p_item == ITEM_DIAMOND        ) return TEX_ITEM_DIAMOND;
+  if (p_item == ITEM_DIAMOND_PICKAXE) return TEX_ITEM_DIAMOND_PICKAXE;
+  if (p_item == ITEM_DIAMOND_AXE    ) return TEX_ITEM_DIAMOND_AXE;
+  if (p_item == ITEM_DIAMOND_SHOVEL ) return TEX_ITEM_DIAMOND_SHOVEL;
+  if (p_item == ITEM_DIAMOND_SWORD  ) return TEX_ITEM_DIAMOND_SWORD;
+  if (p_item == ITEM_DIAMOND_HELMET ) return TEX_ITEM_DIAMOND_HELMET;
+  if (p_item == ITEM_DIAMOND_CHESTPLATE) return TEX_ITEM_DIAMOND_CHESTPLATE;
+  if (p_item == ITEM_DIAMOND_LEGGINGS) return TEX_ITEM_DIAMOND_LEGGINGS;
+  if (p_item == ITEM_DIAMOND_BOOTS  ) return TEX_ITEM_DIAMOND_BOOTS;
   return block_plant_texture(p_item);
 }
 

@@ -1,4 +1,5 @@
 #ifndef HUD_H_INCLUDED
+#define HUD_PORTAL_PIECES  10   // pieces along each edge of the portal overlay
 #define HUD_H_INCLUDED
 
 #include "../core/records.h"

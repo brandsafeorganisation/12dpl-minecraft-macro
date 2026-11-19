@@ -589,21 +589,21 @@ void hud_draw_figure(Draw_Box p_box, Real p_centre_x, Real p_base_y, Real p_unit
 
   // leggings from the waist down, boots over the feet
   if (p_leggings != ITEM_NONE) {
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.92, FALSE, l_x - 4.0 * l_u - l_a, l_y + 3.0 * l_u, 4.0 * l_u + l_a, 0.0, 0.0, 11.0 * l_u);
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.92, FALSE, l_x, l_y + 3.0 * l_u, 4.0 * l_u + l_a, 0.0, 0.0, 11.0 * l_u);
+    hud_texture_face(p_box, item_worn_texture(p_leggings, WORN_LEG_FRONT), 0.92, FALSE, l_x - 4.0 * l_u - l_a, l_y + 3.0 * l_u, 4.0 * l_u + l_a, 0.0, 0.0, 11.0 * l_u);
+    hud_texture_face(p_box, item_worn_texture(p_leggings, WORN_LEG_FRONT), 0.92, FALSE, l_x, l_y + 3.0 * l_u, 4.0 * l_u + l_a, 0.0, 0.0, 11.0 * l_u);
   }
   if (p_boots != ITEM_NONE) {
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.85, FALSE, l_x - 4.0 * l_u - l_a, l_y - l_a, 4.0 * l_u, 0.0, 0.0, 4.0 * l_u + l_a);
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.85, FALSE, l_x + l_a, l_y - l_a, 4.0 * l_u, 0.0, 0.0, 4.0 * l_u + l_a);
+    hud_texture_face(p_box, item_worn_texture(p_boots, WORN_BOOT_FRONT), 0.85, FALSE, l_x - 4.0 * l_u - l_a, l_y - l_a, 4.0 * l_u, 0.0, 0.0, 4.0 * l_u + l_a);
+    hud_texture_face(p_box, item_worn_texture(p_boots, WORN_BOOT_FRONT), 0.85, FALSE, l_x + l_a, l_y - l_a, 4.0 * l_u, 0.0, 0.0, 4.0 * l_u + l_a);
   }
-  // the chestplate covers the body and the tops of the arms
+  // the chestplate covers the body and the arms
   if (p_chestplate != ITEM_NONE) {
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 1.0, FALSE, l_x - 4.0 * l_u - l_a, l_y + 12.0 * l_u, 8.0 * l_u + 2.0 * l_a, 0.0, 0.0, 12.0 * l_u + l_a);
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.9, FALSE, l_x - 8.0 * l_u - l_a, l_y + 19.0 * l_u, 4.0 * l_u, 0.0, 0.0, 5.0 * l_u + l_a);
-    hud_texture_face(p_box, TEX_ARMOUR_IRON, 0.9, FALSE, l_x + 4.0 * l_u + l_a, l_y + 19.0 * l_u, 4.0 * l_u, 0.0, 0.0, 5.0 * l_u + l_a);
+    hud_texture_face(p_box, item_worn_texture(p_chestplate, WORN_BODY_FRONT), 1.0, FALSE, l_x - 4.0 * l_u - l_a, l_y + 12.0 * l_u, 8.0 * l_u + 2.0 * l_a, 0.0, 0.0, 12.0 * l_u + l_a);
+    hud_texture_face(p_box, item_worn_texture(p_chestplate, WORN_ARM_FRONT), 0.9, FALSE, l_x - 8.0 * l_u - l_a, l_y + 12.0 * l_u, 4.0 * l_u, 0.0, 0.0, 12.0 * l_u + l_a);
+    hud_texture_face(p_box, item_worn_texture(p_chestplate, WORN_ARM_FRONT), 0.9, FALSE, l_x + 4.0 * l_u + l_a, l_y + 12.0 * l_u, 4.0 * l_u, 0.0, 0.0, 12.0 * l_u + l_a);
   }
   if (p_helmet != ITEM_NONE) {
-    hud_texture_face(p_box, TEX_ARMOUR_HELMET_FRONT, 1.0, FALSE, l_x - 4.0 * l_u - l_a, l_y + 24.0 * l_u, 8.0 * l_u + 2.0 * l_a, 0.0, 0.0, 8.0 * l_u + l_a);
+    hud_texture_face(p_box, item_worn_texture(p_helmet, WORN_HELMET_FRONT), 1.0, FALSE, l_x - 4.0 * l_u - l_a, l_y + 24.0 * l_u, 8.0 * l_u + 2.0 * l_a, 0.0, 0.0, 8.0 * l_u + l_a);
   }
 }
 
@@ -657,6 +657,79 @@ void hud_draw_health(Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer
       hud_texture_face(p_box, TEX_HEART_HALF, l_pulse, FALSE, l_hx, p_y0, l_size, 0.0, 0.0, l_size);
     }
   }
+}
+
+void hud_portal_band(Draw_Box p_box, Real p_w, Real p_h, Real p_strip, Real p_depth, Real p_phase)
+// ----------------------------------------------------------------
+// One layer of the portal overlay: a band round all four edges of
+// the view reaching in about depth, its inner edge rippling with
+// phase (in the colour already set)
+// ----------------------------------------------------------------
+{
+  Integer l_edge  = 0;
+  Integer l_piece = 0;
+  Real    l_a     = 0.0;
+  Real    l_b     = 0.0;
+  Real    l_in_a  = 0.0;
+  Real    l_in_b  = 0.0;
+  Real    l_span  = 0.0;
+
+  for (l_edge = 1; l_edge <= 4; ++l_edge) {
+    l_span = p_w;
+    if (l_edge >= 3) l_span = p_h - p_strip;
+    for (l_piece = 1; l_piece <= HUD_PORTAL_PIECES; ++l_piece) {
+      l_a    = l_span * (l_piece - 1) / HUD_PORTAL_PIECES;
+      l_b    = l_span * l_piece / HUD_PORTAL_PIECES;
+      l_in_a = p_depth * (1.0 + 0.3 * Sin(p_phase + l_edge * 1.7 + l_piece * 0.9));
+      l_in_b = p_depth * (1.0 + 0.3 * Sin(p_phase + l_edge * 1.7 + (l_piece + 1) * 0.9));
+      if (l_piece == HUD_PORTAL_PIECES) l_in_b = p_depth * (1.0 + 0.3 * Sin(p_phase + (l_edge + 1) * 1.7 + 0.9));
+      if (l_edge == 1) {          // bottom (just above the strip)
+        g_icon_x[1] = l_a;  g_icon_y[1] = p_strip;
+        g_icon_x[2] = l_b;  g_icon_y[2] = p_strip;
+        g_icon_x[3] = l_b;  g_icon_y[3] = p_strip + l_in_b;
+        g_icon_x[4] = l_a;  g_icon_y[4] = p_strip + l_in_a;
+      } else if (l_edge == 2) {   // top
+        g_icon_x[1] = l_a;  g_icon_y[1] = p_h;
+        g_icon_x[2] = l_b;  g_icon_y[2] = p_h;
+        g_icon_x[3] = l_b;  g_icon_y[3] = p_h - l_in_b;
+        g_icon_x[4] = l_a;  g_icon_y[4] = p_h - l_in_a;
+      } else if (l_edge == 3) {   // left
+        g_icon_x[1] = 0.0;     g_icon_y[1] = p_strip + l_a;
+        g_icon_x[2] = 0.0;     g_icon_y[2] = p_strip + l_b;
+        g_icon_x[3] = l_in_b;  g_icon_y[3] = p_strip + l_b;
+        g_icon_x[4] = l_in_a;  g_icon_y[4] = p_strip + l_a;
+      } else {                    // right
+        g_icon_x[1] = p_w;          g_icon_y[1] = p_strip + l_a;
+        g_icon_x[2] = p_w;          g_icon_y[2] = p_strip + l_b;
+        g_icon_x[3] = p_w - l_in_b; g_icon_y[3] = p_strip + l_b;
+        g_icon_x[4] = p_w - l_in_a; g_icon_y[4] = p_strip + l_a;
+      }
+      Draw_polygon(p_box, 4, g_icon_x, g_icon_y);
+    }
+  }
+}
+
+void hud_portal_overlay(Draw_Box p_box, Real p_w, Real p_h, Real p_strip, Real p_amount, Real p_now)
+// ----------------------------------------------------------------
+// The portal's warping purple over the view while you stand in a
+// portal: rippling bands that close in from the edges as amount
+// goes from 0 to 1 and cover the whole view at the end
+// ----------------------------------------------------------------
+{
+  Real l_reach = 0.5 * min_real(p_w, p_h - p_strip);
+  Real l_depth = l_reach * (0.08 + 1.1 * p_amount * p_amount);
+
+  if (p_amount >= 0.97) {
+    render_set_colour(p_box, 92.0, 30.0, 170.0);
+    render_fill_rect (p_box, 0.0, p_strip, p_w, p_h);
+    return;
+  }
+  render_set_colour(p_box, 150.0, 70.0, 230.0);
+  hud_portal_band  (p_box, p_w, p_h, p_strip, l_depth, p_now * 5.0);
+  render_set_colour(p_box, 92.0, 30.0, 170.0);
+  hud_portal_band  (p_box, p_w, p_h, p_strip, l_depth * 0.7, -p_now * 4.0 + 1.3);
+  render_set_colour(p_box, 60.0, 12.0, 120.0);
+  hud_portal_band  (p_box, p_w, p_h, p_strip, l_depth * 0.35, p_now * 6.0 + 2.6);
 }
 
 void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_screen_open,
@@ -713,6 +786,12 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
     hud_draw_pause_menu(p_box, p_w, p_h, record_real(p_hud, ATTR_HUD_MOUSE_X), record_real(p_hud, ATTR_HUD_MOUSE_Y),
                         player_game_mode_name(player_game_mode(p_player)));
     return;
+  }
+
+  // A portal's purple swirling in from the edges while you stand in
+  // it, under the hand and hotbar, until it covers the view
+  if (player_portal_time(p_player) > 0.0 && !l_dead) {
+    hud_portal_overlay(p_box, p_w, p_h, l_strip, clamp_real(player_portal_time(p_player) / PORTAL_SECONDS, 0.0, 1.0), p_now);
   }
 
   // Spectators hold nothing and touch nothing: no hand, crosshair or hotbar
@@ -806,12 +885,8 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
     render_fill_rect(p_box, p_w - l_edge, l_strip, p_w, p_h);
   }
 
-  // A portal's purple closing in while you stand in it, lava's orange
+  // lava's orange round the edges
   l_edge = 0.0;
-  if (player_portal_time(p_player) > 0.0 && !l_dead) {
-    l_edge = 6.0 + 90.0 * clamp_real(player_portal_time(p_player) / PORTAL_SECONDS, 0.0, 1.0);
-    render_set_colour(p_box, 128.0, 52.0, 210.0);
-  }
   if (player_in_lava(p_player) && !l_dead) {
     l_edge = 40.0;
     render_set_colour(p_box, 236.0, 110.0, 20.0);

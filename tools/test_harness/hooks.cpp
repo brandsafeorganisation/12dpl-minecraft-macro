@@ -155,7 +155,7 @@ static void register_hooks(){
       slot_damage(g_inventory,player_selected(g_player))); };
   g_calls["into_portal"]=[]{ int x,y,z; if(world_find_portal((int)px(),(int)py(),(int)pz(),8,x,y,z)){ player_set_position(g_player,x+0.5,y+0.01,z+0.5); printf("[nether] stepped into the portal at %d %d %d\n",x,y,z);} else printf("[nether] no portal near\n"); };
   g_calls["out_of_portal"]=[]{ player_set_position(g_player,px()-2.0,py(),pz()); };
-  g_calls["nether_stats"]=[]{ int c[64]={0}; for(int x=0;x<WORLD_SIZE_X;x++) for(int z=0;z<WORLD_SIZE_Z;z++) for(int y=0;y<WORLD_HEIGHT;y++){ int b=world_get_block(x,y,z); if(b>=0&&b<64) c[b]++; }
+  g_calls["nether_stats"]=[]{ int c[128]={0}; for(int x=0;x<WORLD_SIZE_X;x++) for(int z=0;z<WORLD_SIZE_Z;z++) for(int y=0;y<WORLD_HEIGHT;y++){ int b=world_get_block(x,y,z); if(b>=0&&b<128) c[b]++; }
     printf("[nether] dimension %d: netherrack %d lava %d soul sand %d glowstone %d quartz %d obsidian %d bedrock %d air %d stone %d\n",world_dimension(),c[BLOCK_NETHERRACK],c[BLOCK_LAVA],c[BLOCK_SOUL_SAND],c[BLOCK_GLOWSTONE],c[BLOCK_QUARTZ_ORE],c[BLOCK_OBSIDIAN],c[BLOCK_BEDROCK],c[BLOCK_AIR],c[BLOCK_STONE]); };
   g_calls["survival"]=[]{ player_set_game_mode(g_player,GAMEMODE_SURVIVAL); };
   g_calls["creative"]=[]{ player_set_game_mode(g_player,GAMEMODE_CREATIVE); };
@@ -183,6 +183,26 @@ static void register_hooks(){
   g_calls["pano_setup"]=[]{ record_set_integer(g_settings,ATTR_SET_FOV,90); record_set_integer(g_settings,ATTR_SET_SHOW_HUD,0); record_set_integer(g_settings,ATTR_SET_RENDER_DISTANCE,RENDER_DISTANCE_MAX); record_set_integer(g_settings,ATTR_SET_DETAIL,DETAIL_HIGH); cows_clear(g_cows); world_set_time_of_day(g_info,0.30); };
   g_calls["pano_spot"]=[]{ const char*e=getenv("PANO_X"); int x=e?atoi(e):record_integer(g_info,ATTR_HOUSE_X)-6; e=getenv("PANO_Z"); int z=e?atoi(e):record_integer(g_info,ATTR_HOUSE_Z)-6; e=getenv("PANO_UP"); double up=e?atof(e):2.0; int t=world_top_solid_y(x,z); player_reset(g_player,x+0.5,t+up,z+0.5); player_set_game_mode(g_player,GAMEMODE_SPECTATOR); player_set_flying(g_player,1); printf("[hook] panorama at %d %d top %d\n",x,z,t); };
   g_calls["noon"]=[]{ world_set_time_of_day(g_info,0.25); };
+  // diamonds, the jukebox and fire (34_diamonds_fire)
+  g_calls["diamond_stats"]=[]{ int n=0,low=999,high=-1; for(int x=0;x<WORLD_SIZE_X;x++) for(int z=0;z<WORLD_SIZE_Z;z++) for(int y=0;y<WORLD_HEIGHT;y++) if(world_get_block(x,y,z)==BLOCK_DIAMOND_ORE){ n++; if(y<low) low=y; if(y>high) high=y; }
+    printf("[diamond] diamond ore %d between y %d and %d\n",n,low,high); };
+  g_calls["wear_diamond"]=[]{ slot_set(g_inventory,inventory_armour_slot(ARMOUR_HEAD),ITEM_DIAMOND_HELMET,1,0); slot_set(g_inventory,inventory_armour_slot(ARMOUR_CHEST),ITEM_DIAMOND_CHESTPLATE,1,0);
+    slot_set(g_inventory,inventory_armour_slot(ARMOUR_LEGS),ITEM_DIAMOND_LEGGINGS,1,0); slot_set(g_inventory,inventory_armour_slot(ARMOUR_FEET),ITEM_IRON_BOOTS,1,0);
+    slot_set(g_inventory,player_selected(g_player),ITEM_DIAMOND_SWORD,1,0); printf("[diamond] armour points %d\n",inventory_armour_points(g_inventory)); };
+  g_calls["fire_hut"]=[]{ // a stone floor, a planks wall 3 ahead (+x) with a jukebox in it; aim at the floor in front of the wall
+    int x0=(int)px(),y0=(int)py(),z0=(int)pz();
+    for(int dx=1;dx<=6;dx++) for(int dz=-3;dz<=3;dz++){ for(int dy=0;dy<=4;dy++) world_set_block(x0+dx,y0+dy,z0+dz,0); world_set_block(x0+dx,y0-1,z0+dz,BLOCK_STONE); }
+    world_finish_maps(); mesh_reset();
+    for(int dz=-2;dz<=2;dz++) for(int dy=0;dy<=2;dy++) world_place_block(g_events,x0+4,y0+dy,z0+dz,(dz==0&&dy==0)?BLOCK_JUKEBOX:BLOCK_PLANKS);
+    double ex=px(),ey=py()+PLAYER_EYE_HEIGHT,ez=pz(); double tx=x0+3.5,ty=y0-0.02,tz=z0+1.5;
+    double dx=tx-ex,dy=ty-ey,dz=tz-ez; set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["fires"]=[]{ int f=0,pl=0,x0=(int)px(),y0=(int)py(),z0=(int)pz(); for(int x=x0-8;x<=x0+8;x++) for(int z=z0-8;z<=z0+8;z++) for(int y=y0-3;y<=y0+6;y++){ int b=world_get_block(x,y,z); if(b==BLOCK_FIRE) f++; if(b==BLOCK_PLANKS) pl++; }
+    printf("[fire] fires %d planks %d health %d light at feet %d\n",f,pl,player_health(g_player),world_get_light(x0,y0,z0)); };
+  g_calls["into_fire"]=[]{ int x0=(int)px(),y0=(int)py(),z0=(int)pz(); for(int x=x0-8;x<=x0+8;x++) for(int z=z0-8;z<=z0+8;z++) for(int y=y0-3;y<=y0+6;y++) if(world_get_block(x,y,z)==BLOCK_FIRE){ player_set_position(g_player,x+0.5,y+0.01,z+0.5); printf("[fire] standing in the fire at %d %d %d\n",x,y,z); return; } printf("[fire] no fire near\n"); };
+  g_calls["look_up"]=[]{ double y=0,p=0; player_look(g_player,y,p); set_look(y,MAX_PITCH); };
+  g_calls["head_left"]=[]{ double y=0,p=0; player_look(g_player,y,p); set_look(wrap_angle(y-0.5),0.0); printf("[hook] yaw %.2f body %.2f\n",wrap_angle(y-0.5),player_body_yaw(g_player)); };
+  g_calls["head_right"]=[]{ double y=0,p=0; player_look(g_player,y,p); set_look(wrap_angle(y+0.5),0.0); printf("[hook] yaw %.2f body %.2f\n",wrap_angle(y+0.5),player_body_yaw(g_player)); };
+  g_calls["light_fire_here"]=[]{ int x=(int)px()+2,y=(int)py(),z=(int)pz(); printf("[fire] lit %d\n",world_light_fire(g_events,x,y,z)); };
   g_calls["shared_cells"]=[]{ printf("[hook] host broke 87 67 63: %d; bob placed 86 68 63: %d and 86 69 63: %d\n",world_get_block(87,67,63),world_get_block(86,68,63),world_get_block(86,69,63)); };
   g_calls["clock"]=[]{ double t=world_time_of_day(g_info); printf("[hook] clock %s (%.3f) day %d daylight %.2f\n",world_clock_text(t).c_str(),t,record_integer(g_info,ATTR_WORLD_DAYS),world_daylight(t)); };
   g_calls["give_night_kit"]=[]{ inventory_add(g_inventory,ITEM_TORCH,16); inventory_add(g_inventory,ITEM_GLASS,8); inventory_add(g_inventory,ITEM_BED,1); inventory_add(g_inventory,ITEM_IRON_SWORD,1); };
