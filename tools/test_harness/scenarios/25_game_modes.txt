@@ -18,7 +18,7 @@ wait 2
 call mode
 # straight down into the ground: no collision
 call look_level
-holdkey c 60
+holdkey shift 60
 wait 5
 call inside_stone
 snap 250_spectator_underground

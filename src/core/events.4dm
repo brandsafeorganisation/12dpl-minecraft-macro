@@ -2,6 +2,7 @@
 #define EVENTS_4DM_INCLUDED
 
 #include "../../include/core/common.h"
+#include "../../include/core/util.h"
 #include "../../include/core/records.h"
 #include "../../include/core/events.h"
 
@@ -81,6 +82,33 @@ void emit_drop_event(Attributes &p_events, Integer p_item, Integer p_count, Inte
 // ----------------------------------------------------------------
 {
   emit_event(p_events, EVT_SPAWN_DROP, p_item, p_count, p_damage, 0, p_x, p_y, p_z, "");
+}
+
+void emit_throw_event(Attributes &p_events, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z,
+                      Real p_yaw, Real p_pitch)
+// ----------------------------------------------------------------
+// Ask for an item stack to be thrown from (x, y, z) the way yaw and
+// pitch look. The direction is packed into one integer: yaw in
+// thousandths of a radian (0 .. 6283) times 10000, plus pitch in
+// thousandths plus 5000.
+// ----------------------------------------------------------------
+{
+  Real    l_yaw  = p_yaw - Floor(p_yaw / (2.0 * PI)) * 2.0 * PI;
+  Integer l_code = Floor(l_yaw * 1000.0 + 0.5) * 10000 + Floor(clamp_real(p_pitch, -HALF_PI, HALF_PI) * 1000.0 + 0.5) + 5000;
+
+  emit_event(p_events, EVT_THROW_DROP, p_item, p_count, p_damage, l_code, p_x, p_y, p_z, "");
+}
+
+void event_throw_direction(Attributes &p_event, Real &p_yaw, Real &p_pitch)
+// ----------------------------------------------------------------
+// The yaw and pitch packed into an EVT_THROW_DROP event
+// ----------------------------------------------------------------
+{
+  Integer l_code  = event_integer(p_event, 4);
+  Integer l_yaw   = Floor(l_code / 10000.0);
+
+  p_yaw   = l_yaw / 1000.0;
+  p_pitch = (l_code - l_yaw * 10000 - 5000) / 1000.0;
 }
 
 void emit_toast(Attributes &p_events, Text p_text)

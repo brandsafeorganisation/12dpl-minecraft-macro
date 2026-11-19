@@ -145,6 +145,8 @@ void test_cases_run(Attributes &p_results)
   Integer    l_j      = 0;
   Text       l_bs     = " ";
   Text       l_ctrl_bs = " ";
+  Text       l_ctrl_w  = " ";
+  Integer    l_drop    = 0;
 
   // ---------------------------------------------------- util
   test_group(p_results, "util");
@@ -258,6 +260,36 @@ void test_cases_run(Attributes &p_results)
   test_expect_text   (p_results, "a capital is typed as it is",           text_after_key("a", "B", 48), "aB");
   test_expect_text   (p_results, "nothing past the longest",              text_after_key("abc", "d", 3), "abc");
   test_expect_text   (p_results, "Backspace on nothing stays nothing",    text_after_key("", l_bs, 48), "");
+
+  // ---------------------------------------------------- key binds
+  test_group(p_results, "key binds");
+  Set_char(l_ctrl_w, 1, 23);
+  test_expect_text   (p_results, "Ctrl+W's key is w",                     key_base(l_ctrl_w), "w");
+  test_expect_text   (p_results, "Ctrl+W was pressed with Ctrl",          key_modifier(l_ctrl_w), KEY_CONTROL);
+  test_expect_text   (p_results, "a capital W is w with Shift",           key_modifier("W"), KEY_SHIFT);
+  test_expect_text   (p_results, "Backspace isn't Ctrl+H",                key_base(l_bs), "backspace");
+  test_expect_text   (p_results, "a plain key has no modifier",           key_modifier("w"), "");
+  test_expect_text   (p_results, "Space is written Space",                key_label(" "), "Space");
+  test_expect_text   (p_results, "Shift is written Left Shift",           key_label(KEY_SHIFT), "Left Shift");
+  test_expect_text   (p_results, "a letter is written as a capital",      key_label("q"), "Q");
+  test_expect_text   (p_results, "no key is Not Bound",                   key_label(""), "Not Bound");
+  settings_defaults(g_settings);
+  test_expect_text   (p_results, "Q drops by default",                    settings_bind(g_settings, BIND_DROP), "q");
+  test_expect_true   (p_results, "C does nothing by default",             !settings_bind_pressed(g_settings, BIND_SNEAK, "c", ""));
+  test_expect_true   (p_results, "Shift + W sneaks",                      settings_bind_pressed(g_settings, BIND_SNEAK, "w", KEY_SHIFT));
+  test_expect_true   (p_results, "Shift + W walks forward too",           settings_bind_pressed(g_settings, BIND_FORWARD, "w", KEY_SHIFT));
+  test_expect_true   (p_results, "Ctrl + W sprints",                      settings_bind_pressed(g_settings, BIND_SPRINT, "w", KEY_CONTROL));
+  test_expect_true   (p_results, "the defaults are unchanged",            !settings_binds_changed(g_settings));
+  settings_set_bind(g_settings, BIND_JUMP, "w");
+  test_expect_true   (p_results, "a shared key clashes",                  settings_bind_clashes(g_settings, BIND_FORWARD));
+  test_expect_true   (p_results, "a changed key is noticed",              settings_binds_changed(g_settings));
+  settings_reset_binds(g_settings);
+  test_expect_text   (p_results, "Reset Keys puts Space back",            settings_bind(g_settings, BIND_JUMP), " ");
+  test_expect_integer(p_results, "the list starts with a heading",        menu_key_row_action(1), -BIND_GROUP_MOVEMENT);
+  test_expect_integer(p_results, "then Jump",                             menu_key_row_action(2), BIND_JUMP);
+  test_expect_integer(p_results, "Gameplay's heading after Auto-Walk",    menu_key_row_action(BIND_AUTO_WALK + 2), -BIND_GROUP_GAMEPLAY);
+  test_expect_integer(p_results, "the last row is the last action",       menu_key_row_action(menu_key_rows()), BIND_ACTIONS);
+  test_expect_text   (p_results, "keys are saved by number",              settings_bind_field(3), "key_3");
 
   // ---------------------------------------------------- armour, the offhand and spawn eggs
   test_group(p_results, "armour, offhand and spawn eggs");
@@ -426,6 +458,28 @@ void test_cases_run(Attributes &p_results)
   next_event(g_events, g_event);
   test_expect_text   (p_results, "the toast text",                    event_text(g_event), "hello");
   test_expect_integer(p_results, "a local event is not remote",       event_is_remote(g_event), FALSE);
+  events_clear(g_events);
+  emit_throw_event(g_events, ITEM_STONE, 1, 0, 1.0, 2.0, 3.0, -1.0, 0.5);
+  next_event(g_events, g_event);
+  event_throw_direction(g_event, l_x0, l_y0);
+  test_expect_true   (p_results, "a throw keeps its yaw (round)",     Absolute(l_x0 - (2.0 * PI - 1.0)) < 0.002);
+  test_expect_true   (p_results, "and its pitch",                     Absolute(l_y0 - 0.5) < 0.002);
+  inventory_clear(g_inventory);
+  player_set_selected(g_player, 1);
+  slot_set(g_inventory, 1, ITEM_STONE, 5, 0);
+  player_set_game_mode(g_player, GAMEMODE_SURVIVAL);
+  test_expect_true   (p_results, "Q drops the held item",             player_drop_selected(g_player, g_inventory, g_events, FALSE));
+  test_expect_integer(p_results, "one of them",                       slot_count(g_inventory, 1), 4);
+  test_expect_true   (p_results, "Ctrl+Q drops the stack",            player_drop_selected(g_player, g_inventory, g_events, TRUE));
+  test_expect_true   (p_results, "and the slot is empty",             slot_is_empty(g_inventory, 1));
+  test_expect_true   (p_results, "nothing to drop with an empty hand", !player_drop_selected(g_player, g_inventory, g_events, FALSE));
+  next_event(g_events, g_event);
+  test_expect_integer(p_results, "a drop is thrown",                  event_type(g_event), EVT_THROW_DROP);
+  drops_clear(g_drops);
+  l_drop = drops_throw(g_drops, ITEM_STONE, 1, 0, 0.5, 70.0, 0.5, 0.0, 0.0);
+  test_expect_true   (p_results, "a thrown drop flies forward",       record_real_at(g_drops, ATTR_VX, l_drop) > 1.0);
+  test_expect_true   (p_results, "and can't be picked up at once",    drop_age(g_drops, l_drop) < 0.0);
+  drops_clear(g_drops);
   events_clear(g_events);
 
   // ---------------------------------------------------- multiplayer

@@ -19,6 +19,6 @@ wait 1
 key r
 wait 3
 call dump
-key q
+key escape
 ui Save and Quit to Title
 quit

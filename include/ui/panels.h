@@ -38,7 +38,7 @@ Text    menu_free_world_name (Text p_base);
 Integer menu_turned           (Real p_last_frame, Real p_now);
 Text    menu_splash          (Integer p_pick);
 void    menu_background      (Draw_Box p_box, Real p_w, Real p_h, Integer p_title, Real p_now);
-Integer settings_panel_run   (Draw_Box p_box, Input_Box p_keys, Attributes &p_settings, Integer p_in_game);
+Integer settings_panel_run   (Draw_Box p_box, Input_Box p_keys, Attributes &p_settings, Integer p_in_game, Integer p_screen);
 void    settings_slider      (Attributes &p_settings, Integer p_id, Real p_value);
 Integer game_panel_split_xy  (Text p_msg, Real &p_x, Real &p_y);
 Integer game_panel_calibrate (Draw_Box p_box, Real p_box_x, Real p_box_y, Integer p_width, Integer p_height, Integer &p_origin_x, Integer &p_origin_y);

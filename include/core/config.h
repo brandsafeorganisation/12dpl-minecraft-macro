@@ -53,7 +53,10 @@
 #define DOUBLE_TAP_MAX       0.35     // repeating) turn flying on or off in creative mode
 #define CROUCH_EYE_HEIGHT    1.27     // eye height while crouching
 #define CROUCH_SPEED_FACTOR  0.3      // walking speed while crouching
-#define CROUCH_HOLD_SECONDS  0.6      // a Shift + key press keeps you crouched this long
+#define CROUCH_HOLD_SECONDS  0.6      // a press of the sneak key keeps you crouched this long
+#define SPRINT_SPEED_FACTOR  1.3      // walking speed while sprinting
+#define THROW_SPEED          6.0      // how fast a dropped item leaves your hand
+#define THROW_PICKUP_DELAY   2.0      // seconds before an item you dropped can be picked up again
 #define FALL_DAMAGE_START    3.0
 #define REGEN_SECONDS        4.0
 #define BREAK_RESET_SECONDS  1.2

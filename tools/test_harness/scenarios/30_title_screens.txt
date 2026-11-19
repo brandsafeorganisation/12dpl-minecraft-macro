@@ -22,7 +22,7 @@ call to_meadow
 call noon
 wait 90
 call mode
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 ui Create New World
@@ -31,7 +31,7 @@ ui Create New World
 wait 2
 click 430 300
 wait 2
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 call worlds

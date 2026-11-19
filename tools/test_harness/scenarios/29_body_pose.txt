@@ -34,13 +34,11 @@ wait 1
 call body
 snap 293_crouch
 wait 2
-key c
-wait 4
+holdkey shift 4
 call body
 snap 294_crouch_still
-wait 2
 look 300 0
-wait 3
+holdkey shift 4
 call body
 snap 295_crouch_side
 wait 2

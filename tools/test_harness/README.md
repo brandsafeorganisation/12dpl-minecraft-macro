@@ -93,7 +93,7 @@ One command per line; `#` starts a comment.
 | `capclick`, `caprclick` | left or right click at the cursor while it's captured         |
 | `look <dx> <dy>`       | move the mouse by (dx, dy) pixels                              |
 | `wait <n>`             | let n frames pass                                              |
-| `key <c> [n]`          | press a key (n times); `space` for the space bar; `bs` and `ctrlbs` are Backspace and Ctrl+Backspace as 12d sends them (characters 8 and 127) |
+| `key <c> [n]`          | press a key (n times); `space` for the space bar; `bs` and `ctrlbs` are Backspace and Ctrl+Backspace as 12d sends them (characters 8 and 127), `ctrlq` is Ctrl+Q (Ctrl + a letter is characters 1 to 26), `shift` is Shift alone as the Windows build sends it |
 | `type <text>`          | press each character of the rest of the line, spaces included   |
 | `enter`                | press Enter in the keys box (sends a chat line)                |
 | `holdkey <c> <n>`      | hold a key for n frames (auto-repeat)                          |
@@ -142,7 +142,7 @@ that were looked up most often (to find hot spots).
 | `06_load_fall_respawn`        | load the world from 05, fall damage, death and respawn          |
 | `07_scenery`                  | biome and terrain statistics; the house, water, forest, desert, meadow, cave and hills; water seen from above |
 | `08_crack_and_underwater`     | crack overlay on stone, the underwater view                     |
-| `09_help_screen`              | the help panel                                                  |
+| `09_click_to_play`            | a new world waits for a click ("Click to play")                 |
 | `10_settings`                 | the settings panel from the menu and in game, the - / = keys    |
 | `11_save_and_load`            | items, tool wear, a furnace and block edits survive save and load |
 | `12_delete_world`             | the world list; deleting a world (asked twice) empties and hides its file; the name can be reused |
@@ -160,11 +160,12 @@ that were looked up most often (to find hot spots).
 | `24_multiplayer`              | hosting a world; a made-up second player's log (joining, chat, walking, a block, a half written line, a clock the host ignores, leaving); the host's broken block in its log; joining the session gets the snapshot plus every log |
 | `25_game_modes`               | spectator flies down through the ground, can't break anything or open the inventory and has no hotbar; creative from there keeps flying; the creative screen lists every item, searches ("iron" finds 10), gives a full stack or one more, throws away a stack put down on it, and its tabs switch to the inventory and back; survival lands you and a double Space doesn't fly; an unknown mode |
 | `26_test_build`               | the test build (`build/test`): every unit test and every function with each data set (typical, random, edges), then floor_divide 500 times a data set with its code in the report, a library call with edge values only, a panel function that can't be run, a report in another folder, Open last report; lists the reports written and what was opened |
-| `27_pause_menu`               | Q shows the game menu over the darkened world, the button under the mouse lights up, Controls shows the keys and a click goes back, Mode cycles the game mode, Back to Game plays on; creative flight lands on the ground; the creative screen over the darkened world; Save and Quit to Title |
+| `27_pause_menu`               | Escape shows the game menu over the darkened world, the button under the mouse lights up, Controls opens the Key Binds and Done goes back, Mode cycles the game mode, Back to Game plays on; creative flight lands on the ground; the creative screen over the darkened world; Save and Quit to Title |
 | `29_body_pose`                | the player model from outside: legs together standing still, the head turning before the body, the crouch leaning forward |
 | `30_title_screens`            | the title screen; typing a new world's name in creative; its picture taken after a couple of seconds; the world list's pictures, game modes, files, dates and versions; searching it; the multiplayer screen |
 | `31_armour_offhand_eggs`      | only the right piece goes in each armour slot; the picture in the inventory, the armour bar and the 3D model wear it; a zombie's hit is 1 not 3 in full iron and wears every piece; a torch in the offhand shows by the hotbar, is placed with an empty main hand and X swaps it; a cow egg makes a cow (used up in survival); the armour comes back with the world; the eggs in the creative list and a zombie egg not used up |
 | `32_nether`                   | an overworld has lava pools with obsidian rims; flint and steel lights an obsidian frame; standing in the portal takes you to the Nether, where a portal is built for you; its netherrack, lava, soul sand, glowstone and quartz; lava burns in survival; a world saved in the Nether opens there; back through, the overworld's frame is still there; breaking the frame puts the portal out |
+| `33_key_binds`               | the Key Binds screen from the options: changing a key, a shared key in red, Reset and Reset Keys, scrolling; in the game Q drops one, Ctrl+Q the stack, C does nothing, Shift with W sneaks, Ctrl+W sprints, Escape pauses |
 | `28_skin_camera`              | the skin picker: a file that isn't a skin is reported, the supplied skin (`release/skins/purple.png`) dresses the player model; V: the camera behind, in front (walking backwards), and the eyes again |
 
 ### Font files

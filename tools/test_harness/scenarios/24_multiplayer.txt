@@ -13,7 +13,7 @@ ui Create New World
 wait 2
 click 430 300
 wait 2
-key q
+key escape
 ui Save and Quit to Title
 wait 2
 ui Singleplayer
@@ -50,7 +50,7 @@ wait 10
 call net
 snap 241_bob_left
 wait 1
-key q
+key escape
 ui Save and Quit to Title
 wait 2
 ui Multiplayer

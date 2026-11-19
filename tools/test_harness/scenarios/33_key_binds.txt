@@ -1,0 +1,66 @@
+# Key Binds (Options, Controls...): the actions under their headings
+# with their keys and Reset buttons. Clicking a key waits for one
+# ("> W <"); the key pressed takes its place; a key two actions share
+# shows red; Reset and Reset Keys put them back. In the game Q throws
+# the held item and Ctrl+Q the stack, C no longer crouches, Shift
+# with a movement key does, and Ctrl+W sprints.
+ui Options
+ui Controls...
+snap 330_key_binds
+wait 4
+ui #607
+snap 331_waiting_for_a_key
+wait 4
+key z
+snap 332_forward_on_z
+wait 4
+ui #707
+ui #601
+key w
+snap 333_shared_key_red
+wait 4
+ui Reset Keys
+slide #16|1
+snap 334_scrolled_down
+wait 4
+ui Done
+ui Done
+ui Singleplayer
+ui Create New World
+field World Name|Keys
+field Seed for the World Generator|5151
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call to_meadow
+call noon
+call no_mobs
+call look_level
+key /
+type give @p cobblestone 10
+enter
+wait 2
+call keys
+key q
+wait 3
+call keys
+snap 335_after_dropping
+key ctrlq
+wait 20
+call keys
+key c
+wait 2
+call keys
+key W
+wait 1
+call keys
+holdkey ctrlw 20
+call keys
+wait 20
+call keys
+key escape
+wait 2
+snap 336_paused_by_escape
+ui Save and Quit to Title
+quit

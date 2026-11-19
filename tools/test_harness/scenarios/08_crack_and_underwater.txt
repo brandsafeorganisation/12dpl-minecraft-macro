@@ -5,7 +5,7 @@ field World Name|Look
 field Seed for the World Generator|31337
 ui Create New World
 wait 1
-snap 80_help
+snap 80_click_to_play
 wait 1
 click 430 300
 wait 2

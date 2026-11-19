@@ -8,7 +8,7 @@ ui Create New World
 wait 2
 click 430 300
 wait 2
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 snap 120_world_list
@@ -29,5 +29,5 @@ wait 2
 click 430 300
 wait 2
 call dump
-key q
+key escape
 ui Save and Quit to Title

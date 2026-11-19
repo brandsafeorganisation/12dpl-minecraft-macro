@@ -39,6 +39,7 @@
 #define EVT_LIGHT_CHANGED     18   // i1..i3 cell: block light may have changed up to LIGHT_RADIUS from it
 #define EVT_FURNACE_LIT       19   // i1..i3 cell of a furnace, i4 TRUE if it started burning, FALSE if it went out
 #define EVT_SPAWN_MOB         20   // i1 MOB_* kind, i2 yaw in thousandths of a radian, r1..r3 position (a spawn egg was used)
+#define EVT_THROW_DROP        21   // i1 item, i2 count, i3 tool wear, i4 direction (event_throw_direction), r1..r3 where it leaves the hand
 
 #define EVENT_REMOTE          1.0  // r3 of a block event another player caused
 
@@ -67,6 +68,9 @@ void    emit_event       (Attributes &p_events, Integer p_type, Integer p_i1, In
 void    emit_simple_event(Attributes &p_events, Integer p_type);
 void    emit_cell_event  (Attributes &p_events, Integer p_type, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 void    emit_item_event  (Attributes &p_events, Integer p_type, Integer p_item, Integer p_count);
+void    emit_throw_event (Attributes &p_events, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z,
+                          Real p_yaw, Real p_pitch);
+void    event_throw_direction(Attributes &p_event, Real &p_yaw, Real &p_pitch);
 void    emit_drop_event  (Attributes &p_events, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z);
 void    emit_toast       (Attributes &p_events, Text p_text);
 Integer events_pending   (Attributes &p_events);

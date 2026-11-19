@@ -5,11 +5,12 @@
 
 // ----------------------------------------------------------------
 // Everything drawn flat over the 3D view: crosshair, hotbar, health,
-// the hand, messages, the status strip and the help / pause / death
+// the hand, messages, the status strip and the pause / death
 // overlays. Also the item icons shared with the inventory screens.
 //
 // The HUD record keeps the messages ("text_n", "until_n" for
-// n = 1..MAX_TOASTS, newest first), whether the help is showing and
+// n = 1..MAX_TOASTS, newest first), whether the world is waiting for
+// the first click to start play, and
 // until when the selected item's name is shown.
 // ----------------------------------------------------------------
 
@@ -59,7 +60,7 @@
 
 #define DATATYPE_HUD        ("hud")
 #define ATTR_HUD_UNTIL      ("until")
-#define ATTR_HUD_HELP       ("show_help")
+#define ATTR_HUD_WAITING    ("waiting")         // TRUE until play first starts (a world just opened)
 #define ATTR_HUD_NAME_UNTIL ("name_until")
 #define ATTR_HUD_FRAMES     ("frames")          // frame times over the current second
 #define ATTR_HUD_FRAME_SUM  ("frame_sum")
@@ -73,7 +74,6 @@
 #define ATTR_HUD_CHAT_INPUT ("chat_input")      // the line being typed
 #define ATTR_HUD_MOUSE_X    ("mouse_x")         // the mouse over the pause menu (box coordinates)
 #define ATTR_HUD_MOUSE_Y    ("mouse_y")
-#define ATTR_HUD_MENU_HELP  ("menu_help")       // TRUE: the help was opened from the pause menu
 #define FRAME_STATS_SECONDS 1.0
 
 /*Global variables*/ {
@@ -88,10 +88,8 @@ void hud_chat           (Attributes &p_hud, Text p_text, Real p_now);
 void hud_set_chat_input (Attributes &p_hud, Integer p_open, Text p_text);
 Integer hud_chat_open   (Attributes &p_hud);
 void hud_show_name      (Attributes &p_hud, Real p_now);
-Integer hud_help_shown  (Attributes &p_hud);
-void hud_set_help       (Attributes &p_hud, Integer p_shown);
-void hud_set_menu_help  (Attributes &p_hud, Integer p_from_menu);
-Integer hud_menu_help   (Attributes &p_hud);
+Integer hud_waiting     (Attributes &p_hud);
+void hud_set_waiting    (Attributes &p_hud, Integer p_waiting);
 void hud_set_mouse      (Attributes &p_hud, Real p_x, Real p_y);
 void hud_pause_button_rect(Real p_w, Real p_h, Integer p_button, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1);
 Integer hud_pause_button_at(Real p_w, Real p_h, Real p_x, Real p_y);
@@ -115,7 +113,6 @@ void hud_draw_figure    (Draw_Box p_box, Real p_centre_x, Real p_base_y, Real p_
                          Integer p_helmet, Integer p_chestplate, Integer p_leggings, Integer p_boots);
 void hud_draw_armour    (Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_points);
 void hud_draw_health    (Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_health, Real p_now);
-void hud_draw_help      (Draw_Box p_box, Real p_w, Real p_h, Integer p_from_menu);
 void hud_draw           (Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_screen_open,
                          Attributes &p_hud, Attributes &p_player, Attributes &p_inventory, Attributes &p_settings,
                          Integer p_seed, Real p_time_of_day, Real p_frame_ms, Text p_render_stats, Real p_now);

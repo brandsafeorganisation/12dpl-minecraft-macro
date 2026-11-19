@@ -103,7 +103,10 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
       double bx=g_cursor_x-100+e.x, by=100+g_box_h-g_cursor_y-e.y; id=box; cmd="mouse_move"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }
     if(e.kind=="key"){ id=keys; cmd="keystroke"; msg=e.a;
       // as 12d sends them: "key bs" is Backspace (character 8), "key ctrlbs" Ctrl+Backspace (127)
-      if(e.a=="bs") msg="\x08"; if(e.a=="ctrlbs") msg="\x7f"; return 0; }
+      if(e.a=="bs") msg="\x08"; if(e.a=="ctrlbs") msg="\x7f";
+      // "key ctrlq" is Ctrl+Q: 12d sends Ctrl + a letter as characters 1 .. 26
+      if(e.a.size()==5 && e.a.compare(0,4,"ctrl")==0 && e.a[4]>='a' && e.a[4]<='z') msg=Text(1,(char)(e.a[4]-'a'+1));
+      return 0; }
     if(e.kind=="enter"){ id=keys; cmd="text selected"; msg=""; return 0; }
     if(e.kind=="click"||e.kind=="rclick"||e.kind=="lbdown"||e.kind=="move"){ g_cursor_x=(int)(100+e.x); g_cursor_y=(int)(100+g_box_h-e.y); id=box; cmd= e.kind=="click"?"click_lb": e.kind=="rclick"?"click_rb": e.kind=="move"?"mouse_move":"click_lb_down"; char b[64]; snprintf(b,64,"%g %g",e.x,e.y); msg=b; return 0; }
     if(e.kind=="capclick"||e.kind=="caprclick"){ double bx=g_cursor_x-100, by=100+g_box_h-g_cursor_y; id=box; cmd= e.kind=="capclick"?"click_lb_down":"click_rb"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }

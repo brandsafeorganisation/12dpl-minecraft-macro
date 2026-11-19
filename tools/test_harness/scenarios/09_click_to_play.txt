@@ -1,3 +1,4 @@
+# A new world waits for a click: "Click to play" over the view
 ui Singleplayer
 ui Create New World
 field World Name|Help
@@ -5,6 +6,6 @@ field Seed for the World Generator|5
 ui Create New World
 wait 1
 time 1
-snap 63_help
+snap 63_click_to_play
 move 300 300
 wait 1

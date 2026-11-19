@@ -35,7 +35,8 @@
 // flick doesn't carry the cursor out of it between two events, and
 // if it does the cursor is pulled back. Keys arrive in the Keys
 // input box, which keeps the keyboard focus: if something inside 12d
-// takes it, the game takes it back. The mouse is released with Q,
+// takes it, the game takes it back, and are read through the key
+// binds (settings_bind_pressed). The mouse is released with Escape,
 // when a screen opens, when another window keeps the focus, when the
 // mouse keeps leaving the view, or after IDLE_RELEASE_SECONDS without
 // input. When paused, a click on the view or a movement key carries
@@ -188,7 +189,7 @@ void game_panel_render(Draw_Box p_box, Integer p_captured, Real p_frame_ms, Real
              world_time_of_day(g_info), p_frame_ms, render_stats_text(), p_now);
     ui_draw (p_box, l_w, l_h, g_ui, g_inventory, g_grid, g_furnaces, g_book);
   } else if (!p_captured) {
-    // paused (the game menu), the help or the death screen, over the
+    // paused (the game menu) or the death screen, over the
     // world darkened
     render_set_shade(MENU_WORLD_SHADE);
     render_world(p_box, l_w, l_h, STATUS_STRIP_HEIGHT, g_player, g_inventory, g_cows, g_drops, g_peers, g_settings, world_time_of_day(g_info), p_now);
@@ -229,6 +230,11 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   Text      l_cmd             = "";
   Text      l_msg             = "";
   Text      l_key             = "";
+  Text      l_base            = "";      // the key without Shift or Ctrl (key_base)
+  Text      l_modifier        = "";      // KEY_SHIFT or KEY_CONTROL if one was held (key_modifier)
+  Integer   l_slot            = 0;
+  Integer   l_moved           = FALSE;   // a movement key was pressed
+  Integer   l_settings_screen = SCREEN_OPTIONS;
   Integer   l_chatting        = FALSE;   // a chat line is being typed (T or /)
   Integer   l_was_flying      = FALSE;   // flying before a key that may have toggled it
   Text      l_chat            = "";
@@ -371,7 +377,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
       if (l_dt > MAX_FRAME_DT) l_dt = MAX_FRAME_DT;
       l_last_frame = l_frame_start;
 
-      l_playing = l_captured && ui_screen(g_ui) == SCREEN_NONE && !hud_help_shown(g_hud) && !player_is_dead(g_player);
+      l_playing = l_captured && ui_screen(g_ui) == SCREEN_NONE && !player_is_dead(g_player);
       net_poll(g_net, g_peers, g_net_inbox, l_frame_start);
       game_update(l_dt, l_real_dt, l_frame_start, l_playing, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces,
                   g_cows, g_drops, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
@@ -541,19 +547,17 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
           l_want_frame = TRUE;
         }
 
-      } else if (!l_captured && l_has_xy && (l_cmd == "click_lb" || l_cmd == "click_rb") && hud_menu_help(g_hud)) {
-        // The help opened from the game menu: a click goes back to it
-        hud_set_help(g_hud, FALSE);
-        l_want_frame = TRUE;
-
-      } else if (!l_captured && l_has_xy && l_cmd == "click_lb" && !player_is_dead(g_player) && !hud_help_shown(g_hud) &&
+      } else if (!l_captured && l_has_xy && l_cmd == "click_lb" && !player_is_dead(g_player) && !hud_waiting(g_hud) &&
                  hud_pause_button_at(l_width, l_height, l_box_x, l_box_y) != PAUSE_BUTTON_BACK) {
         // The game menu's buttons (a click beside them does nothing)
         l_button = hud_pause_button_at(l_width, l_height, l_box_x, l_box_y);
-        if (l_button == PAUSE_BUTTON_OPTIONS) l_open_settings = TRUE;
+        if (l_button == PAUSE_BUTTON_OPTIONS) {
+          l_open_settings   = TRUE;
+          l_settings_screen = SCREEN_OPTIONS;
+        }
         if (l_button == PAUSE_BUTTON_CONTROLS) {
-          hud_set_help     (g_hud, TRUE);
-          hud_set_menu_help(g_hud, TRUE);
+          l_open_settings   = TRUE;
+          l_settings_screen = SCREEN_CONTROLS;
         }
         if (l_button == PAUSE_BUTTON_SAVE) {
           if (game_panel_save() == SUCCESS) {
@@ -580,7 +584,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         l_want_frame = TRUE;
 
       } else if (!l_captured && l_has_xy && (l_cmd == "click_lb" || l_cmd == "click_rb")) {
-        // Clicking the view (Back to Game, the help or the death
+        // Clicking the view (Click to play, Back to Game or the death
         // screen) starts or resumes play
         l_calibration = game_panel_calibrate(p_box, l_box_x, l_box_y, l_width, l_height, l_request_x, l_request_y);
         if (l_calibration == 1) {
@@ -598,10 +602,10 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
     } else if (l_id == Get_id64(p_keys)) {
       // ------------------------------------------------ keyboard
       if (l_cmd == "keystroke") {
-        l_key = key_name(l_msg);
+        l_key        = key_name(l_msg);
+        l_base       = key_base(l_msg);
+        l_modifier   = key_modifier(l_msg);
         l_last_input = l_now;
-        // Escape works as Q, except while typing a chat line
-        if (l_key == "escape" && !l_chatting) l_key = "q";
 
         if (l_chatting) {
           // Typing a chat line: every key is text until Enter (or
@@ -615,7 +619,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
           hud_set_chat_input(g_hud, l_chatting, l_chat);
         } else if (ui_screen(g_ui) == SCREEN_CREATIVE) {
           // The creative screen's search takes every key but Escape
-          if (Text_lower(l_msg) == "escape") {
+          if (l_key == "escape") {
             game_panel_close_screen();
             game_panel_dispatch(l_now);
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
@@ -623,7 +627,8 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
             ui_type_search(g_ui, l_msg);
           }
         } else if (ui_screen(g_ui) != SCREEN_NONE) {
-          if (l_key == "e" || l_key == "q") {
+          // Escape or the inventory key closes a screen
+          if (l_key == "escape" || settings_bind_pressed(g_settings, BIND_INVENTORY, l_base, l_modifier)) {
             game_panel_close_screen();
             game_panel_dispatch(l_now);
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
@@ -633,70 +638,97 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
             game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
           }
+        } else if (l_key == "escape") {
+          // Escape pauses, and carries on from the game menu
+          if (l_captured) {
+            l_release = TRUE;
+          } else if (l_have_origin || l_have_seen) {
+            l_start_request = TRUE;
+          }
         } else {
-          // Shift can't be seen on its own, but turns w a s d into
-          // capitals; a "shift" message is taken too in case 12d sends one
-          if (l_key == "shift") player_shift_pressed(g_player, l_now);
-          if (l_key == "w" || l_key == "a" || l_key == "s" || l_key == "d" || l_key == " " || l_key == "c") {
-            if (l_msg != l_key) player_shift_pressed(g_player, l_now);
-            l_was_flying = player_flying(g_player);
-            player_key_pressed(g_player, l_key, l_now);
-            if (player_flying(g_player) != l_was_flying && player_creative(g_player)) {
-              if (l_was_flying) {
-                hud_toast(g_hud, "Flying off", l_now);
-              } else {
-                hud_toast(g_hud, "Flying: Space goes up, Shift or C goes down, double Space lands", l_now);
-              }
-            }
-            // a movement key while paused carries on (the keys only
-            // reach the game while its panel has the focus)
-            if (!l_captured) {
-              if (l_have_origin || l_have_seen) {
-                l_start_request = TRUE;
-              } else {
-                hud_toast(g_hud, "Click the view to carry on", l_now);
-              }
-            }
+          // Every other key goes through the key binds (Key Binds in
+          // the options). Shift and Ctrl send nothing on their own, so
+          // sneak and sprint come with whichever key they were held for.
+          if (settings_bind_pressed(g_settings, BIND_SNEAK, l_base, l_modifier)) player_sneak_pressed(g_player, l_now);
+          if (settings_bind_pressed(g_settings, BIND_SPRINT, l_base, l_modifier)) player_sprint_pressed(g_player);
+          l_was_flying = player_flying(g_player);
+          l_moved      = FALSE;
+          if (settings_bind_pressed(g_settings, BIND_FORWARD, l_base, l_modifier)) {
+            player_key_pressed(g_player, "w", l_now);
+            l_moved = TRUE;
           }
-          if (Text_length(l_key) == 1 && Find_text("123456789", l_key) > 0) {
-            game_select_slot(g_player, g_hud, Find_text("123456789", l_key), l_now);
+          if (settings_bind_pressed(g_settings, BIND_BACK, l_base, l_modifier)) {
+            player_key_pressed(g_player, "s", l_now);
+            l_moved = TRUE;
           }
-          if (l_key == "e" && player_spectator(g_player)) {
-            hud_toast(g_hud, "Spectators have no inventory (/gamemode survival or creative)", l_now);
-          } else if (l_key == "e") {
-            // creative mode opens on every item, with a tab for your own inventory
-            ui_set_tabs(g_ui, player_creative(g_player));
-            if (player_creative(g_player)) {
-              emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_CREATIVE, 0, 0, 0, 0.0, 0.0, 0.0, "");
+          if (settings_bind_pressed(g_settings, BIND_LEFT, l_base, l_modifier)) {
+            player_key_pressed(g_player, "a", l_now);
+            l_moved = TRUE;
+          }
+          if (settings_bind_pressed(g_settings, BIND_RIGHT, l_base, l_modifier)) {
+            player_key_pressed(g_player, "d", l_now);
+            l_moved = TRUE;
+          }
+          if (settings_bind_pressed(g_settings, BIND_JUMP, l_base, l_modifier)) {
+            player_key_pressed(g_player, " ", l_now);
+            l_moved = TRUE;
+          }
+          if (player_flying(g_player) != l_was_flying && player_creative(g_player)) {
+            if (l_was_flying) {
+              hud_toast(g_hud, "Flying off", l_now);
             } else {
-              emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_INVENTORY, 0, 0, 0, 0.0, 0.0, 0.0, "");
+              hud_toast(g_hud, "Flying: " + key_label(settings_bind(g_settings, BIND_JUMP)) + " goes up, " +
+                        key_label(settings_bind(g_settings, BIND_SNEAK)) + " goes down, double " +
+                        key_label(settings_bind(g_settings, BIND_JUMP)) + " lands", l_now);
             }
-            game_panel_dispatch(l_now);
-            if (l_captured) l_release = TRUE;
           }
-          if (l_key == "q" && l_captured) l_release = TRUE;
-          if (l_key == "h") {
-            hud_set_help(g_hud, !hud_help_shown(g_hud));
-            if (hud_help_shown(g_hud) && l_captured) l_release = TRUE;
+          // a movement key while paused carries on (the keys only
+          // reach the game while its panel has the focus)
+          if (l_moved && !l_captured) {
+            if (l_have_origin || l_have_seen) {
+              l_start_request = TRUE;
+            } else {
+              hud_toast(g_hud, "Click the view to carry on", l_now);
+            }
           }
-          if (l_key == "f") player_set_auto_walk(g_player, !player_auto_walk(g_player));
-          // X swaps the selected hotbar item with the offhand (F in
-          // the block game, where it isn't auto-walk)
-          if (l_key == "x") inventory_swap_hands(g_inventory, player_selected(g_player));
-          // the camera: your eyes, behind you, in front of you (F5 if
-          // 12d passes it on, otherwise V)
-          if (l_key == "v" || l_key == "f5") player_next_camera(g_player);
-          if (l_key == "j") {
+          for (l_slot = 1; l_slot <= HOTBAR_SLOTS; ++l_slot) {
+            if (settings_bind_pressed(g_settings, BIND_HOTBAR_1 + l_slot - 1, l_base, l_modifier)) game_select_slot(g_player, g_hud, l_slot, l_now);
+          }
+          if (settings_bind_pressed(g_settings, BIND_INVENTORY, l_base, l_modifier)) {
+            if (player_spectator(g_player)) {
+              hud_toast(g_hud, "Spectators have no inventory (/gamemode survival or creative)", l_now);
+            } else {
+              // creative mode opens on every item, with a tab for your own inventory
+              ui_set_tabs(g_ui, player_creative(g_player));
+              if (player_creative(g_player)) {
+                emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_CREATIVE, 0, 0, 0, 0.0, 0.0, 0.0, "");
+              } else {
+                emit_event(g_events, EVT_OPEN_SCREEN, SCREEN_INVENTORY, 0, 0, 0, 0.0, 0.0, 0.0, "");
+              }
+              game_panel_dispatch(l_now);
+              if (l_captured) l_release = TRUE;
+            }
+          }
+          // Drop the held item; with Ctrl, the whole stack
+          if (settings_bind_pressed(g_settings, BIND_DROP, l_base, l_modifier)) {
+            if (player_drop_selected(g_player, g_inventory, g_events, l_modifier == KEY_CONTROL)) game_panel_dispatch(l_now);
+          }
+          if (settings_bind_pressed(g_settings, BIND_AUTO_WALK, l_base, l_modifier)) player_set_auto_walk(g_player, !player_auto_walk(g_player));
+          if (settings_bind_pressed(g_settings, BIND_SWAP_HANDS, l_base, l_modifier)) inventory_swap_hands(g_inventory, player_selected(g_player));
+          // the camera: your eyes, behind you, in front of you
+          if (settings_bind_pressed(g_settings, BIND_PERSPECTIVE, l_base, l_modifier)) player_next_camera(g_player);
+          if (settings_bind_pressed(g_settings, BIND_AUTO_JUMP, l_base, l_modifier)) {
             settings_toggle(g_settings, ATTR_SET_AUTO_JUMP);
             hud_toast(g_hud, settings_describe(g_settings, ATTR_SET_AUTO_JUMP), l_now);
             settings_save(g_settings, save_settings_path());
           }
-          if (l_key == "i") {
+          if (settings_bind_pressed(g_settings, BIND_STATISTICS, l_base, l_modifier)) {
             settings_toggle(g_settings, ATTR_SET_SHOW_DEBUG);
             settings_save(g_settings, save_settings_path());
           }
-          if (l_key == "-" || l_key == "=" || l_key == "+") {
-            if (l_key == "-") {
+          if (settings_bind_pressed(g_settings, BIND_VIEW_SHORTER, l_base, l_modifier) ||
+              settings_bind_pressed(g_settings, BIND_VIEW_LONGER, l_base, l_modifier)) {
+            if (settings_bind_pressed(g_settings, BIND_VIEW_SHORTER, l_base, l_modifier)) {
               settings_change(g_settings, ATTR_SET_RENDER_DISTANCE, -1);
             } else {
               settings_change(g_settings, ATTR_SET_RENDER_DISTANCE, 1);
@@ -704,23 +736,27 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
             hud_toast(g_hud, settings_describe(g_settings, ATTR_SET_RENDER_DISTANCE), l_now);
             settings_save(g_settings, save_settings_path());
           }
-          if (l_key == "o") l_open_settings = TRUE;
-          if (l_key == "p") {
+          if (settings_bind_pressed(g_settings, BIND_OPTIONS, l_base, l_modifier)) {
+            l_open_settings   = TRUE;
+            l_settings_screen = SCREEN_OPTIONS;
+          }
+          if (settings_bind_pressed(g_settings, BIND_PICK_BLOCK, l_base, l_modifier)) {
             if (player_pick_block(g_player, g_inventory, l_report)) {
               hud_show_name(g_hud, l_now);
             } else if (l_report != "") {
               hud_toast(g_hud, l_report, l_now);
             }
           }
-          if (l_key == "u") {
+          if (settings_bind_pressed(g_settings, BIND_HIDE_HUD, l_base, l_modifier)) {
             settings_toggle(g_settings, ATTR_SET_SHOW_HUD);
             settings_save(g_settings, save_settings_path());
           }
-          // T opens the chat line, / opens it with the / typed
-          if (l_key == "t" || l_key == "/") {
+          // the chat line, or the command line with the / typed
+          if (settings_bind_pressed(g_settings, BIND_CHAT, l_base, l_modifier) ||
+              settings_bind_pressed(g_settings, BIND_COMMAND, l_base, l_modifier)) {
             l_chatting = TRUE;
             l_chat     = "";
-            if (l_key == "/") l_chat = "/";
+            if (settings_bind_pressed(g_settings, BIND_COMMAND, l_base, l_modifier)) l_chat = "/";
             hud_set_chat_input(g_hud, TRUE, l_chat);
           }
         }
@@ -773,7 +809,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         l_captured    = FALSE;
         l_have_origin = FALSE;
       }
-      l_settings_result = settings_panel_run(p_box, p_keys, g_settings, TRUE);
+      l_settings_result = settings_panel_run(p_box, p_keys, g_settings, TRUE, l_settings_screen);
       if (l_settings_result == SHUTDOWN_CODE || l_settings_result == PANEL_CLOSED) {
         game_panel_close_screen();
         game_panel_save();
@@ -807,7 +843,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
       l_confirmed   = FALSE;
       l_leaves      = 0;
       l_captured    = TRUE;
-      hud_set_help(g_hud, FALSE);
+      hud_set_waiting(g_hud, FALSE);
       l_last_input  = l_now;
       Set_cursor_position(l_origin_x + l_warp_x, l_origin_y - l_warp_y);
       Set_focus(p_keys);

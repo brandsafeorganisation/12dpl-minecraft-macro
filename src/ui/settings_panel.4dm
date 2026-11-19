@@ -39,14 +39,17 @@ void settings_slider(Attributes &p_settings, Integer p_id, Real p_value)
   }
 }
 
-Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_settings, Integer p_in_game)
+Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_settings, Integer p_in_game, Integer p_screen)
 // ----------------------------------------------------------------
-// Show the options until Done (or Escape). Returns 0, PANEL_CLOSED
-// if the window was closed, or SHUTDOWN_CODE if 12d asked the macro
-// to stop.
+// Show the options (screen SCREEN_OPTIONS) or the key binds
+// (SCREEN_CONTROLS, from the game menu) until Done (or Escape).
+// Returns 0, PANEL_CLOSED if the window was closed, or SHUTDOWN_CODE
+// if 12d asked the macro to stop.
 // ----------------------------------------------------------------
 {
-  Integer   l_screen     = SCREEN_OPTIONS;
+  Integer   l_screen     = p_screen;
+  Integer   l_listening  = 0;        // the action waiting for a key on the Key Binds screen
+  Integer   l_action     = 0;
   Integer   l_result     = 0;
   Integer   l_doit       = TRUE;
   Integer   l_want_frame = TRUE;
@@ -70,6 +73,7 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
   Text      l_pack       = settings_resource_pack(p_settings);
   Text      l_report     = "";
   Text      l_keep       = "";
+  Text      l_binds[BIND_ACTIONS];
 
   menu_clear(g_menu);
   Set_focus(p_keys);
@@ -94,6 +98,7 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
       if (l_screen == SCREEN_SKINS  ) screen_skins  (p_box, g_menu, g_files, settings_skin(p_settings), l_w, l_h, l_now);
       if (l_screen == SCREEN_PLAYER ) screen_player (p_box, g_menu, FALSE, l_w, l_h, l_now);
       if (l_screen == SCREEN_FONTS  ) screen_fonts  (p_box, g_menu, g_files, settings_font(p_settings), settings_font_file(p_settings), l_w, l_h, l_now);
+      if (l_screen == SCREEN_CONTROLS) screen_controls(p_box, g_menu, p_settings, l_listening, l_w, l_h, l_now);
       End_batch_draw(p_box);
       l_last_frame = l_now;
       l_want_frame = FALSE;
@@ -164,6 +169,8 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         menu_set_focus(g_menu, l_id);
         continue;
       }
+      // a click anywhere else stops waiting for a key
+      if (l_screen == SCREEN_CONTROLS && (l_id < W_KEY_ROW || l_id > W_KEY_ROW + BIND_ACTIONS)) l_listening = 0;
       if (l_id == 0) continue;
 
     } else if (l_event_id == Get_id64(p_keys)) {
@@ -172,7 +179,16 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         l_key = key_name(l_msg);
         Set_data(p_keys, "");
         l_want_frame = TRUE;
-        if (l_key == "escape") {
+        if (l_listening > 0) {
+          // the key for the action being changed: Shift or Ctrl if
+          // one was held, Escape for none
+          l_keep = key_modifier(l_msg);
+          if (l_keep == "") l_keep = key_base(l_msg);
+          if (l_key == "escape") l_keep = "";
+          settings_set_bind(p_settings, l_listening, l_keep);
+          l_listening = 0;
+          continue;
+        } else if (l_key == "escape") {
           l_id = W_DONE;
         } else if (menu_type_key(g_menu, l_key, l_msg)) {
           continue;
@@ -183,6 +199,8 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         Set_data(p_keys, "");
         Set_focus(p_keys);
         l_id = W_DONE;
+        if (l_listening > 0) l_id = 0;
+        l_listening = 0;
         if (l_screen == SCREEN_FONTS && menu_focus(g_menu) == W_FONT_NAME) l_id = W_FONT_USE;
         l_want_frame = TRUE;
       } else {
@@ -224,20 +242,26 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         save_list_files(g_files, SKIN_FOLDER, "*.png", FALSE);
         record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
         l_screen = SCREEN_SKINS;
+      } else if (l_id == W_CONTROLS) {
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        l_listening = 0;
+        l_screen    = SCREEN_CONTROLS;
       } else if (l_id == W_PLAYER_SETTINGS) {
         menu_set_field_text(g_menu, W_PLAYER_NAME, settings_player_name(p_settings));
         menu_set_field_text(g_menu, W_FOLDER, settings_mp_folder(p_settings));
         menu_set_focus(g_menu, 0);
         l_screen = SCREEN_PLAYER;
       } else if (l_id == W_DEFAULTS) {
-        // the textures, skin and font stay: they have screens of their own
+        // the textures, skin, font and keys stay: they have screens of their own
         l_pack = settings_resource_pack(p_settings);
         l_keep = settings_skin(p_settings);
         l_key  = settings_font(p_settings);
+        for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) l_binds[l_action] = settings_bind(p_settings, l_action);
         settings_defaults(p_settings);
         settings_set_resource_pack(p_settings, l_pack);
         settings_set_text(p_settings, ATTR_SET_SKIN, l_keep);
         settings_set_font(p_settings, l_key);
+        for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) settings_set_bind(p_settings, l_action, l_binds[l_action]);
         menu_note(g_menu, "Settings back to their defaults.", FALSE, l_now);
       }
 
@@ -304,6 +328,24 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
         menu_set_focus(g_menu, 0);
         l_screen = SCREEN_OPTIONS;
+      }
+
+    } else if (l_screen == SCREEN_CONTROLS) {
+      if (l_id > W_KEY_ROW && l_id <= W_KEY_ROW + BIND_ACTIONS) {
+        l_listening = l_id - W_KEY_ROW;
+      } else if (l_id > W_KEY_RESET && l_id <= W_KEY_RESET + BIND_ACTIONS) {
+        settings_set_bind(p_settings, l_id - W_KEY_RESET, settings_bind_default(l_id - W_KEY_RESET));
+      } else if (l_id == W_RESET_KEYS) {
+        settings_reset_binds(p_settings);
+      } else if (l_id == W_DONE) {
+        l_listening = 0;
+        record_set_integer(g_menu, ATTR_MENU_SCROLL, 0);
+        // opened from the game menu: Done goes back to it
+        if (p_screen == SCREEN_CONTROLS) {
+          l_doit = FALSE;
+        } else {
+          l_screen = SCREEN_OPTIONS;
+        }
       }
 
     } else if (l_screen == SCREEN_PLAYER) {

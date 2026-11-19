@@ -56,6 +56,7 @@
 #define SCREEN_SKINS         8
 #define SCREEN_PLAYER        9     // multiplayer name and folder, from the options
 #define SCREEN_FONTS         10
+#define SCREEN_CONTROLS      11    // the key binds, from the options or the game menu
 
 // Widget ids (one set for every screen)
 #define W_SINGLEPLAYER       1
@@ -95,11 +96,16 @@
 #define W_PLAYER_SETTINGS    63
 #define W_FONT_NAME          64
 #define W_FONT_USE           65
+#define W_CONTROLS           66
+#define W_RESET_KEYS         67
 #define W_WORLD_ROW          100   // + n: row n of the world list
 #define W_AVAILABLE_ROW      200   // + n: available resource pack n
 #define W_SELECTED_ROW       300   // + 1: the selected pack, + 2: the built-in textures
 #define W_SKIN_ROW           400   // + n: skin n (+ 0: the built-in one)
 #define W_FONT_ROW           500   // + n: font choice n, then the font files
+#define W_KEY_ROW            600   // + action: the key an action is bound to (BIND_*)
+#define W_KEY_RESET          700   // + action: put that action's key back
+#define MENU_KEY_ROW         30.0  // height of a row on the Key Binds screen
 
 // Folders read for the pickers, next to cubeland_worlds in the
 // working folder
@@ -216,6 +222,9 @@ void    screen_options      (Draw_Box p_box, Attributes &p_menu, Attributes &p_s
 void    screen_packs        (Draw_Box p_box, Attributes &p_menu, Attributes &p_files, Text p_selected, Real p_w, Real p_h, Real p_now);
 void    screen_skins        (Draw_Box p_box, Attributes &p_menu, Attributes &p_files, Text p_selected, Real p_w, Real p_h, Real p_now);
 void    screen_fonts        (Draw_Box p_box, Attributes &p_menu, Attributes &p_files, Text p_font, Text p_font_file, Real p_w, Real p_h, Real p_now);
+void    screen_controls     (Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Integer p_listening, Real p_w, Real p_h, Real p_now);
+Integer menu_key_rows       ();
+Integer menu_key_row_action (Integer p_row);
 Integer menu_world_matches  (Attributes &p_worlds, Integer p_entry, Text p_search);
 Integer menu_world_entry    (Attributes &p_worlds, Text p_search, Integer p_shown);
 Integer menu_worlds_shown   (Attributes &p_worlds, Text p_search);

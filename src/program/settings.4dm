@@ -29,6 +29,172 @@ void settings_defaults(Attributes &p_settings)
   record_set_text   (p_settings, ATTR_SET_MP_FOLDER,       MP_FOLDER_DEFAULT);
   record_set_text   (p_settings, ATTR_SET_PLAYER_NAME,     "");
   record_set_text   (p_settings, ATTR_SET_SKIN,            "");
+  settings_reset_binds(p_settings);
+}
+
+// ---------------------------------------------------------------- key binds
+
+Text settings_bind_default(Integer p_action)
+// ----------------------------------------------------------------
+// The key an action has until it is changed
+// ----------------------------------------------------------------
+{
+  if (p_action >= BIND_HOTBAR_1 && p_action <= BIND_HOTBAR_1 + 8) return To_text(p_action - BIND_HOTBAR_1 + 1);
+  if (p_action == BIND_JUMP        ) return " ";
+  if (p_action == BIND_SNEAK       ) return KEY_SHIFT;
+  if (p_action == BIND_SPRINT      ) return KEY_CONTROL;
+  if (p_action == BIND_LEFT        ) return "a";
+  if (p_action == BIND_RIGHT       ) return "d";
+  if (p_action == BIND_BACK        ) return "s";
+  if (p_action == BIND_FORWARD     ) return "w";
+  if (p_action == BIND_AUTO_WALK   ) return "f";
+  if (p_action == BIND_PICK_BLOCK  ) return "p";
+  if (p_action == BIND_DROP        ) return "q";
+  if (p_action == BIND_INVENTORY   ) return "e";
+  if (p_action == BIND_SWAP_HANDS  ) return "x";
+  if (p_action == BIND_CHAT        ) return "t";
+  if (p_action == BIND_COMMAND     ) return "/";
+  if (p_action == BIND_HIDE_HUD    ) return "u";
+  if (p_action == BIND_STATISTICS  ) return "i";
+  if (p_action == BIND_PERSPECTIVE ) return "v";
+  if (p_action == BIND_AUTO_JUMP   ) return "j";
+  if (p_action == BIND_VIEW_SHORTER) return "-";
+  if (p_action == BIND_VIEW_LONGER ) return "=";
+  if (p_action == BIND_OPTIONS     ) return "o";
+  return "";
+}
+
+Text settings_bind_title(Integer p_action)
+// ----------------------------------------------------------------
+// An action's name on the Key Binds screen
+// ----------------------------------------------------------------
+{
+  if (p_action >= BIND_HOTBAR_1 && p_action <= BIND_HOTBAR_1 + 8) return "Hotbar Slot " + To_text(p_action - BIND_HOTBAR_1 + 1);
+  if (p_action == BIND_JUMP        ) return "Jump";
+  if (p_action == BIND_SNEAK       ) return "Sneak";
+  if (p_action == BIND_SPRINT      ) return "Sprint";
+  if (p_action == BIND_LEFT        ) return "Strafe Left";
+  if (p_action == BIND_RIGHT       ) return "Strafe Right";
+  if (p_action == BIND_BACK        ) return "Walk Backward";
+  if (p_action == BIND_FORWARD     ) return "Walk Forward";
+  if (p_action == BIND_AUTO_WALK   ) return "Auto-Walk";
+  if (p_action == BIND_PICK_BLOCK  ) return "Pick Block";
+  if (p_action == BIND_DROP        ) return "Drop Selected Item";
+  if (p_action == BIND_INVENTORY   ) return "Open/Close Inventory";
+  if (p_action == BIND_SWAP_HANDS  ) return "Swap Item With Offhand";
+  if (p_action == BIND_CHAT        ) return "Open Chat";
+  if (p_action == BIND_COMMAND     ) return "Open Command";
+  if (p_action == BIND_HIDE_HUD    ) return "Hide HUD";
+  if (p_action == BIND_STATISTICS  ) return "Show Statistics";
+  if (p_action == BIND_PERSPECTIVE ) return "Toggle Perspective";
+  if (p_action == BIND_AUTO_JUMP   ) return "Toggle Auto-Jump";
+  if (p_action == BIND_VIEW_SHORTER) return "Shorter View Distance";
+  if (p_action == BIND_VIEW_LONGER ) return "Longer View Distance";
+  if (p_action == BIND_OPTIONS     ) return "Options";
+  return "";
+}
+
+Integer settings_bind_group(Integer p_action)
+// ----------------------------------------------------------------
+// The heading an action is listed under (BIND_GROUP_*)
+// ----------------------------------------------------------------
+{
+  if (p_action <= BIND_AUTO_WALK  ) return BIND_GROUP_MOVEMENT;
+  if (p_action <= BIND_PICK_BLOCK ) return BIND_GROUP_GAMEPLAY;
+  if (p_action <= BIND_SWAP_HANDS ) return BIND_GROUP_INVENTORY;
+  if (p_action <= BIND_COMMAND    ) return BIND_GROUP_MULTIPLAYER;
+  return BIND_GROUP_MISC;
+}
+
+Text settings_bind_group_title(Integer p_group)
+// ----------------------------------------------------------------
+// A heading on the Key Binds screen
+// ----------------------------------------------------------------
+{
+  if (p_group == BIND_GROUP_MOVEMENT   ) return "Movement";
+  if (p_group == BIND_GROUP_GAMEPLAY   ) return "Gameplay";
+  if (p_group == BIND_GROUP_INVENTORY  ) return "Inventory";
+  if (p_group == BIND_GROUP_MULTIPLAYER) return "Multiplayer";
+  return "Miscellaneous";
+}
+
+Text settings_bind_field(Integer p_action)
+// ----------------------------------------------------------------
+// The settings file's name for an action's key ("key_<action>")
+// ----------------------------------------------------------------
+{
+  Text l_name = ATTR_SET_KEY;
+
+  return l_name + "_" + To_text(p_action);
+}
+
+Text settings_bind(Attributes &p_settings, Integer p_action)
+// ----------------------------------------------------------------
+// The key an action is bound to ("" for none)
+// ----------------------------------------------------------------
+{
+  return record_text_at(p_settings, ATTR_SET_KEY, p_action);
+}
+
+void settings_set_bind(Attributes &p_settings, Integer p_action, Text p_key)
+// ----------------------------------------------------------------
+// Bind an action to a key ("" for none)
+// ----------------------------------------------------------------
+{
+  if (p_action < 1 || p_action > BIND_ACTIONS) return;
+  record_set_text_at(p_settings, ATTR_SET_KEY, p_action, p_key);
+}
+
+void settings_reset_binds(Attributes &p_settings)
+// ----------------------------------------------------------------
+// Every action back to its default key
+// ----------------------------------------------------------------
+{
+  Integer l_action = 0;
+
+  for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) settings_set_bind(p_settings, l_action, settings_bind_default(l_action));
+}
+
+Integer settings_binds_changed(Attributes &p_settings)
+// ----------------------------------------------------------------
+// TRUE if any action is bound to a key other than its default
+// ----------------------------------------------------------------
+{
+  Integer l_action = 0;
+
+  for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) {
+    if (settings_bind(p_settings, l_action) != settings_bind_default(l_action)) return TRUE;
+  }
+  return FALSE;
+}
+
+Integer settings_bind_clashes(Attributes &p_settings, Integer p_action)
+// ----------------------------------------------------------------
+// TRUE if another action is bound to the same key (it shows red)
+// ----------------------------------------------------------------
+{
+  Integer l_action = 0;
+  Text    l_key    = settings_bind(p_settings, p_action);
+
+  if (l_key == "") return FALSE;
+  for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) {
+    if (l_action != p_action && settings_bind(p_settings, l_action) == l_key) return TRUE;
+  }
+  return FALSE;
+}
+
+Integer settings_bind_pressed(Attributes &p_settings, Integer p_action, Text p_key, Text p_modifier)
+// ----------------------------------------------------------------
+// TRUE if a keystroke (its key_base and key_modifier) presses an
+// action: its key, or the Shift or Ctrl it is bound to held down
+// ----------------------------------------------------------------
+{
+  Text l_bind = settings_bind(p_settings, p_action);
+
+  if (l_bind == "") return FALSE;
+  if (l_bind == p_key) return TRUE;
+  if (p_modifier != "" && l_bind == p_modifier) return TRUE;
+  return FALSE;
 }
 
 Text settings_skin(Attributes &p_settings)
@@ -268,6 +434,8 @@ Integer settings_save(Attributes &p_settings, Text p_path)
   Text l_pack_line = "";
   Text l_font_line = ATTR_SET_FONT;
   Text l_file_line = ATTR_SET_FONT_FILE;
+  Text l_key       = "";
+  Integer l_action = 0;
 
   if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
 
@@ -290,6 +458,12 @@ Integer settings_save(Attributes &p_settings, Text p_path)
   File_write_line(l_file, l_pack_line + " " + settings_player_name(p_settings));
   l_pack_line = ATTR_SET_SKIN;
   File_write_line(l_file, l_pack_line + " " + settings_skin(p_settings));
+  for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) {
+    l_key = settings_bind(p_settings, l_action);
+    if (l_key == " ") l_key = "space";
+    if (l_key == "" ) l_key = "none";
+    File_write_line(l_file, settings_bind_field(l_action) + " " + l_key);
+  }
 
   File_close(l_file);
   return SUCCESS;
@@ -314,6 +488,8 @@ Integer settings_load(Attributes &p_settings, Text p_path)
   Integer      l_font_skip = 0;
   Text         l_path_name = ATTR_SET_FONT_FILE;
   Integer      l_path_skip = 0;
+  Integer      l_action    = 0;
+  Integer      l_bound     = FALSE;
   Dynamic_Text l_words;
 
   settings_defaults(p_settings);
@@ -339,6 +515,16 @@ Integer settings_load(Attributes &p_settings, Text p_path)
       settings_set_text(p_settings, ATTR_SET_SKIN, l_word);
       continue;
     }
+    l_bound = FALSE;
+    for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) {
+      if (!settings_line_text(l_line, settings_bind_field(l_action), l_word)) continue;
+      l_word = Text_justify(l_word);
+      if (l_word == "space") l_word = " ";
+      if (l_word == "none" ) l_word = "";
+      settings_set_bind(p_settings, l_action, l_word);
+      l_bound = TRUE;
+    }
+    if (l_bound) continue;
     if (Text_length(l_line) > l_skip) {
       if (Get_subtext(l_line, 1, l_skip) == l_pack) {
         settings_set_resource_pack(p_settings, Get_subtext(l_line, l_skip + 1, Text_length(l_line)));

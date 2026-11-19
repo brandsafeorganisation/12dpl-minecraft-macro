@@ -39,7 +39,7 @@ call hold_pickaxe
 snap 13_pack_view
 wait 1
 # back to the built-in textures, so later scenarios don't use the pack
-key q
+key escape
 ui Options...
 ui Resource Packs...
 ui test_pack.zip

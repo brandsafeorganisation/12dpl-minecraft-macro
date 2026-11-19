@@ -165,6 +165,24 @@ Integer drops_spawn(Attributes &p_drops, Attributes &p_random, Integer p_item, I
   return l_drop;
 }
 
+Integer drops_throw(Attributes &p_drops, Integer p_item, Integer p_count, Integer p_damage, Real p_x, Real p_y, Real p_z,
+                    Real p_yaw, Real p_pitch)
+// ----------------------------------------------------------------
+// A stack thrown from (x, y, z) the way yaw and pitch look, a little
+// upwards; it can't be picked up for THROW_PICKUP_DELAY (its age
+// starts below zero). Returns the drop's number.
+// ----------------------------------------------------------------
+{
+  Integer l_drop = drops_restore(p_drops, p_item, p_count, p_damage, p_x, p_y - DROP_HALF_SIZE, p_z,
+                                 DROP_PICKUP_DELAY - THROW_PICKUP_DELAY);
+
+  if (l_drop == 0) return 0;
+  record_set_real_at(p_drops, ATTR_VX, l_drop, Cos(p_pitch) * Cos(p_yaw) * THROW_SPEED);
+  record_set_real_at(p_drops, ATTR_VY, l_drop, Sin(p_pitch) * THROW_SPEED + 2.0);
+  record_set_real_at(p_drops, ATTR_VZ, l_drop, Cos(p_pitch) * Sin(p_yaw) * THROW_SPEED);
+  return l_drop;
+}
+
 void drops_update(Attributes &p_drops, Attributes &p_inventory, Attributes &p_events,
                   Real p_player_x, Real p_player_y, Real p_player_z, Integer p_player_dead, Real p_dt)
 // ----------------------------------------------------------------
@@ -277,13 +295,15 @@ void drops_on_event(Attributes &p_event, Attributes &p_drops, Attributes &p_rand
 // ----------------------------------------------------------------
 // Event handler: broken blocks (depending on the tool used; gravel
 // sometimes gives flint) and killed cows leave items behind, and
-// anyone can ask for a drop
-// with EVT_SPAWN_DROP
+// anyone can ask for a drop with EVT_SPAWN_DROP, or throw one with
+// EVT_THROW_DROP
 // ----------------------------------------------------------------
 {
-  Integer l_type = event_type(p_event);
-  Integer l_item = ITEM_NONE;
-  Integer l_tool = 0;
+  Integer l_type  = event_type(p_event);
+  Integer l_item  = ITEM_NONE;
+  Integer l_tool  = 0;
+  Real    l_yaw   = 0.0;
+  Real    l_pitch = 0.0;
 
   if (l_type == EVT_BLOCK_BROKEN) {
     if (event_is_remote(p_event)) return;   // it dropped on the other player's machine
@@ -307,6 +327,10 @@ void drops_on_event(Attributes &p_event, Attributes &p_drops, Attributes &p_rand
   } else if (l_type == EVT_SPAWN_DROP) {
     drops_spawn(p_drops, p_random, event_integer(p_event, 1), event_integer(p_event, 2), event_integer(p_event, 3),
                 event_real(p_event, 1), event_real(p_event, 2), event_real(p_event, 3));
+  } else if (l_type == EVT_THROW_DROP) {
+    event_throw_direction(p_event, l_yaw, l_pitch);
+    drops_throw(p_drops, event_integer(p_event, 1), event_integer(p_event, 2), event_integer(p_event, 3),
+                event_real(p_event, 1), event_real(p_event, 2), event_real(p_event, 3), l_yaw, l_pitch);
   }
 }
 

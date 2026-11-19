@@ -101,7 +101,7 @@ key x
 wait 1
 call armour
 # armour comes back with the world
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 field #15|Armour

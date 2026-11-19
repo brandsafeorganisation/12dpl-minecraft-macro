@@ -332,6 +332,9 @@ static LRESULT CALLBACK view_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
       // character 8, Ctrl+Backspace as 127
       if (w == 8)   push_event(keys, "keystroke", "\x08");
       if (w == 127) push_event(keys, "keystroke", "\x7f");
+      // Tab, and Ctrl + a letter as the control character 12d sends
+      // (Ctrl + W is 23), for the Sprint and drop-the-stack keys
+      if (w == 9 || (w >= 1 && w <= 26 && w != 8 && w != 10 && w != 13)) { char c[2] = {(char)w, 0}; push_event(keys, "keystroke", c); }
       if (w == 13) push_event(keys, "text selected", "");        // Enter, as 12d's input box reports it
       return 0;
     }
@@ -341,6 +344,7 @@ static LRESULT CALLBACK view_proc(HWND h, UINT m, WPARAM w, LPARAM l) {
       // Shift alone types nothing; held down it repeats, which the
       // game reads as crouching (or sinking while flying)
       if (w == VK_SHIFT) push_event(key_box_of(panel_of(id)), "keystroke", "shift");
+      if (w == VK_CONTROL) push_event(key_box_of(panel_of(id)), "keystroke", "control");
       return 0;
     case WM_GETDLGCODE: return DLGC_WANTALLKEYS | DLGC_WANTCHARS;
   }

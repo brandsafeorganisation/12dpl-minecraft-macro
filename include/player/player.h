@@ -55,8 +55,8 @@
 #define ATTR_SPACE_LAST          ("space_last")        // when Space last arrived
 #define ATTR_SPACE_GAP           ("space_gap")         // seconds between the last two Spaces
 #define ATTR_FLY_DOWN_UNTIL      ("fly_down_until")
-#define ATTR_CROUCH_UNTIL        ("crouch_until")      // crouched by Shift + a key until then
-#define ATTR_CROUCH_TOGGLE       ("crouch_toggle")     // crouched by C until C is pressed again
+#define ATTR_CROUCH_UNTIL        ("crouch_until")      // crouched by the sneak key until then
+#define ATTR_SPRINTING           ("sprinting")         // TRUE from the sprint key until you stop walking forward
 #define ATTR_CROUCHING           ("crouching")         // crouched this frame
 #define ATTR_PLAYER_BODY_YAW     ("body_yaw")          // which way the body faces (the head turns first)
 #define ATTR_PLAYER_STRIDE       ("stride")            // 0 standing .. 1 walking: how far the legs swing
@@ -124,7 +124,10 @@ Integer player_break_stage     (Attributes &p_player, Real p_now);
 // ---------------------------------------------------------------- behaviour
 void    player_turn            (Attributes &p_player, Real p_yaw_change, Real p_pitch_change);
 void    player_key_pressed     (Attributes &p_player, Text p_key, Real p_now);
-void    player_shift_pressed   (Attributes &p_player, Real p_now);
+void    player_sneak_pressed   (Attributes &p_player, Real p_now);
+void    player_sprint_pressed  (Attributes &p_player);
+Integer player_sprinting       (Attributes &p_player);
+Integer player_drop_selected   (Attributes &p_player, Attributes &p_inventory, Attributes &p_events, Integer p_whole_stack);
 Integer player_look_facing     (Attributes &p_player);
 Integer player_cell_free       (Attributes &p_player, Attributes &p_cows, Integer p_x, Integer p_y, Integer p_z);
 Integer player_place_double    (Attributes &p_player, Attributes &p_cows, Attributes &p_events, Integer p_item,

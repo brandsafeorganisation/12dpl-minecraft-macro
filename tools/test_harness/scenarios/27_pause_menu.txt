@@ -1,6 +1,6 @@
-# The game menu: Q pauses and shows it over the darkened world; the
-# button under the mouse lights up; Controls shows the keys and a
-# click goes back; Mode cycles the game mode; Back to Game plays on.
+# The game menu: Escape pauses and shows it over the darkened world;
+# the button under the mouse lights up; Controls opens the Key Binds
+# and Done goes back; Mode cycles the game mode; Back to Game plays on.
 # Then creative flight lands on the ground, and the creative screen
 # shows the world behind it. Save and Quit to Title ends the game.
 ui Singleplayer
@@ -11,15 +11,17 @@ ui Create New World
 wait 2
 click 430 300
 wait 2
-key q
+key escape
 wait 2
 snap 270_menu_hover
 move 330 295
 wait 2
 snap 271_controls
-click 530 295
 wait 2
-click 430 300
+snap 272_key_binds_from_menu
+click 530 295
+wait 4
+ui Done
 wait 2
 click 530 247
 wait 2
@@ -34,7 +36,7 @@ key space
 holdkey space 40
 wait 2
 call mode
-holdkey c 150
+holdkey shift 150
 wait 10
 call mode
 key e
@@ -45,7 +47,7 @@ move 300 200
 wait 2
 key escape
 wait 2
-key q
+key escape
 wait 2
 click 330 247
 wait 2

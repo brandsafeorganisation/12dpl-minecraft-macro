@@ -415,15 +415,147 @@ void screen_options(Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, 
            "Font...", TRUE);
   menu_add(p_menu, MENU_BUTTON, W_SKINS, l_left, l_top - 5.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_left + l_half, l_top - 5.0 * l_row - 12.0,
            "Skin...", TRUE);
-  menu_add(p_menu, MENU_BUTTON, W_PACKS, l_right, l_top - 5.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_right + l_half, l_top - 5.0 * l_row - 12.0,
+  menu_add(p_menu, MENU_BUTTON, W_CONTROLS, l_right, l_top - 5.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_right + l_half, l_top - 5.0 * l_row - 12.0,
+           "Controls...", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_PACKS, l_left, l_top - 6.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_left + l_half, l_top - 6.0 * l_row - 12.0,
            "Resource Packs...", TRUE);
-  menu_add(p_menu, MENU_BUTTON, W_PLAYER_SETTINGS, l_left, l_top - 6.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_left + l_half,
+  menu_add(p_menu, MENU_BUTTON, W_PLAYER_SETTINGS, l_right, l_top - 6.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_right + l_half,
            l_top - 6.0 * l_row - 12.0, "Multiplayer...", TRUE);
-  menu_add(p_menu, MENU_BUTTON, W_DEFAULTS, l_right, l_top - 6.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_right + l_half,
-           l_top - 6.0 * l_row - 12.0, "Reset to Defaults", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_DEFAULTS, l_left, l_top - 7.0 * l_row - 12.0 - MENU_BUTTON_HEIGHT, l_left + MENU_WIDE,
+           l_top - 7.0 * l_row - 12.0, "Reset to Defaults", TRUE);
   menu_add(p_menu, MENU_BUTTON, W_DONE, l_left, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Done", TRUE);
 
   menu_draw_title(p_box, p_w, p_h - 18.0, "Options");
+  menu_draw_widgets(p_box, p_menu, p_now);
+}
+
+// ---------------------------------------------------------------- key binds
+
+Integer menu_key_rows()
+// ----------------------------------------------------------------
+// Rows of the Key Binds list: a heading for each group, then its
+// actions
+// ----------------------------------------------------------------
+{
+  return BIND_GROUP_MISC + BIND_ACTIONS;
+}
+
+Integer menu_key_row_action(Integer p_row)
+// ----------------------------------------------------------------
+// The action on a row of the Key Binds list (1 = first), or minus
+// the group for a heading row, 0 past the end. Actions are numbered
+// group by group, so a heading comes before a group's first action.
+// ----------------------------------------------------------------
+{
+  Integer l_row    = 0;
+  Integer l_action = 0;
+  Integer l_group  = 0;
+
+  for (l_action = 1; l_action <= BIND_ACTIONS; ++l_action) {
+    if (settings_bind_group(l_action) != l_group) {
+      l_group = settings_bind_group(l_action);
+      ++l_row;
+      if (l_row == p_row) return -l_group;
+    }
+    ++l_row;
+    if (l_row == p_row) return l_action;
+  }
+  return 0;
+}
+
+void screen_controls(Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Integer p_listening, Real p_w, Real p_h, Real p_now)
+// ----------------------------------------------------------------
+// "Key Binds": each action under its heading, with the key it is
+// bound to on a button (click it, then press a key) and a Reset
+// button; a key two actions share shows red, the one being changed
+// shows "> key <". Reset Keys and Done along the bottom.
+// ----------------------------------------------------------------
+{
+  Integer l_rows   = menu_key_rows();
+  Integer l_row    = 0;
+  Integer l_last   = 0;
+  Integer l_shown  = 0;
+  Integer l_scroll = menu_scroll(p_menu);
+  Integer l_bar    = 0;
+  Integer l_action = 0;
+  Integer l_widget = 0;
+  Integer l_hover  = menu_id_at(p_menu, record_real(p_menu, ATTR_MENU_MOUSE_X), record_real(p_menu, ATTR_MENU_MOUSE_Y));
+  Real    l_top    = p_h - 44.0;
+  Real    l_bottom = MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT + 32.0;
+  Real    l_centre = p_w / 2.0;
+  Real    l_label  = l_centre - 250.0;
+  Real    l_key0   = l_centre + 30.0;
+  Real    l_key1   = l_centre + 180.0;
+  Real    l_reset0 = l_centre + 188.0;
+  Real    l_reset1 = l_centre + 258.0;
+  Real    l_half   = (MENU_WIDE - MENU_BUTTON_GAP) / 2.0;
+  Real    l_left   = l_centre - MENU_WIDE / 2.0;
+  Real    l_y0     = 0.0;
+  Real    l_y1     = 0.0;
+  Real    l_middle = 0.0;
+  Text    l_text   = "";
+
+  l_shown  = max_integer(1, floor_integer((l_top - l_bottom - 6.0) / MENU_KEY_ROW));
+  l_scroll = clamp_integer(l_scroll, 0, max_integer(0, l_rows - l_shown));
+  l_last   = min_integer(l_rows, l_scroll + l_shown);
+  menu_begin(p_menu);
+  for (l_row = l_scroll + 1; l_row <= l_last; ++l_row) {
+    l_action = menu_key_row_action(l_row);
+    if (l_action <= 0) continue;
+    l_y1 = l_top - 4.0 - (l_row - l_scroll - 1) * MENU_KEY_ROW;
+    menu_add(p_menu, MENU_ROW, W_KEY_ROW + l_action, l_key0, l_y1 - MENU_KEY_ROW + 4.0, l_key1, l_y1, "", TRUE);
+    menu_add(p_menu, MENU_BUTTON, W_KEY_RESET + l_action, l_reset0, l_y1 - MENU_KEY_ROW + 4.0, l_reset1, l_y1, "Reset",
+             settings_bind(p_settings, l_action) != settings_bind_default(l_action));
+  }
+  menu_set_list(p_menu, l_rows, l_shown);
+  if (l_rows > l_shown) {
+    l_bar = menu_add(p_menu, MENU_SCROLL, W_LIST_SCROLL, l_reset1 + 16.0, l_bottom, l_reset1 + 24.0, l_top, "", TRUE);
+    menu_set_value(p_menu, l_bar, l_scroll * 1.0 / (l_rows - l_shown));
+  }
+  menu_add(p_menu, MENU_BUTTON, W_RESET_KEYS, l_left, MENU_BUTTON_GAP + 10.0, l_left + l_half, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT,
+           "Reset Keys", settings_binds_changed(p_settings));
+  menu_add(p_menu, MENU_BUTTON, W_DONE, l_left + MENU_WIDE - l_half, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE,
+           MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Done", TRUE);
+
+  menu_dark_band(p_box, p_w, l_bottom, l_top);
+  // headings and action names
+  for (l_row = l_scroll + 1; l_row <= l_last; ++l_row) {
+    l_action = menu_key_row_action(l_row);
+    l_y1     = l_top - 4.0 - (l_row - l_scroll - 1) * MENU_KEY_ROW;
+    l_middle = l_y1 - (MENU_KEY_ROW - 4.0) / 2.0;
+    if (l_action < 0) {
+      hud_shadow_text(p_box, l_centre, l_middle + 8.0, 15.0, TEXT_ALIGN_CENTRE, 255, 255, 255, settings_bind_group_title(-l_action));
+    } else if (l_action > 0) {
+      hud_shadow_text(p_box, l_label, l_middle + 8.0, 15.0, TEXT_ALIGN_LEFT, 255, 255, 255, settings_bind_title(l_action));
+    }
+  }
+  // the key buttons: yellow while waiting for a key, red if shared
+  for (l_widget = 1; l_widget <= menu_widgets(p_menu); ++l_widget) {
+    if (menu_widget_kind(p_menu, l_widget) != MENU_ROW) continue;
+    l_action = menu_widget_id(p_menu, l_widget) - W_KEY_ROW;
+    l_y0     = record_real_at(p_menu, ATTR_MENU_Y0, l_widget);
+    l_y1     = record_real_at(p_menu, ATTR_MENU_Y1, l_widget);
+    l_middle = (l_y0 + l_y1) / 2.0;
+    hud_draw_button(p_box, l_key0, l_y0, l_key1, l_y1, "", menu_widget_id(p_menu, l_widget) == l_hover || l_action == p_listening);
+    l_text = key_label(settings_bind(p_settings, l_action));
+    if (l_action == p_listening) {
+      hud_text(p_box, (l_key0 + l_key1) / 2.0, l_middle + 8.0, 16.0, TEXT_ALIGN_CENTRE, 255, 255, 85, "> " + l_text + " <");
+    } else if (settings_bind_clashes(p_settings, l_action)) {
+      hud_text(p_box, (l_key0 + l_key1) / 2.0, l_middle + 8.0, 16.0, TEXT_ALIGN_CENTRE, 255, 85, 85, l_text);
+    } else {
+      hud_text(p_box, (l_key0 + l_key1) / 2.0, l_middle + 8.0, 16.0, TEXT_ALIGN_CENTRE, 255, 255, 255, l_text);
+    }
+  }
+  if (l_bar > 0) menu_draw_scroll(p_box, l_reset1 + 16.0, l_bottom, l_reset1 + 24.0, l_top, l_scroll * 1.0 / (l_rows - l_shown), l_shown * 1.0 / l_rows);
+
+  menu_draw_title(p_box, p_w, p_h - 14.0, "Key Binds");
+  if (p_listening > 0) {
+    hud_shadow_text(p_box, l_centre, l_bottom - 8.0, 13.0, TEXT_ALIGN_CENTRE, 255, 255, 160,
+                    "Press a key. For Shift or Ctrl, hold it and press a letter. Escape leaves it Not Bound.");
+  } else {
+    hud_shadow_text(p_box, l_centre, l_bottom - 8.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+                    "Click a key to change it. Escape always pauses the game and closes screens.");
+  }
   menu_draw_widgets(p_box, p_menu, p_now);
 }
 

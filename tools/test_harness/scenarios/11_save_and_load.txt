@@ -26,7 +26,7 @@ call torch_ahead
 call torch_light_check
 wait 30
 call dump
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 ui #101

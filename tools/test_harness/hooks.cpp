@@ -135,6 +135,10 @@ static void register_hooks(){
   g_calls["mobs_calm"]=[]{ for(int c=1;c<=MAX_COWS;c++) if(cow_alive(g_cows,c)){ record_set_real_at(g_cows,ATTR_MOB_ATTACK,c,100.0); record_set_real_at(g_cows,ATTR_COW_FLASH,c,0.0); } };
   g_calls["body"]=[]{ double y=0,p=0; player_look(g_player,y,p); printf("[hook] yaw %.2f body %.2f stride %.2f crouch %d\n",y,player_body_yaw(g_player),player_stride(g_player),player_crouching(g_player)); };
   g_calls["no_mobs"]=[]{ cows_clear(g_cows); };
+  // key binds (33_key_binds): the held stack, drops lying about, crouching and sprinting
+  g_calls["keys"]=[]{ int sl=player_selected(g_player); printf("[keys] slot %d %s x%d drops %d crouch %d sprint %d forward key %s jump key '%s'\n",
+      sl,item_name(slot_item(g_inventory,sl)).c_str(),slot_count(g_inventory,sl),slots_count(SLOT_POOL_DROPS),player_crouching(g_player),
+      player_sprinting(g_player),settings_bind(g_settings,BIND_FORWARD).c_str(),settings_bind(g_settings,BIND_JUMP).c_str()); };
   // the Nether (32_nether)
   g_calls["obsidian_frame"]=[]{ // an unlit frame 3 ahead (+x), across z, its inside 2 x 3 in front of the player; aim at its inside's floor
     int x0=(int)px(),y0=(int)py(),z0=(int)pz(); int fx=x0+3, fz=z0-1;

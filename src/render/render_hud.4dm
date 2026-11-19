@@ -19,7 +19,7 @@
 
 void hud_clear(Attributes &p_hud)
 // ----------------------------------------------------------------
-// Remove every message; the help shows until the player starts
+// Remove every message
 // ----------------------------------------------------------------
 {
   Integer l_toast = 0;
@@ -29,8 +29,8 @@ void hud_clear(Attributes &p_hud)
     record_set_text_at(p_hud, ATTR_TEXT,      l_toast, "");
     record_set_real_at(p_hud, ATTR_HUD_UNTIL, l_toast, 0.0);
   }
-  record_set_integer(p_hud, ATTR_HUD_HELP,       TRUE);
   record_set_real   (p_hud, ATTR_HUD_NAME_UNTIL, 0.0);
+  record_set_integer(p_hud, ATTR_HUD_WAITING,    TRUE);
   record_set_integer(p_hud, ATTR_HUD_FRAMES,     0);
   record_set_real   (p_hud, ATTR_HUD_FRAME_SUM,  0.0);
   record_set_real   (p_hud, ATTR_HUD_FRAME_MIN,  0.0);
@@ -39,7 +39,6 @@ void hud_clear(Attributes &p_hud)
   record_set_text   (p_hud, ATTR_HUD_STATS,      "");
   record_set_real   (p_hud, ATTR_HUD_MOUSE_X,    -1.0);
   record_set_real   (p_hud, ATTR_HUD_MOUSE_Y,    -1.0);
-  record_set_integer(p_hud, ATTR_HUD_MENU_HELP,  FALSE);
   for (l_toast = 1; l_toast <= MAX_CHAT_LINES; ++l_toast) {
     record_set_text_at(p_hud, ATTR_HUD_CHAT,       l_toast, "");
     record_set_real_at(p_hud, ATTR_HUD_CHAT_UNTIL, l_toast, 0.0);
@@ -145,38 +144,21 @@ void hud_show_name(Attributes &p_hud, Real p_now)
   record_set_real(p_hud, ATTR_HUD_NAME_UNTIL, p_now + 1.6);
 }
 
-Integer hud_help_shown(Attributes &p_hud)
+Integer hud_waiting(Attributes &p_hud)
 // ----------------------------------------------------------------
-// TRUE while the help panel is showing
+// TRUE while a world just opened waits for a click to start play
+// (instead of the game menu, "Click to play" shows)
 // ----------------------------------------------------------------
 {
-  return record_integer(p_hud, ATTR_HUD_HELP);
+  return record_integer(p_hud, ATTR_HUD_WAITING) == TRUE;
 }
 
-void hud_set_help(Attributes &p_hud, Integer p_shown)
+void hud_set_waiting(Attributes &p_hud, Integer p_waiting)
 // ----------------------------------------------------------------
-// Show or hide the help panel
-// ----------------------------------------------------------------
-{
-  record_set_integer(p_hud, ATTR_HUD_HELP, p_shown);
-  if (!p_shown) record_set_integer(p_hud, ATTR_HUD_MENU_HELP, FALSE);
-}
-
-void hud_set_menu_help(Attributes &p_hud, Integer p_from_menu)
-// ----------------------------------------------------------------
-// Note that the help was opened from the pause menu (a click then
-// goes back to the menu instead of starting play)
+// Note whether play has started yet
 // ----------------------------------------------------------------
 {
-  record_set_integer(p_hud, ATTR_HUD_MENU_HELP, p_from_menu);
-}
-
-Integer hud_menu_help(Attributes &p_hud)
-// ----------------------------------------------------------------
-// TRUE if the help showing was opened from the pause menu
-// ----------------------------------------------------------------
-{
-  return record_integer(p_hud, ATTR_HUD_HELP) && record_integer(p_hud, ATTR_HUD_MENU_HELP);
+  record_set_integer(p_hud, ATTR_HUD_WAITING, p_waiting);
 }
 
 void hud_set_mouse(Attributes &p_hud, Real p_x, Real p_y)
@@ -534,78 +516,6 @@ void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Rea
   }
 }
 
-void hud_help_line(Draw_Box p_box, Real p_x, Real &p_y, Text p_key, Text p_what)
-// ----------------------------------------------------------------
-// One line of the help: key in yellow, description in white
-// ----------------------------------------------------------------
-{
-  hud_text(p_box, p_x        , p_y, 12.0, TEXT_ALIGN_LEFT, 250, 215, 90 , p_key);
-  hud_text(p_box, p_x + 140.0, p_y, 12.0, TEXT_ALIGN_LEFT, 228, 228, 228, p_what);
-  p_y = p_y - 15.0;
-}
-
-void hud_help_heading(Draw_Box p_box, Real p_x, Real &p_y, Text p_text)
-// ----------------------------------------------------------------
-// A heading in the help
-// ----------------------------------------------------------------
-{
-  p_y = p_y - 4.0;
-  hud_text(p_box, p_x, p_y, 13.0, TEXT_ALIGN_LEFT, 120, 210, 110, p_text);
-  p_y = p_y - 17.0;
-}
-
-void hud_draw_help(Draw_Box p_box, Real p_w, Real p_h, Integer p_from_menu)
-// ----------------------------------------------------------------
-// The controls, shown at the start and with H
-// ----------------------------------------------------------------
-{
-  Real l_panel_w = min_real(620.0, p_w - 30.0);
-  Real l_panel_h = min_real(386.0, p_h - STATUS_STRIP_HEIGHT - 16.0);
-  Real l_centre  = p_w / 2.0;
-  Real l_middle  = STATUS_STRIP_HEIGHT + (p_h - STATUS_STRIP_HEIGHT) / 2.0;
-  Real l_left    = l_centre - l_panel_w / 2.0;
-  Real l_top     = l_middle + l_panel_h / 2.0;
-  Real l_x       = l_left + 22.0;
-  Real l_y       = l_top - 50.0;
-  Text l_title   = GAME_TITLE;
-
-  render_set_colour(p_box, 20.0, 22.0, 26.0);
-  render_fill_rect (p_box, l_left, l_middle - l_panel_h / 2.0, l_left + l_panel_w, l_top);
-  render_set_colour(p_box, 92.0, 168.0, 80.0);
-  hud_frame(p_box, l_left, l_middle - l_panel_h / 2.0, l_left + l_panel_w, l_top);
-
-  hud_text(p_box, l_centre, l_top - 12.0, 22.0, TEXT_ALIGN_CENTRE, 132, 220, 116, l_title + " - how to play");
-
-  hud_help_heading(p_box, l_x, l_y, "MOUSE");
-  hud_help_line(p_box, l_x, l_y, "Click the view" , "start playing (the mouse turns the camera)");
-  hud_help_line(p_box, l_x, l_y, "Left click"     , "break blocks (harder blocks take more hits), hit animals");
-  hud_help_line(p_box, l_x, l_y, "Right click"    , "place blocks, eat, put on armour, use spawn eggs and doors");
-  hud_help_heading(p_box, l_x, l_y, "KEYBOARD");
-  hud_help_line(p_box, l_x, l_y, "W A S D"        , "walk (hold one key at a time)");
-  hud_help_line(p_box, l_x, l_y, "Space"          , "jump, swim up, fly up; twice quickly to fly in creative");
-  hud_help_line(p_box, l_x, l_y, "1 - 9"          , "choose a hotbar slot");
-  hud_help_line(p_box, l_x, l_y, "E"              , "inventory and 2 x 2 crafting; every item in creative");
-  hud_help_line(p_box, l_x, l_y, "Q"              , "pause and free the mouse, or close a screen");
-  hud_help_line(p_box, l_x, l_y, "F / J / X"      , "auto-walk, auto-jump on/off; X swaps hand and offhand");
-  hud_help_line(p_box, l_x, l_y, "C / Shift + W"  , "crouch on/off, crouch while held (both sink when flying)");
-  hud_help_line(p_box, l_x, l_y, "T / slash"      , "chat, or a command: /gamemode /time /gamerule /give /help");
-  hud_help_line(p_box, l_x, l_y, "P / U / V or F5" , "pick the block you look at, hide the HUD, camera behind / in front");
-  hud_help_line(p_box, l_x, l_y, "- / ="          , "shorter / longer view distance");
-  hud_help_line(p_box, l_x, l_y, "I / H / O"      , "position info, this help, settings");
-  hud_help_heading(p_box, l_x, l_y, "GETTING STARTED");
-  hud_text(p_box, l_x, l_y, 12.0, TEXT_ALIGN_LEFT, 228, 228, 228, "Your house has a crafting table and a furnace. Punch trees for logs, lay out planks");
-  l_y = l_y - 15.0;
-  hud_text(p_box, l_x, l_y, 12.0, TEXT_ALIGN_LEFT, 228, 228, 228, "and sticks in the grid for a pickaxe - stone only drops if you mine it with one.");
-  l_y = l_y - 15.0;
-  hud_text(p_box, l_x, l_y, 12.0, TEXT_ALIGN_LEFT, 228, 228, 228, "Zombies come out at night: make torches (coal over a stick) or sleep in a bed.");
-
-  if (p_from_menu) {
-    hud_text(p_box, l_centre, l_middle - l_panel_h / 2.0 + 22.0, 13.0, TEXT_ALIGN_CENTRE, 250, 215, 90, "Click to go back");
-  } else {
-    hud_text(p_box, l_centre, l_middle - l_panel_h / 2.0 + 22.0, 13.0, TEXT_ALIGN_CENTRE, 250, 215, 90, "Click the view to play");
-  }
-}
-
 Text hud_facing_name(Real p_yaw)
 // ----------------------------------------------------------------
 // Compass direction for a yaw (north is -z)
@@ -790,6 +700,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   if (player_spectator(p_player)) l_info = l_info + "   SPECTATOR";
   if (player_flying(p_player) && !player_spectator(p_player)) l_info = l_info + "   FLYING";
   if (player_crouching(p_player)) l_info = l_info + "   CROUCHING";
+  if (player_sprinting(p_player)) l_info = l_info + "   SPRINTING";
   if (world_dimension() == DIM_NETHER) l_info = l_info + "   NETHER";
   if (player_auto_walk(p_player)) l_info = l_info + "   AUTO-WALK";
   if (!settings_flag(p_settings, ATTR_SET_AUTO_JUMP)) l_info = l_info + "   auto-jump off";
@@ -798,7 +709,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   if (p_screen_open) return;
 
   // Paused: the game menu over the darkened world, nothing else
-  if (!p_captured && !l_dead && !hud_help_shown(p_hud)) {
+  if (!p_captured && !l_dead && !hud_waiting(p_hud)) {
     hud_draw_pause_menu(p_box, p_w, p_h, record_real(p_hud, ATTR_HUD_MOUSE_X), record_real(p_hud, ATTR_HUD_MOUSE_Y),
                         player_game_mode_name(player_game_mode(p_player)));
     return;
@@ -914,8 +825,8 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
 
   if (l_dead) {
     hud_banner(p_box, p_w / 2.0, l_centre_y, 210.0, 54.0, "You died", "Press R or click the view to respawn", 230, 60, 50);
-  } else if (hud_help_shown(p_hud)) {
-    hud_draw_help(p_box, p_w, p_h, hud_menu_help(p_hud));
+  } else if (!p_captured && hud_waiting(p_hud)) {
+    hud_banner(p_box, p_w / 2.0, l_centre_y, 210.0, 54.0, "Click to play", "The mouse turns the camera; Escape pauses", 255, 255, 255);
   }
 }
 

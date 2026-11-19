@@ -495,7 +495,7 @@ void player_set_game_mode(Attributes &p_player, Integer p_mode)
   }
   record_set_integer(p_player, ATTR_PLAYER_MODE, l_mode);
   if (l_mode != GAMEMODE_SURVIVAL) player_set_health(p_player, PLAYER_MAX_HEALTH);
-  record_set_integer(p_player, ATTR_CROUCH_TOGGLE, FALSE);
+  record_set_integer(p_player, ATTR_SPRINTING, FALSE);
 }
 
 Integer player_creative(Attributes &p_player)
@@ -607,15 +607,6 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
     return;
   }
 
-  if (p_key == "c") {
-    if (player_flying(p_player)) {
-      record_set_real(p_player, ATTR_FLY_DOWN_UNTIL, p_now + FLY_KEY_SECONDS);
-    } else {
-      record_set_integer(p_player, ATTR_CROUCH_TOGGLE, record_integer(p_player, ATTR_CROUCH_TOGGLE) != TRUE);
-    }
-    return;
-  }
-
   if (p_key == " ") {
     // Two quick taps fly or land in creative mode. A held Space
     // repeats faster than DOUBLE_TAP_MIN, and the tap before has to
@@ -636,11 +627,12 @@ void player_key_pressed(Attributes &p_player, Text p_key, Real p_now)
   }
 }
 
-void player_shift_pressed(Attributes &p_player, Real p_now)
+void player_sneak_pressed(Attributes &p_player, Real p_now)
 // ----------------------------------------------------------------
-// A key arrived with Shift held (a capital W, A, S or D): Shift
-// sinks while flying and crouches otherwise. There is no key-up
-// event, so it lasts a moment and each repeat of the key renews it.
+// The sneak key arrived (by default any key with Shift held, such as
+// a capital W): it sinks while flying and crouches otherwise. There
+// is no key-up event, so it lasts a moment and each repeat of the
+// key renews it.
 // ----------------------------------------------------------------
 {
   if (player_flying(p_player)) {
@@ -648,6 +640,53 @@ void player_shift_pressed(Attributes &p_player, Real p_now)
   } else {
     record_set_real(p_player, ATTR_CROUCH_UNTIL, p_now + CROUCH_HOLD_SECONDS);
   }
+}
+
+void player_sprint_pressed(Attributes &p_player)
+// ----------------------------------------------------------------
+// The sprint key arrived (by default any key with Ctrl held, such as
+// Ctrl + W): walking forward is faster until you stop
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_player, ATTR_SPRINTING, TRUE);
+}
+
+Integer player_sprinting(Attributes &p_player)
+// ----------------------------------------------------------------
+// TRUE while sprinting
+// ----------------------------------------------------------------
+{
+  return record_integer(p_player, ATTR_SPRINTING) == TRUE;
+}
+
+Integer player_drop_selected(Attributes &p_player, Attributes &p_inventory, Attributes &p_events, Integer p_whole_stack)
+// ----------------------------------------------------------------
+// Throw the held item (one, or the whole stack) the way you look.
+// Emits EVT_THROW_DROP; returns FALSE if the hand is empty or you
+// can't (dead, a spectator).
+// ----------------------------------------------------------------
+{
+  Integer l_slot  = player_selected(p_player);
+  Integer l_item  = slot_item(p_inventory, l_slot);
+  Integer l_count = 1;
+  Real    l_x     = 0.0;
+  Real    l_y     = 0.0;
+  Real    l_z     = 0.0;
+  Real    l_yaw   = 0.0;
+  Real    l_pitch = 0.0;
+
+  if (l_item == ITEM_NONE || player_is_dead(p_player) || player_spectator(p_player)) return FALSE;
+  if (p_whole_stack) l_count = slot_count(p_inventory, l_slot);
+  player_position(p_player, l_x, l_y, l_z);
+  player_look    (p_player, l_yaw, l_pitch);
+  emit_throw_event(p_events, l_item, l_count, slot_damage(p_inventory, l_slot), l_x, player_eye_y(p_player) - 0.3, l_z, l_yaw, l_pitch);
+  if (l_count >= slot_count(p_inventory, l_slot)) {
+    slot_clear(p_inventory, l_slot);
+  } else {
+    slot_set(p_inventory, l_slot, l_item, slot_count(p_inventory, l_slot) - l_count, slot_damage(p_inventory, l_slot));
+  }
+  record_set_real(p_player, ATTR_PLAYER_SWING, 0.25);
+  return TRUE;
 }
 
 Integer player_key_active(Attributes &p_player, Text p_key, Real p_now)
@@ -833,11 +872,14 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
     l_ease = TAP_START_SPEED + (1.0 - TAP_START_SPEED) * clamp_real((p_now - l_move_start) / TAP_RAMP, 0.0, 1.0);
   }
   l_speed = WALK_SPEED * l_ease;
-  // Crouching (C, or Shift with a movement key; not while flying):
-  // slower, lower eyes, and you don't walk off edges
+  // Crouching (the sneak key, by default Shift with a movement key;
+  // not while flying): slower, lower eyes, and you don't walk off
+  // edges
   if (!l_flying) {
-    if (record_integer(p_player, ATTR_CROUCH_TOGGLE) == TRUE || p_now < record_real(p_player, ATTR_CROUCH_UNTIL)) l_crouching = TRUE;
+    if (p_now < record_real(p_player, ATTR_CROUCH_UNTIL)) l_crouching = TRUE;
   }
+  // Sprinting lasts while you keep walking forward and don't crouch
+  if (l_forward <= 0.0 || l_crouching || player_is_dead(p_player)) record_set_integer(p_player, ATTR_SPRINTING, FALSE);
   record_set_integer(p_player, ATTR_CROUCHING, l_crouching);
   if (l_crouching) l_eye_height = CROUCH_EYE_HEIGHT;
 
@@ -845,6 +887,7 @@ void player_update(Attributes &p_player, Attributes &p_cows, Attributes &p_event
   if (l_flying)   l_speed = l_speed * FLY_SPEED_FACTOR;
   if (l_on_ground && world_get_block(floor_integer(l_x), floor_integer(l_y - 0.1), floor_integer(l_z)) == BLOCK_SOUL_SAND) l_speed = l_speed * SOUL_SAND_SPEED;
   if (l_crouching) l_speed = l_speed * CROUCH_SPEED_FACTOR;
+  if (player_sprinting(p_player)) l_speed = l_speed * SPRINT_SPEED_FACTOR;
 
   l_wish_x = l_heading_x * l_forward - l_heading_z * l_strafe;
   l_wish_z = l_heading_z * l_forward + l_heading_x * l_strafe;

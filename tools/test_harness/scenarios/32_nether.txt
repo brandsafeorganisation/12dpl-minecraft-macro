@@ -50,7 +50,7 @@ wait 2
 call creative
 call back_to_portal
 wait 3
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 field #15|Nether

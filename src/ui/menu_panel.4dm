@@ -294,7 +294,7 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
         menu_set_focus(g_menu, 0);
         l_screen = SCREEN_MULTIPLAYER;
       } else if (l_id == W_OPTIONS) {
-        l_result = settings_panel_run(p_box, p_keys, p_settings, FALSE);
+        l_result = settings_panel_run(p_box, p_keys, p_settings, FALSE, SCREEN_OPTIONS);
         if (l_result == SHUTDOWN_CODE) return SHUTDOWN_CODE;
         if (l_result == PANEL_CLOSED) return MENU_RESULT_QUIT;
         l_result = MENU_RESULT_QUIT;

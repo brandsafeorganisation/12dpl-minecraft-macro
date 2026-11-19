@@ -73,7 +73,7 @@ key space
 holdkey space 20
 wait 2
 call dump
-holdkey c 40
+holdkey shift 40
 wait 10
 call dump
 # sinking onto the ground landed: flying has stopped, so the player falls no further

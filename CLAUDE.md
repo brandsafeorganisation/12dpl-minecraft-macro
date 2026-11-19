@@ -88,6 +88,11 @@ and the code layout (`src/<part>/`, `include/<part>/`).
   `SAFE_WRITE_FOLDER` (`cubeland_worlds`).
 - Never delete files; overwrite them with a marker (`save_delete_world()`).
 
+## To do
+
+`docs/TODO.md` lists the issues and additions the owner has asked for.
+Add new requests there; move an item to Done when it is finished.
+
 ## The test build: `test/`
 
 `test/cubeland_test.4dm` is a second macro made from the same source: a
@@ -141,6 +146,11 @@ Things learned the hard way:
   Ctrl+Backspace 127, Escape 27): read keys with `key_name()` and edit
   text with `text_after_key()`. The harness's `key bs` / `key ctrlbs`
   send them.
+- Game keys go through the key binds (`settings_bind_pressed` with
+  `key_base()` and `key_modifier()`), never a hard-coded letter: add a
+  `BIND_*` action in `settings.h` (with its default, title and group)
+  for a new key. Shift and Ctrl arrive only with another key (a capital
+  letter, Ctrl + a letter as characters 1 to 26); only Escape is fixed.
 - Every 12d draw call costs about as much as a polygon. `[snap]` lines
   print polygons, draw calls and record calls per frame: check them
   after a drawing change. `render_set_colour` skips a colour that is

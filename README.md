@@ -20,8 +20,9 @@ A first-person block-building sandbox for 12d Model, drawn entirely in a
    Pick one and press **Play Selected World** (or click it twice), or press
    **Create New World**, type a name and, optionally, a seed, choose
    **Game Mode** (survival or creative) and press **Create New World**.
-5. Click the view to start playing. Press **H** at any time for the
-   controls. You start inside a small house with a crafting table, a
+5. Click the view to start playing. **Options..., Controls...** (or
+   **Controls...** in the game menu) lists the keys and lets you change
+   them. You start inside a small house with a crafting table, a
    furnace, a chest, a bed and two torches.
 6. **Options...** (on the title screen, in the game menu, or the **O** key)
    has sliders for the field of view, render distance (50 blocks to start
@@ -48,42 +49,53 @@ it to run the tests (see [test/README.md](test/README.md)).
 
 ## Controls
 
+These are the default keys. Every key can be changed in **Options...,
+Controls...** (or **Controls...** in the game menu): the Key Binds
+screen lists each action under Movement, Gameplay, Inventory,
+Multiplayer and Miscellaneous with its key. Click a key and press
+another; a key two actions share shows red; **Reset** puts one back and
+**Reset Keys** all of them. Keys are saved in the settings file.
+
 | Input         | Action                                                       |
 |---------------|--------------------------------------------------------------|
-| Click view    | start playing (the mouse then turns the camera); after a pause, **Back to Game** or W A S D or Space carries on |
+| Click view    | start playing (the mouse then turns the camera); after a pause, **Back to Game**, Escape or a movement key carries on |
 | Mouse         | look around                                                  |
 | Left click    | break blocks (harder blocks take more hits), hit animals     |
 | Right click   | place blocks, eat food, put on armour, use spawn eggs, open crafting tables, furnaces and chests, sleep in beds, open and shut doors; if the item in your hand does nothing, the offhand's item is used |
 | W A S D       | walk                                                         |
 | Space         | jump, swim up, fly up; tap twice quickly to fly or stop flying (creative mode only); flying down onto the ground lands you |
+| Shift + W A S D | sneak: slower, lower, and you don't walk off edges (sink while flying) |
+| Ctrl + W      | sprint: faster until you stop walking forward                |
 | 1 - 9         | choose a hotbar slot                                         |
-| E             | inventory and 2 x 2 crafting (E or Q closes any screen); in creative mode, every item (see below) |
-| Q / Escape    | pause: the game menu (see below)                             |
+| E             | inventory and 2 x 2 crafting (E or Escape closes any screen); in creative mode, every item (see below) |
+| Q             | drop one of the held item, thrown the way you look; Ctrl + Q drops the whole stack |
+| Escape        | pause: the game menu (see below); Escape again carries on. Escape can't be changed |
 | F / J         | auto-walk on/off, auto-jump on/off                           |
 | X             | swap the selected hotbar item with the offhand (F in the block game, but F is auto-walk here) |
-| C             | crouch on/off (sink while flying)                            |
-| Shift + W A S D | crouch while held: slower, and you don't walk off edges (sink while flying) |
 | T             | chat; Enter sends the line, Escape drops it                  |
 | /             | chat with a / already typed, for a command (see below)       |
 | P             | pick block: hold the item of the block you're looking at     |
 | U             | hide or show the HUD                                         |
-| V (or F5)     | camera: behind you, then in front of you looking back, then your own eyes again. Use V in 12d: 12d keeps F5 for itself (the Windows build takes either) |
+| V             | camera: behind you, then in front of you looking back, then your own eyes again |
 | - / =         | shorter / longer render distance (8 to 64 blocks)            |
-| I / H / O     | position, render and frame-time statistics, help, settings   |
+| I / O         | position, render and frame-time statistics; options          |
 
 The keys go to the **Keys** box under the view. If they stop working, click
-that box. 12d doesn't report Shift on its own, only the capital letter it
-makes, so Shift crouches together with a movement key (the Windows build
-also sees Shift held by itself); Caps Lock does the same.
+that box. 12d sends nothing for Shift or Ctrl on their own, only the key
+pressed with them (a capital letter, or a control character for Ctrl +
+a letter), so Sneak and Sprint happen together with a movement key; Caps
+Lock counts as Shift. To bind an action to Shift or Ctrl, click its key
+and hold Shift or Ctrl while pressing a letter. Escape on that screen
+leaves the action with no key.
 
 ### The game menu
 
-**Q** (or Escape) pauses the game and shows the game menu over the world,
+**Escape** pauses the game and shows the game menu over the world,
 drawn darker behind it, like the block game's:
 
-- **Back to Game** carries on (so do W A S D and Space).
+- **Back to Game** carries on (so do Escape and the movement keys).
 - **Options...** opens the options over the darkened world.
-- **Controls...** shows the keys; a click goes back to the menu.
+- **Controls...** opens the Key Binds screen; **Done** goes back to the menu.
 - **Save Game** saves the world.
 - **Mode** shows the game mode; each click moves on to the next one
   (survival, creative, spectator).
@@ -253,7 +265,7 @@ are drawn in your skin too (skins aren't shared through the folder).
 
 ## Fonts
 
-The game's text (hotbar counts, messages, the help and inventory screens)
+The game's text (hotbar counts, messages, the menus and inventory screens)
 can use any font installed in Windows. **Options... > Font...** lists:
 
 - fonts that come with Windows (Arial, Segoe UI, Consolas, Courier New,
@@ -323,9 +335,9 @@ it: it loads the chosen file for itself, then and every time it starts.
 - **Chests:** hold 27 stacks. Right-click to open; the contents are
   saved with the world and spill out if the chest is broken.
 - **Player:** 1.8 blocks tall, with 5 blocks of reach, gravity and collision,
-  swimming, fall damage, a 10-heart health bar and slow healing. **C** (or
-  Shift with a movement key) crouches: lower, slower, and you stop at
-  edges instead of walking off. Worlds start in survival; creative and
+  swimming, fall damage, a 10-heart health bar and slow healing. Sneaking
+  (Shift with a movement key) crouches: lower, slower, and you stop at
+  edges instead of walking off. Sprinting (Ctrl with W) is 30% faster. Worlds start in survival; creative and
   spectator modes are described under Game modes above.
 - **Breaking and placing:** a block being broken cracks in 10 pixel-art
   stages (the resource pack's `destroy_stage` images if it has them).
@@ -422,7 +434,7 @@ include/<part>/*.h    each module's constants, record field names and prototypes
   mobs/               cows (cows, pigs and zombies)
   player/             player: movement and actions
   render/             render_world (the 3D view), render_hud (crosshair,
-                      hotbar, health, hand, help, item icons), render_ui
+                      hotbar, health, hand, item icons), render_ui
                       (inventory, crafting table, furnace and chest screens),
                       render_menu (buttons, text boxes, sliders, the
                       panorama), render_screens (the title screen, world

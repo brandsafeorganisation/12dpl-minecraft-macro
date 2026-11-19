@@ -297,7 +297,84 @@ Text key_name(Text p_msg)
   if (l_code == KEY_CODE_DELETE_WORD) return "backspace_word";
   if (l_code == KEY_CODE_ESCAPE) return "escape";
   if (l_code == KEY_CODE_ENTER) return "enter";
+  if (l_code == KEY_CODE_TAB) return "tab";
   return Text_lower(p_msg);
+}
+
+Integer key_is_control_letter(Integer p_code)
+// ----------------------------------------------------------------
+// TRUE if a character is Ctrl + a letter (1 .. 26, but not those
+// that are keys of their own: Backspace, Tab, line feed and Enter)
+// ----------------------------------------------------------------
+{
+  if (p_code < 1 || p_code > KEY_CODE_CTRL_Z) return FALSE;
+  if (p_code == KEY_CODE_BACKSPACE || p_code == KEY_CODE_TAB || p_code == KEY_CODE_LINE_FEED || p_code == KEY_CODE_ENTER) return FALSE;
+  return TRUE;
+}
+
+Text key_base(Text p_msg)
+// ----------------------------------------------------------------
+// The key of a "keystroke" message without Shift or Ctrl: Ctrl + W
+// (character 23) is "w", a capital W is "w"; otherwise key_name
+// ----------------------------------------------------------------
+{
+  Integer l_code   = 0;
+  Text    l_letter = " ";
+
+  if (Text_length(p_msg) == 1) {
+    Get_char(p_msg, 1, l_code);
+    if (key_is_control_letter(l_code)) {
+      Set_char(l_letter, 1, l_code + 96);
+      return l_letter;
+    }
+  }
+  return key_name(p_msg);
+}
+
+Text key_modifier(Text p_msg)
+// ----------------------------------------------------------------
+// KEY_SHIFT if a "keystroke" message is a capital letter, KEY_CONTROL
+// if it is Ctrl + a letter, otherwise ""
+// ----------------------------------------------------------------
+{
+  Integer l_code = 0;
+
+  if (Text_length(p_msg) != 1) return "";
+  Get_char(p_msg, 1, l_code);
+  if (key_is_control_letter(l_code)) return KEY_CONTROL;
+  if (l_code >= 65 && l_code <= 90) return KEY_SHIFT;
+  return "";
+}
+
+Text key_label(Text p_key)
+// ----------------------------------------------------------------
+// How a key (as key_base names it) is written on the Key Binds
+// screen: "Space", "Left Shift", "W", "F5"; "" is "Not Bound"
+// ----------------------------------------------------------------
+{
+  if (p_key == ""         ) return "Not Bound";
+  if (p_key == " "        ) return "Space";
+  if (p_key == KEY_SHIFT  ) return "Left Shift";
+  if (p_key == KEY_CONTROL) return "Left Control";
+  if (p_key == "tab"      ) return "Tab";
+  if (p_key == "enter"    ) return "Enter";
+  return text_upper(p_key);
+}
+
+Text text_upper(Text p_text)
+// ----------------------------------------------------------------
+// The text with a .. z made capitals (12dPL has Text_lower only)
+// ----------------------------------------------------------------
+{
+  Text    l_text     = p_text;
+  Integer l_position = 0;
+  Integer l_code     = 0;
+
+  for (l_position = 1; l_position <= Text_length(l_text); ++l_position) {
+    Get_char(l_text, l_position, l_code);
+    if (l_code >= 97 && l_code <= 122) Set_char(l_text, l_position, l_code - 32);
+  }
+  return l_text;
 }
 
 Integer key_is_text(Text p_msg)

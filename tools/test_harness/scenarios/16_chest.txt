@@ -29,7 +29,7 @@ key e
 wait 2
 call chests
 call dump
-key q
+key escape
 ui Save and Quit to Title
 ui Singleplayer
 ui #101

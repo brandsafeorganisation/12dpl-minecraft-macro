@@ -12,6 +12,15 @@
 #define KEY_CODE_ENTER        13
 #define KEY_CODE_ESCAPE       27
 #define KEY_CODE_DELETE_WORD  127    // Ctrl+Backspace
+#define KEY_CODE_TAB          9
+#define KEY_CODE_LINE_FEED    10
+#define KEY_CODE_CTRL_Z       26     // Ctrl+A .. Ctrl+Z come as characters 1 .. 26
+
+// Shift and Ctrl alone send nothing in 12d, so a key pressed with one
+// held stands for it too (key_modifier): a capital letter for Shift,
+// a control character for Ctrl
+#define KEY_SHIFT             "shift"
+#define KEY_CONTROL           "control"
 
 Real    clamp_real          (Real p_value, Real p_low, Real p_high);
 Real    angle_of            (Real p_y, Real p_x);
@@ -34,6 +43,11 @@ Text    file_title_from_path(Text p_path);
 Integer text_is_safe_name   (Text p_name);
 Text    key_name            (Text p_msg);
 Integer key_is_text         (Text p_msg);
+Integer key_is_control_letter(Integer p_code);
+Text    key_base            (Text p_msg);
+Text    key_modifier        (Text p_msg);
+Text    key_label           (Text p_key);
+Text    text_upper          (Text p_text);
 Text    text_without_last_word(Text p_text);
 Text    text_after_key      (Text p_text, Text p_msg, Integer p_longest);
 
