@@ -30,7 +30,12 @@ A first-person block-building sandbox for 12d Model, drawn entirely in a
    shadows, auto-jump, the HUD and statistics, and screens for the font,
    your skin, resource packs and the multiplayer name and folder.
 
-Worlds are saved in a `cubeland_worlds` folder inside the 12d working folder.
+Worlds are saved in a `cubeland_worlds` folder inside the 12d working folder,
+each in a folder of its own as in the block game: `level.cubeworld` (the
+world, you and your inventory), `region.cubeworld` (the overworld) and
+`DIM-1\region.cubeworld` (the Nether). Worlds saved as a single
+`.cubeworld` file by the last version still open, and are saved as a
+folder from then on.
 A world is saved when you quit to the title screen, when you press **Save
 Game** in the game menu, and every two minutes while you play. Settings are kept in
 `cubeland_worlds/cubeland_settings.txt`. Worlds saved by the first version
@@ -175,9 +180,9 @@ to go home. Breaking any of a portal's frame puts it out.
 - Lava burns (4 damage every half second in survival); you can swim in
   it slowly, and place blocks into it.
 - Glowstone gives light; the Nether is lit evenly and dimly everywhere.
-- No animals or zombies come in the Nether; mobs, items on the ground,
-  furnaces and chests stay in the dimension they are in (furnaces only
-  cook while you are in theirs). You can't sleep there; if you die you
+- No animals or zombies come in the Nether. Each dimension keeps its
+  own mobs, items on the ground, furnaces and chests (furnaces only cook
+  while you are in theirs), saved in its own folder. You can't sleep there; if you die you
   respawn in the overworld.
 - A world saved in the Nether opens there. The dimension you're not in
   is kept as its changed blocks and made again from the seed when you

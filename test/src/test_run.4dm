@@ -244,7 +244,7 @@ void test_make_world(Integer p_seed)
   Real l_y = 0.0;
   Real l_z = 0.0;
 
-  game_reset_state(g_game, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events, g_hud, g_ui);
+  game_reset_state(g_game, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_away, g_events, g_hud, g_ui);
   record_set_text(g_game, ATTR_GAME_WORLD_NAME, "zz_test");
   world_generate (g_info, p_seed);
   mesh_reset();

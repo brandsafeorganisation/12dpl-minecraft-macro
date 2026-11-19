@@ -35,7 +35,7 @@ RECORDS = {
     'p_furnaces': 'g_furnaces', 'p_info': 'g_info', 'p_settings': 'g_settings', 'p_drops': 'g_drops',
     'p_ui': 'g_ui', 'p_random': 'g_random', 'p_peers': 'g_peers', 'p_hud': 'g_hud', 'p_net': 'g_net',
     'p_grid': 'g_grid', 'p_event': 'g_event', 'p_book': 'g_book', 'p_game': 'g_game', 'p_inbox': 'g_net_inbox',
-    'p_holder': 'g_inventory', 'p_from': 'g_inventory', 'p_to': 'g_grid', 'p_container': 'g_grid',
+    'p_holder': 'g_inventory', 'p_away': 'g_away', 'p_from': 'g_inventory', 'p_to': 'g_grid', 'p_container': 'g_grid',
 }
 SCRATCH = ['g_test_record', 'g_test_record_2', 'g_test_record_3']
 

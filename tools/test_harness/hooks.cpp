@@ -202,6 +202,22 @@ static void register_hooks(){
   g_calls["look_up"]=[]{ double y=0,p=0; player_look(g_player,y,p); set_look(y,MAX_PITCH); };
   g_calls["head_left"]=[]{ double y=0,p=0; player_look(g_player,y,p); set_look(wrap_angle(y-0.5),0.0); printf("[hook] yaw %.2f body %.2f\n",wrap_angle(y-0.5),player_body_yaw(g_player)); };
   g_calls["head_right"]=[]{ double y=0,p=0; player_look(g_player,y,p); set_look(wrap_angle(y+0.5),0.0); printf("[hook] yaw %.2f body %.2f\n",wrap_angle(y+0.5),player_body_yaw(g_player)); };
+  // each dimension's own chests (35_dimension_stores)
+  g_calls["chest_behind"]=[]{ int x=(int)px()-2,y=(int)py(),z=(int)pz(); world_place_block(g_events,x,y,z,BLOCK_CHEST); printf("[stores] chest placed at %d %d %d in dimension %d\n",x,y,z,world_dimension()); };
+  g_calls["fill_chest"]=[]{ int item=world_dimension()==DIM_NETHER?ITEM_NETHER_QUARTZ:ITEM_COAL; for(int c=1;c<=MAX_CHESTS;c++) if(chest_used(g_furnaces,c)&&slot_is_empty(g_furnaces,chest_slot(c,1))) slot_set(g_furnaces,chest_slot(c,1),item,world_dimension()==DIM_NETHER?7:5,0); };
+  g_calls["away_chests"]=[]{ Attributes t; record_copy_unprefixed(g_away,t,AWAY_FURNACES); int n=0; printf("[stores] away:");
+    for(int c=1;c<=MAX_CHESTS;c++) if(chest_used(t,c)){ n++; printf(" chest %d at %d %d %d holds %s x%d;",c,record_integer_at(t,ATTR_CHEST_X,c),record_integer_at(t,ATTR_CHEST_Y,c),record_integer_at(t,ATTR_CHEST_Z,c),item_name(slot_item(t,chest_slot(c,1))).c_str(),slot_count(t,chest_slot(c,1))); }
+    Attributes m; record_copy_unprefixed(g_away,m,AWAY_COWS); int mobs=0; for(int k=1;k<=MAX_COWS;k++) if(record_integer_at(m,ATTR_USED,k)==1) mobs++;
+    printf(" %d chests, %d mobs (dimension %d now)\n",n,mobs,world_dimension()); };
+  g_calls["write_legacy_world"]=[]{ FILE*f=fopen("cubeland_worlds/Legacy.cubeworld","w"); if(!f){ printf("[stores] can't write\n"); return; }
+    fprintf(f,"CUBELAND_WORLD 2\ndimension 0\nseed 4242\n");
+    fprintf(f,"rec furnaces chest_used_1 i 1\nrec furnaces chest_x_1 i 10\nrec furnaces chest_y_1 i 40\nrec furnaces chest_z_1 i 10\nrec furnaces chest_dim_1 i 1\n");
+    fprintf(f,"rec furnaces item_%d i %d\nrec furnaces count_%d i 9\n",CHEST_SLOT_BASE+1,ITEM_GLOWSTONE,CHEST_SLOT_BASE+1);
+    fprintf(f,"rec furnaces chest_used_2 i 1\nrec furnaces chest_x_2 i 64\nrec furnaces chest_y_2 i 70\nrec furnaces chest_z_2 i 64\nrec furnaces chest_dim_2 i 0\n");
+    fprintf(f,"rec furnaces item_%d i %d\nrec furnaces count_%d i 3\n",CHEST_SLOT_BASE+CHEST_SLOTS+1,ITEM_STICK,CHEST_SLOT_BASE+CHEST_SLOTS+1);
+    fprintf(f,"rec cows used_1 i 1\nrec cows kind_1 i %d\nrec cows x_1 r 10.5\nrec cows y_1 r 40\nrec cows z_1 r 10.5\nrec cows dim_1 i 1\n",MOB_PIG);
+    fprintf(f,"edits 100 1\nother_edits 200 %d\nend\n",BLOCK_GLOWSTONE); fclose(f); printf("[stores] wrote a version 2 world\n"); };
+  g_calls["world_files"]=[]{ if(system("cd cubeland_worlds && find Stores Legacy Legacy.cubeworld -type f | sort | sed 's/^/[stores] file /'; head -c 40 Legacy.cubeworld | sed 's/^/[stores] old file: /'; echo")){} };
   g_calls["light_fire_here"]=[]{ int x=(int)px()+2,y=(int)py(),z=(int)pz(); printf("[fire] lit %d\n",world_light_fire(g_events,x,y,z)); };
   g_calls["shared_cells"]=[]{ printf("[hook] host broke 87 67 63: %d; bob placed 86 68 63: %d and 86 69 63: %d\n",world_get_block(87,67,63),world_get_block(86,68,63),world_get_block(86,69,63)); };
   g_calls["clock"]=[]{ double t=world_time_of_day(g_info); printf("[hook] clock %s (%.3f) day %d daylight %.2f\n",world_clock_text(t).c_str(),t,record_integer(g_info,ATTR_WORLD_DAYS),world_daylight(t)); };

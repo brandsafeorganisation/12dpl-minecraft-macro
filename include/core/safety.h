@@ -121,6 +121,20 @@ Integer safe_file_open(Text p_path, Text p_mode, File &p_file)
   return File_open(p_path, p_mode, "", p_file);
 }
 
+Integer safe_folder_create(Text p_path)
+// ----------------------------------------------------------------
+// Make a folder (and nothing else), only inside SAFE_WRITE_FOLDER,
+// with the same rules as safe_path_is_writable. Returns 0 when the
+// folder is there afterwards.
+// ----------------------------------------------------------------
+{
+  if (Directory_exists(p_path)) return 0;
+  if (!safe_path_is_writable(p_path)) return SAFE_OPEN_REFUSED;
+  Directory_create(p_path);
+  if (Directory_exists(p_path)) return 0;
+  return SAFE_OPEN_REFUSED;
+}
+
 #ifdef SAFE_ALLOW_TEST_REPORTS
 Integer safe_open_html(Widget p_widget, Text p_path)
 // ----------------------------------------------------------------

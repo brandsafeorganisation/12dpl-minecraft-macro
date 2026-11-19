@@ -12,6 +12,7 @@
 #include "../../include/items/furnace.h"
 #include "../../include/mobs/cows.h"
 #include "../../include/items/drops.h"
+#include "../../include/items/chest.h"
 #include "../../include/player/player.h"
 #include "../../include/core/records.h"
 #include "../../include/program/settings.h"
@@ -132,15 +133,70 @@ void save_on_event(Attributes &p_event)
   }
 }
 
-Text save_world_path(Text p_name)
+Text save_world_folder(Text p_name)
 // ----------------------------------------------------------------
-// File holding a world
+// Folder holding a world (see WORLD_LEVEL_FILE)
+// ----------------------------------------------------------------
+{
+  Text l_folder = WORLD_FOLDER;
+
+  return l_folder + "\\" + p_name;
+}
+
+Text save_level_path(Text p_name)
+// ----------------------------------------------------------------
+// A world's level file: the world, player and inventory records
+// ----------------------------------------------------------------
+{
+  Text l_file      = WORLD_LEVEL_FILE;
+  Text l_extension = WORLD_EXTENSION;
+
+  return save_world_folder(p_name) + "\\" + l_file + l_extension;
+}
+
+Text save_region_path(Text p_name, Integer p_dimension)
+// ----------------------------------------------------------------
+// File holding one dimension of a world: its block changes, mobs,
+// drops, furnaces and chests (the Nether's in a folder of its own)
+// ----------------------------------------------------------------
+{
+  Text l_file      = WORLD_REGION_FILE;
+  Text l_extension = WORLD_EXTENSION;
+  Text l_nether    = WORLD_NETHER_FOLDER;
+
+  if (p_dimension == DIM_NETHER) return save_world_folder(p_name) + "\\" + l_nether + "\\" + l_file + l_extension;
+  return save_world_folder(p_name) + "\\" + l_file + l_extension;
+}
+
+Text save_legacy_path(Text p_name)
+// ----------------------------------------------------------------
+// The single file an older version saved a world in
 // ----------------------------------------------------------------
 {
   Text l_folder    = WORLD_FOLDER;
   Text l_extension = WORLD_EXTENSION;
 
   return l_folder + "\\" + p_name + l_extension;
+}
+
+Integer save_file_in_use(Text p_path)
+// ----------------------------------------------------------------
+// TRUE if a world file is there and not marked deleted
+// ----------------------------------------------------------------
+{
+  if (!File_exists(p_path)) return FALSE;
+  return !save_file_is_deleted(p_path);
+}
+
+Text save_world_path(Text p_name)
+// ----------------------------------------------------------------
+// The file that describes a world (the about and thumb lines): its
+// level file, or the single file of a world saved by an older
+// version that hasn't been saved since
+// ----------------------------------------------------------------
+{
+  if (!save_file_in_use(save_level_path(p_name)) && save_file_in_use(save_legacy_path(p_name))) return save_legacy_path(p_name);
+  return save_level_path(p_name);
 }
 
 Text save_settings_path()
@@ -186,58 +242,91 @@ Integer save_world_exists(Text p_name)
 // TRUE if a world of this name has been saved (and not deleted)
 // ----------------------------------------------------------------
 {
-  Text l_path = save_world_path(p_name);
-
-  if (!File_exists(l_path))         return FALSE;
-  if (save_file_is_deleted(l_path)) return FALSE;
-  return TRUE;
+  if (p_name == "") return FALSE;
+  if (save_file_in_use(save_level_path(p_name))) return TRUE;
+  return save_file_in_use(save_legacy_path(p_name));
 }
 
 Integer save_list_worlds(Dynamic_Text &p_names)
 // ----------------------------------------------------------------
-// Names of every saved world; returns how many there are
+// Names of every saved world (world folders, and the single files of
+// older versions); returns how many there are
 // ----------------------------------------------------------------
 {
+  Attributes l_found;
   Dynamic_Text l_files;
   Integer      l_count    = 0;
   Integer      l_file     = 0;
-  Integer      l_found    = 0;
+  Integer      l_listed   = 0;
   Text         l_path     = "";
   Text         l_pattern  = "*";
   Text         l_title    = "";
 
   Null(p_names);
   save_ensure_folder();
+  record_clear(l_found, DATATYPE_WORLD_LIST);
 
-  l_pattern = l_pattern + WORLD_EXTENSION;
-  if (List_files_in_folder(WORLD_FOLDER, l_pattern, l_count, l_files) != 0) return 0;
-
-  for (l_file = 1; l_file <= l_count; ++l_file) {
-    Get_item(l_files, l_file, l_path);
-    l_title = file_title_from_path(l_path);
-    if (l_title == "") continue;
-    if (!save_world_exists(l_title)) continue;
-    Append(l_title, p_names);
-    ++l_found;
+  if (List_subfolders_in_folder(WORLD_FOLDER, "*", l_count, l_files) == 0) {
+    for (l_file = 1; l_file <= l_count; ++l_file) {
+      Get_item(l_files, l_file, l_path);
+      l_title = save_file_name(l_path);
+      if (l_title == "" || l_title == "." || l_title == "..") continue;
+      if (!save_file_in_use(save_level_path(l_title))) continue;
+      record_set_integer(l_found, l_title, TRUE);
+      Append(l_title, p_names);
+      ++l_listed;
+    }
   }
-  return l_found;
+
+  Null(l_files);
+  l_count   = 0;
+  l_pattern = l_pattern + WORLD_EXTENSION;
+  if (List_files_in_folder(WORLD_FOLDER, l_pattern, l_count, l_files) == 0) {
+    for (l_file = 1; l_file <= l_count; ++l_file) {
+      Get_item(l_files, l_file, l_path);
+      l_title = file_title_from_path(l_path);
+      if (l_title == "") continue;
+      if (record_integer(l_found, l_title) == TRUE) continue;
+      if (!save_file_in_use(save_legacy_path(l_title))) continue;
+      record_set_integer(l_found, l_title, TRUE);
+      Append(l_title, p_names);
+      ++l_listed;
+    }
+  }
+  return l_listed;
+}
+
+Integer save_mark_deleted(Text p_path)
+// ----------------------------------------------------------------
+// Overwrite a world file with WORLD_DELETED_TAG (deleting files is
+// blocked by safety.h), if it is there
+// ----------------------------------------------------------------
+{
+  File l_file;
+
+  if (!File_exists(p_path)) return SUCCESS;
+  if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
+  File_write_line(l_file, WORLD_DELETED_TAG);
+  File_close(l_file);
+  return SUCCESS;
 }
 
 Integer save_delete_world(Text p_name)
 // ----------------------------------------------------------------
 // Delete a saved world. Deleting files is blocked by safety.h, so
-// the file is overwritten with WORLD_DELETED_TAG instead: the menu
-// no longer lists it and a new world can reuse the name. The empty
-// file can be removed by hand from the worlds folder.
+// its files are overwritten with WORLD_DELETED_TAG instead: the menu
+// no longer lists it and a new world can reuse the name. The emptied
+// files can be removed by hand from the worlds folder.
 // ----------------------------------------------------------------
 {
-  File l_file;
+  Integer l_result = SUCCESS;
 
   if (!save_world_exists(p_name)) return FAILURE;
-  if (safe_file_open(save_world_path(p_name), "w", l_file) != 0) return FAILURE;
-  File_write_line(l_file, WORLD_DELETED_TAG);
-  File_close(l_file);
-  return SUCCESS;
+  if (save_mark_deleted(save_level_path(p_name))              != SUCCESS) l_result = FAILURE;
+  if (save_mark_deleted(save_region_path(p_name, DIM_OVERWORLD)) != SUCCESS) l_result = FAILURE;
+  if (save_mark_deleted(save_region_path(p_name, DIM_NETHER))    != SUCCESS) l_result = FAILURE;
+  if (save_mark_deleted(save_legacy_path(p_name))             != SUCCESS) l_result = FAILURE;
+  return l_result;
 }
 
 // ---------------------------------------------------------------- the world list
@@ -717,85 +806,158 @@ Integer save_read_field(Dynamic_Text &p_words, Integer p_count, Attributes &p_re
 
 // ---------------------------------------------------------------- worlds
 
-Integer save_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                   Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)
+void save_write_level(File &p_file, Attributes &p_info, Attributes &p_player, Attributes &p_inventory)
 // ----------------------------------------------------------------
-// Write a world to its file. Emits EVT_WORLD_SAVED.
-// ----------------------------------------------------------------
-{
-  if (p_name == "") return FAILURE;
-
-  save_ensure_folder();
-  return save_world_to(save_world_path(p_name), p_name, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_events);
-}
-
-Integer save_world_to(Text p_path, Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                      Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)
-// ----------------------------------------------------------------
-// Write a world to the file p_path (a world's own file, or a
-// multiplayer snapshot). Emits EVT_WORLD_SAVED with p_name.
+// The top of a world: the tag and version, the about and thumb lines
+// for the world list, the dimension being played, the seed and the
+// world, player and inventory records
 // ----------------------------------------------------------------
 {
-  File    l_file;
   Text    l_line   = "";
   Text    l_text   = "";
-  Integer l_edit   = 0;
-  Integer l_on_row = 0;
   Integer l_row    = 0;
   Integer l_column = 0;
 
-  if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
-
   l_line = WORLD_FILE_TAG;
-  File_write_line(l_file, l_line + " " + To_text(WORLD_FILE_VERSION));
+  File_write_line(p_file, l_line + " " + To_text(WORLD_FILE_VERSION));
   l_line = GAME_VERSION;
   l_text = record_text(p_info, ATTR_SAVE_PLAYED_TEXT);
-  File_write_line(l_file, "about " + To_text(GAME_VERSION_CODE) + " " + To_text(record_integer(p_info, ATTR_SAVE_PLAYED)) + " " +
+  File_write_line(p_file, "about " + To_text(GAME_VERSION_CODE) + " " + To_text(record_integer(p_info, ATTR_SAVE_PLAYED)) + " " +
                   To_text(player_game_mode(p_player)) + " " + l_line + " " + l_text);
   if (g_thumb_ready) {
     for (l_row = 1; l_row <= THUMB_SIZE; ++l_row) {
       l_line = "";
       for (l_column = 1; l_column <= THUMB_SIZE; ++l_column) l_line = l_line + save_hex_colour(g_thumb_now[(l_row - 1) * THUMB_SIZE + l_column]);
-      File_write_line(l_file, "thumb " + To_text(l_row) + " " + l_line);
+      File_write_line(p_file, "thumb " + To_text(l_row) + " " + l_line);
     }
   }
-  File_write_line(l_file, "dimension " + To_text(world_dimension()));
-  File_write_line(l_file, "seed " + To_text(world_info_seed(p_info)));
+  File_write_line(p_file, "dimension " + To_text(world_dimension()));
+  File_write_line(p_file, "seed " + To_text(world_info_seed(p_info)));
 
-  save_write_record(l_file, RECORD_WORLD,     p_info);
-  save_write_record(l_file, RECORD_PLAYER,    p_player);
-  save_write_record(l_file, RECORD_INVENTORY, p_inventory);
-  save_write_record(l_file, RECORD_FURNACES,  p_furnaces);
-  save_write_record(l_file, RECORD_COWS,      p_cows);
-  save_write_record(l_file, RECORD_DROPS,     p_drops);
+  save_write_record(p_file, RECORD_WORLD,     p_info);
+  save_write_record(p_file, RECORD_PLAYER,    p_player);
+  save_write_record(p_file, RECORD_INVENTORY, p_inventory);
+}
 
-  // Block changes, several index/block pairs to a line
-  l_line   = "";
-  l_on_row = 0;
-  for (l_edit = 1; l_edit <= g_edit_count; ++l_edit) {
+void save_write_edits(File &p_file, Integer p_other)
+// ----------------------------------------------------------------
+// The block changes of the dimension being played (or, with other
+// TRUE, of the other one), several index/block pairs to a line
+// ----------------------------------------------------------------
+{
+  Text    l_line   = "";
+  Integer l_edit   = 0;
+  Integer l_count  = g_edit_count;
+  Integer l_on_row = 0;
+
+  if (p_other) l_count = g_other_edit_count;
+  for (l_edit = 1; l_edit <= l_count; ++l_edit) {
     if (l_on_row == 0) l_line = "edits";
-    l_line = l_line + " " + To_text(g_edit_index[l_edit]) + " " + To_text(g_edit_block[l_edit]);
+    if (p_other) {
+      l_line = l_line + " " + To_text(g_other_edit_index[l_edit]) + " " + To_text(g_other_edit_block[l_edit]);
+    } else {
+      l_line = l_line + " " + To_text(g_edit_index[l_edit]) + " " + To_text(g_edit_block[l_edit]);
+    }
     ++l_on_row;
     if (l_on_row >= EDITS_PER_LINE) {
-      File_write_line(l_file, l_line);
+      File_write_line(p_file, l_line);
       l_on_row = 0;
     }
   }
-  if (l_on_row > 0) File_write_line(l_file, l_line);
+  if (l_on_row > 0) File_write_line(p_file, l_line);
+}
 
-  // and the other dimension's
-  l_on_row = 0;
-  for (l_edit = 1; l_edit <= g_other_edit_count; ++l_edit) {
-    if (l_on_row == 0) l_line = "other_edits";
-    l_line = l_line + " " + To_text(g_other_edit_index[l_edit]) + " " + To_text(g_other_edit_block[l_edit]);
-    ++l_on_row;
-    if (l_on_row >= EDITS_PER_LINE) {
-      File_write_line(l_file, l_line);
-      l_on_row = 0;
-    }
+void save_write_region(File &p_file, Integer p_dimension, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                       Attributes &p_away)
+// ----------------------------------------------------------------
+// One dimension's part of a world: "region <dimension>", then its
+// furnaces and chests, mobs and drops and its block changes. They
+// come from the records being played if it is the dimension being
+// played, otherwise from the away record.
+// ----------------------------------------------------------------
+{
+  Attributes l_furnaces;
+  Attributes l_cows;
+  Attributes l_drops;
+
+  File_write_line(p_file, "region " + To_text(p_dimension));
+  if (p_dimension == world_dimension()) {
+    save_write_record(p_file, RECORD_FURNACES, p_furnaces);
+    save_write_record(p_file, RECORD_COWS,     p_cows);
+    save_write_record(p_file, RECORD_DROPS,    p_drops);
+    save_write_edits (p_file, FALSE);
+    return;
   }
-  if (l_on_row > 0) File_write_line(l_file, l_line);
+  record_copy_unprefixed(p_away, l_furnaces, AWAY_FURNACES);
+  record_copy_unprefixed(p_away, l_cows,     AWAY_COWS);
+  record_copy_unprefixed(p_away, l_drops,    AWAY_DROPS);
+  save_write_record(p_file, RECORD_FURNACES, l_furnaces);
+  save_write_record(p_file, RECORD_COWS,     l_cows);
+  save_write_record(p_file, RECORD_DROPS,    l_drops);
+  save_write_edits (p_file, TRUE);
+}
 
+Integer save_region_file(Text p_path, Integer p_dimension, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                         Attributes &p_away)
+// ----------------------------------------------------------------
+// Write one dimension of a world to a file of its own (see
+// save_write_region). Returns SUCCESS or FAILURE.
+// ----------------------------------------------------------------
+{
+  File l_file;
+  Text l_line = WORLD_FILE_TAG;
+
+  if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
+  File_write_line  (l_file, l_line + " " + To_text(WORLD_FILE_VERSION));
+  save_write_region(l_file, p_dimension, p_furnaces, p_cows, p_drops, p_away);
+  File_write_line  (l_file, "end");
+  File_close(l_file);
+  return SUCCESS;
+}
+
+Integer save_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                   Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events)
+// ----------------------------------------------------------------
+// Write a world to its folder, as the block game does: the level
+// file, the overworld's region file and the Nether's in DIM-1.
+// Emits EVT_WORLD_SAVED.
+// ----------------------------------------------------------------
+{
+  File l_file;
+  Text l_nether = WORLD_NETHER_FOLDER;
+
+  if (p_name == "") return FAILURE;
+
+  save_ensure_folder();
+  if (safe_folder_create(save_world_folder(p_name)) != 0) return FAILURE;
+  if (safe_folder_create(save_world_folder(p_name) + "\\" + l_nether) != 0) return FAILURE;
+
+  if (save_region_file(save_region_path(p_name, DIM_OVERWORLD), DIM_OVERWORLD, p_furnaces, p_cows, p_drops, p_away) != SUCCESS) return FAILURE;
+  if (save_region_file(save_region_path(p_name, DIM_NETHER),    DIM_NETHER,    p_furnaces, p_cows, p_drops, p_away) != SUCCESS) return FAILURE;
+  // the level file last: a world is only listed once it is complete
+  if (safe_file_open(save_level_path(p_name), "w", l_file) != 0) return FAILURE;
+  save_write_level(l_file, p_info, p_player, p_inventory);
+  File_write_line (l_file, "end");
+  File_close(l_file);
+
+  emit_event(p_events, EVT_WORLD_SAVED, 0, 0, 0, 0, 0.0, 0.0, 0.0, p_name);
+  return SUCCESS;
+}
+
+Integer save_world_to(Text p_path, Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                      Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events)
+// ----------------------------------------------------------------
+// Write a whole world to the one file p_path (a multiplayer
+// snapshot): the level lines and both dimensions' regions. Emits
+// EVT_WORLD_SAVED with p_name.
+// ----------------------------------------------------------------
+{
+  File l_file;
+
+  if (safe_file_open(p_path, "w", l_file) != 0) return FAILURE;
+  save_write_level (l_file, p_info, p_player, p_inventory);
+  save_write_region(l_file, DIM_OVERWORLD, p_furnaces, p_cows, p_drops, p_away);
+  save_write_region(l_file, DIM_NETHER,    p_furnaces, p_cows, p_drops, p_away);
   File_write_line(l_file, "end");
   File_close(l_file);
 
@@ -833,26 +995,19 @@ Real save_word_real(Dynamic_Text &p_words, Integer p_position)
   return l_value;
 }
 
-Integer load_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                   Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem)
+Integer load_world_file(Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                        Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                        Attributes &p_away_furnaces, Attributes &p_away_cows, Attributes &p_away_drops,
+                        Integer &p_dimension, Integer &p_seeded, Integer &p_version, Text &p_problem)
 // ----------------------------------------------------------------
-// Read a saved world by name (see load_world_from)
-// ----------------------------------------------------------------
-{
-  p_problem = "";
-  if (!save_world_exists(p_name)) {
-    p_problem = "there is no saved world called " + p_name;
-    return FAILURE;
-  }
-  return load_world_from(save_world_path(p_name), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_problem);
-}
-
-Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                        Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem)
-// ----------------------------------------------------------------
-// Read a world file: regenerate the terrain from its seed, apply
-// the saved block changes and read the records back
-// Returns SUCCESS, or FAILURE with problem saying why
+// Read one world file: a level file, a region file, a multiplayer
+// snapshot (both in one) or an older version's single file. The
+// seed line makes the dimension being played from the seed; the
+// records and block changes after "region <dimension>" go to that
+// dimension (the away records and the other edit list if it isn't
+// the one being played). dimension, seeded and version carry over
+// from one file of a world to the next.
+// Returns SUCCESS, or FAILURE with problem saying why.
 // ----------------------------------------------------------------
 {
   File         l_file;
@@ -864,18 +1019,12 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
   Integer      l_word     = 0;
   Integer      l_index    = 0;
   Integer      l_block    = 0;
-  Integer      l_furnace  = 0;
-  Integer      l_edit     = 0;
   Integer      l_cell_x   = 0;
   Integer      l_cell_y   = 0;
   Integer      l_cell_z   = 0;
-  Integer      l_fx       = 0;
-  Integer      l_fy       = 0;
-  Integer      l_fz       = 0;
-  Integer      l_seeded   = FALSE;
-  Integer      l_dimension = DIM_OVERWORLD;
+  Integer      l_version  = 0;
+  Integer      l_here     = TRUE;    // the lines are about the dimension being played
 
-  p_problem = "";
   if (!File_exists(p_path)) {
     p_problem = "there is no world file " + p_path;
     return FAILURE;
@@ -884,7 +1033,6 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
     p_problem = "the world file couldn't be opened";
     return FAILURE;
   }
-
   if (File_read_line(l_file, l_line) != 0) {
     File_close(l_file);
     p_problem = "the world file is empty";
@@ -898,18 +1046,13 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
     p_problem = "it isn't a Cubeland world file";
     return FAILURE;
   }
-  if (l_count < 2 || save_word_integer(l_words, 2) != WORLD_FILE_VERSION) {
+  if (l_count >= 2) l_version = save_word_integer(l_words, 2);
+  if (l_version != WORLD_FILE_VERSION && l_version != WORLD_LEGACY_VERSION) {
     File_close(l_file);
     p_problem = "it was saved by an older version of Cubeland";
     return FAILURE;
   }
-
-  save_clear_edits();
-  save_clear_thumbnail();
-  inventory_clear (p_inventory);
-  furnaces_clear  (p_furnaces);
-  cows_clear      (p_cows);
-  drops_clear     (p_drops);
+  p_version = l_version;
 
   while (File_read_line(l_file, l_line) == 0) {
     Null(l_words);
@@ -928,24 +1071,32 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
       }
       if (l_index == THUMB_SIZE) g_thumb_ready = 1;
     } else if (l_key == "dimension" && l_count >= 2) {
-      l_dimension = save_word_integer(l_words, 2);
-      if (l_dimension != DIM_NETHER) l_dimension = DIM_OVERWORLD;
+      p_dimension = save_word_integer(l_words, 2);
+      if (p_dimension != DIM_NETHER) p_dimension = DIM_OVERWORLD;
     } else if (l_key == "seed" && l_count >= 2) {
-      world_generate_dimension(p_info, save_word_integer(l_words, 2), l_dimension);
+      world_generate_dimension(p_info, save_word_integer(l_words, 2), p_dimension);
       mesh_reset();
       player_reset(p_player, 0.0, 0.0, 0.0);
-      l_seeded = TRUE;
-    } else if (!l_seeded) {
+      p_seeded = TRUE;
+    } else if (!p_seeded) {
       continue;
+    } else if (l_key == WORLD_REGION_TAG && l_count >= 2) {
+      l_here = save_word_integer(l_words, 2) == p_dimension;
     } else if (l_key == "rec" && l_count >= 5) {
       Get_item(l_words, 2, l_target);
       if (l_target == RECORD_WORLD    ) save_read_field(l_words, l_count, p_info);
       if (l_target == RECORD_PLAYER   ) save_read_field(l_words, l_count, p_player);
       if (l_target == RECORD_INVENTORY) save_read_field(l_words, l_count, p_inventory);
-      if (l_target == RECORD_FURNACES ) save_read_field(l_words, l_count, p_furnaces);
-      if (l_target == RECORD_COWS     ) save_read_field(l_words, l_count, p_cows);
-      if (l_target == RECORD_DROPS    ) save_read_field(l_words, l_count, p_drops);
-    } else if (l_key == "edits") {
+      if (l_here) {
+        if (l_target == RECORD_FURNACES) save_read_field(l_words, l_count, p_furnaces);
+        if (l_target == RECORD_COWS    ) save_read_field(l_words, l_count, p_cows);
+        if (l_target == RECORD_DROPS   ) save_read_field(l_words, l_count, p_drops);
+      } else {
+        if (l_target == RECORD_FURNACES) save_read_field(l_words, l_count, p_away_furnaces);
+        if (l_target == RECORD_COWS    ) save_read_field(l_words, l_count, p_away_cows);
+        if (l_target == RECORD_DROPS   ) save_read_field(l_words, l_count, p_away_drops);
+      }
+    } else if (l_key == "edits" && l_here) {
       for (l_word = 2; l_word + 1 <= l_count; l_word = l_word + 2) {
         l_index = save_word_integer(l_words, l_word);
         l_block = save_word_integer(l_words, l_word + 1);
@@ -955,7 +1106,8 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
         world_set_block(l_cell_x, l_cell_y, l_cell_z, l_block);
         mesh_mark_dirty(l_cell_x, l_cell_y, l_cell_z);
       }
-    } else if (l_key == "other_edits") {
+    } else if (l_key == "other_edits" || l_key == "edits") {
+      // the other dimension's ("other_edits" in an older version's file)
       for (l_word = 2; l_word + 1 <= l_count; l_word = l_word + 2) {
         l_index = save_word_integer(l_words, l_word);
         if (l_index < 1 || l_index > WORLD_CELLS) continue;
@@ -964,12 +1116,44 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
     }
   }
   File_close(l_file);
+  return SUCCESS;
+}
 
-  if (!l_seeded) {
+Integer load_world_finish(Attributes &p_info, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away,
+                          Attributes &p_away_furnaces, Attributes &p_away_cows, Attributes &p_away_drops,
+                          Integer p_dimension, Integer p_seeded, Integer p_version, Text &p_problem)
+// ----------------------------------------------------------------
+// After a world's files are read: an older version's things marked
+// with the other dimension are moved to the away records, which go
+// into the away record; the lists of used mobs, drops and furnaces
+// are rebuilt; torches light their surroundings again
+// ----------------------------------------------------------------
+{
+  Integer l_edit    = 0;
+  Integer l_cell_x  = 0;
+  Integer l_cell_y  = 0;
+  Integer l_cell_z  = 0;
+  Integer l_furnace = 0;
+  Integer l_fx      = 0;
+  Integer l_fy      = 0;
+  Integer l_fz      = 0;
+
+  if (!p_seeded) {
     p_problem = "the world file has no seed";
     return FAILURE;
   }
   world_finish_maps();
+
+  if (p_version == WORLD_LEGACY_VERSION) {
+    mobs_split_legacy    (p_cows,     p_away_cows,     p_dimension);
+    drops_split_legacy   (p_drops,    p_away_drops,    p_dimension);
+    furnaces_split_legacy(p_furnaces, p_away_furnaces, p_dimension);
+    chests_split_legacy  (p_furnaces, p_away_furnaces, p_dimension);
+  }
+  record_clear        (p_away, DATATYPE_AWAY);
+  record_copy_prefixed(p_away_furnaces, p_away, AWAY_FURNACES);
+  record_copy_prefixed(p_away_cows,     p_away, AWAY_COWS);
+  record_copy_prefixed(p_away_drops,    p_away, AWAY_DROPS);
 
   // The lists of used mob, drop and furnace numbers come from the
   // "used" fields just read
@@ -990,8 +1174,86 @@ Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, A
     furnace_cell(p_furnaces, l_furnace, l_fx, l_fy, l_fz);
     if (!block_is_furnace(world_get_block(l_fx, l_fy, l_fz))) furnace_set_used(p_furnaces, l_furnace, FALSE);
   }
-
   return SUCCESS;
+}
+
+void load_world_start(Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                      Attributes &p_away_furnaces, Attributes &p_away_cows, Attributes &p_away_drops)
+// ----------------------------------------------------------------
+// Empty what a world file fills in, before reading one
+// ----------------------------------------------------------------
+{
+  save_clear_edits();
+  save_clear_thumbnail();
+  inventory_clear(p_inventory);
+  furnaces_clear (p_furnaces);
+  cows_clear     (p_cows);
+  drops_clear    (p_drops);
+  furnaces_clear (p_away_furnaces);
+  cows_clear     (p_away_cows);
+  drops_clear    (p_away_drops);
+}
+
+Integer load_world(Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                   Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Text &p_problem)
+// ----------------------------------------------------------------
+// Read a saved world by name: its folder (level file, then each
+// dimension's region file), or an older version's single file
+// ----------------------------------------------------------------
+{
+  Attributes l_away_furnaces;
+  Attributes l_away_cows;
+  Attributes l_away_drops;
+  Integer    l_dimension = DIM_OVERWORLD;
+  Integer    l_seeded    = FALSE;
+  Integer    l_version   = 0;
+
+  p_problem = "";
+  if (!save_world_exists(p_name)) {
+    p_problem = "there is no saved world called " + p_name;
+    return FAILURE;
+  }
+  if (save_world_path(p_name) == save_legacy_path(p_name)) {
+    return load_world_from(save_legacy_path(p_name), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_away, p_problem);
+  }
+
+  load_world_start(p_inventory, p_furnaces, p_cows, p_drops, l_away_furnaces, l_away_cows, l_away_drops);
+  if (load_world_file(save_level_path(p_name), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops,
+                      l_away_furnaces, l_away_cows, l_away_drops, l_dimension, l_seeded, l_version, p_problem) != SUCCESS) return FAILURE;
+  if (save_file_in_use(save_region_path(p_name, DIM_OVERWORLD))) {
+    if (load_world_file(save_region_path(p_name, DIM_OVERWORLD), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops,
+                        l_away_furnaces, l_away_cows, l_away_drops, l_dimension, l_seeded, l_version, p_problem) != SUCCESS) return FAILURE;
+  }
+  if (save_file_in_use(save_region_path(p_name, DIM_NETHER))) {
+    if (load_world_file(save_region_path(p_name, DIM_NETHER), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops,
+                        l_away_furnaces, l_away_cows, l_away_drops, l_dimension, l_seeded, l_version, p_problem) != SUCCESS) return FAILURE;
+  }
+  return load_world_finish(p_info, p_furnaces, p_cows, p_drops, p_away, l_away_furnaces, l_away_cows, l_away_drops,
+                           l_dimension, l_seeded, l_version, p_problem);
+}
+
+Integer load_world_from(Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                        Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Text &p_problem)
+// ----------------------------------------------------------------
+// Read a whole world from one file (a multiplayer snapshot, or an
+// older version's world file): regenerate the terrain from its seed,
+// apply the saved block changes and read the records back
+// Returns SUCCESS, or FAILURE with problem saying why
+// ----------------------------------------------------------------
+{
+  Attributes l_away_furnaces;
+  Attributes l_away_cows;
+  Attributes l_away_drops;
+  Integer    l_dimension = DIM_OVERWORLD;
+  Integer    l_seeded    = FALSE;
+  Integer    l_version   = 0;
+
+  p_problem = "";
+  load_world_start(p_inventory, p_furnaces, p_cows, p_drops, l_away_furnaces, l_away_cows, l_away_drops);
+  if (load_world_file(p_path, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops,
+                      l_away_furnaces, l_away_cows, l_away_drops, l_dimension, l_seeded, l_version, p_problem) != SUCCESS) return FAILURE;
+  return load_world_finish(p_info, p_furnaces, p_cows, p_drops, p_away, l_away_furnaces, l_away_cows, l_away_drops,
+                           l_dimension, l_seeded, l_version, p_problem);
 }
 
 #endif

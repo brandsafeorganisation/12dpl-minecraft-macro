@@ -28,7 +28,19 @@
 #define WORLD_EXTENSION     ".cubeworld"
 #define WORLD_FILE_TAG      "CUBELAND_WORLD"
 #define WORLD_DELETED_TAG   "CUBELAND_DELETED_WORLD"
-#define WORLD_FILE_VERSION  2
+#define WORLD_FILE_VERSION  3
+#define WORLD_LEGACY_VERSION 2        // one file for the whole world, things marked with their dimension
+#define WORLD_LEVEL_FILE    "level"   // a world is a folder: level.cubeworld (the world, player
+#define WORLD_REGION_FILE   "region"  // and inventory), region.cubeworld (the overworld's
+#define WORLD_NETHER_FOLDER "DIM-1"   // changes and things) and DIM-1\region.cubeworld (the Nether's)
+#define WORLD_REGION_TAG    "region"  // "region <dimension>": the lines after it are that dimension's
+
+// The dimension you aren't in: its mobs, drops and furnaces (with
+// chests) are kept in one record, their fields under these prefixes
+#define DATATYPE_AWAY       ("away")
+#define AWAY_COWS           ("cows__")
+#define AWAY_DROPS          ("drops__")
+#define AWAY_FURNACES       ("furnaces__")
 #define EDITS_PER_LINE      16
 
 // The top of a world file describes it for the world list without
@@ -91,12 +103,18 @@ void    save_record_other_edit(Integer p_index, Integer p_block);
 void    save_swap_edits   ();
 void    save_apply_edits  ();
 void    save_on_event     (Attributes &p_event);
+Text    save_world_folder (Text p_name);
+Text    save_level_path   (Text p_name);
+Text    save_region_path  (Text p_name, Integer p_dimension);
+Text    save_legacy_path  (Text p_name);
+Integer save_file_in_use  (Text p_path);
 Text    save_world_path   (Text p_name);
 Text    save_settings_path();
 void    save_ensure_folder();
 Integer save_file_is_deleted(Text p_path);
 Integer save_world_exists (Text p_name);
 Integer save_list_worlds  (Dynamic_Text &p_names);
+Integer save_mark_deleted (Text p_path);
 Integer save_delete_world (Text p_name);
 void    save_clear_thumbnail();
 Integer save_thumbnail_ready();
@@ -118,13 +136,28 @@ Text    text_escape       (Text p_value);
 Text    text_unescape     (Text p_value);
 void    save_write_record (File &p_file, Text p_name, Attributes &p_record);
 Integer save_read_field   (Dynamic_Text &p_words, Integer p_count, Attributes &p_record);
+void    save_write_level  (File &p_file, Attributes &p_info, Attributes &p_player, Attributes &p_inventory);
+void    save_write_edits  (File &p_file, Integer p_other);
+void    save_write_region (File &p_file, Integer p_dimension, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                           Attributes &p_away);
+Integer save_region_file  (Text p_path, Integer p_dimension, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                           Attributes &p_away);
 Integer save_world        (Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events);
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events);
 Integer save_world_to     (Text p_path, Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events);
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events);
+Integer load_world_file   (Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                           Attributes &p_away_furnaces, Attributes &p_away_cows, Attributes &p_away_drops,
+                           Integer &p_dimension, Integer &p_seeded, Integer &p_version, Text &p_problem);
+Integer load_world_finish (Attributes &p_info, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away,
+                           Attributes &p_away_furnaces, Attributes &p_away_cows, Attributes &p_away_drops,
+                           Integer p_dimension, Integer p_seeded, Integer p_version, Text &p_problem);
+void    load_world_start  (Attributes &p_inventory, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                           Attributes &p_away_furnaces, Attributes &p_away_cows, Attributes &p_away_drops);
 Integer load_world_from   (Text p_path, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem);
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Text &p_problem);
 Integer load_world        (Text p_name, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Text &p_problem);
+                           Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Text &p_problem);
 
 #endif

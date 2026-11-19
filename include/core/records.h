@@ -19,7 +19,8 @@
 // ---------------------------------------------------------------- shared field names
 #define ATTR_DATATYPE      ("datatype")
 #define ATTR_USED          ("used")
-#define ATTR_DIM           ("dim")      // DIM_* a mob, drop, furnace or chest is in (0, the overworld, if missing)
+#define ATTR_LEGACY_DIM    ("dim")      // DIM_* a mob, drop, furnace or chest was in, in world files
+                                        // of version 2 (now each dimension keeps its own records)
 #define ATTR_X             ("x")
 #define ATTR_Y             ("y")
 #define ATTR_Z             ("z")
@@ -55,6 +56,11 @@ Text    record_datatype      (Attributes &p_record);
 
 // Fields of entity number index inside a collection record
 Text    record_field_at      (Text p_field, Integer p_index);
+Integer record_copy_field    (Attributes &p_source, Integer p_number, Attributes &p_target, Text p_name);
+void    record_copy_prefixed (Attributes &p_source, Attributes &p_target, Text p_prefix);
+void    record_copy_unprefixed(Attributes &p_source, Attributes &p_target, Text p_prefix);
+void    record_copy          (Attributes &p_source, Attributes &p_target);
+Integer record_copy_entity   (Attributes &p_source, Attributes &p_target, Integer p_index);
 Integer record_integer_at    (Attributes &p_record, Text p_field, Integer p_index);
 Real    record_real_at       (Attributes &p_record, Text p_field, Integer p_index);
 Text    record_text_at       (Attributes &p_record, Text p_field, Integer p_index);

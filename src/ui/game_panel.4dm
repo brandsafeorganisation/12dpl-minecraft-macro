@@ -137,7 +137,7 @@ Integer game_panel_save()
   Get_time(l_seconds);
   Get_time(l_clock);
   save_note_played(g_info, l_seconds, l_clock);
-  return game_save_world(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events);
+  return game_save_world(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_away, g_events);
 }
 
 void game_panel_close_screen()
@@ -307,22 +307,22 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   // Generate or load the world
   if (p_mode == MENU_RESULT_JOIN) {
     game_panel_notice(p_box, "Joining", l_folder);
-    l_loaded = game_join(l_folder, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_events,
+    l_loaded = game_join(l_folder, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_away, g_events,
                          g_hud, g_ui, g_net, g_peers, g_net_inbox, l_player_id, l_player_name, l_now, l_problem);
   } else if (p_mode == MENU_RESULT_CREATE) {
     game_panel_notice(p_box, "Generating world", "Seed " + To_text(p_seed) + " - this takes a few seconds");
     l_loaded = game_new_world(p_world_name, p_seed, p_game_mode, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows,
-                            g_drops, g_events, g_hud, g_ui);
+                            g_drops, g_away, g_events, g_hud, g_ui);
     l_problem = "it could not be saved";
   } else {
     game_panel_notice(p_box, "Loading world", p_world_name);
     l_loaded = game_load_world(p_world_name, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows,
-                             g_drops, g_events, g_hud, g_ui, l_problem);
+                             g_drops, g_away, g_events, g_hud, g_ui, l_problem);
     if (l_loaded == SUCCESS && p_mode == MENU_RESULT_HOST) {
       // the session is named after the time, so old logs in the
       // folder (files are never deleted) aren't mistaken for new ones
       l_session = Floor(l_now - Floor(l_now / 1000000000.0) * 1000000000.0);
-      l_loaded  = game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_events,
+      l_loaded  = game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_away, g_events,
                             g_net, g_peers, g_net_inbox, l_folder, To_text(l_session), l_player_id, l_player_name,
                             l_now, l_problem);
     }
@@ -380,7 +380,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
       l_playing = l_captured && ui_screen(g_ui) == SCREEN_NONE && !player_is_dead(g_player);
       net_poll(g_net, g_peers, g_net_inbox, l_frame_start);
       game_update(l_dt, l_real_dt, l_frame_start, l_playing, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces,
-                  g_cows, g_drops, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
+                  g_cows, g_drops, g_away, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
 
       // Through a portal: the other dimension is made while a notice
       // says where you are going
@@ -390,7 +390,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         } else {
           game_panel_notice(p_box, "Entering the Nether", "Building the Nether");
         }
-        game_travel(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
+        game_travel(g_info, g_player, g_cows, g_drops, g_furnaces, g_away, g_events);
         game_panel_dispatch(l_frame_start);
         game_build_nearby(g_player, settings_render_distance(g_settings));
         Get_time(l_frame_start);
@@ -592,7 +592,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         } else if (l_calibration == 2) {
           hud_toast(g_hud, "Couldn't grab the mouse: try moving the panel, then click again", l_now);
         } else {
-          if (player_is_dead(g_player)) game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
+          if (player_is_dead(g_player)) game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_away, g_events);
           l_start_request  = TRUE;
           l_start_by_click = TRUE;
         }
@@ -635,7 +635,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
           }
         } else if (player_is_dead(g_player)) {
           if (l_key == "r") {
-            game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_events);
+            game_respawn(g_info, g_player, g_cows, g_drops, g_furnaces, g_away, g_events);
             if (l_have_origin || l_have_seen) l_start_request = TRUE;
           }
         } else if (l_key == "escape") {

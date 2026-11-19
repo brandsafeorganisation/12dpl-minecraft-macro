@@ -22,7 +22,7 @@
 #define ATTR_CHEST_X        ("chest_x")
 #define ATTR_CHEST_Y        ("chest_y")
 #define ATTR_CHEST_Z        ("chest_z")
-#define ATTR_CHEST_DIM      ("chest_dim")   // DIM_* the chest is in
+#define ATTR_CHEST_LEGACY_DIM ("chest_dim") // DIM_* the chest was in (world files of version 2)
 
 Integer chest_slot          (Integer p_chest, Integer p_which);
 Integer chest_used          (Attributes &p_store, Integer p_chest);
@@ -31,5 +31,6 @@ Integer chest_get_or_create (Attributes &p_store, Integer p_x, Integer p_y, Inte
 void    chest_remove        (Attributes &p_store, Attributes &p_events, Integer p_chest);
 Integer chest_item_count    (Attributes &p_store, Integer p_chest);
 void    chest_on_event      (Attributes &p_event, Attributes &p_store, Attributes &p_events);
+void    chests_split_legacy (Attributes &p_store, Attributes &p_away_store, Integer p_dimension);
 
 #endif

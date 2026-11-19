@@ -1,0 +1,74 @@
+# Each dimension keeps its own chests, furnaces, mobs and drops: a
+# chest in the overworld and one in the Nether, each only seen in its
+# own dimension; the world is saved as a folder (level, region and
+# DIM-1\region files), loads in the Nether with both chests kept, and
+# back through the portal the overworld's chest is there again. A
+# world file of the older version (one file, things marked with their
+# dimension) loads with its Nether chest and pig put away, and is
+# saved as a folder after that.
+ui Singleplayer
+ui Create New World
+field World Name|Stores
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call to_meadow
+call noon
+call no_mobs
+call creative
+call look_level
+call obsidian_frame
+wait 2
+call hold_flint_and_steel
+caprclick
+wait 2
+call chest_behind
+wait 1
+call fill_chest
+call chests
+call into_portal
+wait 3
+call portals
+call chests
+call away_chests
+call chest_behind
+wait 1
+call fill_chest
+call chests
+key escape
+ui Save and Quit to Title
+call world_files
+ui Singleplayer
+ui row:Stores
+ui Play Selected World
+wait 2
+click 430 300
+wait 2
+call portals
+call chests
+call away_chests
+call back_to_portal
+wait 2
+call into_portal
+wait 3
+call portals
+call chests
+call away_chests
+key escape
+ui Save and Quit to Title
+call write_legacy_world
+ui Singleplayer
+snap 350_world_list
+wait 4
+ui row:Legacy
+ui Play Selected World
+wait 2
+click 430 300
+wait 2
+call chests
+call away_chests
+key escape
+ui Save and Quit to Title
+call world_files

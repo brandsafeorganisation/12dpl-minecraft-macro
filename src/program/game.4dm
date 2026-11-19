@@ -75,7 +75,7 @@ Integer game_load_textures(Attributes &p_settings, Text &p_report)
 }
 
 void game_reset_state(Attributes &p_game, Attributes &p_player, Attributes &p_inventory, Attributes &p_grid,
-                      Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
+                      Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events,
                       Attributes &p_hud, Attributes &p_ui)
 // ----------------------------------------------------------------
 // Empty every record before a world is created or loaded
@@ -89,6 +89,7 @@ void game_reset_state(Attributes &p_game, Attributes &p_player, Attributes &p_in
   furnaces_clear  (p_furnaces);
   cows_clear      (p_cows);
   drops_clear     (p_drops);
+  record_clear    (p_away, DATATYPE_AWAY);
   hud_clear       (p_hud);
   ui_clear        (p_ui);
   player_reset    (p_player, 0.0, 0.0, 0.0);
@@ -106,7 +107,7 @@ Text game_world_name(Attributes &p_game)
 
 Integer game_new_world(Text p_name, Integer p_seed, Integer p_mode, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                        Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
-                       Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui)
+                       Attributes &p_drops, Attributes &p_away, Attributes &p_events, Attributes &p_hud, Attributes &p_ui)
 // ----------------------------------------------------------------
 // Generate a fresh world from a seed, put the player in the starter
 // house with some cows about in a game mode (GAMEMODE_...), and save
@@ -118,7 +119,7 @@ Integer game_new_world(Text p_name, Integer p_seed, Integer p_mode, Attributes &
   Real       l_spawn_y = 0.0;
   Real       l_spawn_z = 0.0;
 
-  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_events, p_hud, p_ui);
+  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_away, p_events, p_hud, p_ui);
   record_set_text (p_game, ATTR_GAME_WORLD_NAME, p_name);
 
   world_generate(p_info, p_seed);
@@ -137,21 +138,22 @@ Integer game_new_world(Text p_name, Integer p_seed, Integer p_mode, Attributes &
   random_seed      (l_cow_random, p_seed + 7919);
   mobs_spawn_random(p_cows, l_cow_random, MOB_PIG, PIG_TARGET_COUNT, l_spawn_x, l_spawn_z, 10.0);
 
-  if (game_save_world(p_game, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_events) != SUCCESS) return FAILURE;
+  if (game_save_world(p_game, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_away, p_events) != SUCCESS) return FAILURE;
   events_clear(p_events);
   return SUCCESS;
 }
 
 Integer game_load_world(Text p_name, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                         Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
-                        Attributes &p_drops, Attributes &p_events, Attributes &p_hud, Attributes &p_ui, Text &p_problem)
+                        Attributes &p_drops, Attributes &p_away, Attributes &p_events, Attributes &p_hud, Attributes &p_ui,
+                        Text &p_problem)
 // ----------------------------------------------------------------
 // Load a saved world; problem says why if it fails
 // ----------------------------------------------------------------
 {
-  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_events, p_hud, p_ui);
+  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_away, p_events, p_hud, p_ui);
   record_set_text (p_game, ATTR_GAME_WORLD_NAME, p_name);
-  if (load_world(p_name, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_problem) != SUCCESS) return FAILURE;
+  if (load_world(p_name, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_away, p_problem) != SUCCESS) return FAILURE;
   // Worlds saved while flying land you unless they are in creative
   // or spectator
   if (player_survival(p_player)) player_set_flying(p_player, FALSE);
@@ -160,7 +162,7 @@ Integer game_load_world(Text p_name, Attributes &p_game, Attributes &p_info, Att
 }
 
 Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                  Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
+                  Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events,
                   Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_folder, Text p_session,
                   Text p_id, Text p_name, Real p_now, Text &p_problem)
 // ----------------------------------------------------------------
@@ -174,7 +176,7 @@ Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, 
     return FAILURE;
   }
   if (save_world_to(net_snapshot_path(p_folder, p_session), game_world_name(p_game), p_info, p_player, p_inventory,
-                    p_furnaces, p_cows, p_drops, p_events) != SUCCESS) {
+                    p_furnaces, p_cows, p_drops, p_away, p_events) != SUCCESS) {
     p_problem = "the world couldn't be written to " + p_folder;
     return FAILURE;
   }
@@ -188,8 +190,8 @@ Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, 
 }
 
 Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                  Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events,
-                  Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox,
+                  Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away,
+                  Attributes &p_events, Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox,
                   Text p_id, Text p_name, Real p_now, Text &p_problem)
 // ----------------------------------------------------------------
 // Join the game hosted in the multiplayer folder: load the host's
@@ -209,10 +211,10 @@ Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attribu
 
   if (net_read_session(p_folder, l_session, l_host, l_seed, l_world, p_problem) != SUCCESS) return FAILURE;
 
-  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_events, p_hud, p_ui);
+  game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_away, p_events, p_hud, p_ui);
   record_set_text (p_game, ATTR_GAME_WORLD_NAME, "MP " + l_world);
   if (load_world_from(net_snapshot_path(p_folder, l_session), p_info, p_player, p_inventory, p_furnaces, p_cows,
-                      p_drops, p_problem) != SUCCESS) return FAILURE;
+                      p_drops, p_away, p_problem) != SUCCESS) return FAILURE;
 
   // the snapshot holds the host's player, chests and furnaces: start
   // afresh (chests and furnaces fill up as you use them)
@@ -222,6 +224,7 @@ Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attribu
   inventory_clear    (p_inventory);
   furnaces_clear     (p_furnaces);
   drops_clear        (p_drops);
+  game_clear_away    (p_away);
 
   net_start(p_net, p_peers, p_inbox, NET_GUEST, p_folder, l_session, l_host, p_id, p_name, p_now);
   events_clear(p_events);
@@ -229,12 +232,12 @@ Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attribu
 }
 
 Integer game_save_world(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                        Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_events)
+                        Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events)
 // ----------------------------------------------------------------
 // Save the world being played
 // ----------------------------------------------------------------
 {
-  return save_world(game_world_name(p_game), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_events);
+  return save_world(game_world_name(p_game), p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_away, p_events);
 }
 
 void game_build_nearby(Attributes &p_player, Integer p_range)
@@ -268,18 +271,54 @@ void game_build_nearby(Attributes &p_player, Integer p_range)
   }
 }
 
-void game_switch_dimension(Attributes &p_info, Attributes &p_cows, Attributes &p_drops, Attributes &p_furnaces, Integer p_to)
+void game_clear_away(Attributes &p_away)
+// ----------------------------------------------------------------
+// The other dimension has no furnaces, chests or drops (its mobs
+// stay): used when joining a game, which starts those afresh
+// ----------------------------------------------------------------
+{
+  Attributes l_cows;
+
+  record_copy_unprefixed(p_away, l_cows, AWAY_COWS);
+  record_clear          (p_away, DATATYPE_AWAY);
+  record_copy_prefixed  (l_cows, p_away, AWAY_COWS);
+}
+
+void game_swap_away(Attributes &p_record, Attributes &p_away, Attributes &p_keep, Text p_prefix)
+// ----------------------------------------------------------------
+// Part of game_switch_dimension for one kind of thing: the record
+// being played is kept in keep under prefix, and the record takes
+// what away held under prefix (an empty record of the same type if
+// it held nothing yet)
+// ----------------------------------------------------------------
+{
+  Text l_type = record_datatype(p_record);
+
+  record_copy_prefixed  (p_record, p_keep, p_prefix);
+  record_copy_unprefixed(p_away, p_record, p_prefix);
+  if (record_datatype(p_record) == "") record_clear(p_record, l_type);
+}
+
+void game_switch_dimension(Attributes &p_info, Attributes &p_cows, Attributes &p_drops, Attributes &p_furnaces,
+                           Attributes &p_away, Integer p_to)
 // ----------------------------------------------------------------
 // Swap the blocks in g_world for the other dimension: this one's
 // changes are put away, the other is generated from the seed (into a
 // scratch record, so the world record keeps its spawn point and
-// clock) with its own changes put back, and only the mobs, drops and
-// furnaces there take part from now on
+// clock) with its own changes put back. Each dimension keeps its own
+// mobs, drops, furnaces and chests: this one's go into the away
+// record and the other's come out of it.
 // ----------------------------------------------------------------
 {
   Attributes l_scratch;
+  Attributes l_keep;
 
   if (p_to == world_dimension()) return;
+  record_clear  (l_keep, DATATYPE_AWAY);
+  game_swap_away(p_cows,     p_away, l_keep, AWAY_COWS);
+  game_swap_away(p_drops,    p_away, l_keep, AWAY_DROPS);
+  game_swap_away(p_furnaces, p_away, l_keep, AWAY_FURNACES);
+  record_copy           (l_keep, p_away);
   save_swap_edits();
   world_generate_dimension(l_scratch, world_info_seed(p_info), p_to);
   record_set_integer(p_info, ATTR_WORLD_DIMENSION, p_to);
@@ -291,7 +330,7 @@ void game_switch_dimension(Attributes &p_info, Attributes &p_cows, Attributes &p
 }
 
 Integer game_travel(Attributes &p_info, Attributes &p_player, Attributes &p_cows, Attributes &p_drops,
-                    Attributes &p_furnaces, Attributes &p_events)
+                    Attributes &p_furnaces, Attributes &p_away, Attributes &p_events)
 // ----------------------------------------------------------------
 // Take the player through the portal they are standing in to the
 // other dimension, at the same place across (the world is too small
@@ -321,7 +360,7 @@ Integer game_travel(Attributes &p_info, Attributes &p_player, Attributes &p_cows
     record_set_integer_at(p_info, ATTR_PORTAL_KNOWN, l_from + 1, TRUE);
   }
 
-  game_switch_dimension(p_info, p_cows, p_drops, p_furnaces, l_to);
+  game_switch_dimension(p_info, p_cows, p_drops, p_furnaces, p_away, l_to);
 
   if (record_integer_at(p_info, ATTR_PORTAL_KNOWN, l_to + 1) == TRUE) {
     l_found = world_find_portal(record_integer_at(p_info, ATTR_PORTAL_X, l_to + 1), record_integer_at(p_info, ATTR_PORTAL_Y, l_to + 1),
@@ -350,7 +389,7 @@ Integer game_travel(Attributes &p_info, Attributes &p_player, Attributes &p_cows
 }
 
 void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_cows, Attributes &p_drops, Attributes &p_furnaces,
-                  Attributes &p_events)
+                  Attributes &p_away, Attributes &p_events)
 // ----------------------------------------------------------------
 // Back to the spawn point with full health (the inventory is kept),
 // which is in the overworld
@@ -360,7 +399,7 @@ void game_respawn(Attributes &p_info, Attributes &p_player, Attributes &p_cows, 
   Real l_y = 0.0;
   Real l_z = 0.0;
 
-  game_switch_dimension(p_info, p_cows, p_drops, p_furnaces, DIM_OVERWORLD);
+  game_switch_dimension(p_info, p_cows, p_drops, p_furnaces, p_away, DIM_OVERWORLD);
   world_info_spawn(p_info, l_x, l_y, l_z);
   player_reset    (p_player, l_x, l_y + COLLISION_EPSILON, l_z);
   player_set_look (p_player, HALF_PI * 3.0, -0.1);
@@ -402,7 +441,7 @@ void game_dispatch_events(Attributes &p_events, Attributes &p_event, Attributes 
 
 void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
                  Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
-                 Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops,
+                 Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away,
                  Attributes &p_events, Attributes &p_event, Attributes &p_random, Attributes &p_settings,
                  Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox)
 // ----------------------------------------------------------------
@@ -436,7 +475,7 @@ void game_update(Real p_dt, Real p_real_dt, Real p_now, Integer p_running,
     l_autosave = l_autosave + p_dt;
     if (l_autosave > AUTOSAVE_SECONDS) {
       l_autosave = 0.0;
-      game_save_world(p_game, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_events);
+      game_save_world(p_game, p_info, p_player, p_inventory, p_furnaces, p_cows, p_drops, p_away, p_events);
     }
     record_set_real(p_game, ATTR_GAME_AUTOSAVE, l_autosave);
   }

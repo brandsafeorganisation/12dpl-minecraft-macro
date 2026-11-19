@@ -34,5 +34,6 @@ Integer drops_restore  (Attributes &p_drops, Integer p_item, Integer p_count, In
 void    drops_update   (Attributes &p_drops, Attributes &p_inventory, Attributes &p_events,
                         Real p_player_x, Real p_player_y, Real p_player_z, Integer p_player_dead, Real p_dt);
 void    drops_on_event (Attributes &p_event, Attributes &p_drops, Attributes &p_random);
+void    drops_split_legacy  (Attributes &p_drops, Attributes &p_away_drops, Integer p_dimension);
 
 #endif

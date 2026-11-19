@@ -33,14 +33,23 @@ void mobs_rebuild_index(Attributes &p_cows)
 // world is loaded)
 // ----------------------------------------------------------------
 {
+  slots_rebuild(SLOT_POOL_MOBS, p_cows, MAX_COWS);
+}
+
+void mobs_split_legacy(Attributes &p_cows, Attributes &p_away_cows, Integer p_dimension)
+// ----------------------------------------------------------------
+// A world file of an older version kept every animal in one record,
+// each marked with its dimension: move those not in dimension (the
+// one being played) to the away record, under the same numbers
+// ----------------------------------------------------------------
+{
   Integer l_n = 0;
 
-  slots_rebuild(SLOT_POOL_MOBS, p_cows, MAX_COWS);
-  // only those in the dimension being played (the rest wait for the
-  // player to come back through a portal)
   for (l_n = 1; l_n <= MAX_COWS; ++l_n) {
-    if (!slots_used(SLOT_POOL_MOBS, l_n)) continue;
-    if (record_integer_at(p_cows, ATTR_DIM, l_n) != world_dimension()) slots_set(SLOT_POOL_MOBS, l_n, FALSE);
+    if (record_integer_at(p_cows, ATTR_USED, l_n) != TRUE) continue;
+    if (record_integer_at(p_cows, ATTR_LEGACY_DIM, l_n) == p_dimension) continue;
+    record_copy_entity(p_cows, p_away_cows, l_n);
+    record_set_integer_at(p_cows, ATTR_USED, l_n, FALSE);
   }
 }
 
@@ -51,7 +60,6 @@ void mob_set_used(Attributes &p_cows, Integer p_cow, Integer p_used)
 // ----------------------------------------------------------------
 {
   record_set_integer_at(p_cows, ATTR_USED, p_cow, p_used);
-  if (p_used) record_set_integer_at(p_cows, ATTR_DIM, p_cow, world_dimension());
   slots_set(SLOT_POOL_MOBS, p_cow, p_used);
 }
 

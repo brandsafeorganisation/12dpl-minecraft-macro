@@ -34,14 +34,23 @@ void drops_rebuild_index(Attributes &p_drops)
 // world is loaded)
 // ----------------------------------------------------------------
 {
+  slots_rebuild(SLOT_POOL_DROPS, p_drops, MAX_DROPS);
+}
+
+void drops_split_legacy(Attributes &p_drops, Attributes &p_away_drops, Integer p_dimension)
+// ----------------------------------------------------------------
+// A world file of an older version kept every drop in one record,
+// each marked with its dimension: move those not in dimension (the
+// one being played) to the away record, under the same numbers
+// ----------------------------------------------------------------
+{
   Integer l_n = 0;
 
-  slots_rebuild(SLOT_POOL_DROPS, p_drops, MAX_DROPS);
-  // only those in the dimension being played (the rest wait for the
-  // player to come back through a portal)
   for (l_n = 1; l_n <= MAX_DROPS; ++l_n) {
-    if (!slots_used(SLOT_POOL_DROPS, l_n)) continue;
-    if (record_integer_at(p_drops, ATTR_DIM, l_n) != world_dimension()) slots_set(SLOT_POOL_DROPS, l_n, FALSE);
+    if (record_integer_at(p_drops, ATTR_USED, l_n) != TRUE) continue;
+    if (record_integer_at(p_drops, ATTR_LEGACY_DIM, l_n) == p_dimension) continue;
+    record_copy_entity(p_drops, p_away_drops, l_n);
+    record_set_integer_at(p_drops, ATTR_USED, l_n, FALSE);
   }
 }
 
@@ -52,7 +61,6 @@ void drop_set_used(Attributes &p_drops, Integer p_drop, Integer p_used)
 // ----------------------------------------------------------------
 {
   record_set_integer_at(p_drops, ATTR_USED, p_drop, p_used);
-  if (p_used) record_set_integer_at(p_drops, ATTR_DIM, p_drop, world_dimension());
   slots_set(SLOT_POOL_DROPS, p_drop, p_used);
 }
 

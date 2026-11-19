@@ -42,5 +42,6 @@ Integer furnace_can_cook      (Attributes &p_furnaces, Integer p_furnace);
 void    furnace_step          (Attributes &p_furnaces, Integer p_furnace, Real p_dt);
 void    furnaces_update      (Attributes &p_furnaces, Attributes &p_events, Real p_dt);
 void    furnace_on_event      (Attributes &p_event, Attributes &p_furnaces, Attributes &p_events);
+void    furnaces_split_legacy(Attributes &p_furnaces, Attributes &p_away_furnaces, Integer p_dimension);
 
 #endif

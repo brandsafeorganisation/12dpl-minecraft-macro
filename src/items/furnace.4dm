@@ -31,14 +31,36 @@ void furnaces_rebuild_index(Attributes &p_furnaces)
 // loaded)
 // ----------------------------------------------------------------
 {
-  Integer l_n = 0;
-
   slots_rebuild(SLOT_POOL_FURNACES, p_furnaces, MAX_FURNACES);
-  // only those in the dimension being played (the rest wait for the
-  // player to come back through a portal)
+}
+
+void furnaces_split_legacy(Attributes &p_furnaces, Attributes &p_away_furnaces, Integer p_dimension)
+// ----------------------------------------------------------------
+// A world file of an older version kept every furnace in one record,
+// each marked with its dimension: move those not in dimension (the
+// one being played), slots and all, to the away record under the
+// same numbers. (The record holds the chests too, so only the
+// furnace's own fields are moved.)
+// ----------------------------------------------------------------
+{
+  Integer l_n    = 0;
+  Integer l_slot = 0;
+  Integer l_at   = 0;
+
   for (l_n = 1; l_n <= MAX_FURNACES; ++l_n) {
-    if (!slots_used(SLOT_POOL_FURNACES, l_n)) continue;
-    if (record_integer_at(p_furnaces, ATTR_DIM, l_n) != world_dimension()) slots_set(SLOT_POOL_FURNACES, l_n, FALSE);
+    if (record_integer_at(p_furnaces, ATTR_USED, l_n) != TRUE) continue;
+    if (record_integer_at(p_furnaces, ATTR_LEGACY_DIM, l_n) == p_dimension) continue;
+    record_set_integer_at(p_away_furnaces, ATTR_USED, l_n, TRUE);
+    record_set_integer_at(p_away_furnaces, ATTR_X, l_n, record_integer_at(p_furnaces, ATTR_X, l_n));
+    record_set_integer_at(p_away_furnaces, ATTR_Y, l_n, record_integer_at(p_furnaces, ATTR_Y, l_n));
+    record_set_integer_at(p_away_furnaces, ATTR_Z, l_n, record_integer_at(p_furnaces, ATTR_Z, l_n));
+    furnace_set_state(p_away_furnaces, l_n, furnace_burn_left(p_furnaces, l_n), furnace_burn_total(p_furnaces, l_n), furnace_progress(p_furnaces, l_n));
+    for (l_slot = 1; l_slot <= FURNACE_SLOTS; ++l_slot) {
+      l_at = furnace_slot(l_n, l_slot);
+      slot_set  (p_away_furnaces, l_at, slot_item(p_furnaces, l_at), slot_count(p_furnaces, l_at), slot_damage(p_furnaces, l_at));
+      slot_clear(p_furnaces, l_at);
+    }
+    record_set_integer_at(p_furnaces, ATTR_USED, l_n, FALSE);
   }
 }
 
@@ -49,7 +71,6 @@ void furnace_set_used(Attributes &p_furnaces, Integer p_furnace, Integer p_used)
 // ----------------------------------------------------------------
 {
   record_set_integer_at(p_furnaces, ATTR_USED, p_furnace, p_used);
-  if (p_used) record_set_integer_at(p_furnaces, ATTR_DIM, p_furnace, world_dimension());
   slots_set(SLOT_POOL_FURNACES, p_furnace, p_used);
 }
 
@@ -118,12 +139,11 @@ void furnace_set_state(Attributes &p_furnaces, Integer p_furnace, Real p_burn_le
 
 Integer furnace_here(Attributes &p_furnaces, Integer p_furnace)
 // ----------------------------------------------------------------
-// TRUE if furnace number p_furnace is used and in the dimension
-// being played
+// TRUE if furnace number p_furnace is used (the record only holds
+// the furnaces of the dimension being played)
 // ----------------------------------------------------------------
 {
-  if (!furnace_used(p_furnaces, p_furnace)) return FALSE;
-  return record_integer_at(p_furnaces, ATTR_DIM, p_furnace) == world_dimension();
+  return furnace_used(p_furnaces, p_furnace);
 }
 
 Integer furnace_find(Attributes &p_furnaces, Integer p_x, Integer p_y, Integer p_z)

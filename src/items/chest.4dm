@@ -39,7 +39,6 @@ Integer chest_find(Attributes &p_store, Integer p_x, Integer p_y, Integer p_z)
     if (record_integer_at(p_store, ATTR_CHEST_X, l_chest) != p_x) continue;
     if (record_integer_at(p_store, ATTR_CHEST_Y, l_chest) != p_y) continue;
     if (record_integer_at(p_store, ATTR_CHEST_Z, l_chest) != p_z) continue;
-    if (record_integer_at(p_store, ATTR_CHEST_DIM, l_chest) != world_dimension()) continue;
     return l_chest;
   }
   return 0;
@@ -62,11 +61,38 @@ Integer chest_get_or_create(Attributes &p_store, Integer p_x, Integer p_y, Integ
     record_set_integer_at(p_store, ATTR_CHEST_X,    l_chest, p_x);
     record_set_integer_at(p_store, ATTR_CHEST_Y,    l_chest, p_y);
     record_set_integer_at(p_store, ATTR_CHEST_Z,    l_chest, p_z);
-    record_set_integer_at(p_store, ATTR_CHEST_DIM,  l_chest, world_dimension());
     for (l_which = 1; l_which <= CHEST_SLOTS; ++l_which) slot_clear(p_store, chest_slot(l_chest, l_which));
     return l_chest;
   }
   return 0;
+}
+
+void chests_split_legacy(Attributes &p_store, Attributes &p_away_store, Integer p_dimension)
+// ----------------------------------------------------------------
+// A world file of an older version kept every chest in one record,
+// each marked with its dimension: move those not in dimension (the
+// one being played), contents and all, to the away record under the
+// same numbers
+// ----------------------------------------------------------------
+{
+  Integer l_chest = 0;
+  Integer l_which = 0;
+  Integer l_at    = 0;
+
+  for (l_chest = 1; l_chest <= MAX_CHESTS; ++l_chest) {
+    if (!chest_used(p_store, l_chest)) continue;
+    if (record_integer_at(p_store, ATTR_CHEST_LEGACY_DIM, l_chest) == p_dimension) continue;
+    record_set_integer_at(p_away_store, ATTR_CHEST_USED, l_chest, TRUE);
+    record_set_integer_at(p_away_store, ATTR_CHEST_X, l_chest, record_integer_at(p_store, ATTR_CHEST_X, l_chest));
+    record_set_integer_at(p_away_store, ATTR_CHEST_Y, l_chest, record_integer_at(p_store, ATTR_CHEST_Y, l_chest));
+    record_set_integer_at(p_away_store, ATTR_CHEST_Z, l_chest, record_integer_at(p_store, ATTR_CHEST_Z, l_chest));
+    for (l_which = 1; l_which <= CHEST_SLOTS; ++l_which) {
+      l_at = chest_slot(l_chest, l_which);
+      slot_set  (p_away_store, l_at, slot_item(p_store, l_at), slot_count(p_store, l_at), slot_damage(p_store, l_at));
+      slot_clear(p_store, l_at);
+    }
+    record_set_integer_at(p_store, ATTR_CHEST_USED, l_chest, FALSE);
+  }
 }
 
 Integer chest_item_count(Attributes &p_store, Integer p_chest)

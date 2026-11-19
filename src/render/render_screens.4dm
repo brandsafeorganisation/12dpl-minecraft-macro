@@ -262,7 +262,9 @@ void screen_worlds(Draw_Box p_box, Attributes &p_menu, Attributes &p_worlds, Rea
     menu_draw_thumbnail(p_box, l_entry, record_integer_at(p_worlds, ATTR_WL_THUMB, l_entry), l_left + 4.0, l_y0 + 4.0, l_y1 - l_y0 - 8.0);
     l_name = record_text_at(p_worlds, ATTR_WL_NAME, l_entry);
     hud_shadow_text(p_box, l_left + 80.0, l_y1 - 8.0, 16.0, TEXT_ALIGN_LEFT, 255, 255, 255, menu_fit_text(l_name, 16.0, l_right - l_left - 90.0));
-    l_line = l_name + WORLD_EXTENSION;
+    // the world's folder, or the single file of an older version
+    l_line = save_file_name(save_world_path(l_name));
+    if (l_line != save_file_name(save_legacy_path(l_name))) l_line = l_name;
     if (record_text_at(p_worlds, ATTR_WL_DATE, l_entry) != "") l_line = l_line + " (" + record_text_at(p_worlds, ATTR_WL_DATE, l_entry) + ")";
     hud_text(p_box, l_left + 80.0, l_y1 - 30.0, 14.0, TEXT_ALIGN_LEFT, 160, 160, 160, menu_fit_text(l_line, 14.0, l_right - l_left - 90.0));
     l_mode      = record_integer_at(p_worlds, ATTR_WL_MODE, l_entry);

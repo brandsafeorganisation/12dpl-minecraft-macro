@@ -90,5 +90,6 @@ Integer cows_ray_hit       (Attributes &p_cows, Real p_origin_x, Real p_origin_y
 void    cow_damage         (Attributes &p_cows, Attributes &p_events, Attributes &p_random, Integer p_cow, Integer p_amount, Real p_push_x, Real p_push_z);
 void    cows_on_event      (Attributes &p_event, Attributes &p_cows, Attributes &p_random, Attributes &p_events);
 Integer cows_box_overlaps  (Attributes &p_cows, Real p_min_x, Real p_min_y, Real p_min_z, Real p_max_x, Real p_max_y, Real p_max_z);
+void    mobs_split_legacy   (Attributes &p_cows, Attributes &p_away_cows, Integer p_dimension);
 
 #endif

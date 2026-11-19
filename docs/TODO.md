@@ -19,16 +19,12 @@ item to "Done" (with the commit) when it is finished and tested.
   - make it smaller than a full block (14/16 wide and tall);
   - add double chests: two chests side by side make one 54-slot chest.
 
-### The Nether and portals
-
-- **Rework how a chest's dimension is kept.** At present each chest
-  (and furnace, mob and drop) carries a `dim` field and the slot indexes
-  filter on it. A chest shouldn't have to know its dimension. Instead,
-  keep each dimension's things in a store of their own, and save each
-  dimension to a folder of its own, as the block game does (`DIM-1`
-  for the Nether).
-
 ## Done
+
+- Each dimension keeps its own mobs, drops, furnaces and chests (no
+  `dim` fields; the other dimension's are put away and swapped back at
+  a portal), and a world is saved as a folder with the Nether in
+  `DIM-1`; older single-file worlds still load.
 
 - The head stays lit looking straight up; it turns as far left as
   right; flying shows the walking legs; the portal swirls (8 frames,

@@ -11,6 +11,7 @@
 #include "../../include/items/crafting.h"
 #include "../../include/world/world.h"
 #include "../../include/world/physics.h"
+#include "../../include/program/save.h"
 #include "../../include/player/player.h"
 #include "../../include/program/commands.h"
 #include "../../include/program/game.h"
@@ -551,6 +552,26 @@ void test_cases_run(Attributes &p_results)
     for (l_j = 0; l_j <= 4; ++l_j) world_set_block(l_x + l_i, l_y + l_j, l_z, BLOCK_AIR);
   }
   events_clear(g_events);
+
+  test_group(p_results, "records kept for the other dimension");
+  record_clear(l_record, DATATYPE_RANDOM);
+  record_set_integer_at(l_record, ATTR_X, 3, 30);
+  record_set_real_at   (l_record, ATTR_Y, 3, 1.5);
+  record_set_integer_at(l_record, ATTR_X, 13, 130);
+  record_clear(l_other, DATATYPE_AWAY);
+  record_copy_prefixed(l_record, l_other, AWAY_COWS);
+  test_expect_integer(p_results, "a field is kept under its prefix",  record_integer(l_other, "cows__x_3"), 30);
+  record_copy_unprefixed(l_other, l_set, AWAY_COWS);
+  test_expect_integer(p_results, "and comes back without it",         record_integer_at(l_set, ATTR_X, 3), 30);
+  test_expect_real   (p_results, "with its type",                     record_real_at(l_set, ATTR_Y, 3), 1.5, 0.0);
+  test_expect_text   (p_results, "and the datatype",                  record_datatype(l_set), DATATYPE_RANDOM);
+  record_clear(l_other, DATATYPE_AWAY);
+  test_expect_integer(p_results, "an entity's fields are copied",     record_copy_entity(l_record, l_other, 3), 2);
+  test_expect_integer(p_results, "not another's ending the same",     record_integer_at(l_other, ATTR_X, 13), 0);
+  record_copy(l_record, l_other);
+  test_expect_integer(p_results, "record_copy copies every field",     record_integer_at(l_other, ATTR_X, 13), 130);
+  test_expect_text   (p_results, "a world is a folder",               save_file_name(save_region_path("W", DIM_NETHER)), "region.cubeworld");
+  test_expect_true   (p_results, "with the Nether in DIM-1",          Find_text(save_region_path("W", DIM_NETHER), "\\DIM-1\\") > 0);
 
   test_group(p_results, "diamonds, jukebox and fire");
   test_expect_real   (p_results, "angle_difference the short way",    angle_difference(0.1, TWO_PI - 0.1), -0.2, 0.0001);

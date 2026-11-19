@@ -86,6 +86,107 @@ Text record_datatype(Attributes &p_record)
   return record_text(p_record, ATTR_DATATYPE);
 }
 
+// ---------------------------------------------------------------- copying
+
+Integer record_copy_field(Attributes &p_source, Integer p_number, Attributes &p_target, Text p_name)
+// ----------------------------------------------------------------
+// Copy field number p_number of source into target as p_name, with
+// its type (found by trying Integer, Real, then Text). Returns TRUE
+// if it was copied.
+// ----------------------------------------------------------------
+{
+  Integer l_integer = 0;
+  Real    l_real    = 0.0;
+  Text    l_text    = "";
+
+  if (Get_attribute(p_source, p_number, l_integer) == 0) {
+    Set_attribute(p_target, p_name, l_integer);
+    return TRUE;
+  }
+  if (Get_attribute(p_source, p_number, l_real) == 0) {
+    Set_attribute(p_target, p_name, l_real);
+    return TRUE;
+  }
+  if (Get_attribute(p_source, p_number, l_text) == 0) {
+    Set_attribute(p_target, p_name, l_text);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+void record_copy_prefixed(Attributes &p_source, Attributes &p_target, Text p_prefix)
+// ----------------------------------------------------------------
+// Add every field of source to target with prefix in front of its
+// name ("x_3" becomes "<prefix>x_3"); target's other fields stay.
+// Used to keep several records in one (the dimension you aren't in).
+// ----------------------------------------------------------------
+{
+  Integer l_fields = 0;
+  Integer l_field  = 0;
+  Text    l_name   = "";
+
+  Get_number_of_attributes(p_source, l_fields);
+  for (l_field = 1; l_field <= l_fields; ++l_field) {
+    if (Get_attribute_name(p_source, l_field, l_name) != 0) continue;
+    record_copy_field(p_source, l_field, p_target, p_prefix + l_name);
+  }
+}
+
+void record_copy_unprefixed(Attributes &p_source, Attributes &p_target, Text p_prefix)
+// ----------------------------------------------------------------
+// Empty target and fill it with the fields of source whose names
+// start with prefix, without it: undoes record_copy_prefixed
+// ----------------------------------------------------------------
+{
+  Integer l_fields = 0;
+  Integer l_field  = 0;
+  Integer l_length = Text_length(p_prefix);
+  Text    l_name   = "";
+
+  Attribute_delete_all(p_target);
+  Get_number_of_attributes(p_source, l_fields);
+  for (l_field = 1; l_field <= l_fields; ++l_field) {
+    if (Get_attribute_name(p_source, l_field, l_name) != 0) continue;
+    if (Text_length(l_name) <= l_length) continue;
+    if (Get_subtext(l_name, 1, l_length) != p_prefix) continue;
+    record_copy_field(p_source, l_field, p_target, Get_subtext(l_name, l_length + 1, Text_length(l_name)));
+  }
+}
+
+void record_copy(Attributes &p_source, Attributes &p_target)
+// ----------------------------------------------------------------
+// Make target hold exactly the fields of source (field by field: 12d
+// doesn't say whether "=" copies or shares a record)
+// ----------------------------------------------------------------
+{
+  Attribute_delete_all(p_target);
+  record_copy_prefixed(p_source, p_target, "");
+}
+
+Integer record_copy_entity(Attributes &p_source, Attributes &p_target, Integer p_index)
+// ----------------------------------------------------------------
+// Copy the fields of entity number index ("<field>_<index>") of a
+// collection from source to target under the same names. Returns
+// how many were copied.
+// ----------------------------------------------------------------
+{
+  Integer l_fields = 0;
+  Integer l_field  = 0;
+  Integer l_copied = 0;
+  Text    l_name   = "";
+  Text    l_suffix = "_" + To_text(p_index);
+  Integer l_length = Text_length(l_suffix);
+
+  Get_number_of_attributes(p_source, l_fields);
+  for (l_field = 1; l_field <= l_fields; ++l_field) {
+    if (Get_attribute_name(p_source, l_field, l_name) != 0) continue;
+    if (Text_length(l_name) <= l_length) continue;
+    if (Get_subtext(l_name, Text_length(l_name) - l_length + 1, Text_length(l_name)) != l_suffix) continue;
+    if (record_copy_field(p_source, l_field, p_target, l_name)) ++l_copied;
+  }
+  return l_copied;
+}
+
 // ---------------------------------------------------------------- collections
 
 Text record_field_at(Text p_field, Integer p_index)

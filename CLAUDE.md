@@ -161,10 +161,19 @@ Things learned the hard way:
 `g_world` holds one dimension at a time (`world_dimension()`). Going
 through a portal (`game_travel`) swaps the edit lists, regenerates the
 other dimension from the seed into a scratch record and applies its
-edits. Mobs, drops, furnaces and chests carry a `dim` field and their
-slot indexes only list the current dimension's, so loops over them need
-no dimension checks; anything new that lives in the world should do the
-same.
+edits. Each dimension has its own mobs, drops, furnaces and chests:
+`g_cows`, `g_drops` and `g_furnaces` hold the current dimension's, and
+`g_away` holds the other's under the prefixes `AWAY_*` (save.h);
+`game_switch_dimension` swaps them. Nothing carries a dimension field;
+anything new that lives in the world goes in a record that is swapped
+the same way.
+
+A world is saved as a folder, like the block game's:
+`cubeland_worlds\<name>\level.cubeworld` (the world, player and
+inventory), `region.cubeworld` (the overworld's changes and things) and
+`DIM-1\region.cubeworld` (the Nether's). A multiplayer snapshot is
+all of it in one file. Version 2 worlds (one file, things marked with
+`dim`) still load (`*_split_legacy`) and are saved as folders after.
 
 ### The one panel
 
