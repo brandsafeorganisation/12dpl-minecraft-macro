@@ -34,10 +34,10 @@ def map_entries():
         r'pack_entry\(p_tex, p_kind, p_name, p_tint, p_overlay, (\w+(?:\s*\+\s*\d+)?)\s*, "(\w+)"\s*, "([\w/]+)"\s*, (\w+)\s*, "(\w*)"\)', src)]
 
 def part_entries():
-    """(tex macro name, skin name, x, y, w, h, turn macro) from pack_map_part()"""
+    """(tex expression, kind, image name, x, y, w, h, turn macro) from pack_map_part()"""
     src = open(os.path.join(MACRO, 'src', 'blocks', 'resource_pack.4dm')).read()
-    return [(t, n, int(x), int(y), int(w), int(h), turn) for t, n, x, y, w, h, turn in re.findall(
-        r'pack_part\(p_tex, p_name, p_x, p_y, p_w, p_h, p_turn, (\w+)\s*, "([\w/]+)"\s*, (\d+)\s*, (\d+)\s*, (\d+)\s*, (\d+)\s*, (\w+)\s*\)', src)]
+    return [(t.strip(), k, n, int(x), int(y), int(w), int(h), turn) for t, k, n, x, y, w, h, turn in re.findall(
+        r'pack_part\(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, ([^"]+?)\s*, "(\w+)"\s*, "([\w/]+)"\s*, (\d+)\s*, (\d+)\s*, (\d+)\s*, (\d+)\s*, (\w+)\s*\)', src)]
 
 def expected_part(pixels, width, x, y, w, h, turn):
     """the 16 x 16 picture the macro samples from a skin rectangle"""
@@ -51,16 +51,33 @@ def expected_part(pixels, width, x, y, w, h, turn):
             if turn == 'PACK_TURN_RIGHT': a, b = v, 17 - u
             elif turn == 'PACK_TURN_HALF': a, b = 17 - u, 17 - v
             elif turn == 'PACK_TURN_LEFT': a, b = 17 - v, u
+            elif turn == 'PACK_TURN_FLIP': a, b = u, 17 - v
             px = rx + ((2 * a - 1) * rw) // 32
             py = ry + ((2 * b - 1) * rh) // 32
             out.append(list(pixels[py][px]))
     return out
 
+def is_sprite(tex_id):
+    """texture_is_sprite() from textures.4dm: the block faces numbered
+    after TEX_FIRST_SPRITE that it lists aren't sprites"""
+    src = open(os.path.join(MACRO, 'src', 'blocks', 'textures.4dm')).read()
+    body = src[src.index('Integer texture_is_sprite('):]
+    body = body[:body.index('\n}')]
+    for a, b in re.findall(r'p_tex >= (\w+) && p_tex <= (\w+)\) return FALSE', body):
+        if macro_value(a) <= tex_id <= macro_value(b): return False
+    for a in re.findall(r'p_tex == (\w+)\) return FALSE', body):
+        if tex_id == macro_value(a): return False
+    return tex_id >= macro_value('TEX_FIRST_SPRITE')
+
 def macro_value(name):
+    """the value of a macro, a number, a sum of them or chest_texture(type)"""
+    name = name.strip()
     if '+' in name:
-        base, offset = name.split('+')
-        return macro_value(base.strip()) + int(offset)
-    for header in ('textures.h', 'resource_pack.h'):
+        return sum(macro_value(term) for term in name.split('+'))
+    if name.isdigit(): return int(name)
+    m = re.match(r'chest_texture\((\w+)\)$', name)
+    if m: return macro_value('TEX_CHEST_PARTS') + macro_value(m.group(1)) * macro_value('CHEST_PARTS')
+    for header in ('textures.h', 'resource_pack.h', 'blocks.h'):
         m = re.search(r'#define\s+' + name + r'\s+(\w+)', open(os.path.join(MACRO, 'include', 'blocks', header)).read())
         if m: return int(m.group(1)) if m.group(1).isdigit() else macro_value(m.group(1))
     raise KeyError(name)
@@ -195,12 +212,11 @@ def make():
         files['colormap/' + name] = write_png(pixels, 256, 256, 2, 8, rng, 6)
 
     water = (macro_value('PACK_WATER_R'), macro_value('PACK_WATER_G'), macro_value('PACK_WATER_B'))
-    first_sprite = macro_value('TEX_FIRST_SPRITE')
 
     overlay_pixels = None
     for n, (tex, kind, name, tint, overlay) in enumerate(entries):
         tex_id = macro_value(tex)
-        sprite = tex_id >= first_sprite
+        sprite = is_sprite(tex_id)
         encoding = ENCODINGS[n % len(ENCODINGS)]
         size = 32 if n % 9 == 4 else 16
         tall = (n % 11 == 6)
@@ -238,7 +254,19 @@ def make():
         pixels = [[rng.choice(colours) for _ in range(w)] for _ in range(h)]
         skins[name] = (pixels, w)
         files['entity/' + name] = write_png(pixels, w, h, ctype, 8, rng, 6)
-    for tex, name, x, y, w, h, turn in part_entries():
+    # the other entity pictures (worn armour, chests, the bed): 64 x 64
+    # with 8 colours. Parts of images that are also whole textures
+    # (the portal's animation strip) aren't checked.
+    for tex, kind, name, x, y, w, h, turn in part_entries():
+        if kind != 'entity' or name in skins: continue
+        colours = [(rng.randrange(256), rng.randrange(256), rng.randrange(256), 255) for _ in range(8)]
+        pixels = [[rng.choice(colours) for _ in range(64)] for _ in range(64)]
+        skins[name] = (pixels, 64)
+        files['entity/' + name] = write_png(pixels, 64, 64, 6, 8, rng, 6)
+    # a texture with two entries (an older and a newer place) ends up
+    # with the later one, as both are in this pack
+    for tex, kind, name, x, y, w, h, turn in part_entries():
+        if kind != 'entity': continue
         pixels, width = skins[name]
         expected[str(macro_value(tex))] = {'name': 'entity/' + name + ' part', 'encoding': [2, 8], 'size': [w, h],
                                            'sprite': False, 'pixels': expected_part(pixels, width, x, y, w, h, turn)}

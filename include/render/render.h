@@ -83,6 +83,7 @@
   Integer g_view_eye_in_water = 0;
   Integer g_view_plants       = 1;
   Integer g_view_shading      = 1;
+  Integer g_view_slim_arms    = 0;     // the skin has slim (3 pixel) arms
   Integer g_view_plant_range  = 16;
   Real    g_view_pitch        = 0.0;
   Integer g_view_break_stage  = 0;
@@ -97,6 +98,7 @@
   Real    g_view_time         = 0.25;
   Real    g_view_now          = 0.0;   // clock for animation (water shimmer)  // time of day, 0 sunrise, 0.25 noon, 0.5 sunset, 0.75 midnight
   Real    g_box_light         = 1.0;   // light of the entity being queued
+  Integer g_box_hide_side     = 0;     // 1 or -1: render_add_box leaves out that side
   Real    g_view_shade        = 1.0;   // every colour is multiplied by this (dims the world behind menus)
   Integer g_view_colour = -1;   // the pen and fill colour set last (r * 65536 + g * 256 + b), -1 if not known
 
@@ -264,6 +266,10 @@ void    render_add_block_face  (Integer p_x, Integer p_y, Integer p_z, Integer p
 void    render_add_sprite      (Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_half_width, Real p_height, Integer p_tex,
                                 Real p_shade, Real p_distance_squared);
 void    render_add_shaped      (Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_light);
+Real    render_facing_yaw      (Integer p_facing);
+void    render_add_chest       (Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_min_x, Real p_min_z, Real p_max_x, Real p_max_z);
+void    render_add_lid         (Real p_cx, Real p_cy, Real p_cz, Real p_yaw, Real p_half_f, Real p_half_y, Real p_half_s, Integer p_tex);
+void    render_add_bed         (Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 void    render_add_plant       (Integer p_x, Integer p_y, Integer p_z, Integer p_tex, Real p_light);
 Integer render_layer_count     (Real p_limit);
 void    render_collect_blocks  ();

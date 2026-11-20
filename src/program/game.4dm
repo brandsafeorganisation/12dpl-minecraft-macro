@@ -61,15 +61,17 @@ Integer game_load_textures(Attributes &p_settings, Text &p_report)
   Text    l_path   = settings_resource_pack(p_settings);
   Text    l_skin   = "";
   Integer l_loaded = 0;
+  Integer l_slim   = FALSE;
 
   p_report = "";
   textures_generate();
   if (l_path != "") l_loaded = pack_apply(l_path, p_report);
   if (settings_skin(p_settings) != "") {
-    pack_apply_skin(settings_skin(p_settings), l_skin);
+    pack_apply_skin(settings_skin(p_settings), l_skin, l_slim);
     if (p_report != "") p_report = p_report + ". ";
     p_report = p_report + l_skin;
   }
+  record_set_integer(p_settings, ATTR_SET_SLIM_ARMS, l_slim);
   textures_finish_all();
   return l_loaded;
 }

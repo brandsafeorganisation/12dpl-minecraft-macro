@@ -24,6 +24,7 @@
 #define ATTR_SET_MP_FOLDER       ("mp_folder")       // multiplayer: the folder every player shares
 #define ATTR_SET_PLAYER_NAME     ("player_name")     // multiplayer: the name others see ("" for the Windows user name)
 #define ATTR_SET_SKIN            ("skin")            // the player's skin (a .png laid out like a block game skin), "" for the built-in one
+#define ATTR_SET_SLIM_ARMS       ("slim_arms")       // TRUE when the skin loaded has slim (3 pixel) arms; not saved
 #define MP_FOLDER_DEFAULT        "cubeland_worlds\\mp"
 
 // Key binds: "key_<action>" is the key an action is bound to, named
@@ -100,6 +101,7 @@ void    settings_set_font_file (Attributes &p_settings, Text p_path);
 void    settings_set_font       (Attributes &p_settings, Text p_font);
 Text    settings_mp_folder      (Attributes &p_settings);
 Text    settings_skin           (Attributes &p_settings);
+Integer settings_slim_arms      (Attributes &p_settings);
 Text    settings_player_name    (Attributes &p_settings);
 void    settings_set_text       (Attributes &p_settings, Text p_field, Text p_value);
 Integer settings_line_text      (Text p_line, Text p_name, Text &p_value);

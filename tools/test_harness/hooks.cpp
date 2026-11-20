@@ -126,7 +126,7 @@ static void register_hooks(){
      double dx=x+0.5-px(), dy=y+0.5-(py()+1.62), dz=z+0.5-pz(); set_look(wrap_angle(atan2(dz,dx)),atan2(dy,sqrt(dx*dx+dz*dz))); printf("[hook] aim at %d %d %d (block %d)\n",x,y,z,world_get_block(x,y,z)); };
   g_calls["stone_eye"]=[]{ int x=(int)px()-2, y=(int)py()+1, z=(int)pz(); world_place_block(g_events,x,y,z,BLOCK_STONE); set_look(PI,-0.15); printf("[hook] stone at %d %d %d\n",x,y,z); };
   g_calls["house_inside"]=[]{ int hx=record_integer(g_info,ATTR_HOUSE_X),hy=record_integer(g_info,ATTR_HOUSE_Y),hz=record_integer(g_info,ATTR_HOUSE_Z); player_reset(g_player,hx+3.5,hy+1.0,hz+1.6); set_look(PI/2,-0.2); printf("[hook] inside the house, light %d\n",world_get_light(hx+3,hy+2,hz+2)); };
-  g_calls["chest_front"]=[]{ int x=(int)px()+2,y=(int)py(),z=(int)pz(); world_place_block(g_events,x,y,z,BLOCK_CHEST); };
+  g_calls["chest_front"]=[]{ int x=(int)px()+2,y=(int)py(),z=(int)pz(); world_place_block(g_events,x,y,z,block_chest(FACING_PX,CHEST_SINGLE)); };
   g_calls["chests"]=[]{ for(int c=1;c<=MAX_CHESTS;c++) if(chest_used(g_furnaces,c)){ printf("[chest] %d at %d %d %d holds",c,record_integer_at(g_furnaces,ATTR_CHEST_X,c),record_integer_at(g_furnaces,ATTR_CHEST_Y,c),record_integer_at(g_furnaces,ATTR_CHEST_Z,c));
       for(int n=1;n<=CHEST_SLOTS;n++){ int sl=chest_slot(c,n); if(slot_item(g_furnaces,sl)) printf(" [%d]%s x%d",n,item_name(slot_item(g_furnaces,sl)).c_str(),slot_count(g_furnaces,sl)); } printf("\n"); } };
   g_calls["night"]=[]{ world_set_time_of_day(g_info,0.75); printf("[hook] time %s daylight %.2f night %d\n",world_clock_text(0.75).c_str(),world_daylight(0.75),world_is_night(0.75)); };
@@ -251,6 +251,21 @@ static void register_hooks(){
      for(int dx=-7;dx<=7;dx++) for(int dz=-7;dz<=7;dz++) world_update_column_top(x0+dx,z0+dz);
      player_reset(g_player,x0+0.5,y0+0.01,z0+0.5); set_look(0.0,-0.3); cows_clear(g_cows);
      printf("[hook] flat area at %d %d %d\n",x0,y0,z0); };
+  // chests: placed by the player beside each other, they join; the
+  // cells, the open screen and breaking one half
+  g_calls["hold_chests"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_CHEST,4,0); };
+  g_calls["aim_ground_2z1"]=[]{ double dx=s_ox+2.5-px(), dy=s_oy-0.02-player_eye_y(g_player), dz=s_oz+1.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["aim_chest"]=[]{ double dx=s_ox+2.5-px(), dy=s_oy+0.5-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["chest_cells"]=[]{ for(int dz=-1;dz<=2;dz++){ int b=world_get_block(s_ox+2,s_oy,s_oz+dz);
+       if(block_is_chest(b)) printf("[chest] cell z%+d block %d facing %d type %d\n",dz,b,block_chest_facing(b),block_chest_type(b)); else printf("[chest] cell z%+d block %d\n",dz,b); }
+     printf("[chest] screen %d chest %d chest2 %d\n",ui_screen(g_ui),record_integer(g_ui,ATTR_UI_CHEST),record_integer(g_ui,ATTR_UI_CHEST2)); };
+  g_calls["fill_chests"]=[]{ int n=0; for(int c=1;c<=MAX_CHESTS;c++) if(chest_used(g_furnaces,c)){ n++; slot_set(g_furnaces,chest_slot(c,1+n),n==1?ITEM_COAL:ITEM_DIAMOND,n*3,0); } };
+  g_calls["break_chest_half"]=[]{ world_break_block(g_events,s_ox+2,s_oy,s_oz+1,ITEM_NONE); };
+  g_calls["view_chests"]=[]{ player_reset(g_player,s_ox+0.3,s_oy+0.01,s_oz-1.6); double dx=s_ox+2.5-px(), dy=s_oy+0.2-player_eye_y(g_player), dz=s_oz+0.3-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["view_chests_back"]=[]{ player_reset(g_player,s_ox+4.6,s_oy+0.01,s_oz+3.0); double dx=s_ox+2.5-px(), dy=s_oy+0.2-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
+  g_calls["hold_pickaxe"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_DIAMOND_PICKAXE,1,0); };
+  g_calls["hold_sword"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_IRON_SWORD,1,0); };
+  g_calls["give_bed"]=[]{ slot_set(g_inventory,player_selected(g_player),ITEM_BED,1,0); };
   g_calls["give_door_bed"]=[]{ inventory_add(g_inventory,ITEM_DOOR,2); inventory_add(g_inventory,ITEM_BED,1); };
   g_calls["aim_ground_2"]=[]{ double dx=s_ox+2.5-px(), dy=s_oy-0.02-player_eye_y(g_player), dz=s_oz+0.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };
   g_calls["aim_ground_side"]=[]{ double dx=s_ox+1.5-px(), dy=s_oy-0.02-player_eye_y(g_player), dz=s_oz-1.5-pz(); set_look(atan2(dz,dx),atan2(dy,sqrt(dx*dx+dz*dz))); };

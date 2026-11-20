@@ -249,7 +249,11 @@ pack too. A pack's crack images are meant to darken the block under them,
 which can't be done here, so only their darker pixels are drawn. Cows, pigs and zombies use
 the pack's mob skins (`entity/cow/cow.png`, `entity/pig/pig.png`,
 `entity/zombie/zombie.png`): every
-face of the model is cut from its own rectangle of the skin. Packs made for
+face of the model is cut from its own rectangle of the skin. Chests and
+beds come from `entity/chest/normal`, `normal_left` and `normal_right`
+and `entity/bed/red` the same way, and worn armour from the armour
+layers (`models/armor/iron_layer_1` or the newer
+`entity/equipment/humanoid/iron`). Packs made for
 16 x 16 work best: bigger images are sampled down, and only 8 colours of
 a detailed image survive. Interlaced PNGs aren't supported.
 
@@ -266,7 +270,10 @@ settings. In 12d, copy the `skins` folder (and any `resourcepacks` and
 
 You see your skin with the camera behind or in front of you (**V**).
 Every face of the model comes from its own part of the skin, with the
-skin's second layer (hair, hoods, jackets) drawn over it. As with resource
+skin's second layer (hair, hoods, jackets) drawn over it. Skins with
+slim (3 pixel) arms are found by themselves and get slim arms. The
+arm you see in front of you is the skin's right arm, sleeve and all.
+As with resource
 packs, each face keeps 8 colours. In a multiplayer game the other players
 are drawn in your skin too (skins aren't shared through the folder).
 
@@ -332,15 +339,22 @@ it: it loads the chosen file for itself, then and every time it starts.
   with a knock-back, take a few hits to kill, drop rotten flesh, and burn
   up when the sun rises unless they're in the shade.
 - **Beds:** two blocks long: the foot goes where you click and the head one
-  block further the way you are looking. Right-click either half at night
+  block further the way you are looking. It is a mattress on four short
+  legs. Right-click either half at night
   to sleep until morning; using a bed also makes it your respawn point.
   Breaking either half removes the whole bed and drops one bed.
 - **Doors:** two blocks tall, made from 6 planks. A shut door is a thin
   panel on the side of its block you were facing; right-click to swing it
   open or shut. You can't walk through a shut door. The top half has
   windows you can see through. Breaking either half drops one door.
-- **Chests:** hold 27 stacks. Right-click to open; the contents are
-  saved with the world and spill out if the chest is broken.
+- **Chests:** hold 27 stacks. A chest is a little smaller than a block,
+  with a lid and a latch, and turns its front to you when you put it
+  down. Put a second chest beside one facing the same way and the two
+  join into a double chest of 54 slots (both halves' contents, in six
+  rows). Right-click to open; the contents are saved with the world and
+  spill out if the chest is broken (breaking half of a double chest
+  leaves the other half as a single chest).
+- **Tools** are held tipped forward with the handle in your hand.
 - **Player:** 1.8 blocks tall, with 5 blocks of reach, gravity and collision,
   swimming, fall damage, a 10-heart health bar and slow healing. Sneaking
   (Shift with a movement key) crouches: lower, slower, and you stop at

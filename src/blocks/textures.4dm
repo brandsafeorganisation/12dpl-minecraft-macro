@@ -1157,9 +1157,11 @@ void make_texture_bed_top(Integer p_tex)
   texture_fill_rect(p_tex, 2 , 11, 15, 11, 2);
 }
 
-void make_texture_bed_side(Integer p_tex)
+void make_texture_bed_side(Integer p_tex, Integer p_head)
 // ----------------------------------------------------------------
-// Side of a bed: red blanket over a wooden frame with legs
+// Side of a bed's mattress: red blanket over a wooden frame; the
+// head half (p_head) shows the pillow's edge at its head end (u
+// runs from the foot to the head)
 // ----------------------------------------------------------------
 {
   texture_set_palette(p_tex, 1, 176, 36 , 36 );
@@ -1168,13 +1170,93 @@ void make_texture_bed_side(Integer p_tex)
   texture_set_palette(p_tex, 4, 104, 76 , 44 );
   texture_set_palette(p_tex, 5, 236, 232, 226);
   texture_fill     (p_tex, 3);
-  texture_fill_rect(p_tex, 1 , 1 , 16, 8 , 1);
-  texture_fill_rect(p_tex, 1 , 8 , 16, 8 , 2);
-  texture_fill_rect(p_tex, 1 , 1 , 4 , 3 , 5);
-  texture_fill_rect(p_tex, 1 , 9 , 16, 9 , 4);
-  texture_fill_rect(p_tex, 1 , 13, 3 , 16, 4);
-  texture_fill_rect(p_tex, 14, 13, 16, 16, 4);
-  texture_fill_rect(p_tex, 4 , 13, 13, 16, 4);
+  texture_fill_rect(p_tex, 1 , 1 , 16, 9 , 1);
+  texture_fill_rect(p_tex, 1 , 9 , 16, 9 , 2);
+  texture_fill_rect(p_tex, 1 , 10, 16, 10, 4);
+  texture_fill_rect(p_tex, 1 , 16, 16, 16, 4);
+  if (p_head) texture_fill_rect(p_tex, 11, 1 , 15, 4 , 5);
+}
+
+void make_texture_bed_end(Integer p_tex, Integer p_head)
+// ----------------------------------------------------------------
+// An end of a bed's mattress: the blanket (or at the head the
+// pillow under it) over the wooden frame
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 176, 36 , 36 );
+  texture_set_palette(p_tex, 2, 140, 24 , 26 );
+  texture_set_palette(p_tex, 3, 150, 112, 66 );
+  texture_set_palette(p_tex, 4, 104, 76 , 44 );
+  texture_set_palette(p_tex, 5, 236, 232, 226);
+  texture_fill     (p_tex, 3);
+  texture_fill_rect(p_tex, 1 , 1 , 16, 9 , 1);
+  texture_fill_rect(p_tex, 1 , 9 , 16, 9 , 2);
+  if (p_head) texture_fill_rect(p_tex, 3 , 1 , 14, 4 , 5);
+  texture_fill_rect(p_tex, 1 , 10, 16, 10, 4);
+  texture_fill_rect(p_tex, 1 , 16, 16, 16, 4);
+}
+
+void make_texture_bed_leg(Integer p_tex)
+// ----------------------------------------------------------------
+// A bed's leg: dark wood
+// ----------------------------------------------------------------
+{
+  texture_set_palette(p_tex, 1, 104, 76 , 44 );
+  texture_set_palette(p_tex, 2, 82 , 58 , 32 );
+  texture_fill     (p_tex, 1);
+  texture_blotch   (p_tex, 2, 4, 0.0, 0.35, 91);
+}
+
+void make_texture_chest_part(Integer p_tex, Integer p_part, Integer p_type)
+// ----------------------------------------------------------------
+// Face p_part (CHEST_*) of a chest of type CHEST_*: planks in a dark
+// rim, with no rim along the edge where the halves of a double chest
+// meet; the lid's sides have their seam at the bottom, the base's at
+// the top. The latch is iron.
+// ----------------------------------------------------------------
+{
+  Integer l_inner = 0;   // 1 left column, 2 right column, 3 top row, 4 bottom row
+
+  texture_set_palette(p_tex, 1, 160, 112, 52 );
+  texture_set_palette(p_tex, 2, 128, 86 , 38 );
+  texture_set_palette(p_tex, 3, 82 , 54 , 24 );
+  texture_set_palette(p_tex, 4, 200, 200, 204);
+  texture_set_palette(p_tex, 5, 60 , 60 , 64 );
+
+  if (p_part == CHEST_LATCH) {
+    texture_fill     (p_tex, 4);
+    texture_fill_rect(p_tex, 1, 13, 16, 16, 5);
+    return;
+  }
+
+  texture_fill     (p_tex, 1);
+  texture_fill_rect(p_tex, 2, 5 , 15, 5 , 2);
+  texture_fill_rect(p_tex, 2, 10, 15, 10, 2);
+  // the edge against the other half of a double chest (see
+  // render_add_box for which way each face's u and v run)
+  if (p_type == CHEST_RIGHT) {
+    if (p_part == CHEST_LID_FRONT || p_part == CHEST_BASE_FRONT) l_inner = 1;
+    if (p_part == CHEST_LID_BACK  || p_part == CHEST_BASE_BACK ) l_inner = 2;
+    if (p_part == CHEST_LID_TOP   ) l_inner = 3;
+    if (p_part == CHEST_BASE_BOTTOM) l_inner = 4;
+  }
+  if (p_type == CHEST_LEFT) {
+    if (p_part == CHEST_LID_FRONT || p_part == CHEST_BASE_FRONT) l_inner = 2;
+    if (p_part == CHEST_LID_BACK  || p_part == CHEST_BASE_BACK ) l_inner = 1;
+    if (p_part == CHEST_LID_TOP   ) l_inner = 4;
+    if (p_part == CHEST_BASE_BOTTOM) l_inner = 3;
+  }
+  if (l_inner != 3) texture_fill_rect(p_tex, 1 , 1 , 16, 1 , 3);
+  if (l_inner != 4) texture_fill_rect(p_tex, 1 , 16, 16, 16, 3);
+  if (l_inner != 1) texture_fill_rect(p_tex, 1 , 1 , 1 , 16, 3);
+  if (l_inner != 2) texture_fill_rect(p_tex, 16, 1 , 16, 16, 3);
+  // the seam between the lid and the base is darker
+  if (p_part == CHEST_LID_FRONT || p_part == CHEST_LID_SIDE || p_part == CHEST_LID_BACK) {
+    texture_fill_rect(p_tex, 1, 15, 16, 16, 3);
+  }
+  if (p_part == CHEST_BASE_FRONT || p_part == CHEST_BASE_SIDE || p_part == CHEST_BASE_BACK) {
+    texture_fill_rect(p_tex, 1, 1, 16, 2, 3);
+  }
 }
 
 void make_texture_zombie(Integer p_tex, Integer p_part)
@@ -2283,6 +2365,7 @@ Integer texture_is_sprite(Integer p_tex)
   if (p_tex == TEX_ARMOUR_IRON) return FALSE;
   if (p_tex >= TEX_OBSIDIAN && p_tex <= TEX_LAVA) return FALSE;
   if (p_tex >= TEX_DIAMOND_ORE && p_tex <= TEX_JUKEBOX_TOP) return FALSE;
+  if (p_tex >= TEX_CHEST_PARTS && p_tex <= TEX_BED_LEG) return FALSE;
   if (p_tex >= TEX_FIRST_SPRITE) return TRUE;
   return FALSE;
 }
@@ -2370,7 +2453,7 @@ void textures_generate()
   make_texture_item_shovel   (TEX_ITEM_IRON_SHOVEL, TIER_IRON);
   make_texture_item_sword    (TEX_ITEM_IRON_SWORD, TIER_IRON);
   make_texture_bed_top       (TEX_BED_TOP);
-  make_texture_bed_side      (TEX_BED_SIDE);
+  make_texture_bed_side      (TEX_BED_SIDE, TRUE);
   make_texture_zombie        (TEX_ZOMBIE_SKIN, 1);
   make_texture_zombie        (TEX_ZOMBIE_FACE, 2);
   make_texture_zombie        (TEX_ZOMBIE_SHIRT, 3);
@@ -2462,6 +2545,13 @@ void textures_generate()
     make_texture_armour_worn(TEX_WORN_DIAMOND + l_frame, l_frame == WORN_HELMET_FRONT);
     make_diamond_armour_palette(TEX_WORN_DIAMOND + l_frame);
   }
+  for (l_tex = 0; l_tex < 3 * CHEST_PARTS; ++l_tex) {
+    make_texture_chest_part(TEX_CHEST_PARTS + l_tex, positive_mod(l_tex, CHEST_PARTS), floor_divide(l_tex, CHEST_PARTS));
+  }
+  make_texture_bed_side      (TEX_BED_FOOT_SIDE, FALSE);
+  make_texture_bed_end       (TEX_BED_HEAD_END,  TRUE);
+  make_texture_bed_end       (TEX_BED_FOOT_END,  FALSE);
+  make_texture_bed_leg       (TEX_BED_LEG);
 }
 
 #endif

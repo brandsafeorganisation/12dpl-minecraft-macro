@@ -29,6 +29,7 @@ void settings_defaults(Attributes &p_settings)
   record_set_text   (p_settings, ATTR_SET_MP_FOLDER,       MP_FOLDER_DEFAULT);
   record_set_text   (p_settings, ATTR_SET_PLAYER_NAME,     "");
   record_set_text   (p_settings, ATTR_SET_SKIN,            "");
+  record_set_integer(p_settings, ATTR_SET_SLIM_ARMS,       FALSE);
   settings_reset_binds(p_settings);
 }
 
@@ -203,6 +204,15 @@ Text settings_skin(Attributes &p_settings)
 // ----------------------------------------------------------------
 {
   return record_text(p_settings, ATTR_SET_SKIN);
+}
+
+Integer settings_slim_arms(Attributes &p_settings)
+// ----------------------------------------------------------------
+// TRUE if the skin loaded last has slim arms (3 pixels wide, found
+// by pack_apply_skin)
+// ----------------------------------------------------------------
+{
+  return record_integer(p_settings, ATTR_SET_SLIM_ARMS) == TRUE;
 }
 
 Text settings_mp_folder(Attributes &p_settings)

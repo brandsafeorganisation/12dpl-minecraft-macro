@@ -190,10 +190,18 @@ void ui_open(Attributes &p_ui, Attributes &p_grid, Attributes &p_furnaces, Attri
 // ----------------------------------------------------------------
 {
   Integer l_furnace = 0;
+  Integer l_other   = 0;
+  Integer l_block   = 0;
+  Integer l_px      = 0;
+  Integer l_py      = 0;
+  Integer l_pz      = 0;
 
   record_set_integer(p_ui, ATTR_UI_SCREEN,  p_screen);
   record_set_integer(p_ui, ATTR_UI_FURNACE, 0);
   record_set_integer(p_ui, ATTR_UI_CHEST,   0);
+  record_set_integer(p_ui, ATTR_UI_CHEST2,  0);
+  record_set_integer(p_ui, ATTR_UI_X2,      p_x);
+  record_set_integer(p_ui, ATTR_UI_Z2,      p_z);
   record_set_integer(p_ui, ATTR_X,          p_x);
   record_set_integer(p_ui, ATTR_Y,          p_y);
   record_set_integer(p_ui, ATTR_Z,          p_z);
@@ -205,6 +213,25 @@ void ui_open(Attributes &p_ui, Attributes &p_grid, Attributes &p_furnaces, Attri
   if (p_screen == SCREEN_CHEST) {
     l_furnace = chest_get_or_create(p_furnaces, p_x, p_y, p_z);
     record_set_integer(p_ui, ATTR_UI_CHEST, l_furnace);
+    // half of a double chest: the left half's slots on top, the
+    // right half's below
+    l_block = world_get_block(p_x, p_y, p_z);
+    if (l_furnace > 0 && block_partner(l_block, p_x, p_y, p_z, l_px, l_py, l_pz)) {
+      if (block_is_chest(world_get_block(l_px, l_py, l_pz))) {
+        l_other = chest_get_or_create(p_furnaces, l_px, l_py, l_pz);
+        if (l_other > 0) {
+          record_set_integer(p_ui, ATTR_UI_SCREEN, SCREEN_LARGE_CHEST);
+          record_set_integer(p_ui, ATTR_UI_X2, l_px);
+          record_set_integer(p_ui, ATTR_UI_Z2, l_pz);
+          if (block_chest_type(l_block) == CHEST_LEFT) {
+            record_set_integer(p_ui, ATTR_UI_CHEST2, l_other);
+          } else {
+            record_set_integer(p_ui, ATTR_UI_CHEST,  l_other);
+            record_set_integer(p_ui, ATTR_UI_CHEST2, l_furnace);
+          }
+        }
+      }
+    }
     if (l_furnace == 0) {
       record_set_integer(p_ui, ATTR_UI_SCREEN, SCREEN_NONE);
       emit_toast(p_events, "Too many chests in this world");
@@ -233,6 +260,8 @@ void ui_close(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Att
   grid_return_items      (p_grid, p_inventory, p_events, p_drop_x, p_drop_y, p_drop_z);
   record_set_integer(p_ui, ATTR_UI_SCREEN,  SCREEN_NONE);
   record_set_integer(p_ui, ATTR_UI_FURNACE, 0);
+  record_set_integer(p_ui, ATTR_UI_CHEST,   0);
+  record_set_integer(p_ui, ATTR_UI_CHEST2,  0);
 }
 
 void ui_on_event(Attributes &p_event, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid,
@@ -249,10 +278,13 @@ void ui_on_event(Attributes &p_event, Attributes &p_ui, Attributes &p_inventory,
   } else if (l_type == EVT_CLOSE_SCREEN || l_type == EVT_PLAYER_DIED) {
     if (ui_screen(p_ui) != SCREEN_NONE) ui_close(p_ui, p_inventory, p_grid, p_events, p_drop_x, p_drop_y, p_drop_z);
   } else if (l_type == EVT_BLOCK_BROKEN) {
-    if (ui_screen(p_ui) == SCREEN_FURNACE || ui_screen(p_ui) == SCREEN_CRAFTING || ui_screen(p_ui) == SCREEN_CHEST) {
-      if (event_integer(p_event, 1) == record_integer(p_ui, ATTR_X) && event_integer(p_event, 2) == record_integer(p_ui, ATTR_Y) &&
-          event_integer(p_event, 3) == record_integer(p_ui, ATTR_Z)) {
-        ui_close(p_ui, p_inventory, p_grid, p_events, p_drop_x, p_drop_y, p_drop_z);
+    if (ui_screen(p_ui) == SCREEN_FURNACE || ui_screen(p_ui) == SCREEN_CRAFTING || ui_screen(p_ui) == SCREEN_CHEST ||
+        ui_screen(p_ui) == SCREEN_LARGE_CHEST) {
+      if (event_integer(p_event, 2) == record_integer(p_ui, ATTR_Y)) {
+        if ((event_integer(p_event, 1) == record_integer(p_ui, ATTR_X ) && event_integer(p_event, 3) == record_integer(p_ui, ATTR_Z )) ||
+            (event_integer(p_event, 1) == record_integer(p_ui, ATTR_UI_X2) && event_integer(p_event, 3) == record_integer(p_ui, ATTR_UI_Z2))) {
+          ui_close(p_ui, p_inventory, p_grid, p_events, p_drop_x, p_drop_y, p_drop_z);
+        }
       }
     }
   }
@@ -270,8 +302,11 @@ void ui_layout(Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_
 {
   Real l_width  = 0.0;
   Real l_height = 0.0;
+  Real l_rows   = 0.0;
 
-  p_slot_size = clamp_real(min_real((p_w - 60.0) / 9.0, (p_h - STATUS_STRIP_HEIGHT - 60.0) / 8.4), 26.0, 44.0);
+  l_rows = 8.4;
+  if (p_screen == SCREEN_LARGE_CHEST) l_rows = 11.4;
+  p_slot_size = clamp_real(min_real((p_w - 60.0) / 9.0, (p_h - STATUS_STRIP_HEIGHT - 60.0) / l_rows), 20.0, 44.0);
 
   l_width  = p_slot_size * 9.0 + UI_PADDING * 2.0;
   l_height = UI_PADDING + p_slot_size * 4.0 + 8.0 + 22.0 + p_slot_size * 3.0 + 10.0 + UI_TITLE_HEIGHT;
@@ -279,6 +314,8 @@ void ui_layout(Integer p_screen, Real p_w, Real p_h, Real &p_slot_size, Real &p_
   if (p_screen == SCREEN_CREATIVE) l_height = UI_PADDING * 2.0 + p_slot_size * (CREATIVE_ROWS + 1.7) + 16.0;
   // the inventory: four rows above for the armour column
   if (p_screen == SCREEN_INVENTORY) l_height = l_height + p_slot_size;
+  // a double chest: six rows of slots above the inventory
+  if (p_screen == SCREEN_LARGE_CHEST) l_height = l_height + p_slot_size * 3.0;
 
   p_x0 = p_w / 2.0 - l_width / 2.0;
   p_x1 = p_x0 + l_width;
@@ -399,17 +436,21 @@ Integer ui_slot_rect(Integer p_screen, Integer p_grid_width, Integer p_slot, Rea
     return FALSE;
   }
 
-  if (p_screen == SCREEN_CHEST) {
+  if (p_screen == SCREEN_CHEST || p_screen == SCREEN_LARGE_CHEST) {
     // three rows of nine above the inventory, slot 1 at the top left
-    if (p_slot > UI_SLOT_CHEST && p_slot <= UI_SLOT_CHEST + CHEST_SLOTS) {
-      l_cell   = p_slot - UI_SLOT_CHEST - 1;
-      l_row    = floor_divide(l_cell, 9);
-      l_column = l_cell - l_row * 9;
-      p_x = l_inv_x + l_column * p_size;
-      p_y = l_top_y + (2 - l_row) * p_size;
-      return TRUE;
+    // (a double chest: six rows, its right half's in the lower three)
+    l_cell = -1;
+    if (p_slot > UI_SLOT_CHEST && p_slot <= UI_SLOT_CHEST + CHEST_SLOTS) l_cell = p_slot - UI_SLOT_CHEST - 1;
+    if (p_screen == SCREEN_LARGE_CHEST && p_slot > UI_SLOT_CHEST2 && p_slot <= UI_SLOT_CHEST2 + CHEST_SLOTS) {
+      l_cell = p_slot - UI_SLOT_CHEST2 - 1 + CHEST_SLOTS;
     }
-    return FALSE;
+    if (l_cell < 0) return FALSE;
+    l_row    = floor_divide(l_cell, 9);
+    l_column = l_cell - l_row * 9;
+    p_x = l_inv_x + l_column * p_size;
+    p_y = l_top_y + (2 - l_row) * p_size;
+    if (p_screen == SCREEN_LARGE_CHEST) p_y = l_top_y + (5 - l_row) * p_size;
+    return TRUE;
   }
 
   if (p_screen == SCREEN_FURNACE) {
@@ -441,6 +482,21 @@ Integer ui_inventory_slot(Integer p_slot)
   if (p_slot >= 1 && p_slot <= INVENTORY_SLOTS) return p_slot;
   if (p_slot > UI_SLOT_ARMOUR && p_slot <= UI_SLOT_ARMOUR + ARMOUR_PLACES) return inventory_armour_slot(p_slot - UI_SLOT_ARMOUR);
   if (p_slot == UI_SLOT_OFFHAND) return OFFHAND_SLOT;
+  return 0;
+}
+
+Integer ui_chest_target(Attributes &p_ui, Integer p_slot)
+// ----------------------------------------------------------------
+// Slot of the chest store (the furnaces record) a chest screen's
+// slot shows, 0 if it isn't a chest slot of the open chest
+// ----------------------------------------------------------------
+{
+  if (p_slot > UI_SLOT_CHEST && p_slot <= UI_SLOT_CHEST + CHEST_SLOTS && record_integer(p_ui, ATTR_UI_CHEST) > 0) {
+    return chest_slot(record_integer(p_ui, ATTR_UI_CHEST), p_slot - UI_SLOT_CHEST);
+  }
+  if (p_slot > UI_SLOT_CHEST2 && p_slot <= UI_SLOT_CHEST2 + CHEST_SLOTS && record_integer(p_ui, ATTR_UI_CHEST2) > 0) {
+    return chest_slot(record_integer(p_ui, ATTR_UI_CHEST2), p_slot - UI_SLOT_CHEST2);
+  }
   return 0;
 }
 
@@ -511,7 +567,7 @@ void ui_click(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Att
     return;
   }
 
-  if (l_slot > UI_SLOT_CREATIVE) {
+  if (l_slot > UI_SLOT_CREATIVE && l_slot <= UI_SLOT_CREATIVE + CREATIVE_SLOTS) {
     ui_creative_click(p_ui, p_inventory, l_slot - UI_SLOT_CREATIVE, p_right_button);
     return;
   }
@@ -531,9 +587,9 @@ void ui_click(Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Att
     return;
   }
 
-  if (l_screen == SCREEN_CHEST && record_integer(p_ui, ATTR_UI_CHEST) > 0) {
-    if (l_slot > UI_SLOT_CHEST && l_slot <= UI_SLOT_CHEST + CHEST_SLOTS) {
-      l_target = chest_slot(record_integer(p_ui, ATTR_UI_CHEST), l_slot - UI_SLOT_CHEST);
+  if (l_screen == SCREEN_CHEST || l_screen == SCREEN_LARGE_CHEST) {
+    l_target = ui_chest_target(p_ui, l_slot);
+    if (l_target > 0) {
       if (p_right_button) {
         slot_click_right(p_inventory, p_furnaces, l_target, FALSE);
       } else {
@@ -692,6 +748,24 @@ void ui_draw_search(Draw_Box p_box, Attributes &p_ui, Real p_x, Real p_y, Real p
   hud_text(p_box, l_text_x, p_y + l_height * 0.85, l_height * 0.55, TEXT_ALIGN_LEFT, 240, 240, 240, ui_search(p_ui) + "_");
 }
 
+void ui_draw_titles(Draw_Box p_box, Integer p_screen, Real p_inv_x, Real p_inv_y, Real p_top, Real p_slot_size)
+// ----------------------------------------------------------------
+// The names written on a screen's panel, as in the block game: what
+// was opened at the top left, and "Inventory" over the player's
+// rows (the creative and inventory screens have neither)
+// ----------------------------------------------------------------
+{
+  Text l_title = "";
+
+  if (p_screen == SCREEN_CHEST      ) l_title = "Chest";
+  if (p_screen == SCREEN_LARGE_CHEST) l_title = "Large Chest";
+  if (p_screen == SCREEN_CRAFTING   ) l_title = "Crafting";
+  if (p_screen == SCREEN_FURNACE    ) l_title = "Furnace";
+  if (l_title == "") return;
+  hud_text(p_box, p_inv_x + 2.0, p_top - 9.0, 14.0, TEXT_ALIGN_LEFT, 64, 64, 64, l_title);
+  hud_text(p_box, p_inv_x + 2.0, p_inv_y + p_slot_size * 4.0 + 26.0, 14.0, TEXT_ALIGN_LEFT, 64, 64, 64, "Inventory");
+}
+
 void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid,
              Attributes &p_furnaces, Attributes &p_book)
 // ----------------------------------------------------------------
@@ -735,6 +809,7 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
   render_fill_rect (p_box, l_x0, l_y0, l_x1, l_y1);
   render_set_colour(p_box, UI_FRAME_R, UI_FRAME_G, UI_FRAME_B);
   hud_frame(p_box, l_x0, l_y0, l_x1, l_y1);
+  ui_draw_titles(p_box, l_screen, l_inv_x, l_inv_y, l_y1, l_slot_size);
 
   for (l_slot = 1; l_slot <= UI_SLOT_LAST; ++l_slot) {
     if (!ui_slot_rect(l_screen, l_width, l_slot, p_w, p_h, l_x, l_y, l_size)) continue;
@@ -755,7 +830,7 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
       l_item   = slot_item  (p_inventory, l_target);
       l_count  = slot_count (p_inventory, l_target);
       l_damage = slot_damage(p_inventory, l_target);
-    } else if (l_slot > UI_SLOT_CREATIVE) {
+    } else if (l_slot > UI_SLOT_CREATIVE && l_slot <= UI_SLOT_CREATIVE + CREATIVE_SLOTS) {
       l_item  = ui_creative_item(p_ui, l_slot - UI_SLOT_CREATIVE);
       l_count = 1;
     } else if (l_slot == UI_SLOT_OUTPUT) {
@@ -767,8 +842,8 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
       l_item   = slot_item  (p_grid, l_slot - UI_SLOT_GRID);
       l_count  = slot_count (p_grid, l_slot - UI_SLOT_GRID);
       l_damage = slot_damage(p_grid, l_slot - UI_SLOT_GRID);
-    } else if (l_slot > UI_SLOT_CHEST && record_integer(p_ui, ATTR_UI_CHEST) > 0) {
-      l_target = chest_slot(record_integer(p_ui, ATTR_UI_CHEST), l_slot - UI_SLOT_CHEST);
+    } else if (ui_chest_target(p_ui, l_slot) > 0) {
+      l_target = ui_chest_target(p_ui, l_slot);
       l_item   = slot_item  (p_furnaces, l_target);
       l_count  = slot_count (p_furnaces, l_target);
       l_damage = slot_damage(p_furnaces, l_target);
@@ -793,7 +868,7 @@ void ui_draw(Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p
 
   if (l_screen == SCREEN_FURNACE) {
     ui_draw_furnace(p_box, p_furnaces, l_furnace, p_w, p_h);
-  } else if (l_screen == SCREEN_CHEST) {
+  } else if (l_screen == SCREEN_CHEST || l_screen == SCREEN_LARGE_CHEST) {
     // nothing more to draw
   } else if (l_screen == SCREEN_CREATIVE) {
     ui_draw_search(p_box, p_ui, l_inv_x, l_inv_y + l_slot_size * (CREATIVE_ROWS + 1) + 16.0, l_slot_size * 6.8, l_slot_size);

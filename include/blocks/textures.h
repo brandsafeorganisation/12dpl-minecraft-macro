@@ -159,7 +159,13 @@
 #define TEX_ITEM_DIAMOND_BOOTS 152
 #define TEX_WORN_IRON          153    // worn armour on the player model, WORN_PARTS
 #define TEX_WORN_DIAMOND       166    // textures for each material (WORN_* below)
-#define NUM_TEXTURES           178
+#define TEX_CHEST_PARTS        179    // a chest's faces: CHEST_PARTS for each of a single
+                                      // chest, the left and the right half of a double one
+#define TEX_BED_FOOT_SIDE      206    // the bed's other faces (TEX_BED_TOP, TEX_BED_FOOT_TOP
+#define TEX_BED_HEAD_END       207    // and TEX_BED_SIDE, the head's side, are above)
+#define TEX_BED_FOOT_END       208
+#define TEX_BED_LEG            209
+#define NUM_TEXTURES           209
 #define PORTAL_FRAMES          8
 // The faces of worn armour, added to TEX_WORN_IRON or TEX_WORN_DIAMOND
 // (from the pack's armour layers, laid out like a player skin)
@@ -177,14 +183,27 @@
 #define WORN_BOOT_FRONT        11
 #define WORN_BOOT_SIDE         12
 #define WORN_PARTS             13
+// The faces of a chest, added to chest_texture(type) (blocks.h):
+// the lid (5 pixels) sits on the base (10 pixels) with a latch on the
+// front
+#define CHEST_LID_TOP          0
+#define CHEST_LID_FRONT        1
+#define CHEST_LID_SIDE         2
+#define CHEST_LID_BACK         3
+#define CHEST_BASE_FRONT       4
+#define CHEST_BASE_SIDE        5
+#define CHEST_BASE_BACK        6
+#define CHEST_BASE_BOTTOM      7
+#define CHEST_LATCH            8
+#define CHEST_PARTS            9
 #define PORTAL_FRAME_SECONDS   0.1
 #define FIRE_FRAME_SECONDS     0.15
 #define TEX_FIRST_SPRITE       TEX_PLANT_GRASS   // every texture from here on is a sprite
 
-#define TEXTURE_PIXELS         45568  // NUM_TEXTURES * 256
+#define TEXTURE_PIXELS         53504  // NUM_TEXTURES * 256
 #define PALETTE_SIZE           8      // colours per texture
-#define TEXTURE_PALETTES       1424   // NUM_TEXTURES * PALETTE_SIZE
-#define TEXTURE_QUADRANTS      712    // NUM_TEXTURES * 4
+#define TEXTURE_PALETTES       1672   // NUM_TEXTURES * PALETTE_SIZE
+#define TEXTURE_QUADRANTS      836    // NUM_TEXTURES * 4
 #define MAX_TEXTURE_RECTS      12000  // resource pack images can need more than the built-in ones
 
 /*Global variables*/ {

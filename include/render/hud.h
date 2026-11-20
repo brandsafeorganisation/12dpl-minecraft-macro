@@ -109,7 +109,9 @@ void hud_draw_slot      (Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Inte
 void hud_draw_slot_style(Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Integer p_item, Integer p_count, Integer p_damage, Integer p_highlight,
                          Integer p_style);
 Text hud_facing_name    (Real p_yaw);
-void hud_draw_hand      (Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integer p_item, Real p_bob, Real p_swing_time);
+void hud_draw_hand      (Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integer p_item, Real p_bob, Real p_swing_time,
+                         Integer p_slim);
+void hud_draw_held_tool (Draw_Box p_box, Integer p_item, Real p_grip_x, Real p_grip_y, Real p_size);
 void hud_draw_figure    (Draw_Box p_box, Real p_centre_x, Real p_base_y, Real p_unit,
                          Integer p_helmet, Integer p_chestplate, Integer p_leggings, Integer p_boots);
 void hud_draw_armour    (Draw_Box p_box, Real p_x0, Real p_y0, Real p_width, Integer p_points);

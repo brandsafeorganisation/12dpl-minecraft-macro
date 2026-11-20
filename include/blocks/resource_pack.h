@@ -72,6 +72,7 @@
 #define PACK_TURN_RIGHT       1
 #define PACK_TURN_HALF        2
 #define PACK_TURN_LEFT        3
+#define PACK_TURN_FLIP        4     // upside down (rows reversed)
 
 // Zip record signatures (little-endian 4 byte words)
 #define ZIP_END_SIGNATURE     101010256   // 0x06054b50
@@ -169,7 +170,8 @@ Integer pack_map_skin_part    (Integer p_entry, Integer &p_tex, Integer &p_x, In
                               Integer &p_over_x, Integer &p_over_y);
 Integer pack_load_png_file    (Text p_path);
 Integer pack_skin_region      (Integer p_x, Integer p_y, Integer p_w, Integer p_h);
-Integer pack_apply_skin       (Text p_path, Text &p_report);
+Integer pack_skin_is_slim     (Integer p_width, Integer p_height);
+Integer pack_apply_skin       (Text p_path, Text &p_report, Integer &p_slim);
 
 // Honest helpers
 Integer pack_is_zip           (Text p_path);

@@ -233,8 +233,9 @@ void world_break_block(Attributes &p_events, Integer p_x, Integer p_y, Integer p
   // A plant standing on the broken block goes with it
   if (block_is_plant(world_get_block(p_x, p_y + 1, p_z))) world_break_block(p_events, p_x, p_y + 1, p_z, ITEM_NONE);
   // and so does the other half of a door or bed (it drops nothing,
-  // see block_drop_item, unless it is the half that carries the item)
-  if (block_partner(l_old_block, p_x, p_y, p_z, l_px, l_py, l_pz)) {
+  // see block_drop_item, unless it is the half that carries the item;
+  // the other half of a double chest stays, as a single chest)
+  if (!block_is_chest(l_old_block) && block_partner(l_old_block, p_x, p_y, p_z, l_px, l_py, l_pz)) {
     if (block_is_shaped(world_get_block(l_px, l_py, l_pz))) world_break_block(p_events, l_px, l_py, l_pz, ITEM_NONE);
   }
   // a door standing on the broken block falls too
@@ -1199,7 +1200,7 @@ void world_build_house(Attributes &p_info, Integer p_origin_x, Integer p_ground_
   // an open door in the doorway
   world_set_block(l_x0 + 3, l_floor_y + 1, l_z0    , block_door(FACING_NZ, TRUE, FALSE));
   world_set_block(l_x0 + 3, l_floor_y + 2, l_z0    , block_door(FACING_NZ, TRUE, TRUE));
-  world_set_block(l_x0 + 1, l_floor_y + 1, l_z1 - 2, BLOCK_CHEST);
+  world_set_block(l_x0 + 1, l_floor_y + 1, l_z1 - 2, block_chest(FACING_PX, CHEST_SINGLE));
   world_set_block(l_x0 + 1, l_floor_y + 1, l_z0 + 1, BLOCK_TORCH);
   world_set_block(l_x1 - 1, l_floor_y + 1, l_z0 + 1, BLOCK_TORCH);
 

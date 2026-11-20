@@ -165,5 +165,6 @@ void    player_lava_and_portal (Attributes &p_player, Attributes &p_events, Real
 Integer player_use_slot        (Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Integer p_slot);
 void    player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Real p_now);
 Integer player_furnace_facing  (Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z);
+Integer player_facing_toward   (Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z);
 
 #endif

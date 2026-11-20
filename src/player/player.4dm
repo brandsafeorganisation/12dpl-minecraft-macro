@@ -1325,6 +1325,23 @@ Integer player_furnace_facing(Real p_player_x, Real p_player_z, Integer p_cell_x
   return BLOCK_FURNACE_NZ;
 }
 
+Integer player_facing_toward(Real p_player_x, Real p_player_z, Integer p_cell_x, Integer p_cell_z)
+// ----------------------------------------------------------------
+// FACING_* from cell (x, z) towards the player: the way a chest put
+// down there turns its front
+// ----------------------------------------------------------------
+{
+  Real l_toward_x = p_player_x - (p_cell_x + 0.5);
+  Real l_toward_z = p_player_z - (p_cell_z + 0.5);
+
+  if (Absolute(l_toward_x) >= Absolute(l_toward_z)) {
+    if (l_toward_x > 0.0) return FACING_PX;
+    return FACING_NX;
+  }
+  if (l_toward_z > 0.0) return FACING_PZ;
+  return FACING_NZ;
+}
+
 Integer player_use_slot(Attributes &p_player, Attributes &p_inventory, Attributes &p_cows, Attributes &p_events, Integer p_slot)
 // ----------------------------------------------------------------
 // Use the item in one hand (the selected hotbar slot or the
@@ -1443,6 +1460,10 @@ Integer player_use_slot(Attributes &p_player, Attributes &p_inventory, Attribute
     player_position(p_player, l_px, l_py, l_pz);
     l_place = player_furnace_facing(l_px, l_pz, l_cell_x, l_cell_z);
   }
+  if (l_held == ITEM_CHEST) {
+    player_position(p_player, l_px, l_py, l_pz);
+    l_place = block_chest(player_facing_toward(l_px, l_pz, l_cell_x, l_cell_z), CHEST_SINGLE);
+  }
 
   // Doors and beds take two cells
   if (l_held == ITEM_DOOR || l_held == ITEM_BED) {
@@ -1488,7 +1509,7 @@ void player_secondary_action(Attributes &p_player, Attributes &p_inventory, Attr
       emit_event(p_events, EVT_OPEN_SCREEN, SCREEN_FURNACE, l_x, l_y, l_z, 0.0, 0.0, 0.0, "");
       return;
     }
-    if (l_block == BLOCK_CHEST) {
+    if (block_is_chest(l_block)) {
       emit_event(p_events, EVT_OPEN_SCREEN, SCREEN_CHEST, l_x, l_y, l_z, 0.0, 0.0, 0.0, "");
       return;
     }

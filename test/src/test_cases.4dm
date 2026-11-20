@@ -388,7 +388,7 @@ void test_cases_run(Attributes &p_results)
   pack_map_skin_part(1, l_tex, l_x, l_y, l_w, l_h, l_over_x, l_over_y);
   test_expect_integer(p_results, "the face is at 8, 8 of the skin",   l_x * 100 + l_y, 808);
   test_expect_integer(p_results, "its second layer at 40, 8",         l_over_x * 100 + l_over_y, 4008);
-  test_expect_integer(p_results, "no skin file: nothing replaced",    pack_apply_skin("zz_no_such_skin.png", l_reply), 0);
+  test_expect_integer(p_results, "no skin file: nothing replaced",    pack_apply_skin("zz_no_such_skin.png", l_reply, l_i), 0);
 
   // ---------------------------------------------------- menus and the world list
   test_group(p_results, "menus and the world list");
@@ -611,6 +611,51 @@ void test_cases_run(Attributes &p_results)
   world_set_block(l_x - 1, l_y + 1, l_z, BLOCK_AIR);
   world_set_block(l_x, l_y, l_z, BLOCK_AIR);
   events_clear(g_events);
+
+  // ---------------------------------------------------- chests and beds
+  test_group(p_results, "chests and beds");
+  l_block = block_chest(FACING_NX, CHEST_RIGHT);
+  test_expect_true   (p_results, "a chest block is a chest",           block_is_chest(l_block));
+  test_expect_integer(p_results, "it keeps its facing",                block_chest_facing(l_block), FACING_NX);
+  test_expect_integer(p_results, "and which half it is",               block_chest_type(l_block), CHEST_RIGHT);
+  test_expect_integer(p_results, "an old chest faces +z",              block_chest_facing(BLOCK_CHEST), FACING_PZ);
+  test_expect_integer(p_results, "every chest drops a chest",          block_drop_item(l_block, ITEM_NONE), ITEM_CHEST);
+  test_expect_integer(p_results, "the chest item places a chest",      block_is_chest(item_places_block(ITEM_CHEST)), TRUE);
+  test_expect_integer(p_results, "a single chest has no partner",      block_partner(block_chest(FACING_PX, CHEST_SINGLE), 5, 5, 5, l_fx, l_fy, l_fz), FALSE);
+  // facing -x, the viewer's left is -z: the right half's partner is there
+  block_partner(l_block, 5, 5, 5, l_fx, l_fy, l_fz);
+  test_expect_integer(p_results, "the right half's partner is left",   l_fx * 100 + l_fz, 504);
+  block_partner(block_chest(FACING_NX, CHEST_LEFT), 5, 5, 4, l_fx, l_fy, l_fz);
+  test_expect_integer(p_results, "and the left half's is right",       l_fx * 100 + l_fz, 505);
+  block_box(block_chest(FACING_PX, CHEST_SINGLE), l_x0, l_y0, l_px, l_x1, l_y1, l_pz);
+  test_expect_real   (p_results, "a chest is 14/16 wide",              l_x1 - l_x0, 0.875, 0.0001);
+  test_expect_real   (p_results, "and 14/16 tall",                     l_y1 - l_y0, 0.875, 0.0001);
+  block_box(l_block, l_x0, l_y0, l_px, l_x1, l_y1, l_pz);
+  test_expect_real   (p_results, "half a double chest meets the other", l_px, 0.0, 0.0001);
+  test_expect_true   (p_results, "chests hide nothing beside them",    !block_hides_faces(l_block));
+  test_expect_integer(p_results, "chest pictures are not sprites",     texture_is_sprite(chest_texture(CHEST_LEFT) + CHEST_LATCH), FALSE);
+  test_expect_integer(p_results, "nor the bed's legs",                 texture_is_sprite(TEX_BED_LEG), FALSE);
+  test_expect_integer(p_results, "a chest put down faces the player",  player_facing_toward(10.5, 3.0, 10, 8), FACING_NZ);
+  // two chests side by side join, and breaking one leaves the other single
+  l_x = 40;
+  l_y = WORLD_HEIGHT - 12;
+  l_z = 40;
+  world_set_block(l_x, l_y - 1, l_z, BLOCK_STONE);
+  world_set_block(l_x, l_y - 1, l_z + 1, BLOCK_STONE);
+  world_set_block(l_x, l_y, l_z, block_chest(FACING_NX, CHEST_SINGLE));
+  world_set_block(l_x, l_y, l_z + 1, block_chest(FACING_NX, CHEST_SINGLE));
+  chest_join(g_events, l_x, l_y, l_z + 1, block_chest(FACING_NX, CHEST_SINGLE));
+  test_expect_integer(p_results, "a chest joins the one beside it",    world_get_block(l_x, l_y, l_z + 1), block_chest(FACING_NX, CHEST_RIGHT));
+  test_expect_integer(p_results, "which becomes the left half",        world_get_block(l_x, l_y, l_z), block_chest(FACING_NX, CHEST_LEFT));
+  world_set_block(l_x, l_y, l_z + 1, BLOCK_AIR);
+  chest_split(g_events, l_x, l_y, l_z + 1, block_chest(FACING_NX, CHEST_RIGHT));
+  test_expect_integer(p_results, "breaking a half leaves a single",    world_get_block(l_x, l_y, l_z), block_chest(FACING_NX, CHEST_SINGLE));
+  world_set_block(l_x, l_y, l_z, BLOCK_AIR);
+  world_set_block(l_x, l_y - 1, l_z, BLOCK_AIR);
+  world_set_block(l_x, l_y - 1, l_z + 1, BLOCK_AIR);
+  events_clear(g_events);
+  test_expect_integer(p_results, "the right half has its own rows",     ui_slot_rect(SCREEN_LARGE_CHEST, 2, UI_SLOT_CHEST2 + 27, 860.0, 520.0, l_x0, l_y0, l_x1), TRUE);
+  test_expect_integer(p_results, "no right half on a single chest",    ui_slot_rect(SCREEN_CHEST, 2, UI_SLOT_CHEST2 + 1, 860.0, 520.0, l_x0, l_y0, l_x1), FALSE);
 }
 
 #endif

@@ -5,21 +5,18 @@ item to "Done" (with the commit) when it is finished and tested.
 
 ## Open
 
-### Rendering and models
-
-- **The first-person arm should match the player model.** It should
-  use the skin's arm (slim or wide) and sleeve, not a stand-in.
-- **Hold tools like tools.** A pickaxe or sword should be held at an
-  angle, the way it is held in the block game, not shown as a flat
-  item picture in the hand.
-- **Fix the bed.** The two halves look disjointed and don't use the
-  resource pack's bed texture.
-- **Chest:**
-  - use the resource pack's chest texture;
-  - make it smaller than a full block (14/16 wide and tall);
-  - add double chests: two chests side by side make one 54-slot chest.
+(nothing open)
 
 ## Done
+
+- The first-person arm is the skin's right arm (sleeve and all; slim
+  skins are found and get 3 pixel arms on the model too); tools are
+  held tipped forward by the handle; the bed is one mattress on legs
+  across both halves; chests are 14/16 with a lid and latch, face the
+  player when placed and join into 54-slot double chests; chests, beds
+  and worn armour use the pack's entity pictures (the layout of the
+  chest and bed pictures is from the block game's format and hasn't
+  been checked against a real pack); container screens are titled.
 
 - Each dimension keeps its own mobs, drops, furnaces and chests (no
   `dim` fields; the other dimension's are put away and swapped back at

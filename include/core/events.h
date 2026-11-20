@@ -50,6 +50,7 @@
 #define SCREEN_FURNACE        3
 #define SCREEN_CHEST          4
 #define SCREEN_CREATIVE       5     // creative mode: every item, with a search
+#define SCREEN_LARGE_CHEST    6     // a double chest (ui_open turns SCREEN_CHEST into it)
 
 #define DATATYPE_EVENT_QUEUE  ("event_queue")
 #define DATATYPE_EVENT        ("event")

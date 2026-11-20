@@ -28,6 +28,8 @@ Integer chest_slot          (Integer p_chest, Integer p_which);
 Integer chest_used          (Attributes &p_store, Integer p_chest);
 Integer chest_find          (Attributes &p_store, Integer p_x, Integer p_y, Integer p_z);
 Integer chest_get_or_create (Attributes &p_store, Integer p_x, Integer p_y, Integer p_z);
+void    chest_join          (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
+void    chest_split         (Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block);
 void    chest_remove        (Attributes &p_store, Attributes &p_events, Integer p_chest);
 Integer chest_item_count    (Attributes &p_store, Integer p_chest);
 void    chest_on_event      (Attributes &p_event, Attributes &p_store, Attributes &p_events);

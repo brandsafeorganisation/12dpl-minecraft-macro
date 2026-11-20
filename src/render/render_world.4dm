@@ -76,6 +76,7 @@ void render_view_from(Attributes &p_player, Attributes &p_settings, Real p_time_
   g_render_distance   = settings_render_distance(p_settings);
   g_view_plants       = settings_flag(p_settings, ATTR_SET_PLANTS);
   g_view_shading      = settings_flag(p_settings, ATTR_SET_SHADING);
+  g_view_slim_arms    = settings_slim_arms(p_settings);
   g_view_eye_in_water = player_eye_in_water(p_player);
   g_view_target_kind  = player_target_kind(p_player);
   g_view_break_stage  = player_break_stage(p_player, p_now);
@@ -289,6 +290,7 @@ void render_add_face(Real p_c0x, Real p_c0y, Real p_c0z, Real p_e1x, Real p_e1y,
   Integer l_bucket   = 0;
   Integer l_face     = 0;
 
+  if (p_tex <= 0) return;   // texture 0: a face left out
   if (g_face_total >= MAX_DRAW_FACES) return;
   if (p_c0z < NEAR_PLANE && l_z1 < NEAR_PLANE && l_z2 < NEAR_PLANE && l_z3 < NEAR_PLANE) return;
 
@@ -436,10 +438,12 @@ void render_add_sprite(Real p_rel_x, Real p_rel_y, Real p_rel_z, Real p_half_wid
 
 void render_add_shaped(Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_light)
 // ----------------------------------------------------------------
-// Queue a door or bed half in cell (x, y, z) as a box filling its
-// block_box, lit by light. A door shows its picture on both broad
-// faces; a bed shows its blanket (and pillow at the head) on top,
-// lengthways from foot to head.
+// Queue a door, bed or chest half in cell (x, y, z), lit by light.
+// A door is a box filling its block_box with its picture on both
+// broad faces; a bed is a mattress on two legs with its blanket (and
+// pillow at the head) on top, lengthways from foot to head; a chest
+// is a base, a lid and a latch, the two halves of a double chest
+// joined without a face between them.
 // ----------------------------------------------------------------
 {
   Real    l_min_x  = 0.0;
@@ -453,43 +457,158 @@ void render_add_shaped(Integer p_x, Integer p_y, Integer p_z, Integer p_block, R
   Real    l_half_s = 0.0;
   Integer l_tex    = 0;
   Integer l_edge   = 0;
-  Integer l_facing = 0;
 
   block_box(p_block, l_min_x, l_min_y, l_min_z, l_max_x, l_max_y, l_max_z);
   g_box_light = p_light;
 
-  if (block_is_door(p_block)) {
-    l_tex  = TEX_DOOR_BOTTOM;
-    l_edge = TEX_DOOR_EDGE_BOTTOM;
-    if (block_door_top(p_block)) {
-      l_tex  = TEX_DOOR_TOP;
-      l_edge = TEX_DOOR_EDGE_TOP;
-    }
-    // the box faces across its thin side
-    l_yaw    = 0.0;
-    l_half_f = (l_max_x - l_min_x) * 0.5;
-    l_half_s = (l_max_z - l_min_z) * 0.5;
-    if (l_max_x - l_min_x > l_max_z - l_min_z) {
-      l_yaw    = PI * 0.5;
-      l_half_f = (l_max_z - l_min_z) * 0.5;
-      l_half_s = (l_max_x - l_min_x) * 0.5;
-    }
-    render_add_box(p_x + (l_min_x + l_max_x) * 0.5, p_y + 0.5, p_z + (l_min_z + l_max_z) * 0.5, l_yaw, 0.0,
-                   l_half_f, 0.5, l_half_s, l_edge, l_edge, l_tex, l_tex, 0.0, -1.0);
+  if (block_is_chest(p_block)) {
+    render_add_chest(p_x, p_y, p_z, p_block, l_min_x, l_min_z, l_max_x, l_max_z);
     return;
   }
 
-  // a bed: facing points from foot to head, so the box's front is the
-  // head end; the top texture's u runs from foot to head
-  l_facing = block_bed_facing(p_block);
-  if (l_facing == FACING_PX) l_yaw = 0.0;
-  if (l_facing == FACING_PZ) l_yaw = PI * 0.5;
-  if (l_facing == FACING_NX) l_yaw = PI;
-  if (l_facing == FACING_NZ) l_yaw = PI * 1.5;
-  l_tex = TEX_BED_FOOT_TOP;
-  if (block_bed_head(p_block)) l_tex = TEX_BED_TOP;
-  render_add_box(p_x + 0.5, p_y + BED_HEIGHT * 0.5, p_z + 0.5, l_yaw, 0.0, 0.5, BED_HEIGHT * 0.5, 0.5,
-                 TEX_BED_SIDE, l_tex, TEX_BED_SIDE, TEX_BED_SIDE, 0.0, -1.0);
+  if (block_is_bed(p_block)) {
+    render_add_bed(p_x, p_y, p_z, p_block);
+    return;
+  }
+
+  l_tex  = TEX_DOOR_BOTTOM;
+  l_edge = TEX_DOOR_EDGE_BOTTOM;
+  if (block_door_top(p_block)) {
+    l_tex  = TEX_DOOR_TOP;
+    l_edge = TEX_DOOR_EDGE_TOP;
+  }
+  // the box faces across its thin side
+  l_yaw    = 0.0;
+  l_half_f = (l_max_x - l_min_x) * 0.5;
+  l_half_s = (l_max_z - l_min_z) * 0.5;
+  if (l_max_x - l_min_x > l_max_z - l_min_z) {
+    l_yaw    = PI * 0.5;
+    l_half_f = (l_max_z - l_min_z) * 0.5;
+    l_half_s = (l_max_x - l_min_x) * 0.5;
+  }
+  render_add_box(p_x + (l_min_x + l_max_x) * 0.5, p_y + 0.5, p_z + (l_min_z + l_max_z) * 0.5, l_yaw, 0.0,
+                 l_half_f, 0.5, l_half_s, l_edge, l_edge, l_tex, l_tex, 0.0, -1.0);
+}
+
+Real render_facing_yaw(Integer p_facing)
+// ----------------------------------------------------------------
+// The yaw render_add_box needs for a box whose front faces FACING_*
+// (its side axis is then block_facing_side's left)
+// ----------------------------------------------------------------
+{
+  if (p_facing == FACING_PZ) return PI * 0.5;
+  if (p_facing == FACING_NX) return PI;
+  if (p_facing == FACING_NZ) return PI * 1.5;
+  return 0.0;
+}
+
+void render_add_chest(Integer p_x, Integer p_y, Integer p_z, Integer p_block, Real p_min_x, Real p_min_z, Real p_max_x, Real p_max_z)
+// ----------------------------------------------------------------
+// Queue a chest in cell (x, y, z) filling (min_x, min_z) .. (max_x,
+// max_z) of it across: a base 10 pixels tall, a lid of 4 on it and a
+// latch on the front. A half of a double chest leaves out its side
+// against the other half and has half the latch on that edge.
+// ----------------------------------------------------------------
+{
+  Integer l_facing  = block_chest_facing(p_block);
+  Integer l_type    = block_chest_type(p_block);
+  Integer l_tex     = chest_texture(l_type);
+  Real    l_yaw     = render_facing_yaw(l_facing);
+  Real    l_cx      = p_x + (p_min_x + p_max_x) * 0.5;
+  Real    l_cz      = p_z + (p_min_z + p_max_z) * 0.5;
+  Real    l_half_f  = 0.5 - CHEST_INSET;
+  Real    l_half_s  = 0.5 - CHEST_INSET;
+  Real    l_base    = 10.0 / 16.0;
+  Real    l_lid     = CHEST_HEIGHT - l_base;
+  Real    l_px      = 1.0 / 16.0;
+  Real    l_side_x  = -Sin(l_yaw);
+  Real    l_side_z  =  Cos(l_yaw);
+  Real    l_fw_x    =  Cos(l_yaw);
+  Real    l_fw_z    =  Sin(l_yaw);
+  Real    l_latch_s = 0.0;
+  Real    l_latch_w = l_px;
+  Real    l_lx      = 0.0;
+  Real    l_lz      = 0.0;
+
+  // the side axis points to the viewer's left: the right half has
+  // its partner there, the left half on the other side
+  g_box_hide_side = 0;
+  if (l_type != CHEST_SINGLE) {
+    l_half_s  = 0.5 - CHEST_INSET * 0.5;
+    l_latch_w = l_px * 0.5;
+    if (l_type == CHEST_RIGHT) {
+      g_box_hide_side = 1;
+      l_latch_s = l_half_s - l_latch_w;
+    } else {
+      g_box_hide_side = -1;
+      l_latch_s = l_latch_w - l_half_s;
+    }
+  }
+
+  render_add_box(l_cx, p_y + l_base * 0.5, l_cz, l_yaw, 0.0, l_half_f, l_base * 0.5, l_half_s,
+                 l_tex + CHEST_BASE_SIDE, l_tex + CHEST_BASE_BOTTOM, l_tex + CHEST_BASE_FRONT, l_tex + CHEST_BASE_BACK, 0.0, -1.0);
+  render_add_lid(l_cx, p_y + l_base + l_lid * 0.5, l_cz, l_yaw, l_half_f, l_lid * 0.5, l_half_s, l_tex);
+  g_box_hide_side = 0;
+
+  // the latch sticks out a pixel from the front, across the lid's edge
+  l_lx = l_cx + l_fw_x * (l_half_f + l_px * 0.5) + l_side_x * l_latch_s;
+  l_lz = l_cz + l_fw_z * (l_half_f + l_px * 0.5) + l_side_z * l_latch_s;
+  render_add_box(l_lx, p_y + l_base, l_lz, l_yaw, 0.0, l_px * 0.5, l_px * 2.0, l_latch_w,
+                 l_tex + CHEST_LATCH, l_tex + CHEST_LATCH, l_tex + CHEST_LATCH, l_tex + CHEST_LATCH, 0.0, -1.0);
+}
+
+void render_add_lid(Real p_cx, Real p_cy, Real p_cz, Real p_yaw, Real p_half_f, Real p_half_y, Real p_half_s, Integer p_tex)
+// ----------------------------------------------------------------
+// Queue a chest's lid: a box with the lid's top on top and the
+// base's bottom texture never seen under it (it sits on the base)
+// ----------------------------------------------------------------
+{
+  render_add_box(p_cx, p_cy, p_cz, p_yaw, 0.0, p_half_f, p_half_y, p_half_s,
+                 p_tex + CHEST_LID_SIDE, p_tex + CHEST_LID_TOP, p_tex + CHEST_LID_FRONT, p_tex + CHEST_LID_BACK, 0.0, -1.0);
+}
+
+void render_add_bed(Integer p_x, Integer p_y, Integer p_z, Integer p_block)
+// ----------------------------------------------------------------
+// Queue a bed half in cell (x, y, z): a mattress 6 pixels thick on
+// legs 3 pixels tall at its outer corners, with no face where the
+// two halves meet. Facing points from foot to head, so the box's
+// front is the head end.
+// ----------------------------------------------------------------
+{
+  Integer l_head    = block_bed_head(p_block);
+  Real    l_yaw     = render_facing_yaw(block_bed_facing(p_block));
+  Real    l_px      = 1.0 / 16.0;
+  Real    l_leg     = 3.0 * l_px;
+  Real    l_thick   = BED_HEIGHT - l_leg;
+  Real    l_fw_x    =  Cos(l_yaw);
+  Real    l_fw_z    =  Sin(l_yaw);
+  Real    l_side_x  = -Sin(l_yaw);
+  Real    l_side_z  =  Cos(l_yaw);
+  Real    l_end     = 0.5 - l_leg * 0.5;
+  Integer l_top     = TEX_BED_FOOT_TOP;
+  Integer l_side    = TEX_BED_FOOT_SIDE;
+  Integer l_front   = 0;
+  Integer l_back    = TEX_BED_FOOT_END;
+  Integer l_corner  = 0;
+  Real    l_s       = 0.0;
+
+  if (l_head) {
+    l_top   = TEX_BED_TOP;
+    l_side  = TEX_BED_SIDE;
+    l_front = TEX_BED_HEAD_END;
+    l_back  = 0;
+  } else {
+    l_end = -l_end;
+  }
+  render_add_box(p_x + 0.5, p_y + l_leg + l_thick * 0.5, p_z + 0.5, l_yaw, 0.0, 0.5, l_thick * 0.5, 0.5,
+                 l_side, l_top, l_front, l_back, 0.0, -1.0);
+  // a leg under each outer corner
+  for (l_corner = 0; l_corner < 2; ++l_corner) {
+    l_s = 0.5 - l_leg * 0.5;
+    if (l_corner == 1) l_s = -l_s;
+    render_add_box(p_x + 0.5 + l_fw_x * l_end + l_side_x * l_s, p_y + l_leg * 0.5, p_z + 0.5 + l_fw_z * l_end + l_side_z * l_s,
+                   l_yaw, 0.0, l_leg * 0.5, l_leg * 0.5, l_leg * 0.5, TEX_BED_LEG, TEX_BED_LEG, TEX_BED_LEG, TEX_BED_LEG, 0.0, -1.0);
+  }
 }
 
 void render_add_plant(Integer p_x, Integer p_y, Integer p_z, Integer p_tex, Real p_light)
@@ -831,7 +950,9 @@ void render_add_box(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_ya
 // half_f is its half length along the facing direction, half_s its
 // half width and half_y its half height. tex_front is drawn on the
 // face it looks out of, tex_back on the opposite one, tex_side on
-// the left and right and tex_top on the top and bottom. On the
+// the left and right and tex_top on the top and bottom (a texture
+// of 0 leaves that face out, and g_box_hide_side 1 or -1 the side at
+// +side or -side). On the
 // sides and the top the texture's u runs from the back to the
 // front, so both sides show the same picture (mirrored, like a
 // model's left and right legs). The faces are ordered by
@@ -908,11 +1029,11 @@ void render_add_box(Real p_centre_x, Real p_centre_y, Real p_centre_z, Real p_ya
     render_add_face(l_m_x, l_m_y, l_m_z, l_s_x, l_s_y, l_s_z, l_u_x, l_u_y, l_u_z,
                     p_tex_back, g_box_light * render_face_shade(-l_fw_x, -l_fw_y, -l_fw_z), l_sort_sq, l_size, p_tint, 0);
   }
-  if (l_eye_s > p_half_s) {
+  if (l_eye_s > p_half_s && g_box_hide_side <= 0) {
     render_add_face(l_m_x + l_s_x, l_m_y + l_s_y, l_m_z + l_s_z, l_f_x, l_f_y, l_f_z, l_u_x, l_u_y, l_u_z,
                     p_tex_side, g_box_light * render_face_shade(l_side_x, 0.0, l_side_z), l_sort_sq, l_size, p_tint, 0);
   }
-  if (l_eye_s < -p_half_s) {
+  if (l_eye_s < -p_half_s && g_box_hide_side >= 0) {
     render_add_face(l_m_x, l_m_y, l_m_z, l_f_x, l_f_y, l_f_z, l_u_x, l_u_y, l_u_z,
                     p_tex_side, g_box_light * render_face_shade(l_side_x, 0.0, l_side_z), l_sort_sq, l_size, p_tint, 0);
   }
@@ -1174,6 +1295,8 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
   Real    l_arm_tip   = 0.0;
   Real    l_a         = PERSON_ARMOUR_GAP;
   Real    l_foot      = 0.625;  // from the hip to the middle of a boot
+  Real    l_arm_out   = 0.375;  // from the middle to an arm's middle ...
+  Real    l_arm_half  = 0.125;  // ... and its half width (slim arms are 3 pixels)
   Integer l_h         = 0;      // first worn texture of each piece
   Integer l_c         = 0;
   Integer l_l         = 0;
@@ -1184,6 +1307,10 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
     l_lean      = 0.5;
     l_legs_back = -0.25;
     l_arm_tip   = 0.4;
+  }
+  if (g_view_slim_arms) {
+    l_arm_out  = 0.34375;
+    l_arm_half = 0.09375;
   }
   l_h = item_worn_texture(p_helmet,     0);
   l_c = item_worn_texture(p_chestplate, 0);
@@ -1196,8 +1323,8 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
   }
   if (l_c > 0) {
     render_mob_part(-0.375 * Sin(l_lean)              , l_neck - 0.375 * Cos(l_lean)        ,  0.0   , 0.125 + l_a   , 0.375 + l_a   , 0.25 + l_a  , 0.0        , -l_lean             , FALSE, l_c + WORN_BODY_SIDE  , l_c + WORN_BODY_SIDE  , l_c + WORN_BODY_FRONT  , l_c + WORN_BODY_BACK  );
-    render_mob_part(0.0                               , l_neck - 0.375                      ,  0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip - p_swing , TRUE , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_FRONT   , l_c + WORN_ARM_SIDE   );
-    render_mob_part(0.0                               , l_neck - 0.375                      , -0.375 , 0.125 + l_a   , 0.375 + l_a   , 0.125 + l_a , 0.0        , l_arm_tip + p_swing , TRUE , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_FRONT   , l_c + WORN_ARM_SIDE   );
+    render_mob_part(0.0                               , l_neck - 0.375                      ,  l_arm_out, 0.125 + l_a, 0.375 + l_a   , l_arm_half + l_a, 0.0     , l_arm_tip - p_swing , TRUE , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_FRONT   , l_c + WORN_ARM_SIDE   );
+    render_mob_part(0.0                               , l_neck - 0.375                      , -l_arm_out, 0.125 + l_a, 0.375 + l_a   , l_arm_half + l_a, 0.0     , l_arm_tip + p_swing , TRUE , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_SIDE   , l_c + WORN_ARM_FRONT   , l_c + WORN_ARM_SIDE   );
   }
   // boots hang from the hip like the legs, a little bigger than the leggings
   if (l_b > 0) {
@@ -1216,8 +1343,8 @@ void render_person(Real p_x, Real p_y, Real p_z, Real p_yaw, Real p_head_turn, R
   render_mob_part(l_legs_back                 , 0.375                     ,  0.125, 0.125 , 0.375 , 0.125 , 0.0        ,  p_swing            , TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
   render_mob_part(l_legs_back                 , 0.375                     , -0.125, 0.125 , 0.375 , 0.125 , 0.0        , -p_swing            , TRUE , TEX_PERSON_PANTS     , TEX_PERSON_PANTS     , TEX_PERSON_LEG_FRONT, TEX_PERSON_PANTS     );
   render_mob_part(-0.375 * Sin(l_lean)        , l_neck - 0.375 * Cos(l_lean),  0.0  , 0.125 , 0.375 , 0.25  , 0.0        , -l_lean             , FALSE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT_SIDE, TEX_PERSON_SHIRT    , TEX_PERSON_SHIRT_BACK);
-  render_mob_part(0.0                         , l_neck - 0.375            ,  0.375, 0.125 , 0.375 , 0.125 , 0.0        , l_arm_tip - p_swing , TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
-  render_mob_part(0.0                         , l_neck - 0.375            , -0.375, 0.125 , 0.375 , 0.125 , 0.0        , l_arm_tip + p_swing , TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
+  render_mob_part(0.0                         , l_neck - 0.375            ,  l_arm_out, 0.125, 0.375, l_arm_half, 0.0     , l_arm_tip - p_swing , TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
+  render_mob_part(0.0                         , l_neck - 0.375            , -l_arm_out, 0.125, 0.375, l_arm_half, 0.0     , l_arm_tip + p_swing , TRUE , TEX_PERSON_ARM       , TEX_PERSON_ARM_TOP   , TEX_PERSON_ARM_FRONT, TEX_PERSON_ARM       );
   render_mob_part(0.0                         , l_neck + 0.25             ,  0.0  , 0.25  , 0.25  , 0.25  , p_head_turn,  p_pitch            , FALSE, TEX_PERSON_HEAD_SIDE , TEX_PERSON_HEAD_TOP  , TEX_PERSON_FACE     , TEX_PERSON_HEAD_BACK );
   render_mob_end();
 }

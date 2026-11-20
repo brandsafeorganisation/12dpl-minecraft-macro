@@ -529,10 +529,14 @@ Text hud_facing_name(Real p_yaw)
   return "north";
 }
 
-void hud_draw_hand(Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integer p_item, Real p_bob, Real p_swing_time)
+void hud_draw_hand(Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integer p_item, Real p_bob, Real p_swing_time,
+                   Integer p_slim)
 // ----------------------------------------------------------------
-// The player's arm in the lower right, holding item; it bobs while
-// walking (bob is the walking phase) and swings when used
+// The player's right arm in the lower right, in their skin (sleeve
+// and all, 3 pixels wide for slim arms), holding item: a block or
+// picture at the hand, a tool tipped forward with its handle in the
+// hand. It bobs while walking (bob is the walking phase) and swings
+// when used.
 // ----------------------------------------------------------------
 {
   Real l_swing  = 0.0;
@@ -541,29 +545,51 @@ void hud_draw_hand(Draw_Box p_box, Real p_w, Real p_view_bottom, Real p_h, Integ
   Real l_scale  = (p_h - p_view_bottom) / 480.0;
   Real l_base_x = 0.0;
   Real l_base_y = 0.0;
+  Real l_hand_x = 0.0;   // the hand end's left corner
+  Real l_hand_y = 0.0;
+  Real l_wide   = 1.0;
 
   if (p_swing_time > 0.0) l_swing = Sin(p_swing_time / 0.25 * PI);
+  if (p_slim) l_wide = 0.75;
 
   l_base_x = p_w * 0.80 + l_bob_x - l_swing * 60.0 * l_scale;
   l_base_y = p_view_bottom + l_bob_y + l_swing * 40.0 * l_scale;
+  l_hand_x = l_base_x - 18.0 * l_scale;
+  l_hand_y = l_base_y + 124.0 * l_scale;
 
-  // Sleeve and hand
-  render_set_colour(p_box, 64.0, 96.0, 168.0);
-  g_icon_x[1] = l_base_x + 30.0 * l_scale;   g_icon_y[1] = l_base_y - 10.0 * l_scale;
-  g_icon_x[2] = l_base_x + 120.0 * l_scale;  g_icon_y[2] = l_base_y - 10.0 * l_scale;
-  g_icon_x[3] = l_base_x + 64.0 * l_scale;   g_icon_y[3] = l_base_y + 96.0 * l_scale;
-  g_icon_x[4] = l_base_x - 4.0 * l_scale;    g_icon_y[4] = l_base_y + 84.0 * l_scale;
-  Draw_polygon(p_box, 4, g_icon_x, g_icon_y);
-  render_set_colour(p_box, 214.0, 164.0, 124.0);
-  g_icon_x[1] = l_base_x - 4.0 * l_scale;    g_icon_y[1] = l_base_y + 84.0 * l_scale;
-  g_icon_x[2] = l_base_x + 64.0 * l_scale;   g_icon_y[2] = l_base_y + 96.0 * l_scale;
-  g_icon_x[3] = l_base_x + 46.0 * l_scale;   g_icon_y[3] = l_base_y + 134.0 * l_scale;
-  g_icon_x[4] = l_base_x - 18.0 * l_scale;   g_icon_y[4] = l_base_y + 120.0 * l_scale;
-  Draw_polygon(p_box, 4, g_icon_x, g_icon_y);
+  // the arm reaches in from below the view: its front, then its side
+  // turned away from the light, from the hand down to the shoulder
+  // (the textures' rows run from the shoulder at the top to the hand)
+  hud_texture_face(p_box, TEX_PERSON_ARM_FRONT, 1.0, FALSE, l_hand_x, l_hand_y, 64.0 * l_wide * l_scale, 12.0 * l_wide * l_scale,
+                   80.0 * l_scale, -170.0 * l_scale);
+  hud_texture_face(p_box, TEX_PERSON_ARM, 0.7, FALSE, l_hand_x + 64.0 * l_wide * l_scale, l_hand_y + 12.0 * l_wide * l_scale,
+                   26.0 * l_scale, -22.0 * l_scale, 80.0 * l_scale, -170.0 * l_scale);
 
-  if (p_item != ITEM_NONE) {
-    hud_draw_item_icon(p_box, p_item, l_base_x + 4.0 * l_scale, l_base_y + 148.0 * l_scale, 82.0 * l_scale, ICON_FULL);
+  if (p_item == ITEM_NONE) return;
+  if (item_tool_kind(p_item) != TOOL_NONE) {
+    hud_draw_held_tool(p_box, p_item, l_hand_x + 32.0 * l_wide * l_scale, l_hand_y + 14.0 * l_scale, 120.0 * l_scale);
+    return;
   }
+  hud_draw_item_icon(p_box, p_item, l_hand_x + 26.0 * l_scale, l_hand_y + 30.0 * l_scale, 82.0 * l_scale, ICON_FULL);
+}
+
+void hud_draw_held_tool(Draw_Box p_box, Integer p_item, Real p_grip_x, Real p_grip_y, Real p_size)
+// ----------------------------------------------------------------
+// A tool held in the right hand at the grip point: its picture
+// (handle at the bottom left, head at the top right) mirrored so the
+// head leans forward to the left, and tipped a little further
+// ----------------------------------------------------------------
+{
+  Integer l_tex  = item_sprite_texture(p_item);
+  Real    l_tilt = 0.35;
+  Real    l_ux   = -Cos(l_tilt) * p_size;   // the picture's u: right to left
+  Real    l_uy   = -Sin(l_tilt) * p_size;
+  Real    l_vx   = -Sin(l_tilt) * p_size;   // and v, up the picture
+  Real    l_vy   =  Cos(l_tilt) * p_size;
+  Real    l_grip = 3.0 / 16.0;              // where the handle's end is
+
+  if (l_tex <= 0) return;
+  hud_texture_face(p_box, l_tex, 1.0, FALSE, p_grip_x - l_grip * (l_ux + l_vx), p_grip_y - l_grip * (l_uy + l_vy), l_ux, l_uy, l_vx, l_vy);
 }
 
 void hud_draw_figure(Draw_Box p_box, Real p_centre_x, Real p_base_y, Real p_unit,
@@ -800,7 +826,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
     // (seen from outside, your body shows instead of the hand and
     // the crosshair)
     if (player_camera(p_player) == CAMERA_FIRST) {
-      if (!l_dead) hud_draw_hand(p_box, p_w, l_strip, p_h, l_held, player_bob(p_player), player_swing_time(p_player));
+      if (!l_dead) hud_draw_hand(p_box, p_w, l_strip, p_h, l_held, player_bob(p_player), player_swing_time(p_player), settings_slim_arms(p_settings));
       // the offhand's item in the lower left
       if (!l_dead && slot_item(p_inventory, OFFHAND_SLOT) != ITEM_NONE) {
         hud_draw_item_icon(p_box, slot_item(p_inventory, OFFHAND_SLOT), p_w * 0.16 - Sin(player_bob(p_player)) * 6.0,

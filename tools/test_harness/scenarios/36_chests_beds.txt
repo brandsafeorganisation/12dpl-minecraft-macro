@@ -1,0 +1,74 @@
+# Chests and beds as models: a chest is put down turned to face the
+# player, and a second one beside it joins it into a double chest
+# (left and right halves); opening it shows six rows, the left half's
+# slots on top. From the side and the back the chests are smaller than
+# their cells, with a lid and a latch; the bed is a mattress on legs.
+# Breaking one half leaves the other a single chest.
+ui Singleplayer
+ui Create New World
+field World Name|Chests
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call noon
+call flat_area
+call no_mobs
+call hold_chests
+call aim_ground_2
+wait 1
+caprclick
+wait 1
+call chest_cells
+call aim_ground_2z1
+wait 1
+caprclick
+wait 1
+call chest_cells
+call fill_chests
+call aim_chest
+wait 1
+caprclick
+wait 2
+call chest_cells
+snap 360_double_chest_screen
+wait 1
+key escape
+wait 1
+call give_bed
+call aim_ground_side
+wait 1
+caprclick
+wait 1
+call cells
+call view_chests
+wait 2
+snap 361_chests_bed
+wait 1
+call view_chests_back
+wait 2
+snap 362_chests_back
+wait 1
+call break_chest_half
+wait 2
+call chest_cells
+call chests
+call view_chests
+wait 2
+snap 363_chest_single
+wait 1
+
+# the arm in the skin, empty, with a tool and with a sword
+call hold_nothing
+wait 2
+snap 364_arm_empty
+wait 1
+call hold_pickaxe
+wait 2
+snap 365_arm_pickaxe
+wait 1
+call hold_sword
+wait 2
+snap 366_arm_sword
+wait 1

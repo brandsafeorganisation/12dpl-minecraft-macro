@@ -17,7 +17,8 @@
 // Slot numbers on screen: 1..36 the inventory, UI_SLOT_GRID + n
 // grid slot n (1..9), UI_SLOT_OUTPUT the crafting result, and
 // UI_SLOT_FURNACE + FURNACE_SLOT_* the furnace's slots and
-// UI_SLOT_CHEST + n slot n of the open chest. The inventory screen
+// UI_SLOT_CHEST + n slot n of the open chest (and UI_SLOT_CHEST2 + n
+// of the right half of a double chest). The inventory screen
 // also has the armour worn (UI_SLOT_ARMOUR + ARMOUR_*) in a column
 // beside a picture of the player, and the offhand (UI_SLOT_OFFHAND).
 //
@@ -33,6 +34,9 @@
 #define ATTR_UI_SCREEN          ("screen")
 #define ATTR_UI_FURNACE         ("furnace")
 #define ATTR_UI_CHEST           ("chest")
+#define ATTR_UI_CHEST2          ("chest2")        // a double chest: its right half's chest (the lower rows)
+#define ATTR_UI_X2              ("x2")            // ... and that half's cell (same y)
+#define ATTR_UI_Z2              ("z2")
 #define ATTR_UI_MOUSE_X         ("mouse_x")
 #define ATTR_UI_MOUSE_Y         ("mouse_y")
 #define ATTR_UI_TABS            ("tabs")          // TRUE: the creative tabs are shown
@@ -52,7 +56,8 @@
 #define UI_SLOT_CREATIVE        100  // + 1 .. CREATIVE_ROWS * 9 (101..145)
 #define UI_SLOT_ARMOUR          150  // + ARMOUR_HEAD .. ARMOUR_FEET (151..154): armour worn (inventory screen)
 #define UI_SLOT_OFFHAND         155  // the offhand (inventory screen)
-#define UI_SLOT_LAST            155
+#define UI_SLOT_CHEST2          160  // + 1 .. CHEST_SLOTS (161..187): a double chest's right half
+#define UI_SLOT_LAST            187
 #define CREATIVE_ROWS           5
 #define CREATIVE_SLOTS          45   // CREATIVE_ROWS * 9
 #define CREATIVE_SEARCH_MAX     24   // longest search
@@ -82,6 +87,7 @@ void    ui_layout         (Integer p_screen, Real p_w, Real p_h, Real &p_slot_si
                            Real &p_inv_x, Real &p_inv_y, Real &p_top_y);
 Integer ui_slot_rect      (Integer p_screen, Integer p_grid_width, Integer p_slot, Real p_w, Real p_h, Real &p_x, Real &p_y, Real &p_size);
 Integer ui_inventory_slot (Integer p_slot);
+Integer ui_chest_target   (Attributes &p_ui, Integer p_slot);
 Integer ui_slot_at        (Integer p_screen, Integer p_grid_width, Real p_px, Real p_py, Real p_w, Real p_h);
 void    ui_click          (Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces,
                            Attributes &p_book, Attributes &p_events, Real p_x, Real p_y, Integer p_right_button, Real p_w, Real p_h);
@@ -90,6 +96,7 @@ void    ui_draw_furnace   (Draw_Box p_box, Attributes &p_furnaces, Integer p_fur
 void    ui_draw_tab       (Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_slot, Integer p_screen, Integer p_hovered);
 void    ui_draw_scroll    (Draw_Box p_box, Real p_x, Real p_y, Real p_size, Integer p_up, Integer p_hovered);
 void    ui_draw_search    (Draw_Box p_box, Attributes &p_ui, Real p_x, Real p_y, Real p_width, Real p_size);
+void    ui_draw_titles    (Draw_Box p_box, Integer p_screen, Real p_inv_x, Real p_inv_y, Real p_top, Real p_slot_size);
 void    ui_draw           (Draw_Box p_box, Real p_w, Real p_h, Attributes &p_ui, Attributes &p_inventory, Attributes &p_grid,
                            Attributes &p_furnaces, Attributes &p_book);
 

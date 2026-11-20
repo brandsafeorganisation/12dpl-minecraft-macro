@@ -261,6 +261,43 @@ Integer pack_map_part(Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_nam
   if (p_entry == 80) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 4              , "block" , "nether_portal"                     , 0 , 1280, 64, 64, PACK_TURN_NONE );
   if (p_entry == 81) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 5              , "block" , "nether_portal"                     , 0 , 1536, 64, 64, PACK_TURN_NONE );
   if (p_entry == 82) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_PORTAL_2 + 6              , "block" , "nether_portal"                     , 0 , 1792, 64, 64, PACK_TURN_NONE );
+  // chests (a single one, then the halves of a double one) and the bed,
+  // from the block entity pictures (1.15 and later: the chest's sides
+  // are upside down in the picture)
+  if (p_entry == 83) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_LID_TOP   , "entity", "chest/normal"        , 28, 0 , 14, 14, PACK_TURN_NONE );
+  if (p_entry == 84) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_LID_FRONT , "entity", "chest/normal"        , 42, 14, 14, 5 , PACK_TURN_FLIP );
+  if (p_entry == 85) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_LID_BACK  , "entity", "chest/normal"        , 14, 14, 14, 5 , PACK_TURN_FLIP );
+  if (p_entry == 86) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_LID_SIDE  , "entity", "chest/normal"        , 0 , 14, 14, 5 , PACK_TURN_FLIP );
+  if (p_entry == 87) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_BASE_FRONT, "entity", "chest/normal"        , 42, 33, 14, 10, PACK_TURN_FLIP );
+  if (p_entry == 88) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_BASE_BACK , "entity", "chest/normal"        , 14, 33, 14, 10, PACK_TURN_FLIP );
+  if (p_entry == 89) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_BASE_SIDE , "entity", "chest/normal"        , 0 , 33, 14, 10, PACK_TURN_FLIP );
+  if (p_entry == 90) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_BASE_BOTTOM, "entity", "chest/normal"        , 14, 19, 14, 14, PACK_TURN_NONE );
+  if (p_entry == 91) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_SINGLE) + CHEST_LATCH     , "entity", "chest/normal"        , 1 , 1 , 2 , 4 , PACK_TURN_FLIP );
+  if (p_entry == 92) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_LID_TOP    , "entity", "chest/normal_left"   , 29, 0 , 15, 14, PACK_TURN_NONE );
+  if (p_entry == 93) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_LID_FRONT  , "entity", "chest/normal_left"   , 43, 14, 15, 5 , PACK_TURN_FLIP );
+  if (p_entry == 94) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_LID_BACK   , "entity", "chest/normal_left"   , 14, 14, 15, 5 , PACK_TURN_FLIP );
+  if (p_entry == 95) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_LID_SIDE   , "entity", "chest/normal_left"   , 0 , 14, 14, 5 , PACK_TURN_FLIP );
+  if (p_entry == 96) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_BASE_FRONT , "entity", "chest/normal_left"   , 43, 33, 15, 10, PACK_TURN_FLIP );
+  if (p_entry == 97) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_BASE_BACK  , "entity", "chest/normal_left"   , 14, 33, 15, 10, PACK_TURN_FLIP );
+  if (p_entry == 98) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_BASE_SIDE  , "entity", "chest/normal_left"   , 0 , 33, 14, 10, PACK_TURN_FLIP );
+  if (p_entry == 99) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_BASE_BOTTOM, "entity", "chest/normal_left"   , 14, 19, 15, 14, PACK_TURN_NONE );
+  if (p_entry == 100) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_RIGHT) + CHEST_LATCH      , "entity", "chest/normal_left"   , 1 , 1 , 1 , 4 , PACK_TURN_FLIP );
+  if (p_entry == 101) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_LID_TOP     , "entity", "chest/normal_right"  , 29, 0 , 15, 14, PACK_TURN_NONE );
+  if (p_entry == 102) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_LID_FRONT   , "entity", "chest/normal_right"  , 43, 14, 15, 5 , PACK_TURN_FLIP );
+  if (p_entry == 103) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_LID_BACK    , "entity", "chest/normal_right"  , 14, 14, 15, 5 , PACK_TURN_FLIP );
+  if (p_entry == 104) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_LID_SIDE    , "entity", "chest/normal_right"  , 29, 14, 14, 5 , PACK_TURN_FLIP );
+  if (p_entry == 105) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_BASE_FRONT  , "entity", "chest/normal_right"  , 43, 33, 15, 10, PACK_TURN_FLIP );
+  if (p_entry == 106) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_BASE_BACK   , "entity", "chest/normal_right"  , 14, 33, 15, 10, PACK_TURN_FLIP );
+  if (p_entry == 107) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_BASE_SIDE   , "entity", "chest/normal_right"  , 29, 33, 14, 10, PACK_TURN_FLIP );
+  if (p_entry == 108) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_BASE_BOTTOM , "entity", "chest/normal_right"  , 14, 19, 15, 14, PACK_TURN_NONE );
+  if (p_entry == 109) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, chest_texture(CHEST_LEFT) + CHEST_LATCH       , "entity", "chest/normal_right"  , 1 , 1 , 1 , 4 , PACK_TURN_FLIP );
+  if (p_entry == 110) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_TOP                                   , "entity", "bed/red"             , 6 , 6 , 16, 16, PACK_TURN_RIGHT);
+  if (p_entry == 111) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_FOOT_TOP                              , "entity", "bed/red"             , 6 , 28, 16, 16, PACK_TURN_RIGHT);
+  if (p_entry == 112) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_SIDE                                  , "entity", "bed/red"             , 22, 6 , 6 , 16, PACK_TURN_RIGHT);
+  if (p_entry == 113) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_FOOT_SIDE                             , "entity", "bed/red"             , 22, 28, 6 , 16, PACK_TURN_RIGHT);
+  if (p_entry == 114) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_HEAD_END                              , "entity", "bed/red"             , 6 , 0 , 16, 6 , PACK_TURN_HALF );
+  if (p_entry == 115) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_FOOT_END                              , "entity", "bed/red"             , 22, 22, 16, 6 , PACK_TURN_NONE );
+  if (p_entry == 116) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_LEG                                   , "entity", "bed/red"             , 50, 0 , 3 , 3 , PACK_TURN_NONE );
   return FALSE;
 }
 
@@ -1175,6 +1212,8 @@ Integer png_decode(Integer p_map_x, Integer p_map_y)
       } else if (g_pack_region_turn == PACK_TURN_LEFT) {
         l_a = 17 - l_v;
         l_b = l_u;
+      } else if (g_pack_region_turn == PACK_TURN_FLIP) {
+        l_b = 17 - l_v;
       }
       l_x = l_region_x + floor_divide((2 * l_a - 1) * l_region_w, 32);
       l_y = l_region_y + floor_divide((2 * l_b - 1) * l_region_h, 32);
@@ -1564,7 +1603,7 @@ Integer pack_apply(Text p_path, Text &p_report)
   // Mob textures, worn armour and animation frames: each one is a
   // rectangle of a bigger image. Some textures have two entries (an
   // older and a newer place in a pack), so a texture is only missing
-  // if none of its entries loaded. The ones numbered from
+  // if none of its entries loaded. The sprites numbered from
   // TEX_PORTAL_2 keep their see-through pixels.
   record_clear(l_parts, DATATYPE_PACK_WANTED);
   l_entry = 1;
@@ -1581,7 +1620,7 @@ Integer pack_apply(Text p_path, Text &p_report)
       record_set_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex), FALSE);
     }
     if (l_result != SUCCESS) continue;
-    pack_to_texture(l_tex, l_tex >= TEX_PORTAL_2);
+    pack_to_texture(l_tex, l_tex >= TEX_PORTAL_2 && texture_is_sprite(l_tex));
     record_set_integer(l_parts, record_field_at(ATTR_PACK_PART, l_tex), TRUE);
     ++l_loaded;
   }
@@ -1663,11 +1702,27 @@ Integer pack_skin_region(Integer p_x, Integer p_y, Integer p_w, Integer p_h)
   return l_result;
 }
 
-Integer pack_apply_skin(Text p_path, Text &p_report)
+Integer pack_skin_is_slim(Integer p_width, Integer p_height)
+// ----------------------------------------------------------------
+// TRUE if the skin in g_pack_file (width x height pixels) has slim
+// arms: in a 64 x 64 skin with 3 pixel arms the last two columns of
+// the right arm's back, at (54, 20) and (55, 31), are see-through
+// ----------------------------------------------------------------
+{
+  if (p_height < p_width) return FALSE;
+  if (png_decode(54 * 4, 20 * 4) != SUCCESS) return FALSE;
+  if (g_pack_a[1] >= 128) return FALSE;
+  if (png_decode(55 * 4, 31 * 4) != SUCCESS) return FALSE;
+  return g_pack_a[1] < 128;
+}
+
+Integer pack_apply_skin(Text p_path, Text &p_report, Integer &p_slim)
 // ----------------------------------------------------------------
 // Dress the player model (the TEX_PERSON_* textures) in the skin
 // p_path, a PNG laid out like the block game's skins (64 x 64, or
 // 64 x 32 without the second layer of the body, arms and legs).
+// p_slim comes back TRUE for a skin with slim arms, whose front and
+// top are 3 pixels wide.
 // Call between textures_generate() and textures_finish_all(), after
 // any resource pack. Returns how many textures it replaced.
 // ----------------------------------------------------------------
@@ -1686,6 +1741,7 @@ Integer pack_apply_skin(Text p_path, Text &p_report)
   Integer l_loaded = 0;
 
   p_report = "";
+  p_slim   = FALSE;
   if (p_path == "") return 0;
   pack_init_tables();
   if (pack_load_png_file(p_path) != SUCCESS) {
@@ -1699,8 +1755,10 @@ Integer pack_apply_skin(Text p_path, Text &p_report)
     return 0;
   }
 
+  p_slim = pack_skin_is_slim(l_width, l_height);
   while (pack_map_skin_part(l_entry, l_tex, l_x, l_y, l_w, l_h, l_over_x, l_over_y)) {
     ++l_entry;
+    if (p_slim && (l_tex == TEX_PERSON_ARM_FRONT || l_tex == TEX_PERSON_ARM_TOP)) l_w = 3;
     // the second layer first (kept aside), then the part under it;
     // 64 x 32 skins have no second layer below the head
     for (l_pixel = 1; l_pixel <= 256; ++l_pixel) g_pack_overlay_a[l_pixel] = 0;

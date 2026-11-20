@@ -134,9 +134,50 @@ void chest_remove(Attributes &p_store, Attributes &p_events, Integer p_chest)
   record_set_integer_at(p_store, ATTR_CHEST_USED, p_chest, FALSE);
 }
 
+void chest_join(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)
+// ----------------------------------------------------------------
+// A single chest was put down at (x, y, z): join it to a single
+// chest facing the same way beside it (the one at its left, as seen
+// from the front, first) to make a double chest
+// ----------------------------------------------------------------
+{
+  Integer l_facing = block_chest_facing(p_block);
+  Integer l_dx     = 0;
+  Integer l_dz     = 0;
+
+  block_facing_side(l_facing, l_dx, l_dz);
+  if (world_get_block(p_x + l_dx, p_y, p_z + l_dz) == block_chest(l_facing, CHEST_SINGLE)) {
+    world_place_block(p_events, p_x + l_dx, p_y, p_z + l_dz, block_chest(l_facing, CHEST_LEFT));
+    world_place_block(p_events, p_x, p_y, p_z, block_chest(l_facing, CHEST_RIGHT));
+    return;
+  }
+  if (world_get_block(p_x - l_dx, p_y, p_z - l_dz) == block_chest(l_facing, CHEST_SINGLE)) {
+    world_place_block(p_events, p_x - l_dx, p_y, p_z - l_dz, block_chest(l_facing, CHEST_RIGHT));
+    world_place_block(p_events, p_x, p_y, p_z, block_chest(l_facing, CHEST_LEFT));
+  }
+}
+
+void chest_split(Attributes &p_events, Integer p_x, Integer p_y, Integer p_z, Integer p_block)
+// ----------------------------------------------------------------
+// Half of a double chest at (x, y, z) was broken: the other half
+// becomes a single chest
+// ----------------------------------------------------------------
+{
+  Integer l_px = 0;
+  Integer l_py = 0;
+  Integer l_pz = 0;
+
+  if (!block_partner(p_block, p_x, p_y, p_z, l_px, l_py, l_pz)) return;
+  if (!block_is_chest(world_get_block(l_px, l_py, l_pz))) return;
+  if (block_chest_type(world_get_block(l_px, l_py, l_pz)) == CHEST_SINGLE) return;
+  world_place_block(p_events, l_px, l_py, l_pz, block_chest(block_chest_facing(p_block), CHEST_SINGLE));
+}
+
 void chest_on_event(Attributes &p_event, Attributes &p_store, Attributes &p_events)
 // ----------------------------------------------------------------
-// Event handler: chests appear and disappear with their blocks
+// Event handler: chests appear and disappear with their blocks; a
+// chest put down beside another joins it, and breaking half of a
+// double chest leaves the other half single
 // ----------------------------------------------------------------
 {
   Integer l_type  = event_type(p_event);
@@ -145,12 +186,16 @@ void chest_on_event(Attributes &p_event, Attributes &p_store, Attributes &p_even
   Integer l_z     = event_integer(p_event, 3);
   Integer l_block = event_integer(p_event, 4);
 
-  if (l_block != BLOCK_CHEST) return;
+  if (!block_is_chest(l_block)) return;
 
   if (l_type == EVT_BLOCK_PLACED) {
     chest_get_or_create(p_store, l_x, l_y, l_z);
+    if (event_is_remote(p_event)) return;
+    if (block_chest_type(l_block) == CHEST_SINGLE && l_block != BLOCK_CHEST) chest_join(p_events, l_x, l_y, l_z, l_block);
   } else if (l_type == EVT_BLOCK_BROKEN) {
     chest_remove(p_store, p_events, chest_find(p_store, l_x, l_y, l_z));
+    if (event_is_remote(p_event)) return;
+    if (block_chest_type(l_block) != CHEST_SINGLE) chest_split(p_events, l_x, l_y, l_z, l_block);
   }
 }
 

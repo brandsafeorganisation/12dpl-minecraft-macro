@@ -57,7 +57,15 @@
 #define BLOCK_DIAMOND_ORE     95   // blocks added after the items 64 .. 94 (so
 #define BLOCK_JUKEBOX         96   // their item can share their number)
 #define BLOCK_FIRE            97   // burns on a block; no item
-#define MAX_BLOCK             97   // the highest block number
+#define BLOCK_CHEST_FIRST     98   // chests: 98 + facing * 3 + CHEST_* (single, or the left
+#define BLOCK_CHEST_LAST      109  // or right half of a double chest seen from the front);
+                                   // BLOCK_CHEST is an older single chest facing +z
+#define MAX_BLOCK             109  // the highest block number
+#define CHEST_SINGLE          0
+#define CHEST_LEFT            1
+#define CHEST_RIGHT           2
+#define CHEST_INSET           0.0625 // a chest is 14/16 wide and deep ...
+#define CHEST_HEIGHT          0.875  // ... and 14/16 tall
 #define MAX_BLOCK_ID          28   // highest of the first run of blocks that are also items
 #define FIRST_NETHER_ITEM     57   // blocks 57 .. LAST_NETHER_ITEM are items too
 #define LAST_NETHER_ITEM      61
@@ -203,6 +211,12 @@ Integer block_door_facing    (Integer p_block);
 Integer block_door_open      (Integer p_block);
 Integer block_door_top       (Integer p_block);
 Integer block_bed            (Integer p_facing, Integer p_head);
+Integer block_is_chest       (Integer p_block);
+Integer block_chest          (Integer p_facing, Integer p_type);
+Integer block_chest_facing   (Integer p_block);
+Integer block_chest_type     (Integer p_block);
+void    block_facing_side    (Integer p_facing, Integer &p_dx, Integer &p_dz);
+Integer chest_texture        (Integer p_type);
 Integer block_bed_facing     (Integer p_block);
 Integer block_bed_head       (Integer p_block);
 void    block_facing_step    (Integer p_facing, Integer &p_dx, Integer &p_dz);

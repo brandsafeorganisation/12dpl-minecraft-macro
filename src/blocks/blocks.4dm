@@ -87,11 +87,11 @@ Integer block_is_bed(Integer p_block)
 
 Integer block_is_shaped(Integer p_block)
 // ----------------------------------------------------------------
-// TRUE for blocks drawn as a box smaller than their cell (doors and
-// beds): they hide nothing next to them
+// TRUE for blocks drawn as boxes smaller than their cell (doors,
+// beds and chests): they hide nothing next to them
 // ----------------------------------------------------------------
 {
-  return block_is_door(p_block) || block_is_bed(p_block);
+  return block_is_door(p_block) || block_is_bed(p_block) || block_is_chest(p_block);
 }
 
 Integer block_door(Integer p_facing, Integer p_open, Integer p_top)
@@ -171,10 +171,71 @@ void block_facing_step(Integer p_facing, Integer &p_dx, Integer &p_dz)
   if (p_facing == FACING_NZ) p_dz = -1;
 }
 
+Integer block_is_chest(Integer p_block)
+// ----------------------------------------------------------------
+// TRUE for a chest, single or either half of a double chest
+// ----------------------------------------------------------------
+{
+  if (p_block == BLOCK_CHEST) return TRUE;
+  return p_block >= BLOCK_CHEST_FIRST && p_block <= BLOCK_CHEST_LAST;
+}
+
+Integer block_chest(Integer p_facing, Integer p_type)
+// ----------------------------------------------------------------
+// The chest block facing FACING_* (its front, with the latch), of
+// type CHEST_SINGLE, CHEST_LEFT or CHEST_RIGHT
+// ----------------------------------------------------------------
+{
+  return BLOCK_CHEST_FIRST + p_facing * 3 + p_type;
+}
+
+Integer block_chest_facing(Integer p_block)
+// ----------------------------------------------------------------
+// FACING_* a chest's front faces (an older BLOCK_CHEST faces +z)
+// ----------------------------------------------------------------
+{
+  if (p_block == BLOCK_CHEST) return FACING_PZ;
+  return floor_divide(p_block - BLOCK_CHEST_FIRST, 3);
+}
+
+Integer block_chest_type(Integer p_block)
+// ----------------------------------------------------------------
+// CHEST_SINGLE, or CHEST_LEFT / CHEST_RIGHT: which half of a double
+// chest, as seen standing in front of it
+// ----------------------------------------------------------------
+{
+  if (p_block == BLOCK_CHEST) return CHEST_SINGLE;
+  return p_block - BLOCK_CHEST_FIRST - 3 * floor_divide(p_block - BLOCK_CHEST_FIRST, 3);
+}
+
+void block_facing_side(Integer p_facing, Integer &p_dx, Integer &p_dz)
+// ----------------------------------------------------------------
+// One cell step to the left of something facing FACING_*, as seen
+// standing in front of it looking at it (the left half of a double
+// chest is this side of the right half)
+// ----------------------------------------------------------------
+{
+  p_dx = 0;
+  p_dz = 0;
+  if (p_facing == FACING_PX) p_dz =  1;
+  if (p_facing == FACING_PZ) p_dx = -1;
+  if (p_facing == FACING_NX) p_dz = -1;
+  if (p_facing == FACING_NZ) p_dx =  1;
+}
+
+Integer chest_texture(Integer p_type)
+// ----------------------------------------------------------------
+// First texture (CHEST_LID_TOP) of a chest of type CHEST_*: add
+// CHEST_* parts to it
+// ----------------------------------------------------------------
+{
+  return TEX_CHEST_PARTS + p_type * CHEST_PARTS;
+}
+
 Integer block_partner(Integer p_block, Integer p_x, Integer p_y, Integer p_z, Integer &p_px, Integer &p_py, Integer &p_pz)
 // ----------------------------------------------------------------
-// For one half of a door or bed at (x, y, z), the cell of the other
-// half. Returns FALSE for every other block.
+// For one half of a door, bed or double chest at (x, y, z), the cell
+// of the other half. Returns FALSE for every other block.
 // ----------------------------------------------------------------
 {
   Integer l_dx = 0;
@@ -202,6 +263,17 @@ Integer block_partner(Integer p_block, Integer p_x, Integer p_y, Integer p_z, In
     }
     return TRUE;
   }
+  if (block_is_chest(p_block) && block_chest_type(p_block) != CHEST_SINGLE) {
+    block_facing_side(block_chest_facing(p_block), l_dx, l_dz);
+    if (block_chest_type(p_block) == CHEST_LEFT) {
+      p_px = p_x - l_dx;
+      p_pz = p_z - l_dz;
+    } else {
+      p_px = p_x + l_dx;
+      p_pz = p_z + l_dz;
+    }
+    return TRUE;
+  }
   return FALSE;
 }
 
@@ -215,6 +287,8 @@ Integer block_box(Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, 
   Real    l_half   = 0.5;
   Real    l_height = 1.0;
   Integer l_side   = 0;
+  Integer l_dx     = 0;
+  Integer l_dz     = 0;
 
   // a door is a thin panel along one side of its cell; opening it
   // swings it round to the next side
@@ -241,6 +315,30 @@ Integer block_box(Integer p_block, Real &p_min_x, Real &p_min_y, Real &p_min_z, 
     if (l_side == FACING_NX) p_max_x = DOOR_THICKNESS;
     if (l_side == FACING_PZ) p_min_z = 1.0 - DOOR_THICKNESS;
     if (l_side == FACING_NZ) p_max_z = DOOR_THICKNESS;
+    return TRUE;
+  }
+
+  // a chest is a little smaller than its cell, except where the two
+  // halves of a double chest meet
+  if (block_is_chest(p_block)) {
+    p_min_x = CHEST_INSET;
+    p_min_y = 0.0;
+    p_min_z = CHEST_INSET;
+    p_max_x = 1.0 - CHEST_INSET;
+    p_max_y = CHEST_HEIGHT;
+    p_max_z = 1.0 - CHEST_INSET;
+    if (block_chest_type(p_block) != CHEST_SINGLE) {
+      block_facing_side(block_chest_facing(p_block), l_dx, l_dz);
+      if (block_chest_type(p_block) == CHEST_LEFT) {
+        l_dx = -l_dx;
+        l_dz = -l_dz;
+      }
+      // (dx, dz) now points to the other half
+      if (l_dx > 0) p_max_x = 1.0;
+      if (l_dx < 0) p_min_x = 0.0;
+      if (l_dz > 0) p_max_z = 1.0;
+      if (l_dz < 0) p_min_z = 0.0;
+    }
     return TRUE;
   }
 
@@ -399,7 +497,7 @@ Integer block_hand_hits(Integer p_block)
   if (p_block == BLOCK_BED           ) return 2;
   if (block_is_bed(p_block)          ) return 2;
   if (block_is_door(p_block)         ) return 3;
-  if (p_block == BLOCK_CHEST         ) return 4;
+  if (block_is_chest(p_block)        ) return 4;
   if (p_block == BLOCK_SANDSTONE     ) return 6;
   if (p_block == BLOCK_COAL_ORE      ) return 10;
   if (p_block == BLOCK_IRON_ORE      ) return 12;
@@ -428,7 +526,7 @@ Integer block_tool_kind(Integer p_block)
   if (p_block == BLOCK_BED           ) return TOOL_AXE;
   if (block_is_bed(p_block)          ) return TOOL_AXE;
   if (block_is_door(p_block)         ) return TOOL_AXE;
-  if (p_block == BLOCK_CHEST         ) return TOOL_AXE;
+  if (block_is_chest(p_block)        ) return TOOL_AXE;
   if (p_block == BLOCK_JUKEBOX       ) return TOOL_AXE;
   if (p_block == BLOCK_DIAMOND_ORE   ) return TOOL_PICKAXE;
   if (p_block == BLOCK_STONE         ) return TOOL_PICKAXE;
@@ -518,6 +616,7 @@ Integer block_drop_item(Integer p_block, Integer p_tool_item)
   if (p_block == BLOCK_AIR     ) return ITEM_NONE;
   if (p_block == BLOCK_BEDROCK ) return ITEM_NONE;
   if (block_is_furnace(p_block)) return ITEM_FURNACE;
+  if (block_is_chest(p_block)) return ITEM_CHEST;
   // a door or bed drops one item, from its bottom half or foot (the
   // other half is broken along with it and drops nothing)
   if (block_is_door(p_block)) {
@@ -540,6 +639,7 @@ Integer block_pick_item(Integer p_block)
   if (block_is_furnace(p_block)) return ITEM_FURNACE;
   if (block_is_door(p_block)) return ITEM_DOOR;
   if (block_is_bed(p_block)) return ITEM_BED;
+  if (block_is_chest(p_block)) return ITEM_CHEST;
   if (item_places_block(p_block) == BLOCK_AIR) return ITEM_NONE;
   return p_block;
 }
@@ -576,9 +676,10 @@ Integer block_face_texture(Integer p_block, Integer p_direction)
     return TEX_JUKEBOX_SIDE;
   }
 
-  if (p_block == BLOCK_CHEST) {
-    if (p_direction == DIR_PY || p_direction == DIR_NY) return TEX_CHEST_TOP;
-    return TEX_CHEST_SIDE;
+  if (block_is_chest(p_block)) {
+    if (p_direction == DIR_PY) return chest_texture(CHEST_SINGLE) + CHEST_LID_TOP;
+    if (p_direction == DIR_NY) return chest_texture(CHEST_SINGLE) + CHEST_BASE_BOTTOM;
+    return chest_texture(CHEST_SINGLE) + CHEST_BASE_FRONT;
   }
   if (p_block == BLOCK_BED) {
     if (p_direction == DIR_PY) return TEX_BED_TOP;
