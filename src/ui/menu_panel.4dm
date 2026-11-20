@@ -8,6 +8,7 @@
 #include "../../include/program/settings.h"
 #include "../../include/program/save.h"
 #include "../../include/program/game.h"
+#include "../../include/net/net.h"
 #include "../../include/render/render.h"
 #include "../../include/render/menu.h"
 #include "../../include/ui/panels.h"
@@ -145,6 +146,7 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
   Real      l_now        = 0.0;
   Real      l_last_frame = 0.0;
   Real      l_last_click = 0.0;
+  Real      l_last_scan  = 0.0;
   Real      l_x          = 0.0;
   Real      l_y          = 0.0;
   Real      l_w          = 0.0;
@@ -179,7 +181,14 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
       if (l_screen == SCREEN_WORLDS     ) screen_worlds(p_box, g_menu, g_worlds, l_w, l_h, l_now);
       if (l_screen == SCREEN_CREATE     ) screen_create(p_box, g_menu, l_new_mode, l_w, l_h, l_now);
       if (l_screen == SCREEN_DELETE     ) screen_delete(p_box, g_menu, l_name, l_w, l_h, l_now);
-      if (l_screen == SCREEN_MULTIPLAYER) screen_player(p_box, g_menu, TRUE, l_w, l_h, l_now);
+      if (l_screen == SCREEN_MULTIPLAYER) {
+        // look for LAN worlds again every couple of seconds
+        if (l_now - l_last_scan >= LAN_SCAN_SECONDS) {
+          net_list_lan(settings_mp_folder(p_settings), g_lan);
+          l_last_scan = l_now;
+        }
+        screen_multiplayer(p_box, g_menu, g_lan, l_w, l_h, l_now);
+      }
       End_batch_draw(p_box);
       l_last_frame = l_now;
       l_want_frame = FALSE;
@@ -257,7 +266,6 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
           // Escape is Back (or Cancel)
           if (l_screen == SCREEN_WORLDS || l_screen == SCREEN_MULTIPLAYER) l_id = W_BACK;
           if (l_screen == SCREEN_CREATE || l_screen == SCREEN_DELETE) l_id = W_CANCEL;
-          if (l_screen == SCREEN_MULTIPLAYER) l_id = W_DONE;
         } else if (menu_type_key(g_menu, l_key, l_msg)) {
           // the world list follows the search as it is typed
           if (menu_focus(g_menu) == W_SEARCH) {
@@ -273,7 +281,7 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
         Set_focus(p_keys);
         if (l_screen == SCREEN_CREATE) l_id = W_CREATE;
         if (l_screen == SCREEN_WORLDS && menu_pick(g_menu) > 0) l_id = W_PLAY;
-        if (l_screen == SCREEN_MULTIPLAYER) l_id = W_JOIN;
+        if (l_screen == SCREEN_MULTIPLAYER && menu_pick(g_menu) > 0) l_id = W_JOIN;
         if (l_id == 0) continue;
         l_want_frame = TRUE;
       } else {
@@ -289,8 +297,9 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
         menu_open_worlds(g_menu, g_worlds);
         l_screen = SCREEN_WORLDS;
       } else if (l_id == W_MULTIPLAYER) {
-        menu_set_field_text(g_menu, W_PLAYER_NAME, settings_player_name(p_settings));
-        menu_set_field_text(g_menu, W_FOLDER, settings_mp_folder(p_settings));
+        net_list_lan(settings_mp_folder(p_settings), g_lan);
+        l_last_scan = l_now;
+        menu_set_pick(g_menu, 0);
         menu_set_focus(g_menu, 0);
         l_screen = SCREEN_MULTIPLAYER;
       } else if (l_id == W_OPTIONS) {
@@ -317,11 +326,9 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
         l_screen   = SCREEN_CREATE;
       } else if (l_id == W_DELETE && l_name != "") {
         l_screen = SCREEN_DELETE;
-      } else if ((l_id == W_PLAY || l_id == W_HOST) && l_name != "") {
+      } else if (l_id == W_PLAY && l_name != "") {
         record_set_text(p_game, ATTR_MENU_WORLD, l_name);
-        l_result = MENU_RESULT_PLAY;
-        if (l_id == W_HOST) l_result = MENU_RESULT_HOST;
-        return l_result;
+        return MENU_RESULT_PLAY;
       }
 
     } else if (l_screen == SCREEN_CREATE) {
@@ -370,16 +377,18 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
       }
 
     } else if (l_screen == SCREEN_MULTIPLAYER) {
-      if (l_id == W_DONE || l_id == W_JOIN) {
-        settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, Text_justify(menu_field_text(g_menu, W_PLAYER_NAME)));
-        settings_set_text(p_settings, ATTR_SET_MP_FOLDER, Text_justify(menu_field_text(g_menu, W_FOLDER)));
-        save_ensure_folder();
-        settings_save(p_settings, save_settings_path());
-        menu_set_focus(g_menu, 0);
+      // a LAN world: its session file goes to the game as the world
+      if (l_id == W_PLAY) l_id = W_JOIN;
+      if (l_id == W_BACK) {
+        menu_set_pick(g_menu, 0);
         l_screen = SCREEN_TITLE;
-      }
-      if (l_id == W_JOIN) {
-        record_set_text(p_game, ATTR_MENU_WORLD, "Multiplayer");
+      } else if (l_id == W_REFRESH) {
+        menu_set_pick(g_menu, 0);
+        net_list_lan(settings_mp_folder(p_settings), g_lan);
+        l_last_scan = l_now;
+      } else if (l_id == W_JOIN && menu_pick(g_menu) > 0 && menu_pick(g_menu) <= record_integer(g_lan, ATTR_LAN_COUNT)) {
+        record_set_text(p_game, ATTR_MENU_WORLD, record_text_at(g_lan, ATTR_LAN_FILE, menu_pick(g_menu)));
+        menu_set_pick(g_menu, 0);
         return MENU_RESULT_JOIN;
       }
     }

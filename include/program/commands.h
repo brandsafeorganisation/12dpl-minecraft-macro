@@ -27,6 +27,8 @@ Text    command_time         (Dynamic_Text &p_words, Integer p_count, Attributes
 Text    command_gamerule     (Dynamic_Text &p_words, Integer p_count, Attributes &p_info);
 Text    command_give         (Dynamic_Text &p_words, Integer p_count, Attributes &p_inventory);
 Text    command_gamemode     (Dynamic_Text &p_words, Attributes &p_player);
-Text    command_run          (Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory);
+Text    command_whisper    (Text p_line, Dynamic_Text &p_words, Integer p_count, Attributes &p_net, Attributes &p_peers);
+Integer command_is_cheat   (Text p_name);
+Text    command_run        (Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_net, Attributes &p_peers);
 
 #endif

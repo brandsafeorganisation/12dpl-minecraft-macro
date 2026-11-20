@@ -7,10 +7,15 @@
 // Multiplayer through a shared folder (12dPL has no sockets, so files
 // are the only way two copies of the game can talk)
 //
-// A session lives in the multiplayer folder (settings, "cubeland_worlds\mp"
-// by default, or a network folder named cubeland_mp):
+// A world opened to LAN (from the game menu) lives in the multiplayer
+// folder (settings, "cubeland_worlds\mp" by default, or a network
+// folder named cubeland_mp):
 //
-//   session.txt                 the host's current session: id, host, seed, world
+//   lan_<session>.txt           one per world opened to LAN: the session,
+//                               the host, the world, the game mode guests
+//                               join in, whether cheats are allowed and
+//                               whether it is still open (Play Multiplayer
+//                               lists the open ones)
 //   snapshot_<session>.txt      the host's world when it started hosting
 //   log_<session>_<player>.txt  one per player, only ever appended to by
 //                               that player, so nothing needs locking
@@ -28,6 +33,7 @@
 //                            filling in or a door's other half arrive as
 //                            their own lines)
 //   C <text>                 said in the chat
+//   W <to> <text>            whispered to one player (the others ignore it)
 //   T time                   the host's time of day (0..1)
 //
 // Who decides: each player their own position, inventory, chests and
@@ -77,6 +83,20 @@
 #define ATTR_NET_SENT_YAW       ("sent_yaw")
 #define ATTR_NET_SENT_PITCH     ("sent_pitch")
 #define ATTR_NET_PROBLEM        ("problem")      // why the last write failed, "" if it worked
+#define ATTR_NET_SEED           ("seed")         // host: the session file's details, to close it on leaving
+#define ATTR_NET_WORLD          ("world")
+#define ATTR_NET_GUEST_MODE     ("guest_mode")   // GAMEMODE_* guests join in
+#define ATTR_NET_CHEATS         ("cheats")       // TRUE: cheat commands work for everyone
+
+#define DATATYPE_LAN_LIST       ("lan_list")     // the LAN worlds Play Multiplayer found
+#define ATTR_LAN_COUNT          ("count")
+#define ATTR_LAN_FILE           ("file")         // world n's session file
+#define ATTR_LAN_HOST           ("host")         // the host's name
+#define ATTR_LAN_WORLD          ("world")
+#define ATTR_LAN_MODE           ("mode")         // GAMEMODE_* you'd join in
+#define ATTR_LAN_CHEATS         ("cheats")
+#define MAX_LAN_WORLDS          8
+#define LAN_SCAN_SECONDS        2.0    // Play Multiplayer looks for LAN worlds again this often
 
 #define DATATYPE_PEERS          ("peers")
 #define ATTR_PEER_COUNT         ("count")
@@ -99,12 +119,18 @@
 void    net_clear              (Attributes &p_net, Attributes &p_peers, Attributes &p_inbox);
 Integer net_mode               (Attributes &p_net);
 Text    net_clean_name         (Text p_name);
-Text    net_session_path       (Text p_folder);
+Text    net_session_path       (Text p_folder, Text p_session);
 Text    net_snapshot_path      (Text p_folder, Text p_session);
 Text    net_log_name           (Text p_session, Text p_id);
 Integer net_ensure_folder      (Text p_folder);
-Integer net_write_session      (Text p_folder, Text p_session, Text p_host_id, Integer p_seed, Text p_world_name);
-Integer net_read_session       (Text p_folder, Text &p_session, Text &p_host_id, Integer &p_seed, Text &p_world_name, Text &p_problem);
+Integer net_write_session      (Text p_folder, Text p_session, Text p_host_id, Text p_host_name, Integer p_seed, Text p_world_name,
+                                Integer p_mode, Integer p_cheats, Integer p_open);
+Integer net_read_session       (Text p_path, Text &p_session, Text &p_host_id, Text &p_host_name, Integer &p_seed, Text &p_world_name,
+                                Integer &p_mode, Integer &p_cheats, Integer &p_open, Text &p_problem);
+Integer net_list_lan           (Text p_folder, Attributes &p_list);
+void    net_set_session        (Attributes &p_net, Integer p_seed, Text p_world, Integer p_mode, Integer p_cheats);
+Integer net_cheats             (Attributes &p_net);
+Text    net_whisper            (Attributes &p_net, Attributes &p_peers, Text p_to, Text p_text);
 void    net_start              (Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Integer p_mode, Text p_folder,
                                 Text p_session, Text p_host_id, Text p_id, Text p_name, Real p_now);
 void    net_queue              (Attributes &p_net, Text p_line);

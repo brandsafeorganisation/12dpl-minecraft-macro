@@ -296,7 +296,7 @@ Integer pack_map_part(Integer p_entry, Integer &p_tex, Text &p_kind, Text &p_nam
   if (p_entry == 112) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_SIDE                                  , "entity", "bed/red"             , 22, 6 , 6 , 16, PACK_TURN_RIGHT);
   if (p_entry == 113) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_FOOT_SIDE                             , "entity", "bed/red"             , 22, 28, 6 , 16, PACK_TURN_RIGHT);
   if (p_entry == 114) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_HEAD_END                              , "entity", "bed/red"             , 6 , 0 , 16, 6 , PACK_TURN_HALF );
-  if (p_entry == 115) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_FOOT_END                              , "entity", "bed/red"             , 22, 22, 16, 6 , PACK_TURN_NONE );
+  if (p_entry == 115) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_FOOT_END                              , "entity", "bed/red"             , 22, 22, 16, 6 , PACK_TURN_FLIP );
   if (p_entry == 116) return pack_part(p_tex, p_kind, p_name, p_x, p_y, p_w, p_h, p_turn, TEX_BED_LEG                                   , "entity", "bed/red"             , 50, 0 , 3 , 3 , PACK_TURN_NONE );
   return FALSE;
 }

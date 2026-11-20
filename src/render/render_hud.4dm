@@ -316,6 +316,10 @@ void hud_draw_item_icon(Draw_Box p_box, Integer p_item, Real p_centre_x, Real p_
 
   if (p_item == ITEM_NONE) return;
 
+  if (p_item == ITEM_BED) {
+    hud_draw_bed_icon(p_box, p_centre_x, p_centre_y, p_size, l_quick);
+    return;
+  }
   if (item_is_block(p_item)) {
     l_top_tex = item_top_texture(p_item);
     l_side    = item_side_texture(p_item);
@@ -328,6 +332,34 @@ void hud_draw_item_icon(Draw_Box p_box, Integer p_item, Real p_centre_x, Real p_
 
   l_sprite = item_sprite_texture(p_item);
   if (l_sprite > 0) hud_texture_face(p_box, l_sprite, 1.0, FALSE, p_centre_x - l_a, p_centre_y - l_a, p_size, 0.0, 0.0, p_size);
+}
+
+void hud_draw_bed_icon(Draw_Box p_box, Real p_centre_x, Real p_centre_y, Real p_size, Integer p_quick)
+// ----------------------------------------------------------------
+// The bed item, as in the block game: the bed itself seen from the
+// same corner as a block icon, two blocks long (foot nearest), from
+// the bed's own textures (the resource pack's bed if it has one)
+// ----------------------------------------------------------------
+{
+  Real l_k     = 0.8;
+  Real l_a     = p_size * 0.5 * l_k;
+  Real l_w     = l_a * 0.87;
+  Real l_ux    = l_w;          // across the bed (one block)
+  Real l_uy    = -l_a * 0.5;
+  Real l_vx    = l_w;          // along it, from the foot to the head
+  Real l_vy    = l_a * 0.5;
+  Real l_up    = l_a;          // one block up
+  Real l_thick = 6.0 / 16.0;
+  Real l_x0    = p_centre_x - 0.5 * l_ux - l_vx;
+  Real l_y0    = p_centre_y - 0.5 * l_uy - l_vy - 0.5 * l_thick * l_up;
+  Real l_top   = l_thick * l_up;
+
+  // the foot's end and the long side towards the viewer, then the top
+  hud_texture_face(p_box, TEX_BED_FOOT_END , 0.80, p_quick, l_x0, l_y0, l_ux, l_uy, 0.0, l_top);
+  hud_texture_face(p_box, TEX_BED_FOOT_SIDE, 0.62, p_quick, l_x0 + l_ux, l_y0 + l_uy, l_vx, l_vy, 0.0, l_top);
+  hud_texture_face(p_box, TEX_BED_SIDE     , 0.62, p_quick, l_x0 + l_ux + l_vx, l_y0 + l_uy + l_vy, l_vx, l_vy, 0.0, l_top);
+  hud_texture_face(p_box, TEX_BED_FOOT_TOP , 1.0 , p_quick, l_x0 + l_ux, l_y0 + l_uy + l_top, l_vx, l_vy, -l_ux, -l_uy);
+  hud_texture_face(p_box, TEX_BED_TOP      , 1.0 , p_quick, l_x0 + l_ux + l_vx, l_y0 + l_uy + l_vy + l_top, l_vx, l_vy, -l_ux, -l_uy);
 }
 
 void hud_draw_slot(Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Integer p_item, Integer p_count, Integer p_damage, Integer p_highlight)
@@ -423,14 +455,14 @@ void hud_pause_button_rect(Real p_w, Real p_h, Integer p_button, Real &p_x0, Rea
   Integer l_row    = 1;
 
   if (p_button == PAUSE_BUTTON_OPTIONS || p_button == PAUSE_BUTTON_CONTROLS) l_row = 2;
-  if (p_button == PAUSE_BUTTON_SAVE    || p_button == PAUSE_BUTTON_MODE    ) l_row = 3;
+  if (p_button == PAUSE_BUTTON_SAVE    || p_button == PAUSE_BUTTON_LAN     ) l_row = 3;
   if (p_button == PAUSE_BUTTON_QUIT) l_row = 4;
   p_y1 = l_top - (l_row - 1) * l_row_h;
   p_y0 = p_y1 - PAUSE_BUTTON_HEIGHT;
   p_x0 = l_left;
   p_x1 = l_left + l_width;
   if (p_button == PAUSE_BUTTON_OPTIONS || p_button == PAUSE_BUTTON_SAVE) p_x1 = l_left + l_half;
-  if (p_button == PAUSE_BUTTON_CONTROLS || p_button == PAUSE_BUTTON_MODE) p_x0 = l_left + l_width - l_half;
+  if (p_button == PAUSE_BUTTON_CONTROLS || p_button == PAUSE_BUTTON_LAN) p_x0 = l_left + l_width - l_half;
 }
 
 Integer hud_pause_button_at(Real p_w, Real p_h, Real p_x, Real p_y)
@@ -487,7 +519,7 @@ void hud_draw_button(Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1,
   }
 }
 
-void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Text p_mode_name)
+void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Integer p_lan)
 // ----------------------------------------------------------------
 // The pause menu: "Game Menu" and its buttons (the world is already
 // drawn behind it, darkened)
@@ -510,7 +542,10 @@ void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Rea
     if (l_button == PAUSE_BUTTON_OPTIONS ) l_label = "Options...";
     if (l_button == PAUSE_BUTTON_CONTROLS) l_label = "Controls...";
     if (l_button == PAUSE_BUTTON_SAVE    ) l_label = "Save Game";
-    if (l_button == PAUSE_BUTTON_MODE    ) l_label = "Mode: " + p_mode_name;
+    if (l_button == PAUSE_BUTTON_LAN     ) {
+      l_label = "Open to LAN";
+      if (p_lan) l_label = "LAN World Open";
+    }
     if (l_button == PAUSE_BUTTON_QUIT    ) l_label = "Save and Quit to Title";
     hud_draw_button(p_box, l_x0, l_y0, l_x1, l_y1, l_label, l_button == l_hover);
   }
@@ -810,7 +845,7 @@ void hud_draw(Draw_Box p_box, Real p_w, Real p_h, Integer p_captured, Integer p_
   // Paused: the game menu over the darkened world, nothing else
   if (!p_captured && !l_dead && !hud_waiting(p_hud)) {
     hud_draw_pause_menu(p_box, p_w, p_h, record_real(p_hud, ATTR_HUD_MOUSE_X), record_real(p_hud, ATTR_HUD_MOUSE_Y),
-                        player_game_mode_name(player_game_mode(p_player)));
+                        record_integer(p_hud, ATTR_HUD_LAN) == TRUE);
     return;
   }
 

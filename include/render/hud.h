@@ -38,7 +38,7 @@
 #define PAUSE_BUTTON_OPTIONS  2
 #define PAUSE_BUTTON_CONTROLS 3
 #define PAUSE_BUTTON_SAVE     4
-#define PAUSE_BUTTON_MODE     5
+#define PAUSE_BUTTON_LAN      5
 #define PAUSE_BUTTON_QUIT     6
 #define PAUSE_BUTTONS         6
 #define PAUSE_BUTTON_WIDTH    400.0   // a full width button (two half buttons and a gap)
@@ -73,6 +73,7 @@
 #define ATTR_HUD_CHAT_UNTIL ("chat_until")
 #define ATTR_HUD_CHAT_OPEN  ("chat_open")       // TRUE while a chat line is being typed
 #define ATTR_HUD_CHAT_INPUT ("chat_input")      // the line being typed
+#define ATTR_HUD_LAN        ("lan")             // TRUE once the world is open to LAN (or joined)
 #define ATTR_HUD_MOUSE_X    ("mouse_x")         // the mouse over the pause menu (box coordinates)
 #define ATTR_HUD_MOUSE_Y    ("mouse_y")
 #define FRAME_STATS_SECONDS 1.0
@@ -95,7 +96,7 @@ void hud_set_mouse      (Attributes &p_hud, Real p_x, Real p_y);
 void hud_pause_button_rect(Real p_w, Real p_h, Integer p_button, Real &p_x0, Real &p_y0, Real &p_x1, Real &p_y1);
 Integer hud_pause_button_at(Real p_w, Real p_h, Real p_x, Real p_y);
 void hud_draw_button    (Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p_y1, Text p_text, Integer p_hover);
-void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Text p_mode_name);
+void hud_draw_pause_menu(Draw_Box p_box, Real p_w, Real p_h, Real p_mouse_x, Real p_mouse_y, Integer p_lan);
 void hud_note_frame     (Attributes &p_hud, Real p_frame_ms, Real p_now);
 Text hud_frame_stats    (Attributes &p_hud);
 void hud_on_event       (Attributes &p_event, Attributes &p_hud, Real p_now);
@@ -105,6 +106,7 @@ void hud_frame          (Draw_Box p_box, Real p_x0, Real p_y0, Real p_x1, Real p
 void hud_texture_face   (Draw_Box p_box, Integer p_tex, Real p_shade, Integer p_quick,
                          Real p_origin_x, Real p_origin_y, Real p_u_x, Real p_u_y, Real p_v_x, Real p_v_y);
 void hud_draw_item_icon (Draw_Box p_box, Integer p_item, Real p_centre_x, Real p_centre_y, Real p_size, Integer p_detail);
+void hud_draw_bed_icon  (Draw_Box p_box, Real p_centre_x, Real p_centre_y, Real p_size, Integer p_quick);
 void hud_draw_slot      (Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Integer p_item, Integer p_count, Integer p_damage, Integer p_highlight);
 void hud_draw_slot_style(Draw_Box p_box, Real p_x0, Real p_y0, Real p_size, Integer p_item, Integer p_count, Integer p_damage, Integer p_highlight,
                          Integer p_style);

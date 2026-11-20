@@ -41,6 +41,7 @@
   Attributes g_net_inbox;   // multiplayer: lines read from their logs, not acted on yet
   Attributes g_menu;        // the menu screen on show: its widgets and typed text
   Attributes g_worlds;      // the world list
+  Attributes g_lan;         // Play Multiplayer: the worlds open to LAN
   Attributes g_files;       // resource packs or skins found in their folders
 }
 
@@ -60,8 +61,9 @@ Integer game_load_world       (Text p_name, Attributes &p_game, Attributes &p_in
 Integer game_host             (Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                                Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away,
                                Attributes &p_events, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_folder,
-                               Text p_session, Text p_id, Text p_name, Real p_now, Text &p_problem);
-Integer game_join             (Text p_folder, Attributes &p_game, Attributes &p_info, Attributes &p_player,
+                               Text p_session, Text p_id, Text p_name, Integer p_mode, Integer p_cheats, Real p_now,
+                               Text &p_problem);
+Integer game_join             (Text p_folder, Text p_session_file, Attributes &p_game, Attributes &p_info, Attributes &p_player,
                                Attributes &p_inventory, Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows,
                                Attributes &p_drops, Attributes &p_away, Attributes &p_events, Attributes &p_hud, Attributes &p_ui,
                                Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_id, Text p_name, Real p_now,

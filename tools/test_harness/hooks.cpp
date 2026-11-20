@@ -32,8 +32,13 @@ static void place_in_grid(int item,int grid_slot){ // pick up the stack, right c
   ui_click_slot(40+grid_slot,"rclick");
   ui_click_slot(s,"click"); }
 extern std::function<bool(const Text&,double&,double&,double&,double&)> g_ui_find;
+extern std::function<bool(const Text&)> g_ui_reveal;
 static bool ui_find(const Text&label,double&x,double&y,double&x1,double&y1){
   int n=menu_widgets(g_menu);
+  // "lan:<n>": row n of the LAN worlds on Play Multiplayer
+  if(label.compare(0,4,"lan:")==0){ for(int w=1;w<=n;w++) if(record_integer_at(g_menu,ATTR_MENU_ID,w)==W_WORLD_ROW+atoi(label.c_str()+4)){
+        x=record_real_at(g_menu,ATTR_MENU_X0,w); x1=record_real_at(g_menu,ATTR_MENU_X1,w); y=record_real_at(g_menu,ATTR_MENU_Y0,w); y1=record_real_at(g_menu,ATTR_MENU_Y1,w); return true; }
+    return false; }
   // "row:<world name>": that world's row in the world list
   if(label.compare(0,4,"row:")==0){ for(int w=1;w<=n;w++){ int id=record_integer_at(g_menu,ATTR_MENU_ID,w);
       if(id>W_WORLD_ROW&&id<=W_WORLD_ROW+MAX_LISTED_WORLDS&&record_text_at(g_worlds,ATTR_WL_NAME,id-W_WORLD_ROW)==label.substr(4)){
@@ -48,11 +53,15 @@ static bool ui_find(const Text&label,double&x,double&y,double&x1,double&y1){
     if(getenv("TRACE")) printf("[ui] %s at %.0f %.0f\n",label.c_str(),x,y);
     return true; }
   // then the game menu's buttons (drawn by the HUD, not in the menu record)
-  const char* pause[]={"","Back to Game","Options...","Controls...","Save Game","Mode","Save and Quit to Title"};
+  const char* pause[]={"","Back to Game","Options...","Controls...","Save Game","Open to LAN","Save and Quit to Title"};
   for(int b=1;b<=PAUSE_BUTTONS;b++) if(label==pause[b]){ hud_pause_button_rect(g_box_w,g_box_h,b,x,y,x1,y1); return true; }
   return false; }
 static void register_hooks(){
   g_ui_find=ui_find;
+  // "row:<world>" off screen: scroll the world list to it
+  g_ui_reveal=[](const Text&label){ if(label.compare(0,4,"row:")!=0) return false; int c=record_integer(g_worlds,ATTR_WL_COUNT);
+    for(int i=1;i<=c;i++) if(record_text_at(g_worlds,ATTR_WL_NAME,i)==label.substr(4)){ int before=menu_scroll(g_menu); menu_set_scroll(g_menu,i-1,c,menu_world_rows_shown(g_box_h)); return menu_scroll(g_menu)!=before; }
+    return false; };
   g_calls["menu"]=[]{ int n=menu_widgets(g_menu); printf("[menu]"); for(int w=1;w<=n;w++) printf(" [%d %s%s]",record_integer_at(g_menu,ATTR_MENU_ID,w),record_text_at(g_menu,ATTR_MENU_LABEL,w).c_str(),record_integer_at(g_menu,ATTR_MENU_ENABLED,w)?"":" (off)"); printf("\n"); };
   g_calls["worlds"]=[]{ int n=record_integer(g_worlds,ATTR_WL_COUNT); for(int e=1;e<=n;e++) printf("[world] %s played %d date '%s' mode %d version %d %s picture %d\n",record_text_at(g_worlds,ATTR_WL_NAME,e).c_str(),record_integer_at(g_worlds,ATTR_WL_PLAYED,e),record_text_at(g_worlds,ATTR_WL_DATE,e).c_str(),record_integer_at(g_worlds,ATTR_WL_MODE,e),record_integer_at(g_worlds,ATTR_WL_VERSION,e),record_text_at(g_worlds,ATTR_WL_VERSION_TEXT,e).c_str(),record_integer_at(g_worlds,ATTR_WL_THUMB,e)); };
   g_calls["dump"]=dump;
@@ -323,7 +332,7 @@ static void register_hooks(){
 
   // ---------------- multiplayer: a made-up second player "bob" writes his log by hand
   auto bob_path=[]{ return Text("cubeland_worlds/mp/")+"log_"+record_text(g_net,"session")+"_bob_77.txt"; };
-  auto bob_write=[bob_path](const Text&t){ FILE*f=fopen(bob_path().c_str(),"a"); fputs(t.c_str(),f); fclose(f); };
+  auto bob_write=[bob_path](const Text&t){ FILE*f=fopen(bob_path().c_str(),"a"); if(!f){ printf("[net] bob can't write %s\n",bob_path().c_str()); return; } fputs(t.c_str(),f); fclose(f); };
   g_calls["bob_join"]=[bob_write]{ char b[256]; snprintf(b,256,"J bob ~\nP %.2f %.2f %.2f 3.1416 0.2 ~\nC hello from bob ~\n",px()+5.5,py(),pz()+0.5); bob_write(b); };
   g_calls["bob_walk"]=[bob_write]{ char b[256]; snprintf(b,256,"P %.2f %.2f %.2f 3.1416 -0.3 ~\n",px()+5.5,py(),pz()-0.8); bob_write(b); };
   g_calls["bob_place"]=[bob_write]{ char b[256]; snprintf(b,256,"B %d %d %d %d ~\n",(int)floor(px())+2,(int)floor(py()),(int)floor(pz()),BLOCK_PLANKS); bob_write(b); };
@@ -331,6 +340,15 @@ static void register_hooks(){
   g_calls["bob_finish"]=[bob_write]{ bob_write(" ~\n"); };
   g_calls["bob_time"]=[bob_write]{ bob_write("T 0.75 ~\n"); };
   g_calls["bob_leave"]=[bob_write]{ bob_write("L ~\n"); };
+  g_calls["bob_whisper"]=[bob_write]{ bob_write("W "+record_text(g_net,"name")+" psst, just you ~\nW somebody_else not for you ~\n"); };
+  g_calls["lan_files"]=[]{ int n=0; Dynamic_Text names; List_files_in_folder("cubeland_worlds/mp","lan_*.txt",n,names);
+     for(auto&f:names.items){ FILE*fp=fopen(("cubeland_worlds/mp/"+f).c_str(),"r"); char line[256]; Text all; while(fp&&fgets(line,256,fp)){ Text t=line; if(!t.empty()&&t.back()=='\n') t.pop_back(); all+=t+" | "; } if(fp) fclose(fp); printf("[lan] %s: %s\n",f.c_str(),all.c_str()); }
+     printf("[lan] net mode %d, cheats %d, guest mode %d, hud says open %d\n",net_mode(g_net),net_cheats(g_net),record_integer(g_net,"guest_mode"),record_integer(g_hud,"lan")); };
+  // the host is still playing on another computer: mark its LAN world open again
+  g_calls["reopen_lan"]=[]{ int n=0; Dynamic_Text names; List_files_in_folder("cubeland_worlds/mp","lan_*.txt",n,names);
+     for(auto&f:names.items){ Text p="cubeland_worlds/mp/"+f; FILE*fp=fopen(p.c_str(),"r"); char line[256]; Text all; while(fp&&fgets(line,256,fp)){ Text t=line; if(t.compare(0,5,"open ")==0) t="open 1\n"; all+=t; } if(fp) fclose(fp); fp=fopen(p.c_str(),"w"); fputs(all.c_str(),fp); fclose(fp); } };
+  g_calls["lan_list"]=[]{ printf("[lan] listed %d:",record_integer(g_lan,"count")); for(int i=1;i<=record_integer(g_lan,"count");i++) printf(" [%s - %s, mode %d, cheats %d]",record_text_at(g_lan,"host",i).c_str(),record_text_at(g_lan,"world",i).c_str(),record_integer_at(g_lan,"mode",i),record_integer_at(g_lan,"cheats",i)); printf("\n"); };
+  g_calls["try_cheat"]=[]{ printf("[lan] /time set day: %s\n",command_run("/time set day",g_info,g_player,g_inventory,g_net,g_peers).c_str()); printf("[lan] /w bob hi: %s\n",command_run("/w bob hi there",g_info,g_player,g_inventory,g_net,g_peers).c_str()); };
   g_calls["net"]=[]{
      int x=(int)floor(px())+2, y=(int)floor(py()), z=(int)floor(pz());
      printf("[net] mode %d players: %s; cells ahead %d %d\n",net_mode(g_net),net_players_text(g_net,g_peers,g_sim_time).c_str(),world_get_block(x,y,z),world_get_block(x,y+1,z));

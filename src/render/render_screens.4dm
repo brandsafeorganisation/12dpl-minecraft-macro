@@ -13,6 +13,7 @@
 #include "../../include/render/render.h"
 #include "../../include/render/hud.h"
 #include "../../include/render/menu.h"
+#include "../../include/net/net.h"
 #include "../../include/ui/font.h"
 
 // ----------------------------------------------------------------
@@ -217,7 +218,6 @@ void screen_worlds(Draw_Box p_box, Attributes &p_menu, Attributes &p_worlds, Rea
   Real    l_y1      = 0.0;
   Real    l_y0      = 0.0;
   Real    l_half    = (MENU_WIDE - MENU_BUTTON_GAP) / 2.0;
-  Real    l_third   = (MENU_WIDE - 2.0 * MENU_BUTTON_GAP) / 3.0;
   Real    l_bl      = p_w / 2.0 - MENU_WIDE / 2.0;
   Real    l_row1    = MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT + MENU_BUTTON_GAP;
   Text    l_name    = "";
@@ -241,10 +241,8 @@ void screen_worlds(Draw_Box p_box, Attributes &p_menu, Attributes &p_worlds, Rea
   l_has = l_pick > 0;
   menu_add(p_menu, MENU_BUTTON, W_PLAY, l_bl, l_row1, l_bl + l_half, l_row1 + MENU_BUTTON_HEIGHT, "Play Selected World", l_has);
   menu_add(p_menu, MENU_BUTTON, W_NEW_WORLD, l_bl + MENU_WIDE - l_half, l_row1, l_bl + MENU_WIDE, l_row1 + MENU_BUTTON_HEIGHT, "Create New World", TRUE);
-  menu_add(p_menu, MENU_BUTTON, W_HOST, l_bl, MENU_BUTTON_GAP, l_bl + l_third, MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Host Selected", l_has);
-  menu_add(p_menu, MENU_BUTTON, W_DELETE, l_bl + l_third + MENU_BUTTON_GAP, MENU_BUTTON_GAP, l_bl + 2.0 * l_third + MENU_BUTTON_GAP,
-           MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Delete", l_has);
-  menu_add(p_menu, MENU_BUTTON, W_BACK, l_bl + MENU_WIDE - l_third, MENU_BUTTON_GAP, l_bl + MENU_WIDE, MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Back", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_DELETE, l_bl, MENU_BUTTON_GAP, l_bl + l_half, MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Delete", l_has);
+  menu_add(p_menu, MENU_BUTTON, W_BACK, l_bl + MENU_WIDE - l_half, MENU_BUTTON_GAP, l_bl + MENU_WIDE, MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Back", TRUE);
 
   // the list's dark band, then each row
   menu_dark_band(p_box, p_w, l_bottom, l_top);
@@ -343,31 +341,120 @@ void screen_delete(Draw_Box p_box, Attributes &p_menu, Text p_name, Real p_w, Re
 
 // ---------------------------------------------------------------- multiplayer
 
-void screen_player(Draw_Box p_box, Attributes &p_menu, Integer p_join, Real p_w, Real p_h, Real p_now)
+void screen_player(Draw_Box p_box, Attributes &p_menu, Real p_w, Real p_h, Real p_now)
 // ----------------------------------------------------------------
-// The multiplayer name and shared folder; from the title screen
-// also Join Game
+// The shared folder LAN worlds are opened in (from the options)
+// ----------------------------------------------------------------
+{
+  Real l_left = p_w / 2.0 - MENU_WIDE / 2.0;
+  Real l_top  = p_h - 90.0;
+  Text l_user = "";
+
+  Get_user_name(l_user);
+  menu_begin(p_menu);
+  menu_add(p_menu, MENU_FIELD, W_FOLDER, l_left, l_top - 30.0, l_left + MENU_WIDE, l_top, "Shared Folder (the same for every player)", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_DONE, l_left, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Done", TRUE);
+  menu_draw_title(p_box, p_w, p_h - 30.0, "Multiplayer");
+  hud_shadow_text(p_box, p_w / 2.0, l_top - 70.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+                  "Every player sets the same shared folder (a network folder named cubeland_mp, or the default on one PC).");
+  hud_shadow_text(p_box, p_w / 2.0, l_top - 90.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+                  "To host, open a world and choose Open to LAN in the game menu; the others find it in Multiplayer.");
+  hud_shadow_text(p_box, p_w / 2.0, l_top - 120.0, 13.0, TEXT_ALIGN_CENTRE, 160, 160, 160, "Others see you as " + net_clean_name(l_user));
+  menu_draw_widgets(p_box, p_menu, p_now);
+}
+
+void screen_lan(Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now)
+// ----------------------------------------------------------------
+// "LAN World" (Open to LAN in the game menu): the game mode other
+// players join in and whether cheats are allowed, then Start LAN
+// World or Cancel
 // ----------------------------------------------------------------
 {
   Real l_left = p_w / 2.0 - MENU_WIDE / 2.0;
   Real l_half = (MENU_WIDE - MENU_BUTTON_GAP) / 2.0;
-  Real l_top  = p_h - 90.0;
+  Real l_mid  = p_h / 2.0;
+  Text l_on   = "OFF";
 
+  if (record_integer(p_settings, ATTR_SET_LAN_CHEATS) == TRUE) l_on = "ON";
   menu_begin(p_menu);
-  menu_add(p_menu, MENU_FIELD, W_PLAYER_NAME, l_left, l_top - 30.0, l_left + MENU_WIDE, l_top, "Your Name (blank for your Windows name)", TRUE);
-  menu_add(p_menu, MENU_FIELD, W_FOLDER, l_left, l_top - 110.0, l_left + MENU_WIDE, l_top - 80.0, "Shared Folder (the same for every player)", TRUE);
-  if (p_join) {
-    menu_add(p_menu, MENU_BUTTON, W_JOIN, l_left, MENU_BUTTON_GAP + 10.0, l_left + l_half, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Join Game", TRUE);
-    menu_add(p_menu, MENU_BUTTON, W_DONE, l_left + MENU_WIDE - l_half, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE,
-             MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Back", TRUE);
-  } else {
-    menu_add(p_menu, MENU_BUTTON, W_DONE, l_left, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Done", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_LAN_MODE, l_left, l_mid + 20.0, l_left + l_half, l_mid + 20.0 + MENU_BUTTON_HEIGHT,
+           "Game Mode: " + player_game_mode_name(record_integer(p_settings, ATTR_SET_LAN_MODE)), TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_LAN_CHEATS, l_left + MENU_WIDE - l_half, l_mid + 20.0, l_left + MENU_WIDE, l_mid + 20.0 + MENU_BUTTON_HEIGHT,
+           "Allow Cheats: " + l_on, TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_LAN_START, l_left, MENU_BUTTON_GAP + 10.0, l_left + l_half, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT,
+           "Start LAN World", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_CANCEL, l_left + MENU_WIDE - l_half, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE,
+           MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Cancel", TRUE);
+  menu_draw_title(p_box, p_w, p_h - 40.0, "LAN World");
+  hud_shadow_text(p_box, p_w / 2.0, l_mid + 80.0, 15.0, TEXT_ALIGN_CENTRE, 255, 255, 255, "Settings for Other Players");
+  hud_shadow_text(p_box, p_w / 2.0, l_mid - 20.0, 13.0, TEXT_ALIGN_CENTRE, 160, 160, 160,
+                  "Cheats (/gamemode, /give, /time) work for everyone, you too, only if they are allowed.");
+  menu_draw_widgets(p_box, p_menu, p_now);
+}
+
+void screen_multiplayer(Draw_Box p_box, Attributes &p_menu, Attributes &p_lan, Real p_w, Real p_h, Real p_now)
+// ----------------------------------------------------------------
+// "Play Multiplayer": the worlds open to LAN in the shared folder,
+// each with its host, its name and the game mode you'd join in,
+// under "Scanning for games on your local network"; then Join
+// Server, Refresh and Back
+// ----------------------------------------------------------------
+{
+  Integer l_count  = record_integer(p_lan, ATTR_LAN_COUNT);
+  Integer l_shown  = menu_world_rows_shown(p_h);
+  Integer l_row    = 0;
+  Integer l_pick   = menu_pick(p_menu);
+  Integer l_dots   = floor_integer(p_now * 2.0 - Floor(p_now * 2.0 / 3.0) * 3.0);  // 0..2 (p_now is too big for an Integer)
+  Real    l_top    = 0.0;
+  Real    l_bottom = 0.0;
+  Real    l_left   = p_w / 2.0 - 220.0;
+  Real    l_right  = p_w / 2.0 + 220.0;
+  Real    l_y1     = 0.0;
+  Real    l_y0     = 0.0;
+  Real    l_third  = (MENU_WIDE - 2.0 * MENU_BUTTON_GAP) / 3.0;
+  Real    l_bl     = p_w / 2.0 - MENU_WIDE / 2.0;
+  Text    l_line   = "";
+  Text    l_cheats = "";
+
+  menu_list_area(p_h, l_top, l_bottom);
+  menu_begin(p_menu);
+  if (l_count > l_shown) l_count = l_shown;
+  for (l_row = 1; l_row <= l_count; ++l_row) {
+    l_y1 = l_top - 30.0 - (l_row - 1) * MENU_LIST_ROW;
+    menu_add(p_menu, MENU_ROW, W_WORLD_ROW + l_row, l_left, l_y1 - MENU_LIST_ROW + 4.0, l_right, l_y1, "", TRUE);
   }
-  menu_draw_title(p_box, p_w, p_h - 30.0, "Multiplayer");
-  hud_shadow_text(p_box, p_w / 2.0, l_top - 150.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
-                  "Every player sets the same shared folder (a network folder, or the default on one PC).");
-  hud_shadow_text(p_box, p_w / 2.0, l_top - 170.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
-                  "To host, pick a world in Singleplayer and press Host Selected; the others press Join Game.");
+  menu_add(p_menu, MENU_BUTTON, W_JOIN, l_bl, MENU_BUTTON_GAP, l_bl + l_third, MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Join Server",
+           l_pick > 0 && l_pick <= l_count);
+  menu_add(p_menu, MENU_BUTTON, W_REFRESH, l_bl + l_third + MENU_BUTTON_GAP, MENU_BUTTON_GAP, l_bl + 2.0 * l_third + MENU_BUTTON_GAP,
+           MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT, "Refresh", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_BACK, l_bl + MENU_WIDE - l_third, MENU_BUTTON_GAP, l_bl + MENU_WIDE, MENU_BUTTON_GAP + MENU_BUTTON_HEIGHT,
+           "Back", TRUE);
+
+  menu_dark_band(p_box, p_w, l_bottom, l_top);
+  hud_shadow_text(p_box, p_w / 2.0, l_top - 6.0, 15.0, TEXT_ALIGN_CENTRE, 255, 255, 255, "Scanning for games on your local network");
+  l_line = "o o o";
+  if (l_dots == 0) l_line = "O o o";
+  if (l_dots == 1) l_line = "o O o";
+  if (l_dots == 2) l_line = "o o O";
+  if (l_count == 0) hud_shadow_text(p_box, p_w / 2.0, l_top - 30.0, 15.0, TEXT_ALIGN_CENTRE, 160, 160, 160, l_line);
+  for (l_row = 1; l_row <= l_count; ++l_row) {
+    l_y1 = l_top - 30.0 - (l_row - 1) * MENU_LIST_ROW;
+    l_y0 = l_y1 - MENU_LIST_ROW + 4.0;
+    if (l_row == l_pick) {
+      render_set_colour(p_box, 128.0, 128.0, 128.0);
+      render_fill_rect (p_box, l_left, l_y0, l_right, l_y1);
+      render_set_colour(p_box, 0.0, 0.0, 0.0);
+      render_fill_rect (p_box, l_left + 2.0, l_y0 + 2.0, l_right - 2.0, l_y1 - 2.0);
+    }
+    l_cheats = "";
+    if (record_integer_at(p_lan, ATTR_LAN_CHEATS, l_row) == TRUE) l_cheats = ", cheats allowed";
+    hud_shadow_text(p_box, l_left + 12.0, l_y1 - 8.0, 16.0, TEXT_ALIGN_LEFT, 255, 255, 255, "LAN World");
+    hud_text(p_box, l_left + 12.0, l_y1 - 30.0, 14.0, TEXT_ALIGN_LEFT, 160, 160, 160,
+             menu_fit_text(record_text_at(p_lan, ATTR_LAN_HOST, l_row) + " - " + record_text_at(p_lan, ATTR_LAN_WORLD, l_row), 14.0, l_right - l_left - 24.0));
+    hud_text(p_box, l_left + 12.0, l_y1 - 50.0, 14.0, TEXT_ALIGN_LEFT, 160, 160, 160,
+             "Join in " + player_game_mode_name(record_integer_at(p_lan, ATTR_LAN_MODE, l_row)) + " Mode" + l_cheats);
+  }
+  menu_draw_title(p_box, p_w, p_h - 14.0, "Play Multiplayer");
   menu_draw_widgets(p_box, p_menu, p_now);
 }
 

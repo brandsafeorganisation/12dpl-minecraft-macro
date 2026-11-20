@@ -1,10 +1,17 @@
-# Multiplayer through the shared folder. Host a world; a made-up second
-# player, bob, writes his log by hand: he joins, says hello, walks,
-# places a block and sets the clock (which the host ignores). A line
-# without its end mark is half written and waits until it is finished.
-# The host breaks a block, which goes in the host's log. Then quit and
-# join the same session: the guest gets the snapshot plus every log,
-# so the block the host broke is gone and bob's block is there.
+# Multiplayer through the shared folder, opened to LAN from inside the
+# world. Escape > Open to LAN shows the LAN World screen: guests are
+# set to join in creative with cheats allowed, then Start LAN World
+# hosts it (the session file describes it). A made-up second player,
+# bob, writes his log by hand: he joins, says hello, walks, places a
+# block, sets the clock (which the host ignores) and whispers (only
+# the whisper to the host shows). A line without its end mark is half
+# written and waits until it is finished. The host breaks a block,
+# which goes in the host's log. Saving and quitting marks the LAN
+# world closed, so Play Multiplayer lists nothing; marked open again
+# (the host still playing elsewhere) it is listed with its host, world
+# and game mode, and Join Server gets the snapshot plus every log, so
+# the block the host broke is gone and bob's block is there, and the
+# guest plays in creative with cheats.
 ui Singleplayer
 ui Create New World
 field World Name|Shared
@@ -14,13 +21,22 @@ wait 2
 click 430 300
 wait 2
 key escape
-ui Save and Quit to Title
+wait 1
+snap 239_game_menu_lan
+wait 1
+ui Open to LAN
+wait 1
+ui Game Mode: Survival
+ui Allow Cheats: OFF
+wait 1
+snap 239_lan_world
+move 100 100
 wait 2
-ui Singleplayer
-field #15|Shared
-ui row:Shared
-ui Host Selected
+move 120 110
 wait 2
+ui Start LAN World
+wait 2
+call lan_files
 click 430 300
 wait 2
 call noon
@@ -38,9 +54,11 @@ wait 10
 call net
 call bob_finish
 call bob_time
+call bob_whisper
 wait 10
 call net
 call clock
+call try_cheat
 call break_ahead
 call ground_ahead
 wait 5
@@ -50,11 +68,21 @@ wait 10
 call net
 snap 241_bob_left
 wait 1
-key escape
+# the long waits have idled the game into the game menu
 ui Save and Quit to Title
 wait 2
+call lan_files
 ui Multiplayer
-ui Join Game
+wait 2
+call lan_list
+call reopen_lan
+ui Refresh
+wait 2
+call lan_list
+snap 242_play_multiplayer
+wait 1
+ui lan:1
+ui Join Server
 wait 2
 click 430 300
 wait 2
@@ -62,5 +90,6 @@ wait 70
 call net
 call clock
 call shared_cells
+call lan_files
 call dump
 quit

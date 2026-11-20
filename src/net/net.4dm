@@ -57,12 +57,12 @@ Text net_clean_name(Text p_name)
   return l_clean;
 }
 
-Text net_session_path(Text p_folder)
+Text net_session_path(Text p_folder, Text p_session)
 // ----------------------------------------------------------------
-// The file naming the host's current session
+// The file describing one world opened to LAN
 // ----------------------------------------------------------------
 {
-  return p_folder + "\\session.txt";
+  return p_folder + "\\lan_" + p_session + ".txt";
 }
 
 Text net_snapshot_path(Text p_folder, Text p_session)
@@ -95,28 +95,36 @@ Integer net_ensure_folder(Text p_folder)
   return Directory_exists(p_folder);
 }
 
-Integer net_write_session(Text p_folder, Text p_session, Text p_host_id, Integer p_seed, Text p_world_name)
+Integer net_write_session(Text p_folder, Text p_session, Text p_host_id, Text p_host_name, Integer p_seed, Text p_world_name,
+                          Integer p_mode, Integer p_cheats, Integer p_open)
 // ----------------------------------------------------------------
-// Host: name the session that joining players should join
+// Host: describe the world opened to LAN for Play Multiplayer, or
+// (open FALSE) mark it closed when the host leaves (files are never
+// deleted)
 // ----------------------------------------------------------------
 {
   File l_file;
   Text l_tag = NET_SESSION_TAG;
 
-  if (safe_file_open(net_session_path(p_folder), "w", l_file) != 0) return FAILURE;
+  if (safe_file_open(net_session_path(p_folder, p_session), "w", l_file) != 0) return FAILURE;
   File_write_line(l_file, l_tag + " " + To_text(NET_PROTOCOL));
   File_write_line(l_file, "session " + p_session);
   File_write_line(l_file, "host " + p_host_id);
+  File_write_line(l_file, "name " + p_host_name);
   File_write_line(l_file, "seed " + To_text(p_seed));
+  File_write_line(l_file, "mode " + To_text(p_mode));
+  File_write_line(l_file, "cheats " + To_text(p_cheats));
+  File_write_line(l_file, "open " + To_text(p_open));
   File_write_line(l_file, "world " + p_world_name);
   File_close(l_file);
   return SUCCESS;
 }
 
-Integer net_read_session(Text p_folder, Text &p_session, Text &p_host_id, Integer &p_seed, Text &p_world_name, Text &p_problem)
+Integer net_read_session(Text p_path, Text &p_session, Text &p_host_id, Text &p_host_name, Integer &p_seed, Text &p_world_name,
+                         Integer &p_mode, Integer &p_cheats, Integer &p_open, Text &p_problem)
 // ----------------------------------------------------------------
-// Joining: which session the host is running. Returns FAILURE with
-// problem saying why if there is none.
+// A LAN world's session file. Returns FAILURE with problem saying
+// why if it can't be joined (open is read but not checked).
 // ----------------------------------------------------------------
 {
   File         l_file;
@@ -128,15 +136,19 @@ Integer net_read_session(Text p_folder, Text &p_session, Text &p_host_id, Intege
 
   p_session    = "";
   p_host_id    = "";
+  p_host_name  = "";
   p_seed       = 0;
   p_world_name = "";
+  p_mode       = GAMEMODE_SURVIVAL;
+  p_cheats     = FALSE;
+  p_open       = FALSE;
   p_problem    = "";
-  if (!File_exists(net_session_path(p_folder))) {
-    p_problem = "nobody is hosting in " + p_folder;
+  if (!File_exists(p_path)) {
+    p_problem = "that LAN world isn't there any more";
     return FAILURE;
   }
-  if (safe_file_open(net_session_path(p_folder), "r", l_file) != 0) {
-    p_problem = "the session file in " + p_folder + " couldn't be opened";
+  if (safe_file_open(p_path, "r", l_file) != 0) {
+    p_problem = "the LAN world's file couldn't be opened";
     return FAILURE;
   }
   while (File_read_line(l_file, l_line) == 0) {
@@ -149,20 +161,85 @@ Integer net_read_session(Text p_folder, Text &p_session, Text &p_host_id, Intege
     }
     if (l_key == "session") Get_item(l_words, 2, p_session);
     if (l_key == "host"   ) Get_item(l_words, 2, p_host_id);
-    if (l_key == "seed"   ) p_seed = net_word_integer(l_words, 2);
+    if (l_key == "name"   ) Get_item(l_words, 2, p_host_name);
+    if (l_key == "seed"   ) p_seed   = net_word_integer(l_words, 2);
+    if (l_key == "mode"   ) p_mode   = net_word_integer(l_words, 2);
+    if (l_key == "cheats" ) p_cheats = net_word_integer(l_words, 2);
+    if (l_key == "open"   ) p_open   = net_word_integer(l_words, 2);
     if (l_key == "world"  ) p_world_name = net_rest_of_line(l_line);
   }
   File_close(l_file);
   if (p_problem != "") return FAILURE;
   if (p_session == "") {
-    p_problem = "the session file in " + p_folder + " is damaged";
+    p_problem = "the LAN world's file is damaged";
     return FAILURE;
   }
-  if (!File_exists(net_snapshot_path(p_folder, p_session))) {
-    p_problem = "the host's world isn't in " + p_folder;
-    return FAILURE;
-  }
+  if (p_host_name == "") p_host_name = p_host_id;
   return SUCCESS;
+}
+
+Integer net_list_lan(Text p_folder, Attributes &p_list)
+// ----------------------------------------------------------------
+// Fill the list with the worlds open to LAN in the multiplayer
+// folder (up to MAX_LAN_WORLDS); returns how many
+// ----------------------------------------------------------------
+{
+  Dynamic_Text l_files;
+  Integer      l_count   = 0;
+  Integer      l_file    = 0;
+  Integer      l_found   = 0;
+  Integer      l_seed    = 0;
+  Integer      l_mode    = 0;
+  Integer      l_cheats  = 0;
+  Integer      l_open    = 0;
+  Text         l_path    = "";
+  Text         l_session = "";
+  Text         l_host_id = "";
+  Text         l_host    = "";
+  Text         l_world   = "";
+  Text         l_problem = "";
+
+  record_clear      (p_list, DATATYPE_LAN_LIST);
+  record_set_integer(p_list, ATTR_LAN_COUNT, 0);
+  if (!Directory_exists(p_folder)) return 0;
+  if (List_files_in_folder(p_folder, "lan_*.txt", l_count, l_files) != 0) return 0;
+  for (l_file = 1; l_file <= l_count; ++l_file) {
+    if (l_found >= MAX_LAN_WORLDS) break;
+    Get_item(l_files, l_file, l_path);
+    l_path = p_folder + "\\" + file_title_from_path(l_path) + ".txt";
+    if (net_read_session(l_path, l_session, l_host_id, l_host, l_seed, l_world, l_mode, l_cheats, l_open, l_problem) != SUCCESS) continue;
+    if (!l_open) continue;
+    ++l_found;
+    record_set_text_at   (p_list, ATTR_LAN_FILE,   l_found, l_path);
+    record_set_text_at   (p_list, ATTR_LAN_HOST,   l_found, l_host);
+    record_set_text_at   (p_list, ATTR_LAN_WORLD,  l_found, l_world);
+    record_set_integer_at(p_list, ATTR_LAN_MODE,   l_found, l_mode);
+    record_set_integer_at(p_list, ATTR_LAN_CHEATS, l_found, l_cheats);
+  }
+  record_set_integer(p_list, ATTR_LAN_COUNT, l_found);
+  return l_found;
+}
+
+void net_set_session(Attributes &p_net, Integer p_seed, Text p_world, Integer p_mode, Integer p_cheats)
+// ----------------------------------------------------------------
+// Remember the session file's details (the host closes it with
+// them on leaving) and whether cheats are allowed
+// ----------------------------------------------------------------
+{
+  record_set_integer(p_net, ATTR_NET_SEED,       p_seed);
+  record_set_text   (p_net, ATTR_NET_WORLD,      p_world);
+  record_set_integer(p_net, ATTR_NET_GUEST_MODE, p_mode);
+  record_set_integer(p_net, ATTR_NET_CHEATS,     p_cheats);
+}
+
+Integer net_cheats(Attributes &p_net)
+// ----------------------------------------------------------------
+// TRUE if cheat commands work: always out of a multiplayer game,
+// and in one if the host allowed them
+// ----------------------------------------------------------------
+{
+  if (net_mode(p_net) == NET_OFF) return TRUE;
+  return record_integer(p_net, ATTR_NET_CHEATS) == TRUE;
 }
 
 void net_start(Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Integer p_mode, Text p_folder,
@@ -233,13 +310,37 @@ Integer net_flush(Attributes &p_net)
 
 void net_leave(Attributes &p_net)
 // ----------------------------------------------------------------
-// Say goodbye and stop
+// Say goodbye and stop; the host marks the LAN world closed
 // ----------------------------------------------------------------
 {
   if (net_mode(p_net) == NET_OFF) return;
   net_queue(p_net, "L");
   net_flush(p_net);
+  if (net_mode(p_net) == NET_HOST) {
+    net_write_session(record_text(p_net, ATTR_NET_FOLDER), record_text(p_net, ATTR_NET_SESSION), record_text(p_net, ATTR_NET_ID),
+                      record_text(p_net, ATTR_NET_NAME), record_integer(p_net, ATTR_NET_SEED), record_text(p_net, ATTR_NET_WORLD),
+                      record_integer(p_net, ATTR_NET_GUEST_MODE), record_integer(p_net, ATTR_NET_CHEATS), FALSE);
+  }
   record_set_integer(p_net, ATTR_NET_MODE, NET_OFF);
+}
+
+Text net_whisper(Attributes &p_net, Attributes &p_peers, Text p_to, Text p_text)
+// ----------------------------------------------------------------
+// Send a chat line to one player only; returns what to show in
+// your own chat
+// ----------------------------------------------------------------
+{
+  Integer l_peer = 0;
+  Text    l_to   = net_clean_name(p_to);
+
+  if (net_mode(p_net) == NET_OFF) return "There is nobody else here to whisper to";
+  for (l_peer = 1; l_peer <= peers_count(p_peers); ++l_peer) {
+    if (!peer_here(p_peers, l_peer)) continue;
+    if (Text_lower(peer_name(p_peers, l_peer)) != Text_lower(l_to)) continue;
+    net_queue(p_net, "W " + peer_name(p_peers, l_peer) + " " + p_text);
+    return "You whisper to " + peer_name(p_peers, l_peer) + ": " + p_text;
+  }
+  return "No player was found called " + p_to;
 }
 
 void net_say(Attributes &p_net, Text p_text)
@@ -548,6 +649,12 @@ void net_apply_line(Attributes &p_net, Attributes &p_peers, Integer p_peer, Text
     }
   } else if (l_tag == "C") {
     hud_chat(p_hud, "<" + l_name + "> " + net_rest_of_line(p_line), p_now);
+  } else if (l_tag == "W" && l_count >= 3) {
+    // a whisper: only for the player it names
+    Get_item(l_words, 2, l_tag);
+    if (Text_lower(l_tag) == Text_lower(record_text(p_net, ATTR_NET_NAME))) {
+      hud_chat(p_hud, l_name + " whispers to you: " + net_rest_of_line(net_rest_of_line(p_line)), p_now);
+    }
   } else if (l_tag == "T" && l_count >= 2) {
     // only the host's clock counts
     if (record_text_at(p_peers, ATTR_PEER_FILE, p_peer) == record_text(p_net, ATTR_NET_HOST_FILE)) {

@@ -5,9 +5,27 @@ item to "Done" (with the commit) when it is finished and tested.
 
 ## Open
 
-(nothing open)
+### Multiplayer: real LAN
+
+- Open to LAN and Play Multiplayer should work between PCs on the same
+  network without a shared folder. 12dPL has no sockets and cmd.exe
+  can't listen, so a small PowerShell helper (started hidden with
+  `Create_process`) carries the log lines over UDP broadcast (finding
+  worlds) and TCP (playing), writing the same files the shared-folder
+  mode reads. The investigation and plan: `docs/lan_plan.md`.
 
 ## Done
+
+- Open to LAN from the game menu (where Mode was): the LAN World screen
+  sets the game mode guests join in and Allow Cheats, then Start LAN
+  World hosts the world being played; the name is the 12d user name.
+  Play Multiplayer lists open LAN worlds (host, world, the mode you'd
+  join in) with Join Server, Refresh and Back; a world closed by its
+  host leaves the list. Cheats (`/time`, `/gamerule`, `/give`,
+  `/gamemode`) only work in a LAN world that allows them; `/whisper`
+  (`/w`, `/msg`, `/tell`). Still through the shared folder (any folder
+  named `cubeland_mp`). The bed's foot end is the right way up, and the
+  bed item is a little bed drawn from the pack's bed pictures.
 
 - The first-person arm is the skin's right arm (sleeve and all; slim
   skins are found and get 3 pixel arms on the model too); tools are

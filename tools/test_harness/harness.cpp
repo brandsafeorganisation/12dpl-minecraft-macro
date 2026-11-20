@@ -87,6 +87,7 @@ static void load_script(const char*path){ std::ifstream in(path); Text line; whi
 std::map<Text,std::function<void()>> g_calls;
 // set by hooks.cpp: where the menu widget with a label (or "#id") is, false if none
 std::function<bool(const Text&,double&,double&,double&,double&)> g_ui_find;
+std::function<bool(const Text&)> g_ui_reveal;   // scroll a list so the row is on screen; true if it scrolled
 static void print_attr_top(){ std::vector<std::pair<long long,Text>> v; for(auto&p:g_attribute_by_name) v.push_back({p.second,p.first}); std::sort(v.rbegin(),v.rend()); for(size_t i=0;i<v.size()&&i<15;i++) printf("[attr] %lld %s\n",v[i].first,v[i].second.c_str()); }
 static void print_frames(){ if(getenv("TRACE_ATTR")) print_attr_top(); printf("[frames] %lld polygons %lld attribute calls %lld type errors %lld\n", g_frames, g_polygons, g_attribute_calls, g_attribute_type_errors); }
 struct FrameAtExit{ FrameAtExit(){ atexit(print_frames);} } frame_at_exit;
@@ -112,7 +113,10 @@ int Wait_on_events(long long&id,Text&cmd,Text&msg){
     if(e.kind=="capclick"||e.kind=="caprclick"){ double bx=g_cursor_x-100, by=100+g_box_h-g_cursor_y; id=box; cmd= e.kind=="capclick"?"click_lb_down":"click_rb"; char b[64]; snprintf(b,64,"%g %g",bx,by); msg=b; return 0; }
     if(e.kind=="slide"){ auto p=e.a.find('|'); double x0=0,y0=0,x1=0,y1=0, f=atof(e.a.substr(p+1).c_str());
       if(g_ui_find&&g_ui_find(e.a.substr(0,p),x0,y0,x1,y1)){ double x=x0+4+f*(x1-x0-8), y=(y0+y1)/2; if(y1-y0>x1-x0){ /* a scroll bar: down from its top */ x=(x0+x1)/2; y=y1-f*(y1-y0); } script.push_front({"click","",x,y}); script.push_front({"lbdown","",x,y}); } else printf("[harness] no menu widget %s\n",e.a.c_str()); continue; }
-    if(e.kind=="ui"){ double x0=0,y0=0,x1=0,y1=0; if(g_ui_find&&g_ui_find(e.a,x0,y0,x1,y1)){ double x=(x0+x1)/2,y=(y0+y1)/2; script.push_front({"click","",x,y}); script.push_front({"lbdown","",x,y}); } else printf("[harness] no menu widget %s\n",e.a.c_str()); continue; }
+    if(e.kind=="ui"){ double x0=0,y0=0,x1=0,y1=0; if(g_ui_find&&g_ui_find(e.a,x0,y0,x1,y1)){ double x=(x0+x1)/2,y=(y0+y1)/2; script.push_front({"click","",x,y}); script.push_front({"lbdown","",x,y}); }
+      else if(g_ui_reveal&&g_ui_reveal(e.a)){ // scrolled: let the menu redraw, then try again
+        script.push_front(e); for(int i=0;i<4;i++) script.push_front({"tick",""}); script.push_front({"move","",5,5}); script.push_front({"move","",g_box_w/2.0,g_box_h/2.0}); }
+      else printf("[harness] no menu widget %s\n",e.a.c_str()); continue; }
     if(e.kind=="snap"){ g_snap_name=e.a; continue; }
     if(e.kind=="time"){ g_sim_time+=e.x; continue; }
     if(e.kind=="call"){ if(g_calls.count(e.a)) g_calls[e.a](); continue; }

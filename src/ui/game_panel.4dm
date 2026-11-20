@@ -214,16 +214,15 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
 // Play a world in the view until the player quits to the title
 // screen. mode is the menu's choice: MENU_RESULT_CREATE generates a
 // new world from seed in game_mode, MENU_RESULT_PLAY loads the saved
-// world, MENU_RESULT_HOST loads it and hosts it for other players,
-// MENU_RESULT_JOIN joins the game hosted in the multiplayer folder
-// (world name unused). Returns 0, PANEL_CLOSED if the window was
+// world, MENU_RESULT_JOIN joins a LAN world (world name is its
+// session file in the multiplayer folder). The game menu's Open to
+// LAN hosts the world being played. Returns 0, PANEL_CLOSED if the window was
 // closed, or SHUTDOWN_CODE if 12d asked the macro to stop.
 // ----------------------------------------------------------------
 {
   Integer   l_result          = 0;
   Integer   l_button          = 0;
   Integer   l_hover_button    = 0;
-  Integer   l_mode            = 0;
   Integer   l_running         = TRUE;
   Integer   l_loaded          = FAILURE;
   Integer64 l_id              = 0;
@@ -284,7 +283,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   Text      l_report          = "";
   Integer   l_open_settings   = FALSE;
   Text      l_problem         = "";
-  Text      l_player_name     = settings_player_name(g_settings);
+  Text      l_player_name     = "";
   Text      l_player_id       = "";
   Text      l_folder          = settings_mp_folder(g_settings);
   Integer   l_session         = 0;
@@ -299,15 +298,15 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   // Multiplayer: who you are to the others (a name and a number, so
   // two players with the same name have different logs)
   net_clear(g_net, g_peers, g_net_inbox);
-  if (l_player_name == "") Get_user_name(l_player_name);
+  Get_user_name(l_player_name);
   l_player_name = net_clean_name(l_player_name);
   l_player_id   = l_player_name + "_" + To_text(random_range(g_random, 1000, 9999));
   Get_time(l_now);
 
   // Generate or load the world
   if (p_mode == MENU_RESULT_JOIN) {
-    game_panel_notice(p_box, "Joining", l_folder);
-    l_loaded = game_join(l_folder, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_away, g_events,
+    game_panel_notice(p_box, "Joining", "a LAN world in " + l_folder);
+    l_loaded = game_join(l_folder, p_world_name, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_away, g_events,
                          g_hud, g_ui, g_net, g_peers, g_net_inbox, l_player_id, l_player_name, l_now, l_problem);
   } else if (p_mode == MENU_RESULT_CREATE) {
     game_panel_notice(p_box, "Generating world", "Seed " + To_text(p_seed) + " - this takes a few seconds");
@@ -318,14 +317,6 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
     game_panel_notice(p_box, "Loading world", p_world_name);
     l_loaded = game_load_world(p_world_name, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows,
                              g_drops, g_away, g_events, g_hud, g_ui, l_problem);
-    if (l_loaded == SUCCESS && p_mode == MENU_RESULT_HOST) {
-      // the session is named after the time, so old logs in the
-      // folder (files are never deleted) aren't mistaken for new ones
-      l_session = Floor(l_now - Floor(l_now / 1000000000.0) * 1000000000.0);
-      l_loaded  = game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_away, g_events,
-                            g_net, g_peers, g_net_inbox, l_folder, To_text(l_session), l_player_id, l_player_name,
-                            l_now, l_problem);
-    }
   }
 
   if (l_loaded != SUCCESS) {
@@ -357,9 +348,8 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   Get_time(l_seconds);
   Get_time(l_clock);
   save_note_played(g_info, l_seconds, l_clock);
-  if (net_mode(g_net) == NET_HOST) {
-    hud_chat(g_hud, "Hosting as " + l_player_name + ": others press Join game with the multiplayer folder set to " + l_folder, l_now);
-  } else if (net_mode(g_net) == NET_GUEST) {
+  record_set_integer(g_hud, ATTR_HUD_LAN, net_mode(g_net) != NET_OFF);
+  if (net_mode(g_net) == NET_GUEST) {
     hud_chat(g_hud, "Joined as " + l_player_name + " (your copy is saved as " + game_world_name(g_game) + ")", l_now);
   }
   Get_size(p_box, l_last_w, l_last_h);
@@ -567,13 +557,15 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
           }
           game_panel_dispatch(l_now);
         }
-        if (l_button == PAUSE_BUTTON_MODE) {
-          // survival, creative, spectator and round again
-          l_mode = GAMEMODE_SURVIVAL;
-          if (player_survival(g_player)) l_mode = GAMEMODE_CREATIVE;
-          if (player_creative(g_player)) l_mode = GAMEMODE_SPECTATOR;
-          player_set_game_mode(g_player, l_mode);
-          hud_toast(g_hud, "Game mode: " + player_game_mode_name(l_mode), l_now);
+        if (l_button == PAUSE_BUTTON_LAN) {
+          // Open to LAN: the LAN World screen, then hosting (once)
+          if (net_mode(g_net) == NET_OFF) {
+            record_set_integer(g_settings, ATTR_SET_LAN_START, FALSE);
+            l_open_settings   = TRUE;
+            l_settings_screen = SCREEN_LAN;
+          } else {
+            hud_toast(g_hud, "This world is already open to LAN", l_now);
+          }
         }
         if (l_button == PAUSE_BUTTON_QUIT) {
           game_panel_close_screen();
@@ -770,7 +762,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         if (l_chatting) {
           if (Get_subtext(l_chat, 1, 1) == "/") {
             hud_chat(g_hud, l_chat, l_now);
-            l_reply = command_run(l_chat, g_info, g_player, g_inventory);
+            l_reply = command_run(l_chat, g_info, g_player, g_inventory, g_net, g_peers);
             hud_chat(g_hud, l_reply, l_now);
           } else if (l_chat != "") {
             hud_chat(g_hud, "<You> " + l_chat, l_now);
@@ -815,6 +807,22 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         game_panel_save();
         net_leave(g_net);
         return l_settings_result;
+      }
+      if (l_settings_screen == SCREEN_LAN && record_integer(g_settings, ATTR_SET_LAN_START) == TRUE) {
+        // the session is named after the time, so old logs in the
+        // folder (files are never deleted) aren't mistaken for new ones
+        game_panel_notice(p_box, "Opening to LAN", game_world_name(g_game));
+        Get_time(l_now);
+        l_session = Floor(l_now - Floor(l_now / 1000000000.0) * 1000000000.0);
+        if (game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_away, g_events, g_net, g_peers,
+                      g_net_inbox, l_folder, To_text(l_session), l_player_id, l_player_name,
+                      record_integer(g_settings, ATTR_SET_LAN_MODE), record_integer(g_settings, ATTR_SET_LAN_CHEATS),
+                      l_now, l_problem) == SUCCESS) {
+          record_set_integer(g_hud, ATTR_HUD_LAN, TRUE);
+          hud_chat(g_hud, "Local game hosted as " + l_player_name + ": others find it under Multiplayer", l_now);
+        } else {
+          hud_chat(g_hud, "Couldn't open to LAN: " + l_problem, l_now);
+        }
       }
       game_build_nearby(g_player, settings_render_distance(g_settings));
       Set_focus(p_keys);

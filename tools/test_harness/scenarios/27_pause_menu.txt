@@ -1,6 +1,7 @@
 # The game menu: Escape pauses and shows it over the darkened world;
 # the button under the mouse lights up; Controls opens the Key Binds
-# and Done goes back; Mode cycles the game mode; Back to Game plays on.
+# and Done goes back; Open to LAN shows the LAN World screen and Cancel
+# goes back; Back to Game plays on.
 # Then creative flight lands on the ground, and the creative screen
 # shows the world behind it. Save and Quit to Title ends the game.
 ui Singleplayer
@@ -23,8 +24,14 @@ click 530 295
 wait 4
 ui Done
 wait 2
-click 530 247
+ui Open to LAN
 wait 2
+snap 273_lan_world
+move 330 296
+wait 4
+ui Cancel
+wait 2
+call creative
 call mode
 click 430 343
 wait 2

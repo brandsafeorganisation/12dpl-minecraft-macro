@@ -8,6 +8,7 @@
 #include "../../include/items/inventory.h"
 #include "../../include/world/world.h"
 #include "../../include/player/player.h"
+#include "../../include/net/net.h"
 #include "../../include/program/commands.h"
 
 Text command_word(Dynamic_Text &p_words, Integer p_position)
@@ -188,7 +189,36 @@ Text command_gamemode(Dynamic_Text &p_words, Attributes &p_player)
   return "Set own game mode to Survival";
 }
 
-Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory)
+Text command_whisper(Text p_line, Dynamic_Text &p_words, Integer p_count, Attributes &p_net, Attributes &p_peers)
+// ----------------------------------------------------------------
+// /whisper <player> <message> (also /w, /msg and /tell): say
+// something only that player sees
+// ----------------------------------------------------------------
+{
+  Text l_rest = Get_subtext(p_line, 2, Text_length(p_line));
+  Text l_to   = command_word(p_words, 2);
+
+  if (p_count < 3) return "Usage: /whisper <player> <message>";
+  // the message is everything after the command and the name
+  l_rest = Text_justify(Get_subtext(l_rest, Find_text(l_rest, " ") + 1, Text_length(l_rest)));
+  l_rest = Text_justify(Get_subtext(l_rest, Text_length(l_to) + 1, Text_length(l_rest)));
+  return net_whisper(p_net, p_peers, l_to, l_rest);
+}
+
+Integer command_is_cheat(Text p_name)
+// ----------------------------------------------------------------
+// TRUE for the commands that need cheats allowed (a LAN world can
+// turn them off for everyone)
+// ----------------------------------------------------------------
+{
+  if (p_name == "time"    ) return TRUE;
+  if (p_name == "gamerule") return TRUE;
+  if (p_name == "give"    ) return TRUE;
+  if (p_name == "gamemode") return TRUE;
+  return FALSE;
+}
+
+Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attributes &p_inventory, Attributes &p_net, Attributes &p_peers)
 // ----------------------------------------------------------------
 // Carry out a chat command (p_line starts with "/") and return what
 // to show in the chat
@@ -202,11 +232,15 @@ Text command_run(Text p_line, Attributes &p_info, Attributes &p_player, Attribut
   if (l_count < 1) return "Type a command after the /, for example /help";
   l_name = Text_lower(command_word(l_words, 1));
 
+  if (command_is_cheat(l_name) && !net_cheats(p_net)) return "Cheats aren't allowed in this world: /" + l_name + " can't be used";
+  if (l_name == "whisper" || l_name == "w" || l_name == "msg" || l_name == "tell") {
+    return command_whisper(p_line, l_words, l_count, p_net, p_peers);
+  }
   if (l_name == "time"    ) return command_time    (l_words, l_count, p_info);
   if (l_name == "gamerule") return command_gamerule(l_words, l_count, p_info);
   if (l_name == "give"    ) return command_give    (l_words, l_count, p_inventory);
   if (l_name == "gamemode") return command_gamemode(l_words, p_player);
-  if (l_name == "help"    ) return "Commands: /gamemode survival|creative|spectator, /time set|add|query, /gamerule doDaylightCycle true|false, /give <player> <item> [count]";
+  if (l_name == "help"    ) return "Commands: /gamemode survival|creative|spectator, /time set|add|query, /gamerule doDaylightCycle true|false, /give <player> <item> [count], /whisper <player> <message>";
   return "Unknown command: /" + command_word(l_words, 1) + " (try /help)";
 }
 

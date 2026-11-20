@@ -28,7 +28,7 @@ A first-person block-building sandbox for 12d Model, drawn entirely in a
    has sliders for the field of view, render distance (50 blocks to start
    with) and mouse speed, buttons for texture detail, grass and flowers,
    shadows, auto-jump, the HUD and statistics, and screens for the font,
-   your skin, resource packs and the multiplayer name and folder.
+   your skin, resource packs and the multiplayer folder.
 
 Worlds are saved in a `cubeland_worlds` folder inside the 12d working folder,
 each in a folder of its own as in the block game: `level.cubeworld` (the
@@ -128,13 +128,18 @@ block game's ticks: 24000 to a day, 0 at sunrise, 6000 at noon.
 | `/gamemode survival\|creative\|spectator` | change game mode (also `s`, `c`, `sp` or `0`, `1`, `3`); see Game modes below |
 | `/gamerule doDaylightCycle true\|false` | start or stop the clock (saved with the world) |
 | `/give <player> <item> [count]` | give yourself items, e.g. `/give @p oak_door 3` or `/give @p minecraft:torch 64` (any player name means you) |
+| `/whisper <player> <message>` | a message only that player sees (also `/w`, `/msg`, `/tell`) |
 | `/help` | list the commands |
+
+`/time`, `/gamerule`, `/give` and `/gamemode` are cheats: in a LAN world
+they only work if the host turned **Allow Cheats** on (for everyone,
+the host too). Playing alone they always work.
 
 ### Game modes
 
 | Mode | Health | Flying | Blocks | Inventory |
 |------|--------|--------|--------|-----------|
-| Survival (every world starts here; change it with `/gamemode` or the game menu's Mode button) | yes: falls, zombies and drowning hurt | no | collide; break and place | your own, with crafting |
+| Survival (every world starts here; change it with `/gamemode`) | yes: falls, zombies and drowning hurt | no | collide; break and place | your own, with crafting |
 | Creative | none; zombies leave you alone | double tap Space to fly or land; Space up, Shift or C down | collide; break and place | every item, endlessly |
 | Spectator | none; zombies leave you alone | always | fly straight through them; can't break, place or pick anything up | none (no hotbar either) |
 
@@ -198,17 +203,25 @@ a shared folder of text files. Each player appends what they do to their
 own log file there and reads everyone else's a few times a second.
 
 1. Every player sets the same **Shared Folder** on the **Multiplayer**
-   screen (from the title screen, or **Options... > Multiplayer...**). The
-   default, `cubeland_worlds\mp`, works for two copies of the game on one
-   PC. Across PCs use a shared network folder whose name is `cubeland_mp`,
-   such as `\\host-pc\shared\cubeland_mp` (see Safety below). **Your
-   Name** can be set there too; blank uses your Windows name.
-2. The host picks a world in **Singleplayer** and presses **Host
-   Selected**. A copy of the world goes into the folder.
-3. Everyone else presses **Join Game** on the **Multiplayer** screen. They get the host's world as it was
-   when hosting started, plus every change anyone has made since, and start
-   at the spawn point with an empty inventory. Their own copy is saved as
-   `MP <world>`.
+   settings screen (**Options... > Multiplayer...**). The default,
+   `cubeland_worlds\mp`, works for two copies of the game on one PC.
+   Across PCs use a shared network folder whose name is `cubeland_mp`,
+   such as `\\host-pc\shared\cubeland_mp` (see Safety below). Others see
+   you by your Windows (12d) user name.
+2. The host plays their world, presses Escape and **Open to LAN**. The
+   **LAN World** screen sets what other players get: **Game Mode** (the
+   mode they join in) and **Allow Cheats**. **Start LAN World** opens it;
+   the button then reads **LAN World Open**.
+3. Everyone else presses **Multiplayer** on the title screen. **Play
+   Multiplayer** lists the open LAN worlds with the host, the world and
+   the mode you'd join in (rescanned every couple of seconds, or
+   **Refresh**). Pick one and **Join Server** (or double click it). You
+   get the host's world as it was when it was opened, plus every change
+   anyone has made since, and start at the spawn point with an empty
+   inventory. Your own copy is saved as `MP <world>`.
+
+When the host saves and quits, the world is marked closed and leaves the
+list.
 
 What is shared: players (drawn with their names over their heads), every
 block placed or broken (doors, beds and water included), chat, and the

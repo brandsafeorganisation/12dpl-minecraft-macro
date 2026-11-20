@@ -25,7 +25,7 @@ build_one() {   # build_one <entry file> <name> [compiler flags]
   cat "$HERE/hooks.cpp" >> "$HERE/build/$NAME.cpp"
   cat >> "$HERE/build/$NAME.cpp" <<'X'
 extern void load_script_public(const char*);
-int main(int argc,char**argv){ register_hooks(); load_script_public(argv[1]); macro_main(); return 0; }
+int main(int argc,char**argv){ setvbuf(stdout,nullptr,_IOLBF,0); register_hooks(); load_script_public(argv[1]); macro_main(); return 0; }
 X
 
   # 3. Compile with address and undefined-behaviour checks

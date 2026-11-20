@@ -15,7 +15,7 @@
 #define MENU_RESULT_QUIT     0
 #define MENU_RESULT_PLAY     1   // load the world named ATTR_MENU_WORLD
 #define MENU_RESULT_CREATE   2   // create it from ATTR_MENU_SEED in ATTR_MENU_MODE
-#define MENU_RESULT_HOST     3   // load ATTR_MENU_WORLD and host it for other players
+// 3 was MENU_RESULT_HOST: worlds are opened to LAN from the game menu now
 #define MENU_RESULT_JOIN     4   // join the game hosted in the multiplayer folder
 #define PANEL_CLOSED         2   // settings_panel_run / game_panel_run: the window was closed
 

@@ -96,7 +96,8 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
       if (l_screen == SCREEN_OPTIONS) screen_options(p_box, g_menu, p_settings, l_w, l_h, l_now);
       if (l_screen == SCREEN_PACKS  ) screen_packs  (p_box, g_menu, g_files, l_pack, l_w, l_h, l_now);
       if (l_screen == SCREEN_SKINS  ) screen_skins  (p_box, g_menu, g_files, settings_skin(p_settings), l_w, l_h, l_now);
-      if (l_screen == SCREEN_PLAYER ) screen_player (p_box, g_menu, FALSE, l_w, l_h, l_now);
+      if (l_screen == SCREEN_PLAYER ) screen_player (p_box, g_menu, l_w, l_h, l_now);
+      if (l_screen == SCREEN_LAN    ) screen_lan    (p_box, g_menu, p_settings, l_w, l_h, l_now);
       if (l_screen == SCREEN_FONTS  ) screen_fonts  (p_box, g_menu, g_files, settings_font(p_settings), settings_font_file(p_settings), l_w, l_h, l_now);
       if (l_screen == SCREEN_CONTROLS) screen_controls(p_box, g_menu, p_settings, l_listening, l_w, l_h, l_now);
       End_batch_draw(p_box);
@@ -247,7 +248,6 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         l_listening = 0;
         l_screen    = SCREEN_CONTROLS;
       } else if (l_id == W_PLAYER_SETTINGS) {
-        menu_set_field_text(g_menu, W_PLAYER_NAME, settings_player_name(p_settings));
         menu_set_field_text(g_menu, W_FOLDER, settings_mp_folder(p_settings));
         menu_set_focus(g_menu, 0);
         l_screen = SCREEN_PLAYER;
@@ -348,9 +348,22 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
         }
       }
 
+    } else if (l_screen == SCREEN_LAN) {
+      // Open to LAN: the game mode others join in (round the three),
+      // cheats on or off, then start or go back to the game menu
+      if (l_id == W_LAN_MODE) {
+        record_set_integer(p_settings, ATTR_SET_LAN_MODE, positive_mod(record_integer(p_settings, ATTR_SET_LAN_MODE) + 1, 3));
+      } else if (l_id == W_LAN_CHEATS) {
+        record_set_integer(p_settings, ATTR_SET_LAN_CHEATS, record_integer(p_settings, ATTR_SET_LAN_CHEATS) != TRUE);
+      } else if (l_id == W_LAN_START) {
+        record_set_integer(p_settings, ATTR_SET_LAN_START, TRUE);
+        l_doit = FALSE;
+      } else if (l_id == W_CANCEL || l_id == W_DONE) {
+        l_doit = FALSE;
+      }
+
     } else if (l_screen == SCREEN_PLAYER) {
       if (l_id == W_DONE) {
-        settings_set_text(p_settings, ATTR_SET_PLAYER_NAME, Text_justify(menu_field_text(g_menu, W_PLAYER_NAME)));
         settings_set_text(p_settings, ATTR_SET_MP_FOLDER, Text_justify(menu_field_text(g_menu, W_FOLDER)));
         menu_set_focus(g_menu, 0);
         l_screen = SCREEN_OPTIONS;

@@ -30,6 +30,9 @@ void settings_defaults(Attributes &p_settings)
   record_set_text   (p_settings, ATTR_SET_PLAYER_NAME,     "");
   record_set_text   (p_settings, ATTR_SET_SKIN,            "");
   record_set_integer(p_settings, ATTR_SET_SLIM_ARMS,       FALSE);
+  record_set_integer(p_settings, ATTR_SET_LAN_MODE,        0);       // survival
+  record_set_integer(p_settings, ATTR_SET_LAN_CHEATS,      FALSE);
+  record_set_integer(p_settings, ATTR_SET_LAN_START,       FALSE);
   settings_reset_binds(p_settings);
 }
 

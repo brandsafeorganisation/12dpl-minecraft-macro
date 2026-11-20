@@ -57,6 +57,7 @@
 #define SCREEN_PLAYER        9     // multiplayer name and folder, from the options
 #define SCREEN_FONTS         10
 #define SCREEN_CONTROLS      11    // the key binds, from the options or the game menu
+#define SCREEN_LAN           12    // Open to LAN, from the game menu
 
 // Widget ids (one set for every screen)
 #define W_SINGLEPLAYER       1
@@ -65,7 +66,7 @@
 #define W_QUIT               4
 #define W_PLAY               10
 #define W_NEW_WORLD          11
-#define W_HOST               12
+// 12 was W_HOST (Host Selected)
 #define W_DELETE             13
 #define W_BACK               14
 #define W_SEARCH             15
@@ -98,6 +99,10 @@
 #define W_FONT_USE           65
 #define W_CONTROLS           66
 #define W_RESET_KEYS         67
+#define W_LAN_MODE           68
+#define W_LAN_CHEATS         69
+#define W_LAN_START          70
+#define W_REFRESH            71
 #define W_WORLD_ROW          100   // + n: row n of the world list
 #define W_AVAILABLE_ROW      200   // + n: available resource pack n
 #define W_SELECTED_ROW       300   // + 1: the selected pack, + 2: the built-in textures
@@ -217,7 +222,9 @@ void    screen_title        (Draw_Box p_box, Attributes &p_menu, Real p_w, Real 
 void    screen_worlds       (Draw_Box p_box, Attributes &p_menu, Attributes &p_worlds, Real p_w, Real p_h, Real p_now);
 void    screen_create       (Draw_Box p_box, Attributes &p_menu, Integer p_mode, Real p_w, Real p_h, Real p_now);
 void    screen_delete       (Draw_Box p_box, Attributes &p_menu, Text p_name, Real p_w, Real p_h, Real p_now);
-void    screen_player       (Draw_Box p_box, Attributes &p_menu, Integer p_join, Real p_w, Real p_h, Real p_now);
+void    screen_player       (Draw_Box p_box, Attributes &p_menu, Real p_w, Real p_h, Real p_now);
+void    screen_lan          (Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now);
+void    screen_multiplayer  (Draw_Box p_box, Attributes &p_menu, Attributes &p_lan, Real p_w, Real p_h, Real p_now);
 void    screen_options      (Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now);
 void    screen_packs        (Draw_Box p_box, Attributes &p_menu, Attributes &p_files, Text p_selected, Real p_w, Real p_h, Real p_now);
 void    screen_skins        (Draw_Box p_box, Attributes &p_menu, Attributes &p_files, Text p_selected, Real p_w, Real p_h, Real p_now);

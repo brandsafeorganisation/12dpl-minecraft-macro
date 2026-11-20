@@ -166,10 +166,12 @@ Integer game_load_world(Text p_name, Attributes &p_game, Attributes &p_info, Att
 Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                   Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away, Attributes &p_events,
                   Attributes &p_net, Attributes &p_peers, Attributes &p_inbox, Text p_folder, Text p_session,
-                  Text p_id, Text p_name, Real p_now, Text &p_problem)
+                  Text p_id, Text p_name, Integer p_mode, Integer p_cheats, Real p_now, Text &p_problem)
 // ----------------------------------------------------------------
-// Host the world being played: put a copy of it in the multiplayer
-// folder and name the session there, so others can join
+// Open the world being played to LAN: put a copy of it in the
+// multiplayer folder and describe it there (the host's name, the
+// world, the game mode guests join in, whether cheats are allowed)
+// so Play Multiplayer lists it
 // ----------------------------------------------------------------
 {
   p_problem = "";
@@ -182,36 +184,52 @@ Integer game_host(Attributes &p_game, Attributes &p_info, Attributes &p_player, 
     p_problem = "the world couldn't be written to " + p_folder;
     return FAILURE;
   }
-  if (net_write_session(p_folder, p_session, p_id, world_info_seed(p_info), game_world_name(p_game)) != SUCCESS) {
+  if (net_write_session(p_folder, p_session, p_id, p_name, world_info_seed(p_info), game_world_name(p_game), p_mode, p_cheats,
+                        TRUE) != SUCCESS) {
     p_problem = "the session file couldn't be written in " + p_folder;
     return FAILURE;
   }
-  net_start(p_net, p_peers, p_inbox, NET_HOST, p_folder, p_session, p_id, p_id, p_name, p_now);
+  net_start      (p_net, p_peers, p_inbox, NET_HOST, p_folder, p_session, p_id, p_id, p_name, p_now);
+  net_set_session(p_net, world_info_seed(p_info), game_world_name(p_game), p_mode, p_cheats);
   events_clear(p_events);
   return SUCCESS;
 }
 
-Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
+Integer game_join(Text p_folder, Text p_session_file, Attributes &p_game, Attributes &p_info, Attributes &p_player, Attributes &p_inventory,
                   Attributes &p_grid, Attributes &p_furnaces, Attributes &p_cows, Attributes &p_drops, Attributes &p_away,
                   Attributes &p_events, Attributes &p_hud, Attributes &p_ui, Attributes &p_net, Attributes &p_peers, Attributes &p_inbox,
                   Text p_id, Text p_name, Real p_now, Text &p_problem)
 // ----------------------------------------------------------------
-// Join the game hosted in the multiplayer folder: load the host's
-// world as it was when hosting started (everyone's changes since
-// then are read from their logs) and start at the spawn point with
-// an empty inventory, in survival. Your own copy is saved as
-// "MP <world>".
+// Join a LAN world (its session file in the multiplayer folder):
+// load the host's world as it was when it was opened (everyone's
+// changes since then are read from their logs) and start at the
+// spawn point with an empty inventory, in the game mode the host
+// chose. Your own copy is saved as "MP <world>".
 // ----------------------------------------------------------------
 {
   Text    l_session = "";
   Text    l_host    = "";
+  Text    l_host_name = "";
   Text    l_world   = "";
   Integer l_seed    = 0;
+  Integer l_mode    = GAMEMODE_SURVIVAL;
+  Integer l_cheats  = FALSE;
+  Integer l_open    = FALSE;
   Real    l_x       = 0.0;
   Real    l_y       = 0.0;
   Real    l_z       = 0.0;
 
-  if (net_read_session(p_folder, l_session, l_host, l_seed, l_world, p_problem) != SUCCESS) return FAILURE;
+  if (net_read_session(p_session_file, l_session, l_host, l_host_name, l_seed, l_world, l_mode, l_cheats, l_open, p_problem) != SUCCESS) {
+    return FAILURE;
+  }
+  if (!l_open) {
+    p_problem = l_host_name + " has closed that world";
+    return FAILURE;
+  }
+  if (!File_exists(net_snapshot_path(p_folder, l_session))) {
+    p_problem = "the host's world isn't in " + p_folder;
+    return FAILURE;
+  }
 
   game_reset_state(p_game, p_player, p_inventory, p_grid, p_furnaces, p_cows, p_drops, p_away, p_events, p_hud, p_ui);
   record_set_text (p_game, ATTR_GAME_WORLD_NAME, "MP " + l_world);
@@ -222,13 +240,14 @@ Integer game_join(Text p_folder, Attributes &p_game, Attributes &p_info, Attribu
   // afresh (chests and furnaces fill up as you use them)
   world_info_spawn   (p_info, l_x, l_y, l_z);
   player_reset       (p_player, l_x, l_y + COLLISION_EPSILON, l_z);
-  player_set_game_mode(p_player, GAMEMODE_SURVIVAL);
+  player_set_game_mode(p_player, l_mode);
   inventory_clear    (p_inventory);
   furnaces_clear     (p_furnaces);
   drops_clear        (p_drops);
   game_clear_away    (p_away);
 
-  net_start(p_net, p_peers, p_inbox, NET_GUEST, p_folder, l_session, l_host, p_id, p_name, p_now);
+  net_start      (p_net, p_peers, p_inbox, NET_GUEST, p_folder, l_session, l_host, p_id, p_name, p_now);
+  net_set_session(p_net, l_seed, l_world, l_mode, l_cheats);
   events_clear(p_events);
   return SUCCESS;
 }
