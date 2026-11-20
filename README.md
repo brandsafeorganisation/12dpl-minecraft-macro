@@ -198,21 +198,33 @@ to go home. Breaking any of a portal's frame puts it out.
 
 ## Multiplayer
 
-12dPL can't open network connections, so copies of the game talk through
-a shared folder of text files. Each player appends what they do to their
-own log file there and reads everyone else's a few times a second.
+Copies of the game share a world by writing what each player does to
+their own log file and reading everyone else's a few times a second.
+12dPL can't open network connections itself, so those files travel one
+of two ways (**Options... > Multiplayer...**, **Connect:**):
 
-1. Every player sets the same **Shared Folder** on the **Multiplayer**
-   settings screen (**Options... > Multiplayer...**). The default,
-   `cubeland_worlds\mp`, works for two copies of the game on one PC.
-   Across PCs use a shared network folder whose name is `cubeland_mp`,
-   such as `\\host-pc\shared\cubeland_mp` (see Safety below). Others see
-   you by your Windows (12d) user name.
-2. The host plays their world, presses Escape and **Open to LAN**. The
+- **Over the Network** (the default): a small Windows PowerShell script
+  that comes with the game (the LAN helper) carries them between PCs on
+  the same local network, like the block game's LAN worlds. Nothing needs
+  setting up, but the first time a PC hosts, Windows may ask whether
+  Windows PowerShell may use the network: allow it on private networks
+  (this needs an administrator on some PCs; if it was refused, an
+  administrator can allow it in Windows Defender Firewall). PowerShell
+  runs without a window, only while you are on Play Multiplayer or in a
+  LAN world, and stops by itself when the game does. On a PC where
+  PowerShell is locked down, use a shared folder instead.
+- **Through a Shared Folder**: every player sets the same **Shared
+  Folder**. The default, `cubeland_worlds\mp`, works for two copies of
+  the game on one PC. Across PCs use a shared network folder whose name is
+  `cubeland_mp`, such as `\\host-pc\shared\cubeland_mp` (see Safety below).
+
+Others see you by your Windows (12d) user name.
+
+1. The host plays their world, presses Escape and **Open to LAN**. The
    **LAN World** screen sets what other players get: **Game Mode** (the
    mode they join in) and **Allow Cheats**. **Start LAN World** opens it;
    the button then reads **LAN World Open**.
-3. Everyone else presses **Multiplayer** on the title screen. **Play
+2. Everyone else presses **Multiplayer** on the title screen. **Play
    Multiplayer** lists the open LAN worlds with the host, the world and
    the mode you'd join in (rescanned every couple of seconds, or
    **Refresh**). Pick one and **Join Server** (or double click it). You
@@ -221,7 +233,7 @@ own log file there and reads everyone else's a few times a second.
    inventory. Your own copy is saved as `MP <world>`.
 
 When the host saves and quits, the world is marked closed and leaves the
-list.
+list (over the network, guests are told "The host closed the world").
 
 What is shared: players (drawn with their names over their heads), every
 block placed or broken (doors, beds and water included), chat, and the
@@ -233,9 +245,10 @@ What isn't: inventories, chests and furnaces are each player's own (a
 chest someone else breaks spills your copy of its contents), and animals
 and zombies run separately on each machine. A game only reads and writes
 while its view is running, so a paused player catches up when they carry
-on. Over a network share, expect delays of a fraction of a second to a few
-seconds. Files in the folder are never deleted: each hosted session uses
-new file names.
+on. Expect delays of a fraction of a second (over the network) to a few
+seconds (over a network share). Files are never deleted: each hosted
+session uses new file names. Over the network they are kept in
+`cubeland_worlds\lan` (a folder for each session and each search).
 
 ## Resource packs
 
@@ -490,7 +503,8 @@ include/<part>/*.h    each module's constants, record field names and prototypes
   program/            settings (the settings record and its file), save
                       (world files), commands (the chat commands), game
                       (starting worlds, the per-frame update, event dispatch)
-  net/                net (multiplayer through a shared folder of log files)
+  net/                net (multiplayer through log files) and lan (the LAN helper that
+                      carries them over the network; lan_helper.ps1 is its script)
   ui/                 menu_panel (the game's panel and the title screen),
                       settings_panel (the options), game_panel (playing): the
                       controllers; font (font names and files)
@@ -560,7 +574,8 @@ when you change the world size, also update the products written next to it
 ### Safety
 
 `include/core/safety.h` is the first file `src/build.4dm` includes. It
-`#define`s every 12d call that could do harm (start a program, delete or
+`#define`s every 12d call that could do harm (start a program (but see
+`SAFE_ALLOW_LAN_HELPER`), delete or
 copy files, delete or change models, tins, views or project settings, use
 the clipboard, databases or the network) as `illegal_call`, which doesn't
 exist, so a macro that uses one of them doesn't compile. Even `File_open`
@@ -574,6 +589,14 @@ Two switches at the top of `src/build.4dm` loosen it, and each prints a
 
 - `SAFE_ALLOW_SHARE_FOLDER` (on): files may also be written in any folder
   named `cubeland_mp`, for multiplayer across PCs.
+- `SAFE_ALLOW_LAN_HELPER` (on, but never in the test build): one program
+  may be started: Windows PowerShell, without a window, running the LAN
+  helper script that `safety.h` itself writes into `cubeland_worlds\lan`
+  (`safe_run_helper()`; every value on its command line is checked to be
+  a plain word, number or address). It is the only call to
+  `Create_process` in the macro. The script is `src/net/lan_helper.ps1`;
+  `python3 tools/make_lan_helper.py` turns it into
+  `include/core/safe_lan_script.h`.
 - `SAFETY_OFF` (off): none of the dangerous calls are blocked. The game
   doesn't need any of them.
 

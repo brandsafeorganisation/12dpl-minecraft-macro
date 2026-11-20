@@ -1,6 +1,14 @@
 # Cubeland: real LAN play without a shared folder (research plan)
 
-Research only: nothing in the repo was changed. Quotes come from
+**Implemented** (see README, Multiplayer). Differences from this plan:
+the six-argument `Create_process` (no `Process_Handle`; the status file
+says whether the helper runs), no modified-time checks (each Play
+Multiplayer search has its own folder, and the helper writes a world
+`open 0` once it stops answering), the helper finds 12d's process
+itself (its parent), and the script lives in
+`include/core/safe_lan_script.h`, written from `src/net/lan_helper.ps1`.
+
+The research below was written before any code. Quotes come from
 `resources/12dpl_functions_documentation.json` (ids in brackets). Where I
 am not sure, it says **UNSURE**.
 

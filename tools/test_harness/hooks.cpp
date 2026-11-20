@@ -1,4 +1,5 @@
 // Test hooks appended to the translated macro (they can see its globals and functions)
+#include <sstream>
 extern std::map<Text,std::function<void()>> g_calls;
 extern int g_box_w, g_box_h;
 void push_front_click(const char*kind,double x,double y);
@@ -331,7 +332,8 @@ static void register_hooks(){
   g_calls["records"]=[]{ int n; Get_number_of_attributes(g_player,n); printf("[records] player %d fields, ",n); Get_number_of_attributes(g_cows,n); printf("cows %d, ",n); Get_number_of_attributes(g_drops,n); printf("drops %d, ",n); Get_number_of_attributes(g_inventory,n); printf("inventory %d, ",n); Get_number_of_attributes(g_settings,n); printf("settings %d\n",n); };
 
   // ---------------- multiplayer: a made-up second player "bob" writes his log by hand
-  auto bob_path=[]{ return Text("cubeland_worlds/mp/")+"log_"+record_text(g_net,"session")+"_bob_77.txt"; };
+  // (in whichever folder the game uses: the shared folder, or a LAN helper's)
+  auto bob_path=[]{ return fix_path(record_text(g_net,"folder"))+"/log_"+record_text(g_net,"session")+"_bob_77.txt"; };
   auto bob_write=[bob_path](const Text&t){ FILE*f=fopen(bob_path().c_str(),"a"); if(!f){ printf("[net] bob can't write %s\n",bob_path().c_str()); return; } fputs(t.c_str(),f); fclose(f); };
   g_calls["bob_join"]=[bob_write]{ char b[256]; snprintf(b,256,"J bob ~\nP %.2f %.2f %.2f 3.1416 0.2 ~\nC hello from bob ~\n",px()+5.5,py(),pz()+0.5); bob_write(b); };
   g_calls["bob_walk"]=[bob_write]{ char b[256]; snprintf(b,256,"P %.2f %.2f %.2f 3.1416 -0.3 ~\n",px()+5.5,py(),pz()-0.8); bob_write(b); };
@@ -347,13 +349,33 @@ static void register_hooks(){
   // the host is still playing on another computer: mark its LAN world open again
   g_calls["reopen_lan"]=[]{ int n=0; Dynamic_Text names; List_files_in_folder("cubeland_worlds/mp","lan_*.txt",n,names);
      for(auto&f:names.items){ Text p="cubeland_worlds/mp/"+f; FILE*fp=fopen(p.c_str(),"r"); char line[256]; Text all; while(fp&&fgets(line,256,fp)){ Text t=line; if(t.compare(0,5,"open ")==0) t="open 1\n"; all+=t; } if(fp) fclose(fp); fp=fopen(p.c_str(),"w"); fputs(all.c_str(),fp); fclose(fp); } };
+  // ---------------------------------------------------------------- the LAN helper (simulated in harness.cpp)
+  g_calls["lan_firewall"]=[]{ extern bool g_lan_firewall; g_lan_firewall=true; };
+  g_calls["lan_no_powershell"]=[]{ extern bool g_lan_no_powershell; g_lan_no_powershell=true; };
+  g_calls["lan_fixed"]=[]{ extern bool g_lan_firewall; extern bool g_lan_no_powershell; g_lan_firewall=false; g_lan_no_powershell=false; };
+  // every helper folder and what its status and control files say
+  g_calls["lan_dirs"]=[]{ DIR*d=opendir("cubeland_worlds/lan"); if(!d){ printf("[lan] no helper folder\n"); return; } std::vector<Text> v; while(auto e=readdir(d)){ Text n=e->d_name; if(n[0]!='.') v.push_back(n);} closedir(d); std::sort(v.begin(),v.end());
+     for(auto&n:v){ printf("[lan] %s:",n.c_str()); int c=0; Dynamic_Text names; List_files_in_folder("cubeland_worlds/lan/"+n,"*.txt",c,names);
+       for(auto&f:names.items){ printf(" %s",f.c_str()); if(f.compare(0,7,"status_")==0||f.compare(0,8,"control_")==0){ std::ifstream in("cubeland_worlds/lan/"+n+"/"+f); Text l; std::getline(in,l); printf(" (%s)",l.c_str()); } } printf("\n"); } };
+  // "another PC" hosts the world this PC just hosted: its folder copied to run/remote, open again
+  g_calls["remote_host"]=[]{ DIR*d=opendir("cubeland_worlds/lan"); Text last; while(d&&true){ auto e=readdir(d); if(!e) break; Text n=e->d_name; if(n.compare(0,2,"h_")==0&&n>last) last=n; } if(d) closedir(d);
+     if(last.empty()){ printf("[lan] no hosted world to copy\n"); return; }
+     mkdir("remote",0755); Text to="remote/"+last; mkdir(to.c_str(),0755); int c=0; Dynamic_Text names; List_files_in_folder("cubeland_worlds/lan/"+last,"*.txt",c,names);
+     for(auto&f:names.items){ if(f.compare(0,7,"status_")==0||f.compare(0,8,"control_")==0) continue; std::ifstream in("cubeland_worlds/lan/"+last+"/"+f,std::ios::binary); std::stringstream ss; ss<<in.rdbuf(); Text t=ss.str();
+       if(f.compare(0,4,"lan_")==0){ size_t p=t.find("\nopen 0"); if(p!=Text::npos) t.replace(p,7,"\nopen 1"); } std::ofstream out(to+"/"+f,std::ios::binary); out<<t; }
+     printf("[lan] the other PC hosts %s\n",last.c_str()); };
+  // bob, on the other PC, says something in the remote world; then that host quits
+  g_calls["remote_bob"]=[]{ DIR*d=opendir("remote"); while(d){ auto e=readdir(d); if(!e) break; Text n=e->d_name; if(n.compare(0,2,"h_")!=0) continue; Text s=n.substr(2);
+       std::ofstream("remote/"+n+"/log_"+s+"_bob_77.txt",std::ios::app)<<"C hello over the network ~\n"; } if(d) closedir(d); };
+  g_calls["remote_close"]=[]{ DIR*d=opendir("remote"); while(d){ auto e=readdir(d); if(!e) break; Text n=e->d_name; if(n.compare(0,2,"h_")!=0) continue; Text s=n.substr(2), p="remote/"+n+"/lan_"+s+".txt";
+       std::ifstream in(p); std::stringstream ss; ss<<in.rdbuf(); Text t=ss.str(); size_t at=t.find("\nopen 1"); if(at!=Text::npos) t.replace(at,7,"\nopen 0"); in.close(); std::ofstream(p)<<t; } if(d) closedir(d); };
   g_calls["lan_list"]=[]{ printf("[lan] listed %d:",record_integer(g_lan,"count")); for(int i=1;i<=record_integer(g_lan,"count");i++) printf(" [%s - %s, mode %d, cheats %d]",record_text_at(g_lan,"host",i).c_str(),record_text_at(g_lan,"world",i).c_str(),record_integer_at(g_lan,"mode",i),record_integer_at(g_lan,"cheats",i)); printf("\n"); };
   g_calls["try_cheat"]=[]{ printf("[lan] /time set day: %s\n",command_run("/time set day",g_info,g_player,g_inventory,g_net,g_peers).c_str()); printf("[lan] /w bob hi: %s\n",command_run("/w bob hi there",g_info,g_player,g_inventory,g_net,g_peers).c_str()); };
   g_calls["net"]=[]{
      int x=(int)floor(px())+2, y=(int)floor(py()), z=(int)floor(pz());
      printf("[net] mode %d players: %s; cells ahead %d %d\n",net_mode(g_net),net_players_text(g_net,g_peers,g_sim_time).c_str(),world_get_block(x,y,z),world_get_block(x,y+1,z));
      for(int p=1;p<=peers_count(g_peers);p++){ double a,b,c; peer_position(g_peers,p,a,b,c); printf("[net] peer %d %s here %d at %.2f %.2f %.2f offset %d\n",p,peer_name(g_peers,p).c_str(),peer_here(g_peers,p),a,b,c,record_integer_at(g_peers,"offset",p)); }
-     Text mine=Text("cubeland_worlds/mp/")+"log_"+record_text(g_net,"session")+"_"+record_text(g_net,"id")+".txt";
+     Text mine=fix_path(record_text(g_net,"folder"))+"/log_"+record_text(g_net,"session")+"_"+record_text(g_net,"id")+".txt";
      FILE*f=fopen(mine.c_str(),"r"); int n=0; char line[512]; std::map<char,int> tags; Text last;
      if(f){ while(fgets(line,512,f)){ n++; tags[line[0]]++; if(line[0]=='B') last=line; } fclose(f); }
      printf("[net] my log: %d lines (J %d P %d H %d B %d C %d T %d L %d) last block line: %s",n,tags['J'],tags['P'],tags['H'],tags['B'],tags['C'],tags['T'],tags['L'],last.empty()?"none\n":last.c_str()); };

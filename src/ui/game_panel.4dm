@@ -20,6 +20,7 @@
 #include "../../include/ui/panels.h"
 #include "../../include/ui/font.h"
 #include "../../include/net/net.h"
+#include "../../include/net/lan.h"
 #include "../../include/render/menu.h"
 
 // ----------------------------------------------------------------
@@ -115,6 +116,112 @@ void game_panel_notice(Draw_Box p_box, Text p_title, Text p_line)
   hud_shadow_text(p_box, l_w / 2.0, l_h / 2.0 + 30.0, 18.0, TEXT_ALIGN_CENTRE, 255, 255, 255, p_title);
   hud_shadow_text(p_box, l_w / 2.0, l_h / 2.0 - 4.0, 14.0, TEXT_ALIGN_CENTRE, 200, 200, 200, p_line);
   End_batch_draw(p_box);
+}
+
+Integer game_panel_lan_join(Draw_Box p_box, Text p_found, Text p_player_id, Text &p_folder, Text &p_problem)
+// ----------------------------------------------------------------
+// Joining over the network: start the LAN helper for the world in
+// the found file p_found and wait until it has fetched the host's
+// snapshot into its folder (p_folder, where game_join then reads
+// it). Returns FAILURE with the problem if it can't.
+// ----------------------------------------------------------------
+{
+  Text    l_run     = "";
+  Text    l_session = "";
+  Text    l_host_id = "";
+  Text    l_host    = "";
+  Text    l_world   = "";
+  Text    l_address = "";
+  Text    l_check   = "";
+  Integer l_port    = 0;
+  Integer l_seed    = 0;
+  Integer l_mode    = 0;
+  Integer l_cheats  = 0;
+  Integer l_open    = 0;
+  Real    l_now     = 0.0;
+  Real    l_start   = 0.0;
+
+  p_folder = "";
+  if (net_read_session(p_found, l_session, l_host_id, l_host, l_seed, l_world, l_mode, l_cheats, l_open, p_problem) != SUCCESS) return FAILURE;
+  if (!l_open) {
+    p_problem = l_host + " has closed that world";
+    return FAILURE;
+  }
+  if (net_read_session_address(p_found, l_address, l_port) != SUCCESS) {
+    p_problem = "the world's network address is missing";
+    return FAILURE;
+  }
+  Get_time(l_now);
+  l_start  = l_now;
+  l_run    = lan_run_name(l_now);
+  p_folder = lan_folder(lan_join_dir(l_run));
+  if (lan_run_start(g_lan_play, Getenv("SystemRoot"), "join", lan_join_dir(l_run), l_run, l_session, p_player_id,
+                    l_address, l_port, l_now) != SUCCESS) {
+    p_problem = "Windows PowerShell couldn't be started";
+    return FAILURE;
+  }
+  while (TRUE) {
+    game_panel_notice(p_box, "Connecting", "to " + l_host + " at " + l_address + " - " + l_world);
+    Sleep(100);
+    Get_time(l_now);
+    l_check = lan_run_check(g_lan_play, l_now);
+    if (l_check != "") {
+      p_problem = l_check;
+      lan_run_stop(g_lan_play);
+      return FAILURE;
+    }
+    if (lan_run_state(g_lan_play) == "ready") return SUCCESS;
+    if (l_now - l_start > LAN_CONNECT_SECONDS) {
+      p_problem = "the host didn't answer in time";
+      lan_run_stop(g_lan_play);
+      return FAILURE;
+    }
+  }
+  return FAILURE;
+}
+
+Integer game_panel_lan_host(Draw_Box p_box, Text p_session, Text p_player_id, Text &p_problem)
+// ----------------------------------------------------------------
+// Opening to LAN over the network: start the LAN helper for the
+// session just written (game_host) and wait until it listens.
+// Returns FAILURE with the problem if it can't.
+// ----------------------------------------------------------------
+{
+  Text l_check = "";
+  Real l_now   = 0.0;
+  Real l_start = 0.0;
+
+  Get_time(l_now);
+  l_start = l_now;
+  if (lan_run_start(g_lan_play, Getenv("SystemRoot"), "host", lan_host_dir(p_session), p_session, p_session, p_player_id,
+                    "", LAN_GAME_PORT, l_now) != SUCCESS) {
+    p_problem = "Windows PowerShell couldn't be started";
+    return FAILURE;
+  }
+  while (TRUE) {
+    Sleep(100);
+    Get_time(l_now);
+    l_check = lan_run_check(g_lan_play, l_now);
+    if (l_check != "") {
+      p_problem = l_check;
+      lan_run_stop(g_lan_play);
+      return FAILURE;
+    }
+    if (lan_run_state(g_lan_play) == "hosting") return SUCCESS;
+    if (l_now - l_start > LAN_HOST_WAIT_SECONDS) {
+      // still starting (a slow PC): it carries on, and says if it fails
+      return SUCCESS;
+    }
+  }
+  return FAILURE;
+}
+
+void game_panel_lan_stop()
+// ----------------------------------------------------------------
+// Leaving a game: the LAN helper (if any) stops
+// ----------------------------------------------------------------
+{
+  lan_run_stop(g_lan_play);
 }
 
 void game_panel_dispatch(Real p_now)
@@ -286,6 +393,8 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   Text      l_player_name     = "";
   Text      l_player_id       = "";
   Text      l_folder          = settings_mp_folder(g_settings);
+  Text      l_lan_root        = LAN_FOLDER;
+  Text      l_lan_problem     = "";
   Integer   l_session         = 0;
   Integer   l_settings_result = 0;
   Real      l_played          = 0.0;   // seconds played since the world opened (for its picture)
@@ -300,13 +409,20 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   net_clear(g_net, g_peers, g_net_inbox);
   Get_user_name(l_player_name);
   l_player_name = net_clean_name(l_player_name);
-  l_player_id   = l_player_name + "_" + To_text(random_range(g_random, 1000, 9999));
+  l_player_id   = lan_word(l_player_name + "_" + To_text(random_range(g_random, 1000, 9999)));
+  lan_run_stop(g_lan_play);
+  lan_run_clear(g_lan_play);
   Get_time(l_now);
 
   // Generate or load the world
   if (p_mode == MENU_RESULT_JOIN) {
-    game_panel_notice(p_box, "Joining", "a LAN world in " + l_folder);
-    l_loaded = game_join(l_folder, p_world_name, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_away, g_events,
+    l_loaded = SUCCESS;
+    if (!settings_flag(g_settings, ATTR_SET_MP_SHARED)) {
+      // over the network: the LAN helper fetches the world first
+      l_loaded = game_panel_lan_join(p_box, p_world_name, l_player_id, l_folder, l_problem);
+    }
+    game_panel_notice(p_box, "Joining", "a LAN world");
+    if (l_loaded == SUCCESS) l_loaded = game_join(l_folder, p_world_name, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces, g_cows, g_drops, g_away, g_events,
                          g_hud, g_ui, g_net, g_peers, g_net_inbox, l_player_id, l_player_name, l_now, l_problem);
   } else if (p_mode == MENU_RESULT_CREATE) {
     game_panel_notice(p_box, "Generating world", "Seed " + To_text(p_seed) + " - this takes a few seconds");
@@ -369,6 +485,8 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
 
       l_playing = l_captured && ui_screen(g_ui) == SCREEN_NONE && !player_is_dead(g_player);
       net_poll(g_net, g_peers, g_net_inbox, l_frame_start);
+      l_lan_problem = lan_run_check(g_lan_play, l_frame_start);
+      if (l_lan_problem != "") hud_chat(g_hud, l_lan_problem, l_frame_start);
       game_update(l_dt, l_real_dt, l_frame_start, l_playing, g_game, g_info, g_player, g_inventory, g_grid, g_furnaces,
                   g_cows, g_drops, g_away, g_events, g_event, g_random, g_settings, g_hud, g_ui, g_net, g_peers, g_net_inbox);
 
@@ -420,6 +538,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
       game_panel_close_screen();
       game_panel_save();
       net_leave(g_net);
+      game_panel_lan_stop();
       Set_exit_code(l_cmd);
       return SHUTDOWN_CODE;
     }
@@ -428,6 +547,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
       game_panel_close_screen();
       game_panel_save();
       net_leave(g_net);
+      game_panel_lan_stop();
       return PANEL_CLOSED;
     }
 
@@ -806,6 +926,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         game_panel_close_screen();
         game_panel_save();
         net_leave(g_net);
+        game_panel_lan_stop();
         return l_settings_result;
       }
       if (l_settings_screen == SCREEN_LAN && record_integer(g_settings, ATTR_SET_LAN_START) == TRUE) {
@@ -814,12 +935,26 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
         game_panel_notice(p_box, "Opening to LAN", game_world_name(g_game));
         Get_time(l_now);
         l_session = Floor(l_now - Floor(l_now / 1000000000.0) * 1000000000.0);
+        if (!settings_flag(g_settings, ATTR_SET_MP_SHARED)) {
+          // over the network: the session's files go in the LAN helper's folder
+          l_folder = lan_folder(lan_host_dir(To_text(l_session)));
+          safe_folder_create(l_lan_root);
+        }
         if (game_host(g_game, g_info, g_player, g_inventory, g_furnaces, g_cows, g_drops, g_away, g_events, g_net, g_peers,
                       g_net_inbox, l_folder, To_text(l_session), l_player_id, l_player_name,
                       record_integer(g_settings, ATTR_SET_LAN_MODE), record_integer(g_settings, ATTR_SET_LAN_CHEATS),
                       l_now, l_problem) == SUCCESS) {
           record_set_integer(g_hud, ATTR_HUD_LAN, TRUE);
-          hud_chat(g_hud, "Local game hosted as " + l_player_name + ": others find it under Multiplayer", l_now);
+          if (!settings_flag(g_settings, ATTR_SET_MP_SHARED)) {
+            if (game_panel_lan_host(p_box, To_text(l_session), l_player_id, l_problem) == SUCCESS) {
+              hud_chat(g_hud, "Local game hosted as " + l_player_name + ": others find it under Multiplayer", l_now);
+              hud_chat(g_hud, "If Windows asks, let Windows PowerShell through the firewall on private networks", l_now);
+            } else {
+              hud_chat(g_hud, "Couldn't open to LAN over the network: " + l_problem, l_now);
+            }
+          } else {
+            hud_chat(g_hud, "Local game hosted as " + l_player_name + ": others find it under Multiplayer", l_now);
+          }
         } else {
           hud_chat(g_hud, "Couldn't open to LAN: " + l_problem, l_now);
         }
@@ -872,6 +1007,7 @@ Integer game_panel_run(Draw_Box p_box, Input_Box p_keys, Text p_world_name, Inte
   }
 
   net_leave(g_net);
+  game_panel_lan_stop();
   return l_result;
 }
 

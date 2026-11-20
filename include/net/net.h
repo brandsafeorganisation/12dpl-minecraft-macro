@@ -4,12 +4,13 @@
 #include "../core/records.h"
 
 // ----------------------------------------------------------------
-// Multiplayer through a shared folder (12dPL has no sockets, so files
-// are the only way two copies of the game can talk)
+// Multiplayer through a folder of files (12dPL has no sockets). The
+// folder is either shared ("cubeland_worlds\mp" by default, or a
+// network folder named cubeland_mp), or one the LAN helper (lan.h)
+// keeps in step with the other PCs over the network; this module
+// can't tell which.
 //
-// A world opened to LAN (from the game menu) lives in the multiplayer
-// folder (settings, "cubeland_worlds\mp" by default, or a network
-// folder named cubeland_mp):
+// A world opened to LAN (from the game menu) lives in that folder:
 //
 //   lan_<session>.txt           one per world opened to LAN: the session,
 //                               the host, the world, the game mode guests
@@ -94,6 +95,7 @@
 #define ATTR_LAN_HOST           ("host")         // the host's name
 #define ATTR_LAN_WORLD          ("world")
 #define ATTR_LAN_MODE           ("mode")         // GAMEMODE_* you'd join in
+#define ATTR_LAN_PROBLEM        ("problem")   // why nothing can be found, "" if all is well
 #define ATTR_LAN_CHEATS         ("cheats")
 #define MAX_LAN_WORLDS          8
 #define LAN_SCAN_SECONDS        2.0    // Play Multiplayer looks for LAN worlds again this often
@@ -127,6 +129,7 @@ Integer net_write_session      (Text p_folder, Text p_session, Text p_host_id, T
                                 Integer p_mode, Integer p_cheats, Integer p_open);
 Integer net_read_session       (Text p_path, Text &p_session, Text &p_host_id, Text &p_host_name, Integer &p_seed, Text &p_world_name,
                                 Integer &p_mode, Integer &p_cheats, Integer &p_open, Text &p_problem);
+Integer net_read_session_address(Text p_path, Text &p_address, Integer &p_port);
 Integer net_list_lan           (Text p_folder, Attributes &p_list);
 void    net_set_session        (Attributes &p_net, Integer p_seed, Text p_world, Integer p_mode, Integer p_cheats);
 Integer net_cheats             (Attributes &p_net);

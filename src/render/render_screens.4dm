@@ -341,25 +341,39 @@ void screen_delete(Draw_Box p_box, Attributes &p_menu, Text p_name, Real p_w, Re
 
 // ---------------------------------------------------------------- multiplayer
 
-void screen_player(Draw_Box p_box, Attributes &p_menu, Real p_w, Real p_h, Real p_now)
+void screen_player(Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now)
 // ----------------------------------------------------------------
-// The shared folder LAN worlds are opened in (from the options)
+// How LAN worlds are reached (from the options): over the network,
+// or through a shared folder (and which)
 // ----------------------------------------------------------------
 {
-  Real l_left = p_w / 2.0 - MENU_WIDE / 2.0;
-  Real l_top  = p_h - 90.0;
-  Text l_user = "";
+  Real    l_left   = p_w / 2.0 - MENU_WIDE / 2.0;
+  Real    l_top    = p_h - 90.0;
+  Integer l_shared = settings_flag(p_settings, ATTR_SET_MP_SHARED);
+  Text    l_user   = "";
+  Text    l_how    = "Connect: Over the Network";
 
   Get_user_name(l_user);
+  if (l_shared) l_how = "Connect: Through a Shared Folder";
   menu_begin(p_menu);
-  menu_add(p_menu, MENU_FIELD, W_FOLDER, l_left, l_top - 30.0, l_left + MENU_WIDE, l_top, "Shared Folder (the same for every player)", TRUE);
+  menu_add(p_menu, MENU_BUTTON, W_MP_SHARED, l_left, l_top - MENU_BUTTON_HEIGHT, l_left + MENU_WIDE, l_top, l_how, TRUE);
+  if (l_shared) {
+    menu_add(p_menu, MENU_FIELD, W_FOLDER, l_left, l_top - 80.0, l_left + MENU_WIDE, l_top - 50.0, "Shared Folder (the same for every player)", TRUE);
+  }
   menu_add(p_menu, MENU_BUTTON, W_DONE, l_left, MENU_BUTTON_GAP + 10.0, l_left + MENU_WIDE, MENU_BUTTON_GAP + 10.0 + MENU_BUTTON_HEIGHT, "Done", TRUE);
   menu_draw_title(p_box, p_w, p_h - 30.0, "Multiplayer");
-  hud_shadow_text(p_box, p_w / 2.0, l_top - 70.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
-                  "Every player sets the same shared folder (a network folder named cubeland_mp, or the default on one PC).");
-  hud_shadow_text(p_box, p_w / 2.0, l_top - 90.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+  if (l_shared) {
+    hud_shadow_text(p_box, p_w / 2.0, l_top - 120.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+                    "Every player sets the same shared folder (a network folder named cubeland_mp, or the default on one PC).");
+  } else {
+    hud_shadow_text(p_box, p_w / 2.0, l_top - 60.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+                    "Worlds are found and played over the local network, through Windows PowerShell.");
+    hud_shadow_text(p_box, p_w / 2.0, l_top - 80.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
+                    "The host may be asked once to let Windows PowerShell through the firewall (allow it on private networks).");
+  }
+  hud_shadow_text(p_box, p_w / 2.0, l_top - 140.0, 13.0, TEXT_ALIGN_CENTRE, 200, 200, 200,
                   "To host, open a world and choose Open to LAN in the game menu; the others find it in Multiplayer.");
-  hud_shadow_text(p_box, p_w / 2.0, l_top - 120.0, 13.0, TEXT_ALIGN_CENTRE, 160, 160, 160, "Others see you as " + net_clean_name(l_user));
+  hud_shadow_text(p_box, p_w / 2.0, l_top - 170.0, 13.0, TEXT_ALIGN_CENTRE, 160, 160, 160, "Others see you as " + net_clean_name(l_user));
   menu_draw_widgets(p_box, p_menu, p_now);
 }
 
@@ -437,6 +451,9 @@ void screen_multiplayer(Draw_Box p_box, Attributes &p_menu, Attributes &p_lan, R
   if (l_dots == 1) l_line = "o O o";
   if (l_dots == 2) l_line = "o o O";
   if (l_count == 0) hud_shadow_text(p_box, p_w / 2.0, l_top - 30.0, 15.0, TEXT_ALIGN_CENTRE, 160, 160, 160, l_line);
+  if (l_count == 0 && record_text(p_lan, ATTR_LAN_PROBLEM) != "") {
+    hud_shadow_text(p_box, p_w / 2.0, l_top - 60.0, 13.0, TEXT_ALIGN_CENTRE, 255, 120, 120, record_text(p_lan, ATTR_LAN_PROBLEM));
+  }
   for (l_row = 1; l_row <= l_count; ++l_row) {
     l_y1 = l_top - 30.0 - (l_row - 1) * MENU_LIST_ROW;
     l_y0 = l_y1 - MENU_LIST_ROW + 4.0;

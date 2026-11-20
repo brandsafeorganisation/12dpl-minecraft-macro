@@ -1,0 +1,103 @@
+# Real LAN play through the LAN helper (Windows PowerShell; here
+# simulated with files by harness.cpp, and "the other PC" is the
+# folder run/remote). Over the network is the default: Options >
+# Multiplayer shows it. Open to LAN starts a host helper (its command
+# line is printed) in cubeland_worlds\lan\h_<session>, where bob's
+# lines arrive; Save and Quit tells it to stop. Then another PC hosts
+# that world: Play Multiplayer starts a scan helper, which finds it
+# (host, world, mode); Join Server starts a join helper, waits for the
+# snapshot and loads the world with bob's block; bob's chat comes over
+# the network; the host quitting is told in the chat. A firewall that
+# blocks the host leaves the list empty, and a PC where PowerShell
+# can't start says so on Play Multiplayer.
+ui Options...
+ui Multiplayer...
+# (back from the shared folder, if an earlier scenario chose it)
+ui Connect: Through a Shared Folder
+wait 2
+move 430 440
+wait 2
+snap 370_mp_settings
+move 430 30
+wait 4
+ui Done
+ui Done
+ui Singleplayer
+ui Create New World
+field World Name|Networked
+field Seed for the World Generator|4242
+ui Create New World
+wait 2
+click 430 300
+wait 2
+call noon
+call flat_area
+key escape
+wait 1
+ui Open to LAN
+wait 1
+ui Game Mode: Survival
+wait 1
+ui Start LAN World
+wait 4
+call lan_dirs
+call bob_join
+call bob_place
+wait 70
+call net
+snap 371_hosting
+wait 1
+# the long wait has idled the game into the game menu
+ui Save and Quit to Title
+wait 2
+call lan_dirs
+call remote_host
+ui Multiplayer
+wait 4
+move 400 300
+wait 4
+ui Refresh
+wait 2
+call lan_list
+snap 372_found_over_network
+wait 4
+ui lan:1
+ui Join Server
+wait 2
+click 430 300
+wait 2
+call net
+call shared_cells
+call remote_bob
+wait 20
+call net
+call remote_close
+wait 70
+snap 373_host_closed
+wait 1
+call lan_dirs
+key escape
+wait 1
+ui Save and Quit to Title
+wait 2
+call lan_firewall
+ui Multiplayer
+wait 4
+move 400 300
+wait 4
+ui Refresh
+wait 2
+call lan_list
+ui Back
+wait 2
+call lan_no_powershell
+ui Multiplayer
+wait 2
+move 400 300
+wait 4
+snap 374_no_powershell
+wait 4
+call lan_fixed
+ui Back
+call lan_dirs
+quit

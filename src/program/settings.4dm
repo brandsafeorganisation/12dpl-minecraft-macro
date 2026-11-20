@@ -30,6 +30,7 @@ void settings_defaults(Attributes &p_settings)
   record_set_text   (p_settings, ATTR_SET_PLAYER_NAME,     "");
   record_set_text   (p_settings, ATTR_SET_SKIN,            "");
   record_set_integer(p_settings, ATTR_SET_SLIM_ARMS,       FALSE);
+  record_set_integer(p_settings, ATTR_SET_MP_SHARED,       FALSE);   // over the network
   record_set_integer(p_settings, ATTR_SET_LAN_MODE,        0);       // survival
   record_set_integer(p_settings, ATTR_SET_LAN_CHEATS,      FALSE);
   record_set_integer(p_settings, ATTR_SET_LAN_START,       FALSE);
@@ -461,6 +462,7 @@ Integer settings_save(Attributes &p_settings, Text p_path)
   File_write_line(l_file, settings_line(ATTR_SET_SENSITIVITY, record_integer(p_settings, ATTR_SET_SENSITIVITY)));
   File_write_line(l_file, settings_line(ATTR_SET_SHOW_HUD, settings_flag(p_settings, ATTR_SET_SHOW_HUD)));
   File_write_line(l_file, settings_line(ATTR_SET_SHOW_DEBUG, settings_flag(p_settings, ATTR_SET_SHOW_DEBUG)));
+  File_write_line(l_file, settings_line(ATTR_SET_MP_SHARED, settings_flag(p_settings, ATTR_SET_MP_SHARED)));
   l_pack_line = ATTR_SET_RESOURCE_PACK;
   File_write_line(l_file, l_pack_line + " " + settings_resource_pack(p_settings));
   File_write_line(l_file, l_font_line + " " + settings_font(p_settings));
@@ -564,7 +566,8 @@ Integer settings_load(Attributes &p_settings, Text p_path)
     if (From_text(l_word, l_value) != 0) continue;
     if (l_name == ATTR_SET_RENDER_DISTANCE || l_name == ATTR_SET_DETAIL    || l_name == ATTR_SET_PLANTS   ||
         l_name == ATTR_SET_SHADING         || l_name == ATTR_SET_AUTO_JUMP || l_name == ATTR_SET_FOV      ||
-        l_name == ATTR_SET_SENSITIVITY     || l_name == ATTR_SET_SHOW_HUD  || l_name == ATTR_SET_SHOW_DEBUG) {
+        l_name == ATTR_SET_SENSITIVITY     || l_name == ATTR_SET_SHOW_HUD  || l_name == ATTR_SET_SHOW_DEBUG ||
+        l_name == ATTR_SET_MP_SHARED) {
       record_set_integer(p_settings, l_name, l_value);
     }
   }

@@ -9,6 +9,7 @@
 #include "../../include/program/save.h"
 #include "../../include/program/game.h"
 #include "../../include/net/net.h"
+#include "../../include/net/lan.h"
 #include "../../include/render/render.h"
 #include "../../include/render/menu.h"
 #include "../../include/ui/panels.h"
@@ -124,6 +125,16 @@ void menu_background(Draw_Box p_box, Real p_w, Real p_h, Integer p_title, Real p
   menu_draw_panorama(p_box, p_w, p_h, l_turn, l_shade);
 }
 
+Text menu_panel_lan_folder(Attributes &p_settings)
+// ----------------------------------------------------------------
+// Where Play Multiplayer finds LAN worlds: the shared folder, or the
+// folder the LAN helper writes what it hears in
+// ----------------------------------------------------------------
+{
+  if (settings_flag(p_settings, ATTR_SET_MP_SHARED)) return settings_mp_folder(p_settings);
+  return lan_run_folder(g_lan_scan);
+}
+
 Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Attributes &p_random, Attributes &p_settings)
 // ----------------------------------------------------------------
 // The title screen and the screens it leads to. Returns a
@@ -147,6 +158,8 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
   Real      l_last_frame = 0.0;
   Real      l_last_click = 0.0;
   Real      l_last_scan  = 0.0;
+  Text      l_problem    = "";
+  Text      l_lan_problem = "";
   Real      l_x          = 0.0;
   Real      l_y          = 0.0;
   Real      l_w          = 0.0;
@@ -183,8 +196,11 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
       if (l_screen == SCREEN_DELETE     ) screen_delete(p_box, g_menu, l_name, l_w, l_h, l_now);
       if (l_screen == SCREEN_MULTIPLAYER) {
         // look for LAN worlds again every couple of seconds
+        l_problem = lan_run_check(g_lan_scan, l_now);
+        if (l_problem != "") l_lan_problem = l_problem;
         if (l_now - l_last_scan >= LAN_SCAN_SECONDS) {
-          net_list_lan(settings_mp_folder(p_settings), g_lan);
+          net_list_lan(menu_panel_lan_folder(p_settings), g_lan);
+          record_set_text(g_lan, ATTR_LAN_PROBLEM, l_lan_problem);
           l_last_scan = l_now;
         }
         screen_multiplayer(p_box, g_menu, g_lan, l_w, l_h, l_now);
@@ -204,9 +220,13 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
 
     if (l_cmd == "CodeShutdown") {
       Set_exit_code(l_cmd);
+      lan_run_stop(g_lan_scan);
       return SHUTDOWN_CODE;
     }
-    if (l_cmd == "Panel Quit") return MENU_RESULT_QUIT;
+    if (l_cmd == "Panel Quit") {
+      lan_run_stop(g_lan_scan);
+      return MENU_RESULT_QUIT;
+    }
     if (l_cmd == "Panel_Resize") l_want_frame = TRUE;
 
     if (l_event_id == Get_id64(p_box)) {
@@ -297,7 +317,19 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
         menu_open_worlds(g_menu, g_worlds);
         l_screen = SCREEN_WORLDS;
       } else if (l_id == W_MULTIPLAYER) {
-        net_list_lan(settings_mp_folder(p_settings), g_lan);
+        // over the network, a LAN helper asks who is there
+        l_lan_problem = "";
+        lan_run_stop(g_lan_scan);
+        lan_run_clear(g_lan_scan);
+        if (!settings_flag(p_settings, ATTR_SET_MP_SHARED)) {
+          l_name = lan_run_name(l_now);
+          if (lan_run_start(g_lan_scan, Getenv("SystemRoot"), "scan", lan_scan_dir(l_name), l_name, "", "", "",
+                            LAN_GAME_PORT, l_now) != SUCCESS) {
+            l_lan_problem = "Windows PowerShell couldn't be started: connect through a shared folder (Options... > Multiplayer...)";
+          }
+        }
+        net_list_lan(menu_panel_lan_folder(p_settings), g_lan);
+        record_set_text(g_lan, ATTR_LAN_PROBLEM, l_lan_problem);
         l_last_scan = l_now;
         menu_set_pick(g_menu, 0);
         menu_set_focus(g_menu, 0);
@@ -381,14 +413,17 @@ Integer menu_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_game, Att
       if (l_id == W_PLAY) l_id = W_JOIN;
       if (l_id == W_BACK) {
         menu_set_pick(g_menu, 0);
+        lan_run_stop(g_lan_scan);
         l_screen = SCREEN_TITLE;
       } else if (l_id == W_REFRESH) {
         menu_set_pick(g_menu, 0);
-        net_list_lan(settings_mp_folder(p_settings), g_lan);
+        net_list_lan(menu_panel_lan_folder(p_settings), g_lan);
+        record_set_text(g_lan, ATTR_LAN_PROBLEM, l_lan_problem);
         l_last_scan = l_now;
       } else if (l_id == W_JOIN && menu_pick(g_menu) > 0 && menu_pick(g_menu) <= record_integer(g_lan, ATTR_LAN_COUNT)) {
         record_set_text(p_game, ATTR_MENU_WORLD, record_text_at(g_lan, ATTR_LAN_FILE, menu_pick(g_menu)));
         menu_set_pick(g_menu, 0);
+        lan_run_stop(g_lan_scan);
         return MENU_RESULT_JOIN;
       }
     }

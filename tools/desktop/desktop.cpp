@@ -92,6 +92,33 @@ int Shell_execute(const Widget &, const Text &op, const Text &file, const Text &
   return (INT_PTR)r > 32 ? 0 : 1;
 }
 
+// The LAN helper's calls: the real thing, so two PCs can play without 12d
+Text Getenv(const Text &name) {
+  const char *v = getenv(name.c_str());
+  return v ? v : "";
+}
+
+Text Get_absolute_path(const Text &path) {
+  char b[MAX_PATH * 2];
+  DWORD n = GetFullPathNameA(path.c_str(), sizeof b, b, NULL);
+  if (n == 0 || n >= sizeof b) return "";
+  return b;
+}
+
+int Create_process(const Text &program, const Text &line, const Text &dir, int flags, int wait, int inherit) {
+  STARTUPINFOA si; PROCESS_INFORMATION pi;
+  ZeroMemory(&si, sizeof si); si.cb = sizeof si; ZeroMemory(&pi, sizeof pi);
+  std::vector<char> command(line.begin(), line.end()); command.push_back(0);   // CreateProcess may write to it
+  if (!CreateProcessA(program.empty() ? NULL : program.c_str(), command.data(), NULL, NULL, inherit ? TRUE : FALSE,
+                      (DWORD)flags, NULL, dir.empty() ? NULL : dir.c_str(), &si, &pi)) return 1;
+  if (wait) WaitForSingleObject(pi.hProcess, INFINITE);
+  CloseHandle(pi.hThread);
+  CloseHandle(pi.hProcess);
+  return 0;
+}
+
+void Sleep(int milliseconds) { ::Sleep((DWORD)(milliseconds < 0 ? 0 : milliseconds)); }
+
 static Node &node(long long id) { return g_nodes[id]; }
 static long long new_node(int kind, const Text &title) {
   long long id = ++g_next_id;

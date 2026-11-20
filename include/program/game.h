@@ -42,6 +42,8 @@
   Attributes g_menu;        // the menu screen on show: its widgets and typed text
   Attributes g_worlds;      // the world list
   Attributes g_lan;         // Play Multiplayer: the worlds open to LAN
+  Attributes g_lan_scan;    // Play Multiplayer: the LAN helper looking for them (lan.h)
+  Attributes g_lan_play;    // in a game: the LAN helper hosting or joining (lan.h)
   Attributes g_files;       // resource packs or skins found in their folders
 }
 

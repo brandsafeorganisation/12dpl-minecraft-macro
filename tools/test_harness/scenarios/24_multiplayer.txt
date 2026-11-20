@@ -11,7 +11,13 @@
 # (the host still playing elsewhere) it is listed with its host, world
 # and game mode, and Join Server gets the snapshot plus every log, so
 # the block the host broke is gone and bob's block is there, and the
-# guest plays in creative with cheats.
+# guest plays in creative with cheats. (Through the shared folder:
+# scenario 37 is the same over the network.)
+ui Options...
+ui Multiplayer...
+ui Connect: Over the Network
+ui Done
+ui Done
 ui Singleplayer
 ui Create New World
 field World Name|Shared

@@ -87,6 +87,15 @@ and the code layout (`src/<part>/`, `include/<part>/`).
 - Open files only with `safe_file_open()`. It writes only inside
   `SAFE_WRITE_FOLDER` (`cubeland_worlds`).
 - Never delete files; overwrite them with a marker (`save_delete_world()`).
+- The only program the macro may start is the LAN helper:
+  `safe_run_helper()` (with `SAFE_ALLOW_LAN_HELPER`, never in the test
+  build) writes `src/net/lan_helper.ps1` into `cubeland_worlds\lan` and
+  starts Windows PowerShell on it. After editing the script run
+  `python3 tools/make_lan_helper.py` (it writes
+  `include/core/safe_lan_script.h`; the harness build checks it). The
+  script must have no double quotes. The harness only simulates it
+  (`harness.cpp`, "the other PC" is `run/remote`): test the real one on
+  Windows (two PCs, or a host and a guest on one PC).
 
 ## To do
 

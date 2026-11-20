@@ -2,9 +2,13 @@
 #define INCLUDE_BUILD_4DM
 
 // Safety switches (see safety.h; each prints a warning when on):
-// multiplayer across PCs needs the shared folder; SAFETY_OFF unblocks
-// every dangerous call and is not needed by the game
+// multiplayer across PCs needs the shared folder, or the LAN helper
+// (Windows PowerShell carrying the multiplayer files over the network);
+// SAFETY_OFF unblocks every dangerous call and is not needed by the game
 #define SAFE_ALLOW_SHARE_FOLDER
+#ifndef SAFE_ALLOW_TEST_REPORTS   // never in the test build, which runs every function
+#define SAFE_ALLOW_LAN_HELPER
+#endif
 //#define SAFETY_OFF
 
 // Safety first: blocks every dangerous library call for all the
@@ -78,6 +82,7 @@
 
 // net: multiplayer through a shared folder
 #include "net/net.4dm"
+#include "net/lan.4dm"
 #include "program/game.4dm"
 
 // ui: the game's panel and its controllers, and fonts

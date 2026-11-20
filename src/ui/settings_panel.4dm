@@ -96,7 +96,7 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
       if (l_screen == SCREEN_OPTIONS) screen_options(p_box, g_menu, p_settings, l_w, l_h, l_now);
       if (l_screen == SCREEN_PACKS  ) screen_packs  (p_box, g_menu, g_files, l_pack, l_w, l_h, l_now);
       if (l_screen == SCREEN_SKINS  ) screen_skins  (p_box, g_menu, g_files, settings_skin(p_settings), l_w, l_h, l_now);
-      if (l_screen == SCREEN_PLAYER ) screen_player (p_box, g_menu, l_w, l_h, l_now);
+      if (l_screen == SCREEN_PLAYER ) screen_player (p_box, g_menu, p_settings, l_w, l_h, l_now);
       if (l_screen == SCREEN_LAN    ) screen_lan    (p_box, g_menu, p_settings, l_w, l_h, l_now);
       if (l_screen == SCREEN_FONTS  ) screen_fonts  (p_box, g_menu, g_files, settings_font(p_settings), settings_font_file(p_settings), l_w, l_h, l_now);
       if (l_screen == SCREEN_CONTROLS) screen_controls(p_box, g_menu, p_settings, l_listening, l_w, l_h, l_now);
@@ -363,6 +363,9 @@ Integer settings_panel_run(Draw_Box p_box, Input_Box p_keys, Attributes &p_setti
       }
 
     } else if (l_screen == SCREEN_PLAYER) {
+      if (l_id == W_MP_SHARED) {
+        record_set_integer(p_settings, ATTR_SET_MP_SHARED, !settings_flag(p_settings, ATTR_SET_MP_SHARED));
+      }
       if (l_id == W_DONE) {
         settings_set_text(p_settings, ATTR_SET_MP_FOLDER, Text_justify(menu_field_text(g_menu, W_FOLDER)));
         menu_set_focus(g_menu, 0);

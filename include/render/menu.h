@@ -103,6 +103,7 @@
 #define W_LAN_CHEATS         69
 #define W_LAN_START          70
 #define W_REFRESH            71
+#define W_MP_SHARED          72
 #define W_WORLD_ROW          100   // + n: row n of the world list
 #define W_AVAILABLE_ROW      200   // + n: available resource pack n
 #define W_SELECTED_ROW       300   // + 1: the selected pack, + 2: the built-in textures
@@ -222,7 +223,7 @@ void    screen_title        (Draw_Box p_box, Attributes &p_menu, Real p_w, Real 
 void    screen_worlds       (Draw_Box p_box, Attributes &p_menu, Attributes &p_worlds, Real p_w, Real p_h, Real p_now);
 void    screen_create       (Draw_Box p_box, Attributes &p_menu, Integer p_mode, Real p_w, Real p_h, Real p_now);
 void    screen_delete       (Draw_Box p_box, Attributes &p_menu, Text p_name, Real p_w, Real p_h, Real p_now);
-void    screen_player       (Draw_Box p_box, Attributes &p_menu, Real p_w, Real p_h, Real p_now);
+void    screen_player       (Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now);
 void    screen_lan          (Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now);
 void    screen_multiplayer  (Draw_Box p_box, Attributes &p_menu, Attributes &p_lan, Real p_w, Real p_h, Real p_now);
 void    screen_options      (Draw_Box p_box, Attributes &p_menu, Attributes &p_settings, Real p_w, Real p_h, Real p_now);

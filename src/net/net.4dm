@@ -178,6 +178,35 @@ Integer net_read_session(Text p_path, Text &p_session, Text &p_host_id, Text &p_
   return SUCCESS;
 }
 
+Integer net_read_session_address(Text p_path, Text &p_address, Integer &p_port)
+// ----------------------------------------------------------------
+// Where a LAN world found on the network is (its address and port
+// lines, added by the LAN helper). Returns FAILURE if it has none.
+// ----------------------------------------------------------------
+{
+  File         l_file;
+  Dynamic_Text l_words;
+  Text         l_line  = "";
+  Text         l_key   = "";
+  Integer      l_count = 0;
+
+  p_address = "";
+  p_port    = 0;
+  if (!File_exists(p_path)) return FAILURE;
+  if (safe_file_open(p_path, "r", l_file) != 0) return FAILURE;
+  while (File_read_line(l_file, l_line) == 0) {
+    Null(l_words);
+    l_count = From_text(l_line, l_words);
+    if (l_count < 2) continue;
+    Get_item(l_words, 1, l_key);
+    if (l_key == "address") Get_item(l_words, 2, p_address);
+    if (l_key == "port"   ) p_port = net_word_integer(l_words, 2);
+  }
+  File_close(l_file);
+  if (p_address == "" || p_port <= 0) return FAILURE;
+  return SUCCESS;
+}
+
 Integer net_list_lan(Text p_folder, Attributes &p_list)
 // ----------------------------------------------------------------
 // Fill the list with the worlds open to LAN in the multiplayer

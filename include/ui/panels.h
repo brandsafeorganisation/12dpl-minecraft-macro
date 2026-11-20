@@ -43,6 +43,9 @@ void    settings_slider      (Attributes &p_settings, Integer p_id, Real p_value
 Integer game_panel_split_xy  (Text p_msg, Real &p_x, Real &p_y);
 Integer game_panel_calibrate (Draw_Box p_box, Real p_box_x, Real p_box_y, Integer p_width, Integer p_height, Integer &p_origin_x, Integer &p_origin_y);
 void    game_panel_notice    (Draw_Box p_box, Text p_title, Text p_line);
+Integer game_panel_lan_join  (Draw_Box p_box, Text p_found, Text p_player_id, Text &p_folder, Text &p_problem);
+Integer game_panel_lan_host  (Draw_Box p_box, Text p_session, Text p_player_id, Text &p_problem);
+void    game_panel_lan_stop  ();
 void    game_panel_dispatch  (Real p_now);
 Integer game_panel_save      ();
 void    game_panel_close_screen();

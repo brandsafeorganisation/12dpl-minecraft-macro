@@ -5,16 +5,16 @@ item to "Done" (with the commit) when it is finished and tested.
 
 ## Open
 
-### Multiplayer: real LAN
-
-- Open to LAN and Play Multiplayer should work between PCs on the same
-  network without a shared folder. 12dPL has no sockets and cmd.exe
-  can't listen, so a small PowerShell helper (started hidden with
-  `Create_process`) carries the log lines over UDP broadcast (finding
-  worlds) and TCP (playing), writing the same files the shared-folder
-  mode reads. The investigation and plan: `docs/lan_plan.md`.
-
 ## Done
+
+- Real LAN play without a shared folder: Options > Multiplayer >
+  Connect: Over the Network (the default) or Through a Shared Folder.
+  Over the network, a Windows PowerShell helper (`src/net/lan_helper.ps1`,
+  started hidden by `safe_run_helper`, the macro's only `Create_process`)
+  finds LAN worlds by UDP broadcast and carries the multiplayer files over
+  TCP; the game reads them as if from a shared folder. Tested here only
+  with a simulated helper (scenario 37): the script itself still has to
+  be tried on Windows. Plan and research: `docs/lan_plan.md`.
 
 - Open to LAN from the game menu (where Mode was): the LAN World screen
   sets the game mode guests join in and Allow Cheats, then Start LAN

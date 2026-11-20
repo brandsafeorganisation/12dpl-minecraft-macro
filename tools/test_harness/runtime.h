@@ -212,6 +212,12 @@ inline int List_subfolders_in_folder(const Text&folder,const Text&,int&count,Dyn
   count=0; DIR*d=opendir(fix_path(folder).c_str()); if(!d) return 1;
   while(auto e=readdir(d)){ Text n=e->d_name; if(n=="."||n=="..") continue; struct stat st; if(stat((fix_path(folder)+"/"+n).c_str(),&st)==0&&S_ISDIR(st.st_mode)){ names.items.push_back(n); count++; } }
   closedir(d); std::sort(names.items.end()-count,names.items.end()); return 0; }
+// ---------------------------------------------------------------- the LAN helper's calls
+// (harness.cpp simulates the helper with files; tools/desktop runs the real one)
+Text Getenv(const Text&name);
+Text Get_absolute_path(const Text&path);
+int  Create_process(const Text&program,const Text&line,const Text&dir,int flags,int wait,int inherit);
+void Sleep(int milliseconds);
 inline int Get_number_of_command_arguments(){ return 0; }
 inline int Get_command_argument(int,Text&t){ t=""; return 0; }
 

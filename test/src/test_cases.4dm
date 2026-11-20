@@ -17,6 +17,7 @@
 #include "../../include/program/game.h"
 #include "../../include/render/ui.h"
 #include "../../include/net/net.h"
+#include "../../include/net/lan.h"
 #include "../include/test.h"
 
 // fields of the record the records checks use
@@ -131,6 +132,12 @@ void test_cases_run(Attributes &p_results)
   Real       l_py     = 0.0;
   Real       l_pz     = 0.0;
   Text       l_reply  = "";
+  Text       l_state  = "";
+  Text       l_detail = "";
+  Text       l_dir    = "";
+  Text       l_line   = "";
+  Integer    l_port   = 0;
+  File       l_lan_file;
   Real       l_x0     = 0.0;
   Real       l_y0     = 0.0;
   Real       l_x1     = 0.0;
@@ -627,6 +634,55 @@ void test_cases_run(Attributes &p_results)
   world_set_block(l_x - 1, l_y + 1, l_z, BLOCK_AIR);
   world_set_block(l_x, l_y, l_z, BLOCK_AIR);
   events_clear(g_events);
+
+  // ---------------------------------------------------- the LAN helper
+  test_group(p_results, "LAN helper");
+  l_line = safe_helper_command_line("host", "h_77", "77", "77", "bob_1234", "", 24461, "cubeland_lan.ps1");
+  test_expect_text   (p_results, "the host's command line",           l_line,
+                      "powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File cubeland_lan.ps1 -Mode host -Dir h_77 -Run 77 -Port 24461 -Session 77 -Id bob_1234");
+  l_line = safe_helper_command_line("join", "j_5", "5", "77", "bob_1234", "192.168.1.23", 24461, "cubeland_lan.ps1");
+  test_expect_true   (p_results, "a join names the host's address",   Find_text(l_line, "-Address 192.168.1.23") > 0);
+  test_expect_text   (p_results, "no command for a name with ;",      safe_helper_command_line("host", "h_77", "77", "77", "bob;calc", "", 24461, "cubeland_lan.ps1"), "");
+  test_expect_text   (p_results, "no command for a folder with ..",   safe_helper_command_line("scan", "..", "77", "", "", "", 24461, "cubeland_lan.ps1"), "");
+  test_expect_text   (p_results, "no command for a name with a space", safe_helper_command_line("host", "h_77", "77", "77", "bob 2", "", 24461, "cubeland_lan.ps1"), "");
+  test_expect_text   (p_results, "no command for a bad address",      safe_helper_command_line("join", "j_5", "5", "77", "bob", "10.0.0.300", 24461, "cubeland_lan.ps1"), "");
+  test_expect_text   (p_results, "no command for port 80",            safe_helper_command_line("join", "j_5", "5", "77", "bob", "10.0.0.3", 80, "cubeland_lan.ps1"), "");
+  test_expect_text   (p_results, "no command for another mode",       safe_helper_command_line("run", "j_5", "5", "77", "bob", "", 24461, "cubeland_lan.ps1"), "");
+  test_expect_text   (p_results, "no command for another script",     safe_helper_command_line("scan", "s_5", "5", "", "", "", 24461, "evil.ps1"), "");
+  test_expect_true   (p_results, "PowerShell under Windows' folder",  Find_text(safe_helper_program("C:\\WINDOWS"), "\\System32\\WindowsPowerShell\\v1.0\\powershell.exe") > 0);
+  test_expect_text   (p_results, "no program for an odd Windows folder", safe_helper_program("C:\\Program Files"), "");
+  test_expect_true   (p_results, "the helper folder is a start folder", safe_helper_start_folder("D:\\12d\\Work\\cubeland_worlds\\lan\\") == SAFE_YES);
+  test_expect_true   (p_results, "another folder isn't",              safe_helper_start_folder("D:\\12d\\Work") == SAFE_NO);
+  test_expect_true   (p_results, "the test build never starts it",    safe_run_helper("C:\\WINDOWS", "scan", "s_1", "1", "", "", "", 24461) == SAFE_OPEN_REFUSED);
+  test_expect_text   (p_results, "lan_word makes a plain word",       lan_word("bob-smith!"), "bob_smith_");
+  test_expect_true   (p_results, "a refused join says firewall",      Find_text(lan_status_problem("failed", "the host did not answer"), "firewall") > 0);
+  test_expect_text   (p_results, "hosting is no problem",             lan_status_problem("hosting", "24461"), "");
+  test_expect_text   (p_results, "a closed world is told",            lan_status_problem("closed", "the host closed the world"), "The host closed the world");
+  l_dir = lan_folder("t_test");
+  safe_folder_create(LAN_FOLDER);
+  safe_folder_create(l_dir);
+  if (safe_file_open(l_dir + "\\status_1.txt", "w", l_lan_file) == 0) {
+    File_write_line(l_lan_file, "ready 12 ~");
+    File_close(l_lan_file);
+  }
+  test_expect_integer(p_results, "a status is read",                  lan_read_status(l_dir, "1", l_state, l_detail), SUCCESS);
+  test_expect_text   (p_results, "its state",                         l_state, "ready");
+  test_expect_text   (p_results, "and the rest",                      l_detail, "12");
+  if (safe_file_open(l_dir + "\\status_1.txt", "w", l_lan_file) == 0) {
+    File_write_line(l_lan_file, "hosting 244");
+    File_close(l_lan_file);
+  }
+  test_expect_integer(p_results, "a half written status isn't",       lan_read_status(l_dir, "1", l_state, l_detail), FAILURE);
+  if (safe_file_open(l_dir + "\\lan_9.txt", "w", l_lan_file) == 0) {
+    File_write_line(l_lan_file, "session 9");
+    File_write_line(l_lan_file, "address 10.0.0.2");
+    File_write_line(l_lan_file, "port 24462");
+    File_write_line(l_lan_file, "world My World");
+    File_close(l_lan_file);
+  }
+  test_expect_integer(p_results, "a found world has an address",     net_read_session_address(l_dir + "\\lan_9.txt", l_state, l_port), SUCCESS);
+  test_expect_text   (p_results, "which is the host's",               l_state, "10.0.0.2");
+  test_expect_integer(p_results, "and its port",                      l_port, 24462);
 
   // ---------------------------------------------------- chests and beds
   test_group(p_results, "chests and beds");

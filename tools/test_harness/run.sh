@@ -24,7 +24,7 @@ for arg in "$@"; do
 done
 if [ ${#SCRIPTS[@]} -eq 0 ]; then sed -n '2,12p' "$0"; exit 1; fi
 
-[ $KEEP -eq 1 ] || rm -rf "$HERE/run/cubeland_worlds"
+[ $KEEP -eq 1 ] || rm -rf "$HERE/run/cubeland_worlds" "$HERE/run/remote"   # remote: "the other PC" of the LAN helper
 rm -rf "$HERE/run/out"
 mkdir -p "$HERE/run/out"
 # The folders the pickers read: the test pack (zip and folder, from

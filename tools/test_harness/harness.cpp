@@ -91,9 +91,74 @@ std::function<bool(const Text&)> g_ui_reveal;   // scroll a list so the row is o
 static void print_attr_top(){ std::vector<std::pair<long long,Text>> v; for(auto&p:g_attribute_by_name) v.push_back({p.second,p.first}); std::sort(v.rbegin(),v.rend()); for(size_t i=0;i<v.size()&&i<15;i++) printf("[attr] %lld %s\n",v[i].first,v[i].second.c_str()); }
 static void print_frames(){ if(getenv("TRACE_ATTR")) print_attr_top(); printf("[frames] %lld polygons %lld attribute calls %lld type errors %lld\n", g_frames, g_polygons, g_attribute_calls, g_attribute_type_errors); }
 struct FrameAtExit{ FrameAtExit(){ atexit(print_frames);} } frame_at_exit;
+
+// ---------------------------------------------------------------- the LAN helper, simulated
+// Create_process never runs anything: it prints the command line and
+// starts a pretend helper that does with files what the PowerShell
+// script does over the network. "The other PC" is the folder
+// run/remote: a host there is remote/h_<session>/ (its lan_, snapshot_
+// and log_ files); a host on this PC is cubeland_worlds/lan/h_<session>.
+// Hooks set g_lan_firewall (nothing answers) and g_lan_no_powershell
+// (Create_process fails).
+bool g_lan_firewall=false, g_lan_no_powershell=false;
+struct SimHelper{ Text mode,dir,run,session,id,address; int port=0; bool running=true, ready=false; std::map<Text,long> sent; };
+static std::vector<SimHelper> s_helpers;
+static Text read_all(const Text&p){ std::ifstream f(p,std::ios::binary); if(!f) return ""; std::stringstream ss; ss<<f.rdbuf(); return ss.str(); }
+static void write_all(const Text&p,const Text&t){ FILE*f=fopen(p.c_str(),"wb"); if(f){ fputs(t.c_str(),f); fclose(f);} }
+static void append_all(const Text&p,const Text&t){ FILE*f=fopen(p.c_str(),"ab"); if(f){ fputs(t.c_str(),f); fclose(f);} }
+static std::vector<Text> list_dir(const Text&d,const Text&prefix){ std::vector<Text> v; DIR*dd=opendir(d.c_str()); if(!dd) return v; while(auto e=readdir(dd)){ Text n=e->d_name; if(n.compare(0,prefix.size(),prefix)==0) v.push_back(n);} closedir(dd); std::sort(v.begin(),v.end()); return v; }
+static void sim_status(SimHelper&h,const Text&t){ write_all("cubeland_worlds/lan/"+h.dir+"/status_"+h.run+".txt",t+" ~\n"); }
+// the complete lines (ending in ~) of a file after byte `from`; moves `from` past them
+static Text new_lines(const Text&path,long&from){ Text all=read_all(path); Text out; size_t at=from;
+  while(true){ size_t nl=all.find('\n',at); if(nl==Text::npos) break; Text line=all.substr(at,nl-at); while(!line.empty()&&line.back()=='\r') line.pop_back(); if(line.empty()||line.back()!='~') break; out+=line+"\n"; at=nl+1; }
+  from=(long)at; return out; }
+static Text host_folder(const SimHelper&h){ return h.address=="127.0.0.1" ? "cubeland_worlds/lan/h_"+h.session : "remote/h_"+h.session; }
+static void sim_scan(SimHelper&h){
+  sim_status(h,"scanning");
+  struct Src{ Text folder,address; }; std::vector<Src> srcs;
+  for(auto&d:list_dir("remote","h_")) srcs.push_back({"remote/"+d,"10.0.0.2"});
+  for(auto&o:s_helpers) if(o.running&&o.mode=="host") srcs.push_back({"cubeland_worlds/lan/"+o.dir,"127.0.0.1"});
+  for(auto&s:srcs){ Text session=s.folder.substr(s.folder.find("h_")+2); Text info=read_all(s.folder+"/lan_"+session+".txt"); if(info.empty()) continue;
+    bool open=info.find("\nopen 1")!=Text::npos; if(g_lan_firewall) open=false;
+    Text out=info; if(!open){ size_t p=out.find("\nopen 1"); if(p!=Text::npos) out.replace(p,7,"\nopen 0"); }
+    out+="address "+s.address+"\nport 24461\n";
+    Text path="cubeland_worlds/lan/"+h.dir+"/lan_"+session+".txt";
+    if(!open && read_all(path).empty()) continue;   // never heard: nothing to close
+    if(read_all(path)!=out) write_all(path,out); } }
+static void sim_join(SimHelper&h){
+  Text src=host_folder(h), mine="log_"+h.session+"_"+h.id+".txt", here="cubeland_worlds/lan/"+h.dir+"/";
+  Text info=read_all(src+"/lan_"+h.session+".txt");
+  if(!h.ready){
+    if(g_lan_firewall||info.empty()){ sim_status(h,"failed the host did not answer"); h.running=false; return; }
+    Text snap=read_all(src+"/snapshot_"+h.session+".txt"); write_all(here+"snapshot_"+h.session+".txt",snap);
+    int lines=0; for(char c:snap) if(c=='\n') lines++;
+    h.ready=true; sim_status(h,"downloading");
+    for(auto&f:list_dir(src,"log_"+h.session+"_")) if(f!=mine){ Text t=new_lines(src+"/"+f,h.sent[f]); append_all(here+f,t); }
+    new_lines(here+mine,h.sent["out:"+mine]);
+    sim_status(h,"ready "+std::to_string(lines)); return; }
+  if(info.find("\nopen 0")!=Text::npos){ sim_status(h,"closed the host closed the world"); h.running=false; return; }
+  for(auto&f:list_dir(src,"log_"+h.session+"_")) if(f!=mine){ Text t=new_lines(src+"/"+f,h.sent[f]); if(!t.empty()) append_all(here+f,t); }
+  Text out=new_lines(here+mine,h.sent["out:"+mine]); if(!out.empty()) append_all(src+"/"+mine,out); }
+void lan_sim_pump(){
+  for(auto&h:s_helpers){ if(!h.running) continue;
+    Text control=read_all("cubeland_worlds/lan/"+h.dir+"/control_"+h.run+".txt");
+    if(control.compare(0,4,"stop")==0){ h.running=false; sim_status(h,"stopped"); printf("[process] %s helper %s stopped\n",h.mode.c_str(),h.run.c_str()); continue; }
+    if(h.mode=="scan") sim_scan(h);
+    else if(h.mode=="host") sim_status(h,"hosting 24461");
+    else sim_join(h); } }
+Text Getenv(const Text&name){ if(name=="SystemRoot") return "C:\\Windows"; const char*v=getenv(name.c_str()); return v?v:""; }
+Text Get_absolute_path(const Text&path){ return "C:\\cubeland\\"+path; }
+void Sleep(int ms){ g_sim_time+=ms/1000.0; lan_sim_pump(); }
+int Create_process(const Text&program,const Text&line,const Text&dir,int flags,int wait,int inherit){
+  printf("[process] %s | %s | %s | flags %d wait %d\n",program.c_str(),line.c_str(),dir.c_str(),flags,wait);
+  if(g_lan_no_powershell) return 1;
+  SimHelper h; std::istringstream ss(line); Text w,last;
+  while(ss>>w){ if(last=="-Mode") h.mode=w; if(last=="-Dir") h.dir=w; if(last=="-Run") h.run=w; if(last=="-Session") h.session=w; if(last=="-Id") h.id=w; if(last=="-Address") h.address=w; if(last=="-Port") h.port=atoi(w.c_str()); last=w; }
+  sim_status(h,"starting"); s_helpers.push_back(h); return 0; }
 void push_front_click(const char*kind,double x,double y){ script.push_front({kind,"",x,y}); }
 int Wait_on_events(long long&id,Text&cmd,Text&msg){
   g_sim_time += 1.0/30.0;
+  lan_sim_pump();
   while(true){
     if(script.empty()){ cmd="Panel Quit"; id=0; msg=""; return 0; }
     Ev e=script.front(); script.pop_front();

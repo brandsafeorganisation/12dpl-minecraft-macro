@@ -10,6 +10,7 @@ mkdir -p "$HERE/build"
 # 0. The test build's function registry must match the source
 "$PYTHON" "$MACRO/tools/make_test_registry.py" --check
 "$PYTHON" "$MACRO/tools/make_report_page.py" --check
+"$PYTHON" "$MACRO/tools/make_lan_helper.py" --check
 
 build_one() {   # build_one <entry file> <name> [compiler flags]
   local ENTRY=$1 NAME=$2 FLAGS=$3

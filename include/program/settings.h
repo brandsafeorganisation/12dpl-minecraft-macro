@@ -23,6 +23,7 @@
 #define ATTR_SET_FONT_FILE       ("font_file")       // the font file it was read from, if one was chosen
 #define ATTR_SET_MP_FOLDER       ("mp_folder")       // multiplayer: the folder every player shares
 #define ATTR_SET_PLAYER_NAME     ("player_name")     // no longer used: the name others see is the 12d user name
+#define ATTR_SET_MP_SHARED       ("mp_shared")       // multiplayer: TRUE through the shared folder, FALSE over the network (the LAN helper)
 #define ATTR_SET_LAN_MODE        ("lan_mode")        // Open to LAN: the game mode others join in (GAMEMODE_*); not saved
 #define ATTR_SET_LAN_CHEATS      ("lan_cheats")      // Open to LAN: TRUE to allow cheats; not saved
 #define ATTR_SET_LAN_START       ("lan_start")       // TRUE when the LAN World screen was left with Start LAN World
