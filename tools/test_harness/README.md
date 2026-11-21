@@ -170,7 +170,7 @@ that were looked up most often (to find hot spots).
 | `35_dimension_stores`        | a chest in each dimension, each seen only in its own, kept through a portal both ways and a save and load in the Nether; the world saved as a folder (level, region, DIM-1); an older single-file world with a Nether chest and pig loads with them put away, and the world list names folders |
 | `36_chests_beds`             | two chests put down side by side face the player and join into a double chest whose screen has six rows (the left half's on top); the chests from the side and back, smaller than their cells with a lid and latch; a bed as a mattress on legs; breaking one half leaves a single chest; the first-person arm empty, with a pickaxe and with a sword |
 | `37_lan_helper`               | over the network (the LAN helper, simulated): Options > Multiplayer; Open to LAN starts a host helper (its command line printed), bob's lines arrive, Save and Quit stops it; another PC (run/remote) hosts the world: Play Multiplayer's scan helper finds it, Join Server's join helper fetches the snapshot and the world loads with bob's block, his chat arrives, the host quitting is told; a firewall leaves the list empty; no PowerShell is said on Play Multiplayer |
-| `28_skin_camera`              | the skin picker: a file that isn't a skin is reported, the supplied skin (`release/skins/purple.png`) dresses the player model; V: the camera behind, in front (walking backwards), and the eyes again |
+| `28_skin_camera`              | the skin picker: a file that isn't a skin is reported, a test skin (`make_test_skin.py`) dresses the player model; V: the camera behind, in front (walking backwards), and the eyes again |
 
 ### Font files
 

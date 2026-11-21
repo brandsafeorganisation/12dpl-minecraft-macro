@@ -288,11 +288,10 @@ a detailed image survive. Interlaced PNGs aren't supported.
 Your player wears a skin: a PNG laid out like the block game's player
 skins (64 x 64, or the older 64 x 32). Put skins in a `skins` folder next
 to `cubeland_worlds`; **Options... > Skin...** lists them (and the
-built-in skin) and shows the one you click from the front. One comes with
-the game: `release/skins/purple.png`. The choice is saved with the other
-settings. In 12d, copy the `skins` folder (and any `resourcepacks` and
-`fonts` folders) from `release` into the 12d working folder, next to
-`cubeland_worlds`; `cubeland.exe` finds them in `release` already.
+built-in skin) and shows the one you click from the front. The choice is
+saved with the other settings. In 12d, put the `skins` folder (and any
+`resourcepacks` and `fonts` folders) in the 12d working folder, next to
+`cubeland_worlds`; `cubeland.exe` looks next to itself in `release`.
 
 You see your skin with the camera behind or in front of you (**V**).
 Every face of the model comes from its own part of the skin, with the

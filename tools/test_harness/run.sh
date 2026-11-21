@@ -28,14 +28,14 @@ if [ ${#SCRIPTS[@]} -eq 0 ]; then sed -n '2,12p' "$0"; exit 1; fi
 rm -rf "$HERE/run/out"
 mkdir -p "$HERE/run/out"
 # The folders the pickers read: the test pack (zip and folder, from
-# make_test_pack.py) and a file that isn't a pack; the supplied skin
-# and a file that isn't a skin; the test fonts (make_test_fonts.py)
+# make_test_pack.py) and a file that isn't a pack; a test skin
+# (make_test_skin.py) and a file that isn't a skin; the test fonts (make_test_fonts.py)
 rm -rf "$HERE/run/resourcepacks" "$HERE/run/skins" "$HERE/run/fonts"
 mkdir -p "$HERE/run/resourcepacks" "$HERE/run/skins" "$HERE/run/fonts"
 [ -f "$HERE/packs/test_pack.zip" ] && cp "$HERE/packs/test_pack.zip" "$HERE/run/resourcepacks/"
 [ -d "$HERE/packs/test_pack" ] && cp -r "$HERE/packs/test_pack" "$HERE/run/resourcepacks/"
 echo "not a zip" > "$HERE/run/resourcepacks/broken.zip"
-cp "$HERE/../../release/skins/purple.png" "$HERE/run/skins/"
+python3 "$HERE/make_test_skin.py" "$HERE/run/skins/test_skin.png"
 echo "not a png" > "$HERE/run/skins/broken.png"
 for f in test_font.ttf test_mac.otf test_collection.ttc not_a_font.ttf; do
   [ -f "$HERE/packs/$f" ] && cp "$HERE/packs/$f" "$HERE/run/fonts/"

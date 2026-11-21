@@ -1,6 +1,6 @@
 # Player skins and the camera. A file that isn't a skin is reported
-# and the built-in look stays; the supplied skin (release/skins/
-# purple.png, copied to the skins folder by run.sh, a 64 x 64 skin with
+# and the built-in look stays; a test skin (test_skin.png, written to
+# the skins folder by run.sh with make_test_skin.py, a 64 x 64 skin with
 # a second layer) dresses the player model. V moves
 # the camera behind the player, then in front looking back, then back
 # to the eyes (the hand and crosshair only show from the eyes).
@@ -8,7 +8,7 @@ ui Options...
 ui Skin...
 ui broken.png
 call font
-ui purple.png
+ui test_skin.png
 snap 284_skin_picker
 wait 4
 ui Done
